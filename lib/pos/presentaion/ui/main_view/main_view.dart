@@ -1,0 +1,2319 @@
+﻿import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
+import 'package:awesome_dropdown/awesome_dropdown.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:poslix_app/pos/domain/requests/cart_model.dart';
+import 'package:poslix_app/pos/domain/response/customer_model.dart';
+import 'package:poslix_app/pos/domain/response/products_model.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/close_register_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/customer_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/discount_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/hold_dialog/hold_card_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/item_options_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports/orders_and_hold_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/shipping_dialog.dart';
+import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
+import 'package:poslix_app/pos/shared/constant/padding_margin_values_manager.dart';
+import 'package:poslix_app/pos/shared/style/colors_manager.dart';
+
+import '../../../domain/entities/order_model.dart';
+import '../../../domain/entities/tmp_order_model.dart';
+import '../../../domain/response/brands_model.dart';
+import '../../../domain/response/categories_model.dart';
+import '../../../domain/response/stocks_model.dart';
+import '../../../domain/response/variations_model.dart';
+import '../../../shared/constant/assets_manager.dart';
+import '../../../shared/constant/language_manager.dart';
+import '../../../shared/constant/strings_manager.dart';
+import '../../../shared/preferences/app_pref.dart';
+import '../../../shared/utils/global_values.dart';
+import '../../di/di.dart';
+import '../../router/app_router.dart';
+import '../components/container_component.dart';
+import '../components/text_component.dart';
+import '../login_view/login_cubit/login_cubit.dart';
+import '../login_view/login_cubit/login_state.dart';
+import '../popup_dialogs/custom_dialog.dart';
+import '../popup_dialogs/loading_dialog.dart';
+import 'main_view_cubit/main_view_state.dart';
+
+class MainView extends StatefulWidget {
+  MainView({super.key});
+
+  @override
+  State<MainView> createState() => _MainViewState();
+}
+
+class _MainViewState extends State<MainView> {
+  final AppPreferences _appPreferences = sl<AppPreferences>();
+
+  final GlobalKey<AnimatedFloatingActionButtonState> floatingKey =
+      GlobalKey<AnimatedFloatingActionButtonState>();
+
+  DateTime today = DateTime.now();
+
+  List<CategoriesResponse> listOfCategories = [];
+  List<BrandsResponse> listOfBrands = [];
+
+  List<ProductsResponse> listOfAllProducts = [];
+  List<ProductsResponse> listOfBothProducts = [];
+  List<String> searchList = [];
+
+  List<ProductsResponse> listOfProducts = [];
+  List<VariationsResponse> listOfVariations = [];
+  List<StocksResponse> listOfStocks = [];
+
+  List<CustomerResponse> listOfCustomers = [];
+
+  String selectedDiscountType = '';
+
+  int decimalPlaces = 2;
+  int locationId = 0;
+  int tax = 0;
+
+  int getIndex(int index) {
+    int finalIndex = index + 1;
+    return finalIndex;
+  }
+
+  @override
+  void dispose() {
+    _searchEditingController.dispose();
+    super.dispose();
+  }
+
+  final int _currentSortColumn = 0;
+  final bool _isSortAsc = true;
+
+  CustomerResponse? _selectedCustomer;
+  String? _selectedCustomerName;
+
+  int? _selectedCustomerId;
+  String? _selectedCustomerTel;
+  String? _selectedCategory;
+
+  double shippingCharge = 0;
+  double discount = 0;
+  double totalAmount = 0;
+  double differenceValue = 0;
+  double originalTotalValue = 0;
+
+  bool? categoryFilter;
+
+  bool _isExpanded = false;
+
+  double? sumItems() {
+    double total = 0;
+    for (var itemOfOrder in listOfTmpOrder) {
+      total = total +
+          (double.parse(itemOfOrder.itemPrice.toString()) *
+              itemOfOrder.itemQuantity!);
+    }
+    return total;
+  }
+
+  double getTotalAmount() {
+    getEstimatedTax();
+    totalAmount = roundDouble(
+        sumItems()! + ((tax / 100) * sumItems()!) + shippingCharge - discount,
+        decimalPlaces);
+    return totalAmount;
+  }
+
+  double estimatedTax = 0.00;
+  double getEstimatedTax() {
+    estimatedTax = roundDouble((tax / 100) * sumItems()!, decimalPlaces);
+    return estimatedTax;
+  }
+
+  double roundDouble(double value, int places) {
+    String roundedNumber = value.toStringAsFixed(places);
+    return double.parse(roundedNumber);
+  }
+
+  void isSelected(int itemId) {
+    setState(() {
+      if (categoryFilter!) {
+        for (var n in listOfCategories) {
+          n.selected = false;
+        }
+        final currentId =
+            listOfCategories.indexWhere((element) => element.id == itemId);
+
+        listOfCategories[currentId].selected =
+            !listOfCategories[currentId].selected!;
+        _selectedCategory = listOfCategories[currentId].name;
+        listOfProducts = listOfCategories[currentId].products;
+        if (listOfCategories[currentId].products.isNotEmpty) {
+          listOfVariations =
+              listOfCategories[currentId].products[currentId].variations;
+          listOfStocks = listOfCategories[currentId].products[currentId].stocks;
+        } else {
+          listOfVariations = [];
+          listOfStocks = [];
+        }
+      } else {
+        for (var n in listOfBrands) {
+          n.selected = false;
+        }
+        final currentId =
+            listOfBrands.indexWhere((element) => element.id == itemId);
+
+        listOfBrands[currentId].selected = !listOfBrands[currentId].selected!;
+        _selectedCategory = listOfBrands[currentId].name;
+        listOfProducts = listOfBrands[currentId].products;
+        if (listOfBrands[currentId].products.isNotEmpty) {
+          listOfVariations =
+              listOfBrands[currentId].products[currentId].variations;
+
+          listOfStocks = listOfBrands[currentId].products[currentId].stocks;
+        } else {
+          listOfVariations = [];
+          listOfStocks = [];
+        }
+      }
+    });
+  }
+
+  void getDiscount(double discountValue, bool fixed) {
+    setState(() {
+      if (fixed) {
+        discount = roundDouble(discountValue, decimalPlaces);
+      } else {
+        discount = roundDouble((discountValue / 100) * 100, decimalPlaces);
+      }
+    });
+  }
+
+  void getShippingValue(double shippingValue) {
+    setState(() {
+      shippingCharge = roundDouble(shippingValue, decimalPlaces);
+    });
+  }
+
+  String currencyCode = '';
+
+  @override
+  void initState() {
+    categoryFilter = true;
+
+    listOfTmpOrder = [];
+
+    getToken();
+    getDecimalPlaces();
+    getLocationId();
+    getTax();
+
+    super.initState();
+  }
+
+  void getToken() async {
+    _appPreferences.getToken(LOGGED_IN_TOKEN)!;
+  }
+
+  void getDecimalPlaces() async {
+    decimalPlaces = _appPreferences.getLocationId(PREFS_KEY_DECIMAL_PLACES)!;
+  }
+
+  void getLocationId() async {
+    locationId = _appPreferences.getLocationId(PREFS_KEY_LOCATION_ID)!;
+  }
+
+  void getTax() async {
+    tax = _appPreferences.getTaxValue(PREFS_KEY_TAX_VALUE)!;
+  }
+
+  void reload() {
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext context) => super.widget));
+  }
+
+  TextEditingController _searchEditingController = TextEditingController();
+
+  Widget language() {
+    return FloatingActionButton(
+      onPressed: () {
+        setState(() {
+          _changeLanguage();
+        });
+      },
+      heroTag: AppStrings.language.tr(),
+      tooltip: AppStrings.language.tr(),
+      backgroundColor: ColorManager.primary,
+      child: SvgPicture.asset(
+        ImageAssets.language,
+        width: AppSize.s25,
+        color: ColorManager.white,
+      ),
+    );
+  }
+
+  Widget logout() {
+    return BlocProvider(
+      create: (context) => sl<LoginCubit>(),
+      child: BlocConsumer<LoginCubit, LoginState>(
+        listener: (context, state) {
+          if (state is LogoutSucceed) {
+          } else if (state is LogoutFailed) {}
+        },
+        builder: (context, state) {
+          return FloatingActionButton(
+            onPressed: () {
+              LoginCubit.get(context).logout();
+              _appPreferences.logout();
+              Navigator.of(context).pushReplacementNamed(Routes.loginRoute);
+            },
+            heroTag: AppStrings.logout.tr(),
+            tooltip: AppStrings.logout.tr(),
+            backgroundColor: ColorManager.primary,
+            child: SvgPicture.asset(
+              ImageAssets.logout,
+              width: AppSize.s25,
+              color: ColorManager.white,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget register() {
+    return FloatingActionButton(
+      onPressed: () {
+        CloseRegisterDialog.show(context, locationId);
+      },
+      heroTag: AppStrings.registerPos.tr(),
+      tooltip: AppStrings.registerPos.tr(),
+      backgroundColor: ColorManager.primary,
+      child: SvgPicture.asset(
+        ImageAssets.close,
+        width: AppSize.s25,
+        color: ColorManager.white,
+      ),
+    );
+  }
+
+  Widget refresh() {
+    return FloatingActionButton(
+      onPressed: () {
+        reload();
+      },
+      heroTag: AppStrings.reload.tr(),
+      tooltip: AppStrings.reload.tr(),
+      backgroundColor: ColorManager.primary,
+      child: SvgPicture.asset(
+        ImageAssets.reload,
+        width: AppSize.s25,
+        color: ColorManager.white,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () => _onBackButtonPressed(context),
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: ColorManager.secondary,
+          body: SingleChildScrollView(child: bodyContent(context)),
+          floatingActionButton: AnimatedFloatingActionButton(
+              fabButtons: <Widget>[language(), logout(),register(), refresh()],
+              key: floatingKey,
+              colorStartAnimation: ColorManager.primary,
+              colorEndAnimation: ColorManager.delete,
+              animatedIconData: AnimatedIcons.menu_close //To principal button
+              ),
+        ),
+      ),
+    );
+  }
+
+  Widget bodyContent(BuildContext context) {
+    totalAmount = getTotalAmount();
+
+    GlobalValues.getEditOrder
+        ? differenceValue = roundDouble(
+            double.parse((totalAmount - originalTotalValue).toStringAsFixed(2)),
+            decimalPlaces)
+        : differenceValue = 0;
+
+    return BlocProvider(
+      create: (context) => sl<MainViewCubit>()
+        ..getCategories(locationId)
+        ..getCustomers(locationId)
+        ..getCurrency(locationId),
+      child: BlocConsumer<MainViewCubit, MainViewState>(
+        listener: (context, state) async {
+
+          if (state is MainNoInternetState) {
+            CustomDialog.show(context,AppStrings.noInternet.tr(),const Icon(Icons.wifi),ColorManager.white,AppConstants.durationOfSnackBar,ColorManager.delete);
+          }
+
+          if (state is LoadingCategories) {
+            LoadingDialog.show(context);
+          } else if (state is LoadedCategories) {
+            LoadingDialog.hide(context);
+            listOfCategories = MainViewCubit.get(context).listOfCategories;
+
+            for (var element in listOfCategories) {
+              listOfAllProducts.addAll(Set.of(element.products));
+              listOfBothProducts.addAll(Set.of(element.products));
+            }
+
+            for (var element in listOfAllProducts) {
+              searchList.add(element.name);
+            }
+
+            listOfCategories.insert(
+                0,
+                CategoriesResponse(
+                    id: 0,
+                    selected: false,
+                    name: AppStrings.all.tr(),
+                    description: '',
+                    locationId: locationId,
+                    createdBy: 1,
+                    neverTax: 0,
+                    parentId: 0,
+                    products: listOfAllProducts,
+                    productsCount: listOfAllProducts.length,
+                    deletedAt: '',
+                    createdAt: '',
+                    updatedAt: '',
+                    taxId: 0,
+                    slug: '',
+                    woocommerceCatId: 0,
+                    showInList: 'on',
+                    categoryType: 'single',
+                    shortCode: ''));
+
+            listOfProducts = listOfAllProducts;
+            listOfVariations = listOfCategories[0].products[0].variations;
+            listOfStocks = listOfCategories[0].products[0].stocks;
+
+            for (var element in listOfCategories) {
+              element.selected = false;
+            }
+
+            listOfCategories[0].selected = true;
+
+            _selectedCategory = listOfCategories[0].name;
+          } else if (state is LoadingErrorCategories) {
+            listOfProducts = [];
+            LoadingDialog.hide(context);
+            CustomDialog.show(
+                context,
+                AppStrings.errorTryAgain
+                    .tr(),
+                const Icon(Icons
+                    .close),
+                ColorManager.white,
+                AppConstants
+                    .durationOfSnackBar,
+                ColorManager.delete);
+          } else if (state is LoadingBrands) {
+            LoadingDialog.show(context);
+          } else if (state is LoadedBrands) {
+            LoadingDialog.hide(context);
+            listOfBrands = MainViewCubit.get(context).listOfBrands;
+
+            for (var element in listOfBrands) {
+              listOfAllProducts.addAll(Set.of(element.products));
+              listOfBothProducts.addAll(Set.of(element.products));
+            }
+
+            for (var element in listOfAllProducts) {
+              searchList.add(element.name);
+            }
+
+            listOfBrands.insert(
+                0,
+                BrandsResponse(
+                    id: 0,
+                    selected: false,
+                    name: AppStrings.all.tr(),
+                    description: '',
+                    locationId: locationId,
+                    createdBy: 1,
+                    neverTax: 0,
+                    products: listOfAllProducts,
+                    productsCount: listOfAllProducts.length,
+                    deletedAt: '',
+                    createdAt: '',
+                    updatedAt: ''));
+
+            listOfProducts = listOfAllProducts;
+            listOfVariations = listOfBrands[0].products[0].variations;
+            listOfStocks = listOfBrands[0].products[0].stocks;
+
+            for (var element in listOfBrands) {
+              element.selected = false;
+            }
+
+            listOfBrands[0].selected = true;
+
+            _selectedCategory = listOfBrands[0].name;
+          } else if (state is LoadingErrorBrands) {
+            // LoadingDialog.hide(context);
+            listOfProducts = [];
+            CustomDialog.show(
+                context,
+                AppStrings.errorTryAgain
+                    .tr(),
+                const Icon(Icons
+                    .close),
+                ColorManager.white,
+                AppConstants
+                    .durationOfSnackBar,
+                ColorManager.delete);
+          }
+          if (state is LoadingCustomers) {
+          } else if (state is LoadedCustomers) {
+            listOfCustomers = MainViewCubit.get(context).listOfCustomers;
+            listOfCustomers.insert(
+                0,
+                CustomerResponse(
+                    firstName: AppStrings.firstName,
+                    lastName: AppStrings.secondName,
+                    locationId: locationId,
+                    addressLine_1: '',
+                    addressLine_2: '',
+                    city: '',
+                    contactStatus: '',
+                    country: '',
+                    createdAt: '',
+                    createdBy: 0,
+                    id: 1,
+                    mobile: '',
+                    shippingAddress: '',
+                    state: '',
+                    type: '',
+                    zipCode: '',
+                    contactId: '',
+                    deletedAt: '',
+                    email: '',
+                    name: '',
+                    updatedAt: ''));
+
+            _selectedCustomerName =
+                '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
+            _selectedCustomerId = listOfCustomers[0].id;
+            _selectedCustomerTel = listOfCustomers[0].mobile;
+          } else if (state is LoadingErrorCustomers) {
+          } else if (state is LoadedCustomer) {
+            int index = listOfCustomers.indexWhere((element) =>
+                '${element.firstName} ${element.lastName} | ${element.mobile}' ==
+                '${_selectedCustomer?.firstName} ${_selectedCustomer?.lastName} | ${_selectedCustomer?.mobile}');
+            CustomerDialog.show(context, 'Edit', listOfCustomers[index],
+                _selectedCustomerId!, locationId, (done) {
+              if (done == 'done') {
+                setState(() {
+                  listOfCustomers = [];
+                  CustomerResponse? _selectedCustomer2;
+                  _selectedCustomer = _selectedCustomer2;
+                  MainViewCubit.get(context).getCustomers(locationId);
+                });
+              }
+            });
+          }
+
+          if (state is LoadedCurrency) {
+            currencyCode = state.currencyCode;
+          } else if (state is LoadingErrorCurrency) {
+
+          }
+        },
+        builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.all(AppPadding.p10),
+              child: Center(
+                child: Row(
+                  children: [
+                    leftPart(context),
+                    SizedBox(
+                      width: AppConstants.smallDistance,
+                    ),
+                    rightPart(context),
+                  ],
+                ),
+              ),
+            );
+        },
+      ),
+    );
+  }
+
+  // left part ------------------------------------------------------
+  Widget leftPart(BuildContext context) {
+    return Expanded(
+      flex: 2,
+      child: Column(
+        children: [
+          containerComponent(
+              context,
+              Padding(
+                padding: const EdgeInsets.all(AppPadding.p10),
+                child: Column(
+                  children: [
+                    // drop down
+                    Row(
+                      children: [
+                        customerDropDown(context),
+                        SizedBox(
+                          width: AppConstants.smallerDistance,
+                        ),
+                        addAndEditCustomer(context)
+                      ],
+                    ),
+
+                    SizedBox(
+                      height: AppConstants.smallDistance,
+                    ),
+
+                    searchText(context),
+
+                    // tmp table of items
+                    Expanded(
+                      flex: 2,
+                      child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: _createDataTable())),
+                    ),
+
+                    constantsAndTotal(context),
+
+                    buttons(context)
+                  ],
+                ),
+              ),
+              height: MediaQuery.of(context).size.height - 20.h,
+              color: ColorManager.white,
+              borderColor: ColorManager.white,
+              borderWidth: 1.5.w,
+              borderRadius: AppSize.s5),
+        ],
+      ),
+    );
+  }
+
+  bool _isBackPressedOrTouchedOutSide = false,
+      _isDropDownOpened = false,
+      _isPanDown = false;
+
+  Widget customerDropDown(BuildContext context) {
+    return Expanded(
+        flex: 3,
+        child:
+        containerComponent(
+            context,
+            DropdownButton(
+              borderRadius:
+              BorderRadius.circular(
+                  AppSize.s5),
+              itemHeight: 50.h,
+              underline: Container(),
+              value: _selectedCustomer,
+              items:
+              listOfCustomers.map((item) {
+                return DropdownMenuItem(
+                    value: item,
+                    child: Row(
+                      children: [
+                        textS14PrimaryComponent(context,item.firstName,),
+                        SizedBox(
+                            width: AppConstants
+                                .smallerDistance),
+                        textS14PrimaryComponent(context,item.lastName,),
+                        item.firstName ==
+                            AppStrings
+                                .firstName
+                            ? Container()
+                            : Row(
+                          children: [
+                            SizedBox(
+                                width: AppConstants
+                                    .smallerDistance),
+                            textS14PrimaryComponent(context,'|',),
+                            SizedBox(
+                                width: AppConstants
+                                    .smallerDistance),
+                            textS14PrimaryComponent(context,
+                                item
+                                    .mobile,)
+                          ],
+                        ),
+                      ],
+                    ));
+              }).toList(),
+              onChanged: (selectedCustomer) {
+                setState(() {
+                  _selectedCustomer =
+                      selectedCustomer;
+                  _selectedCustomerName =
+                  '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
+                  _selectedCustomerId =
+                      selectedCustomer?.id;
+                  _selectedCustomerTel =
+                      selectedCustomer
+                          ?.mobile;
+                });
+              },
+              isExpanded: true,
+              hint: Row(
+                children: [
+                  textS14PrimaryComponent(context,
+                    '${AppStrings.firstName} ${AppStrings.secondName}',
+                  ),
+                  SizedBox(
+                    width: AppConstants
+                        .smallDistance,
+                  )
+                ],
+              ),
+              icon: Icon(
+                Icons.arrow_drop_down,
+                color: ColorManager.primary,
+                size: AppSize.s20.sp,
+              ),
+              style: TextStyle(
+                  color: ColorManager.primary,
+                  fontSize: AppSize.s14.sp),
+            ),
+            padding:
+            const EdgeInsets.fromLTRB(
+                AppPadding.p15,
+                AppPadding.p2,
+                AppPadding.p5,
+                AppPadding.p2),
+            height: 47.h,
+            borderColor: ColorManager.primary,
+            borderWidth: 0.5.w,
+            borderRadius: AppSize.s5
+        ));
+  }
+
+  Widget addAndEditCustomer(BuildContext context) {
+    return Expanded(
+        flex: 1,
+        child: Column(
+          children: [
+            SizedBox(height: 7.h),
+            Row(
+              children: [
+                Expanded(
+                    flex: 5,
+                    child: Bounceable(
+                        duration: Duration(
+                            milliseconds:
+                            AppConstants
+                                .durationOfBounceable),
+                        onTap: () async {
+                          await Future.delayed(
+                              Duration(
+                                  milliseconds:
+                                  AppConstants
+                                      .durationOfBounceable));
+                          if (_selectedCustomerId !=
+                              1) {
+                            setState(() {
+                              MainViewCubit.get(
+                                  context)
+                                  .getCustomer(
+                                  _selectedCustomerId!);
+                            });
+                          }
+                        },
+                        child:
+                        containerComponent(
+                            context,
+                            Center(
+                                child: Icon(
+                                  Icons.edit,
+                                  size:
+                                  AppSize.s20.sp,
+                                  color: ColorManager
+                                      .white,
+                                )),
+                            height: 45.h,
+                            // width: 35.w,
+                            margin:
+                            const EdgeInsets
+                                .only(
+                                bottom:
+                                AppMargin
+                                    .m8),
+                            padding:
+                            const EdgeInsets
+                                .all(
+                                AppPadding
+                                    .p08),
+                            color: ColorManager.primary,
+                            borderColor: ColorManager.primary,
+                            borderWidth: 0.1.w,
+                            borderRadius: AppSize.s5
+                        )
+                    )),
+                SizedBox(
+                  width: AppConstants
+                      .smallerDistance,
+                ),
+                Expanded(
+                    flex: 5,
+                    child: Bounceable(
+                      duration: Duration(
+                          milliseconds:
+                          AppConstants
+                              .durationOfBounceable),
+                      onTap: () async {
+                        await Future.delayed(
+                            Duration(
+                                milliseconds:
+                                AppConstants
+                                    .durationOfBounceable));
+                        CustomerDialog.show(
+                            context,
+                            'Add',
+                            [],
+                            0,
+                            locationId,
+                                (done) {
+                              if (done ==
+                                  'done') {
+                                setState(() {
+                                  MainViewCubit.get(
+                                      context)
+                                      .getCustomers(
+                                      locationId);
+                                });
+                              }
+                            });
+                      },
+                      child:
+                      containerComponent(
+                          context,
+                          Center(
+                              child: Icon(
+                                Icons
+                                    .add_circle_outline,
+                                size:
+                                AppSize.s20.sp,
+                                color: ColorManager
+                                    .white,
+                              )),
+                          height: 45.h,
+                          margin:
+                          const EdgeInsets
+                              .only(
+                              bottom:
+                              AppMargin
+                                  .m8),
+                          padding:
+                          const EdgeInsets
+                              .all(
+                              AppPadding
+                                  .p08),
+                          color: ColorManager.primary,
+                          borderColor: ColorManager.primary,
+                          borderWidth: 0.0.w,
+                          borderRadius: AppSize.s5
+                      ),
+                    )),
+              ],
+            )
+          ],
+        ));
+  }
+
+  Widget searchText(BuildContext context) {
+    return Autocomplete<String>(
+      optionsBuilder:
+          (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty) {
+          return const Iterable<String>.empty();
+        } else {
+          return searchList.where((word) => word
+              .toLowerCase()
+              .contains(textEditingValue.text
+              .toLowerCase()));
+        }
+      },
+      onSelected: (String selection) {
+        int index = listOfAllProducts.indexWhere(
+                (element) =>
+            element.name == selection);
+
+        addToTmp(index,context);
+      },
+      fieldViewBuilder: (context,
+          textEditingController,
+          focusNode,
+          onFieldSubmitted) {
+        _searchEditingController =
+            textEditingController;
+        return TextField(
+            autofocus: false,
+            keyboardType: TextInputType.text,
+            controller: _searchEditingController,
+            focusNode: focusNode,
+            onEditingComplete: onFieldSubmitted,
+            decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.search,
+                  size: AppSize.s25.sp,
+                ),
+                hintText: AppStrings
+                    .searchByProduct
+                    .tr(),
+                hintStyle: TextStyle(
+                    fontSize: AppSize.s14,
+                    color: ColorManager.primary),
+                border: InputBorder.none));
+      },
+      optionsViewBuilder:
+          (context, onSelected, options) => Align(
+        alignment: Alignment.topLeft,
+        child: Material(
+          child:
+          containerComponent(
+              context,
+              ListView(
+                children: options
+                    .map((e) => Padding(
+                  padding:
+                  const EdgeInsets.only(
+                      top: AppPadding
+                          .p15),
+                  child: ListTile(
+                    onTap: () =>
+                        onSelected(e),
+                    title: Column(
+                      crossAxisAlignment:
+                      CrossAxisAlignment
+                          .start,
+                      children: [
+                        Text(e),
+                        const Divider()
+                      ],
+                    ),
+                  ),
+                ))
+                    .toList(),
+              ),
+              width: 120.w,
+              height: 200.h,
+              color: ColorManager.white,
+              borderColor: ColorManager.secondary,
+              borderWidth: 0.5.w,
+              borderRadius: AppSize.s5
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget constantsAndTotal(BuildContext context) {
+    return Column(
+      children: [
+        Divider(
+          height: 20.h,
+          color: ColorManager.primary,
+        ),
+
+        // tax and shipping
+        Row(
+          mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+                child: Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
+                  children: [
+                    textS12Component(context,
+                      '${AppStrings.estimatedTax.tr()} ($tax%)',
+                    ),
+                    textS12Component(context,estimatedTax.toString(),),
+                  ],
+                )),
+            SizedBox(
+              width: AppConstants
+                  .smallWidthBetweenElements,
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
+                children: [
+                  textS12Component(context,AppStrings.shippingCharge.tr()),
+                  Bounceable(
+                    duration: Duration(
+                        milliseconds: AppConstants
+                            .durationOfBounceable),
+                    onTap: () async {
+                      await Future.delayed(Duration(
+                          milliseconds: AppConstants
+                              .durationOfBounceable));
+                      setState(() {
+                        ShippingDialog.show(context,
+                                (shippingValue) {
+                              getShippingValue(
+                                  shippingValue);
+                            });
+                      });
+                    },
+                    child: Icon(
+                      Icons.edit,
+                      color: ColorManager.primary,
+                      size: AppSize.s20.sp,
+                    ),
+                  ),
+                  textS12Component(context,shippingCharge.toString(),),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        SizedBox(
+          height: AppConstants.smallDistance,
+        ),
+
+        // discount and total
+        Row(
+          mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
+                children: [
+                  textS12Component(context,AppStrings.discount.tr(),),
+                  Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment
+                        .spaceBetween,
+                    children: [
+                      Bounceable(
+                        duration: Duration(
+                            milliseconds: AppConstants
+                                .durationOfBounceable),
+                        onTap: () async {
+                          await Future.delayed(Duration(
+                              milliseconds: AppConstants
+                                  .durationOfBounceable));
+                          setState(() {
+                            DiscountDialog.show(
+                                context,
+                                    (discountValue,
+                                    fixed) {
+                                  getDiscount(
+                                      discountValue,
+                                      fixed);
+                                }, (discountType) {
+                              selectedDiscountType ==
+                                  discountType;
+                            });
+                          });
+                        },
+                        child: Icon(
+                          Icons.edit,
+                          color: ColorManager.primary,
+                          size: AppSize.s20.sp,
+                        ),
+                      ),
+                      SizedBox(
+                        width: AppConstants
+                            .smallDistance,
+                      ),
+                      textS12Component(context,
+                          '${discount.toString()} $currencyCode',),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              width: AppConstants
+                  .smallWidthBetweenElements,
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
+                children: [
+                  textS12Component(context,AppStrings.totalAmount.tr()),
+                  textS12Component(context,totalAmount.toString()),
+                  textS12Component(context,currencyCode,),
+                ],
+              ),
+            )
+          ],
+        ),
+
+        SizedBox(
+          height: AppConstants.smallDistance,
+        ),
+
+        // difference
+        GlobalValues.getEditOrder
+            ? Row(
+          mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(''),
+            const Text(''),
+            textS12Component(context,AppStrings.difference.tr()),
+            textS12Component(context,differenceValue.toString()),
+          ],
+        )
+            : const SizedBox.shrink(),
+        SizedBox(
+          height: AppConstants.smallDistance,
+        ),
+      ],
+    );
+  }
+
+  Widget buttons(BuildContext context) {
+    return Column(
+      children: [
+
+        // delete and hold and orders
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Bounceable(
+                duration: Duration(
+                    milliseconds: AppConstants
+                        .durationOfBounceable),
+                onTap: () async {
+                  await Future.delayed(Duration(
+                      milliseconds: AppConstants
+                          .durationOfBounceable));
+                  if (listOfTmpOrder.isEmpty) {
+                    CustomDialog.show(
+                        context,
+                        AppStrings.noDataToDelete
+                            .tr(),
+                        const Icon(Icons
+                            .warning_amber_rounded),
+                        ColorManager.white,
+                        AppConstants
+                            .durationOfSnackBar,
+                        ColorManager.hold);
+
+                    setState(() {
+                      _selectedCustomer = listOfCustomers
+                          .where((element) =>
+                      "${element.firstName} ${element.lastName}" ==
+                          '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}')
+                          .first;
+
+                      _selectedCustomerId =
+                          listOfCustomers[0].id;
+
+                      _selectedCustomerName =
+                      '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
+
+                      _selectedCustomerTel =
+                          listOfCustomers[0].mobile;
+
+                      discount = 0;
+                      differenceValue = 0;
+                      originalTotalValue = 0;
+                      estimatedTax = 0;
+                      shippingCharge = 0;
+                      GlobalValues.setEditOrder =
+                      false;
+                    });
+                  } else {
+                    setState(() {
+                      CustomDialog.show(
+                          context,
+                          AppStrings
+                              .orderDeletedSuccessfully
+                              .tr(),
+                          const Icon(Icons.check),
+                          ColorManager.white,
+                          AppConstants
+                              .durationOfSnackBar,
+                          ColorManager.success);
+
+                      listOfTmpOrder.clear();
+
+                      _selectedCustomer = listOfCustomers
+                          .where((element) =>
+                      "${element.firstName} ${element.lastName}" ==
+                          '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}')
+                          .first;
+
+                      _selectedCustomerId =
+                          listOfCustomers[0].id;
+
+                      _selectedCustomerName =
+                      '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
+
+                      _selectedCustomerTel =
+                          listOfCustomers[0].mobile;
+
+                      discount = 0;
+                      differenceValue = 0;
+                      originalTotalValue = 0;
+                      estimatedTax = 0;
+                      shippingCharge = 0;
+                      GlobalValues.setEditOrder =
+                      false;
+                    });
+                  }
+                },
+                child:
+                containerComponent(
+                    context,
+                    Center(
+                        child: textS14WhiteComponent(context,
+                          AppStrings.delete.tr(),
+                        )),
+                    height: 30.h,
+                    color: ColorManager.delete,
+                    borderColor: ColorManager.delete,
+                    borderWidth: 1.w,
+                    borderRadius: AppSize.s5
+                ),
+              ),
+            ),
+            SizedBox(
+              width: AppConstants.smallDistance,
+            ),
+            Expanded(
+              flex: 2,
+              child: Bounceable(
+                duration: Duration(
+                    milliseconds: AppConstants
+                        .durationOfBounceable),
+                onTap: () async {
+                  await Future.delayed(Duration(
+                      milliseconds: AppConstants
+                          .durationOfBounceable));
+                  if (listOfTmpOrder.isEmpty) {
+                    CustomDialog.show(
+                        context,
+                        AppStrings.noDataToHold.tr(),
+                        const Icon(Icons
+                            .warning_amber_rounded),
+                        ColorManager.white,
+                        AppConstants
+                            .durationOfSnackBar,
+                        ColorManager.hold);
+                  } else {
+                    listOfTmpOrder[0].orderDiscount =
+                        discount;
+
+                    holdOrdersDialog(
+                        context,
+                        listOfTmpOrder,
+                        discount,
+                        _selectedCustomerTel!,
+                        _selectedCustomerName!,
+                            (done) {
+                          if (done == 'done') {
+                            setState(() {
+                              listOfTmpOrder.clear();
+                            });
+                          }
+                        });
+                    discount = 0;
+                  }
+                },
+                child:
+                containerComponent(
+                    context,
+                    Center(
+                        child: textS14WhiteComponent(context,
+                          AppStrings.holdCard.tr(),
+                        )),
+                    height: 30.h,
+                    color: ColorManager.hold,
+                    borderColor: ColorManager.hold,
+                    borderWidth: 1.w,
+                    borderRadius: AppSize.s5
+                ),
+              ),
+            ),
+            SizedBox(
+              width: AppConstants.smallDistance,
+            ),
+            Expanded(
+                flex: 1,
+                child: Bounceable(
+                  duration: Duration(
+                      milliseconds: AppConstants
+                          .durationOfBounceable),
+                  onTap: () async {
+                    await Future.delayed(Duration(
+                        milliseconds: AppConstants
+                            .durationOfBounceable));
+                    OrdersDialog.show(
+                        context, locationId,
+                            (customerName) {
+                          if (customerName ==
+                              '${AppStrings.firstName} ${AppStrings.secondName}') {
+                            _selectedCustomer =
+                                listOfCustomers
+                                    .where((element) =>
+                                "${element.firstName} ${element.lastName}" ==
+                                    customerName)
+                                    .first;
+                            int indexOfCustomer =
+                            listOfCustomers.indexWhere(
+                                    (element) =>
+                                "${element.firstName} ${element.lastName}" ==
+                                    customerName);
+
+                            _selectedCustomerId =
+                                listOfCustomers[
+                                indexOfCustomer]
+                                    .id;
+                            _selectedCustomerName =
+                            '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
+                            _selectedCustomerTel =
+                                listOfCustomers[
+                                indexOfCustomer]
+                                    .mobile;
+                          } else {
+                            _selectedCustomer =
+                                listOfCustomers
+                                    .where((element) =>
+                                "${element.firstName} ${element.lastName} | ${element.mobile}" ==
+                                    customerName)
+                                    .first;
+                            int indexOfCustomer =
+                            listOfCustomers.indexWhere(
+                                    (element) =>
+                                "${element.firstName} ${element.lastName} | ${element.mobile}" ==
+                                    customerName);
+
+                            _selectedCustomerId =
+                                listOfCustomers[
+                                indexOfCustomer]
+                                    .id;
+                            _selectedCustomerName =
+                            '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
+                            _selectedCustomerTel =
+                                listOfCustomers[
+                                indexOfCustomer]
+                                    .mobile;
+                          }
+                        }, (orderTotal) {
+                      originalTotalValue = orderTotal;
+                    }, (orderDiscount) {
+                      setState(() {
+                        discount = double.parse(
+                            orderDiscount.toString());
+                      });
+                    });
+                  },
+                  child:
+                  containerComponent(
+                      context,
+                      Center(
+                          child: textS14WhiteComponent(context,
+                            AppStrings.orders.tr(),
+                          )),
+                      height: 30.h,
+                      color: ColorManager.orders,
+                      borderColor: ColorManager.orders,
+                      borderWidth: 1.w,
+                      borderRadius: AppSize.s5
+                  ),
+                )),
+          ],
+        ),
+
+        SizedBox(
+          height: AppConstants.smallDistance,
+        ),
+
+        //check out
+        Bounceable(
+          duration: Duration(
+              milliseconds:
+              AppConstants.durationOfBounceable),
+          onTap: () async {
+            await Future.delayed(Duration(
+                milliseconds: AppConstants
+                    .durationOfBounceable));
+            if (listOfTmpOrder.isEmpty) {
+              CustomDialog.show(
+                  context,
+                  AppStrings.noDataToCheckOut.tr(),
+                  const Icon(
+                      Icons.warning_amber_rounded),
+                  ColorManager.white,
+                  AppConstants.durationOfSnackBar,
+                  ColorManager.hold);
+            } else {
+              for (var n in listOfTmpOrder) {
+                var itemStock = listOfBothProducts
+                    .where((element) =>
+                element.id == n.productId)
+                    .first;
+
+                int qty = itemStock.stock;
+                int indexOfList = listOfBothProducts
+                    .indexWhere((element) =>
+                element.id == n.productId);
+
+                if (listOfBothProducts[indexOfList]
+                    .variations
+                    .isNotEmpty) {
+                  int indexOfVariationList = itemStock
+                      .variations
+                      .indexWhere((element) =>
+                  element.id ==
+                      n.variationId);
+                  qty =
+                      listOfBothProducts[indexOfList]
+                          .variations[
+                      indexOfVariationList]
+                          .stock;
+                }
+
+                if (int.parse(
+                    n.itemQuantity.toString()) >
+                    qty) {
+                  CustomDialog.show(
+                      context,
+                      AppStrings.noCreditWhenCheck
+                          .tr(),
+                      const Icon(Icons
+                          .warning_amber_rounded),
+                      ColorManager.white,
+                      AppConstants.durationOfSnackBar,
+                      ColorManager.hold);
+                  return;
+                }
+              }
+
+              listOfTmpOrder[0].orderDiscount =
+                  discount;
+
+              listOfOrders.clear();
+
+              for (var element in listOfTmpOrder) {
+                listOfOrders.add(OrderModel(
+                    id: element.id,
+                    date: element.date,
+                    category: element.category,
+                    brand: element.brand,
+                    customer: element.customer,
+                    itemAmount: element.itemAmount,
+                    itemName: element.itemName,
+                    itemPrice: element.itemPrice,
+                    itemQuantity:
+                    element.itemQuantity,
+                    orderDiscount:
+                    element.orderDiscount,
+                    customerTel: element.customerTel,
+                    itemOption: element.itemOption,
+                    variationId: element.variationId,
+                    productId: element.productId));
+              }
+
+              totalAmount = getTotalAmount();
+
+              originalTotalValue = 0;
+              differenceValue = 0;
+              GlobalValues.setEditOrder = false;
+
+              List<CartRequest> cartRequest = [];
+              for (var element in listOfTmpOrder) {
+                cartRequest.add(CartRequest(
+                    productId: element.productId!,
+                    variationId: element.variationId!,
+                    qty: element.itemQuantity!,
+                    note: ''));
+              }
+
+              PaymentDialog.show(
+                  context,
+                  currencyCode,
+                  totalAmount,
+                  cartRequest,
+                  locationId,
+                  _selectedCustomerId!,
+                  selectedDiscountType,
+                  discount,
+                  'fixed',
+                  estimatedTax, (done) {
+                if (done == 'done') {
+                  setState(() {
+                    categoryFilter = true;
+                    listOfBothProducts = [];
+                    listOfAllProducts = [];
+                    searchList = [];
+                    MainViewCubit.get(context)
+                        .getCategories(locationId);
+                  });
+                }
+              });
+
+              discount = 0;
+              estimatedTax = 0;
+              shippingCharge = 0;
+              totalAmount = 0;
+              differenceValue = 0;
+
+              listOfTmpOrder.clear();
+            }
+          },
+          child:
+          containerComponent(
+              context,
+              Center(
+                  child: Text(
+                    GlobalValues.getEditOrder
+                        ? AppStrings.saveOrder.tr()
+                        : AppStrings.checkOut.tr(),
+                    style: TextStyle(
+                        color: ColorManager.white,
+                        fontSize: AppSize.s18.sp),
+                  )),
+              height: 40.h,
+              color: ColorManager.primary,
+              borderColor: ColorManager.primary,
+              borderWidth: 1.w,
+              borderRadius: AppSize.s5
+          ),
+        )
+      ],
+    );
+  }
+
+  DataTable _createDataTable() {
+    return DataTable(
+      horizontalMargin: 5,
+      columnSpacing: 20,
+      dividerThickness: 2.sp,
+      columns: _createColumns(),
+      rows: _createRows(context),
+      sortColumnIndex: _currentSortColumn,
+      sortAscending: _isSortAsc,
+    );
+  }
+
+  List<DataColumn> _createColumns() {
+    return [
+      const DataColumn(
+        label: Text('#'),
+      ),
+      DataColumn(
+        label: SizedBox(
+            width: 40.w, child: Center(child: Text(AppStrings.product.tr()))),
+      ),
+      DataColumn(
+          label: SizedBox(
+              width: 42.w,
+              child: Center(
+                  child: Text(
+                    AppStrings.quantity.tr(),
+                  )))),
+      DataColumn(
+          label: SizedBox(
+              width: 20.w, child: Center(child: Text(AppStrings.amount.tr()))))
+    ];
+  }
+
+  List<DataRow> _createRows(BuildContext context) {
+    return listOfTmpOrder
+        .map((tmpOrder) => DataRow(cells: [
+      DataCell(Text(
+        getIndex(listOfTmpOrder.indexOf(tmpOrder)).toString(),
+        style: TextStyle(color: ColorManager.edit),
+      )),
+      DataCell(SizedBox(
+        width: 40.w,
+        child: Center(
+            child: Text(
+                listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                    .itemName
+                    .toString(),
+                style: TextStyle(fontSize: AppSize.s12.sp),
+                textAlign: TextAlign.center)),
+      )),
+      DataCell(Center(
+          child: SizedBox(
+            width: 42.w,
+            child: Center(
+              child: Row(
+                children: [
+                  Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Bounceable(
+                            duration: Duration(
+                                milliseconds:
+                                AppConstants
+                                    .durationOfBounceable),
+                            onTap: () async {
+                              await Future.delayed(
+                                  Duration(
+                                      milliseconds:
+                                      AppConstants
+                                          .durationOfBounceable));
+                            },
+                            child:
+                            containerComponent(
+                                context,
+                                Center(
+                                    child: Icon(
+                                      Icons.edit,
+                                      size:
+                                      AppSize.s15.sp,
+                                      color: ColorManager
+                                          .white,
+                                    )),
+                                height: 28.h,
+                                width: 10.w,
+                                margin:
+                                const EdgeInsets
+                                    .only(
+                                    bottom:
+                                    AppMargin
+                                        .m8),
+                                padding:
+                                const EdgeInsets
+                                    .all(
+                                    AppPadding
+                                        .p08),
+                                color: ColorManager.primary,
+                                borderColor: ColorManager.primary,
+                                borderWidth: 0.1.w,
+                                borderRadius: AppSize.s5
+                            )
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: AppConstants.smallerDistance,
+                  ),
+                  containerComponent(
+                      context,
+                      Padding(
+                        padding: const EdgeInsets.all(AppPadding.p2),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Bounceable(
+                              duration: Duration(
+                                  milliseconds:
+                                  AppConstants.durationOfBounceable),
+                              onTap: () async {
+                                await Future.delayed(Duration(
+                                    milliseconds:
+                                    AppConstants.durationOfBounceable));
+                                setState(() {
+                                  int? itemCount = listOfTmpOrder[
+                                  listOfTmpOrder.indexOf(tmpOrder)]
+                                      .itemQuantity;
+                                  itemCount = itemCount! - 1;
+                                  listOfTmpOrder[
+                                  listOfTmpOrder.indexOf(tmpOrder)]
+                                      .itemQuantity = itemCount;
+
+                                  double total = roundDouble(
+                                      (itemCount *
+                                          double.parse(listOfTmpOrder[
+                                          listOfTmpOrder
+                                              .indexOf(tmpOrder)]
+                                              .itemPrice
+                                              .toString())),
+                                      decimalPlaces);
+
+                                  listOfTmpOrder[
+                                  listOfTmpOrder.indexOf(tmpOrder)]
+                                      .itemAmount = total.toString();
+                                  if (itemCount == 0) {
+                                    listOfTmpOrder.removeAt(
+                                        listOfTmpOrder.indexOf(tmpOrder));
+                                  }
+                                });
+                              },
+                              child:
+                              containerComponent(
+                                  context,
+                                  Icon(
+                                    listOfTmpOrder[listOfTmpOrder
+                                        .indexOf(tmpOrder)]
+                                        .itemQuantity ==
+                                        1
+                                        ? Icons.close
+                                        : Icons.remove,
+                                    size: AppSize.s10.sp,
+                                  ),
+                                  height: 20.h,
+                                  width: 10.w,
+                                  color: ColorManager.secondary,
+                                  borderColor: ColorManager.secondary,
+                                  borderWidth: 1.w,
+                                  borderRadius: AppSize.s5
+                              ),
+                            ),
+                            Text(
+                              listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                                  .itemQuantity
+                                  .toString(),
+                              style: TextStyle(fontSize: AppSize.s12.sp),
+                              textAlign: TextAlign.center,
+                            ),
+                            Bounceable(
+                              duration: Duration(
+                                  milliseconds:
+                                  AppConstants.durationOfBounceable),
+                              onTap: () async {
+                                await Future.delayed(Duration(
+                                    milliseconds:
+                                    AppConstants.durationOfBounceable));
+                                var itemStock = listOfBothProducts
+                                    .where((element) =>
+                                element.id ==
+                                    listOfTmpOrder[listOfTmpOrder
+                                        .indexOf(tmpOrder)]
+                                        .productId)
+                                    .first;
+
+                                int qty = itemStock.stock;
+
+                                int indexOfList = listOfBothProducts.indexWhere(
+                                        (element) =>
+                                    element.id ==
+                                        listOfTmpOrder[listOfTmpOrder
+                                            .indexOf(tmpOrder)]
+                                            .productId);
+
+                                if (listOfBothProducts[indexOfList]
+                                    .variations
+                                    .isNotEmpty) {
+                                  int indexOfVariationList = itemStock
+                                      .variations
+                                      .indexWhere((element) =>
+                                  element.id ==
+                                      listOfTmpOrder[listOfTmpOrder
+                                          .indexOf(tmpOrder)]
+                                          .variationId);
+                                  qty = listOfBothProducts[indexOfList]
+                                      .variations[indexOfVariationList]
+                                      .stock;
+                                }
+
+                                if (int.parse(listOfTmpOrder[
+                                listOfTmpOrder.indexOf(tmpOrder)]
+                                    .itemQuantity
+                                    .toString()) >=
+                                    qty) {
+                                  CustomDialog.show(
+                                      context,
+                                      AppStrings.noCredit.tr(),
+                                      const Icon(Icons.warning_amber_rounded),
+                                      ColorManager.white,
+                                      AppConstants.durationOfSnackBar,
+                                      ColorManager.hold);
+                                  return;
+                                }
+
+                                setState(() {
+                                  int? itemCount = listOfTmpOrder[
+                                  listOfTmpOrder.indexOf(tmpOrder)]
+                                      .itemQuantity;
+
+                                  itemCount = itemCount! + 1;
+
+                                  listOfTmpOrder[
+                                  listOfTmpOrder.indexOf(tmpOrder)]
+                                      .itemQuantity = itemCount;
+
+                                  double total = roundDouble(
+                                      (itemCount *
+                                          double.parse(listOfTmpOrder[
+                                          listOfTmpOrder
+                                              .indexOf(tmpOrder)]
+                                              .itemPrice
+                                              .toString())),
+                                      decimalPlaces);
+
+                                  listOfTmpOrder[
+                                  listOfTmpOrder.indexOf(tmpOrder)]
+                                      .itemAmount = total.toString();
+                                });
+                              },
+                              child:
+                              containerComponent(
+                                  context,
+                                  Icon(
+                                    Icons.add,
+                                    size: AppSize.s10.sp,
+                                  ),
+                                  height: 20.h,
+                                  width: 10.w,
+                                  color: ColorManager.secondary,
+                                  borderColor: ColorManager.secondary,
+                                  borderWidth: 1.w,
+                                  borderRadius: AppSize.s5
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      height: 30.h,
+                      width: 30.w,
+                      color: ColorManager.white,
+                      borderColor: ColorManager.badge,
+                      borderWidth: 0.5.w,
+                      borderRadius: AppSize.s5)
+                ],
+              ),
+            ),
+          ))),
+      DataCell(SizedBox(
+        width: 20.w,
+        child: Center(
+            child: Text(
+                listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                    .itemAmount
+                    .toString(),
+                style: TextStyle(fontSize: AppSize.s12.sp),
+                textAlign: TextAlign.center)),
+      ))
+    ]))
+        .toList();
+  }
+
+  void addToTmp(int index,BuildContext context) {
+    if (listOfProducts[index].variations.isNotEmpty) {
+      setState(() {
+        ItemOptionsDialog.show(
+            context,
+            currencyCode,
+            index,
+            listOfProducts[index].variations,
+            listOfProducts,
+            _selectedCustomerTel!,
+            _selectedCustomerName!,
+            discount);
+      });
+    } else {
+      ///////////////////////
+      if (listOfTmpOrder.isNotEmpty) {
+        int listOfTmpOrderIndex = listOfTmpOrder.indexWhere(
+                (element) => element.productId == listOfProducts[index].id);
+
+        if (listOfTmpOrderIndex >= 0) {
+          if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
+              .itemQuantity
+              .toString()) >=
+              listOfProducts[index].stock) {
+            CustomDialog.show(
+                context,
+                AppStrings.noCredit.tr(),
+                const Icon(Icons.warning_amber_rounded),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.hold);
+            return;
+          }
+        }
+      }
+
+      ///////////////////////
+      setState(() {
+        for (var entry in listOfTmpOrder) {
+          if (listOfProducts[index].name == entry.itemName) {
+            int? itemCount = entry.itemQuantity;
+            itemCount = itemCount! + 1;
+            entry.itemQuantity = itemCount;
+            entry.itemAmount =
+                (itemCount * double.parse(entry.itemPrice.toString()))
+                    .toString();
+            return;
+          }
+        }
+
+        String customerName, tel = '';
+        if (_selectedCustomer != null) {
+          customerName =
+          '${_selectedCustomer!.firstName} ${_selectedCustomer!.lastName}';
+          tel = _selectedCustomer!.mobile;
+        } else {
+          customerName = '${AppStrings.firstName} ${AppStrings.secondName}';
+          tel = '';
+        }
+
+        if (listOfProducts[index].stock == 0) {
+          CustomDialog.show(
+              context,
+              AppStrings.noCredit.tr(),
+              const Icon(Icons.warning_amber_rounded),
+              ColorManager.white,
+              AppConstants.durationOfSnackBar,
+              ColorManager.hold);
+          return;
+        }
+
+        String sellPrice = listOfProducts[index].sellPrice;
+
+        listOfTmpOrder.add(TmpOrderModel(
+          id: listOfProducts[index].id,
+          itemName: listOfProducts[index].name,
+          itemQuantity: 1,
+          itemAmount:
+          '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+          itemPrice:
+          '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+          customer: customerName,
+          category: listOfProducts[index].categoryId.toString(),
+          orderDiscount: discount,
+          brand: listOfProducts[index].brandId.toString(),
+          customerTel: tel,
+          date: today.toString().split(" ")[0],
+          itemOption: listOfVariations.isNotEmpty
+              ? listOfProducts[index].variations[index].name
+              : '',
+          productId: listOfProducts[index].id,
+          variationId: listOfProducts[index].variations.isNotEmpty
+              ? listOfProducts[index].variations[index].id
+              : 0,
+        ));
+      });
+    }
+  }
+
+
+  // right part --------------------------------------------------------------
+  Widget rightPart(BuildContext context) {
+    return Expanded(
+      flex: 3,
+      child: Column(
+        children: [
+          containerComponent(
+              context,
+              Padding(
+                padding: const EdgeInsets.all(AppPadding.p10),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        category(context),
+                        SizedBox(
+                          width: AppConstants.smallDistance,
+                        ),
+                        brand(context)
+                      ],
+                    ),
+                    SizedBox(
+                      height: AppConstants.smallDistance,
+                    ),
+                    categoryFilter!
+                    // Category buttons -------------
+                        ? categoryButtons(context)
+                    // Brand buttons -------------
+                        : brandButtons(context),
+                    SizedBox(
+                      height: AppConstants.smallDistance,
+                    ),
+                    categoryFilter!
+                    // Category items -------------
+                        ? categoryItems(context)
+                    // Brand items -------------
+                        : brandItems(context)
+                  ],
+                ),
+              ),
+              height: MediaQuery.of(context).size.height - 20.h,
+              color: ColorManager.white,
+              borderColor: ColorManager.white,
+              borderWidth: 1.5.w,
+              borderRadius: AppSize.s5),
+        ],
+      ),
+    );
+  }
+
+  Widget itemModel(int index,BuildContext context){
+    return Column(
+      mainAxisAlignment:
+      MainAxisAlignment
+          .spaceBetween,
+      children: [
+        Container(
+          width: 200.w,
+          height: 105.h,
+          decoration: BoxDecoration(
+              shape: BoxShape
+                  .rectangle,
+              image: listOfProducts[
+              index]
+                  .image
+                  .toString() ==
+                  "n"
+                  ? const DecorationImage(
+                  image: AssetImage(
+                      ImageAssets
+                          .noItem),
+                  fit: BoxFit
+                      .fill)
+                  : DecorationImage(
+                  image: CachedNetworkImageProvider(listOfProducts[
+                  index]
+                      .image
+                      .toString()),
+                  fit: BoxFit
+                      .fill)),
+        ),
+        Container(
+          width: 50.w,
+          height: 40.h,
+          decoration: BoxDecoration(
+              color:
+              ColorManager
+                  .badge,
+              border: Border.all(
+                  color: ColorManager
+                      .badge,
+                  width: 1.5.w),
+              borderRadius: const BorderRadius
+                  .only(
+                  bottomLeft: Radius
+                      .circular(
+                      AppSize
+                          .s5),
+                  bottomRight:
+                  Radius.circular(
+                      AppSize
+                          .s5))),
+          child: Center(
+            child: Text(
+              listOfProducts[
+              index]
+                  .name
+                  .toString(),
+              style: TextStyle(
+                  color:
+                  ColorManager
+                      .white,
+                  fontSize:
+                  AppSize
+                      .s14
+                      .sp),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget category(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: Bounceable(
+        duration: Duration(
+            milliseconds: AppConstants
+                .durationOfBounceable),
+        onTap: () async {
+          await Future.delayed(Duration(
+              milliseconds: AppConstants
+                  .durationOfBounceable));
+          setState(() {
+            if (!categoryFilter!) {
+              categoryFilter =
+              !categoryFilter!;
+              listOfAllProducts = [];
+              searchList = [];
+              MainViewCubit.get(context)
+                  .getCategories(locationId);
+            }
+          });
+        },
+        child:
+        containerComponent(
+            context,
+            Center(
+                child: Text(
+                  AppStrings.category.tr(),
+                  style: TextStyle(
+                      color: categoryFilter!
+                          ? ColorManager.white
+                          : ColorManager.primary,
+                      fontSize: AppSize.s20.sp),
+                )),
+            height: 40.h,
+            width: MediaQuery.of(context)
+                .size
+                .width,
+            color: categoryFilter!
+                ? ColorManager.primary
+                : ColorManager.white,
+            borderColor: ColorManager.primary,
+            borderWidth: 0.6.w,
+            borderRadius: AppSize.s5
+        ),
+      ),
+    );
+  }
+
+  Widget brand(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: Bounceable(
+        duration: Duration(
+            milliseconds: AppConstants
+                .durationOfBounceable),
+        onTap: () async {
+          await Future.delayed(Duration(
+              milliseconds: AppConstants
+                  .durationOfBounceable));
+          setState(() {
+            if (categoryFilter!) {
+              categoryFilter =
+              !categoryFilter!;
+              listOfAllProducts = [];
+              searchList = [];
+              MainViewCubit.get(context)
+                  .getBrands(locationId);
+            }
+          });
+        },
+        child:
+        containerComponent(
+            context,
+            Center(
+                child: Text(
+                  AppStrings.brand.tr(),
+                  style: TextStyle(
+                      color: categoryFilter!
+                          ? ColorManager.primary
+                          : ColorManager.white,
+                      fontSize: AppSize.s20.sp),
+                )),
+            height: 40.h,
+            width: MediaQuery.of(context)
+                .size
+                .width,
+            color: categoryFilter!
+                ? ColorManager.white
+                : ColorManager.primary,
+            borderColor: ColorManager.primary,
+            borderWidth: 0.6.w,
+            borderRadius: AppSize.s5
+        ),
+      ),
+    );
+  }
+
+  Widget categoryButtons(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: SizedBox(
+            height: 40.h,
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics:
+              const AlwaysScrollableScrollPhysics(),
+              scrollDirection:
+              Axis.horizontal,
+              itemCount:
+              listOfCategories.length,
+              itemBuilder:
+                  (BuildContext context,
+                  int index) {
+                return CategoryButton(
+                  id: listOfCategories[
+                  index]
+                      .id,
+                  categoryName:
+                  listOfCategories[
+                  index]
+                      .name,
+                  selected:
+                  listOfCategories[
+                  index]
+                      .selected!,
+                  isSelected: (int itemId) {
+                    isSelected(itemId);
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget categoryItems(BuildContext context) {
+    return Expanded(
+        child: GridView.count(
+            crossAxisCount: 5,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 11 / 16,
+            physics: const ScrollPhysics(),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            children: List.generate(
+                listOfProducts.length,
+                    (index) {
+                  return Bounceable(
+                    duration: Duration(
+                        milliseconds: AppConstants
+                            .durationOfBounceable),
+                    onTap: () async {
+                      await Future.delayed(Duration(
+                          milliseconds: AppConstants
+                              .durationOfBounceable));
+
+                      addToTmp(index,context);
+                    },
+                    child:
+                    containerComponent(
+                        context,
+                        itemModel(index,context),
+                        height: 400.h,
+                        width: 200.w,
+                        color: ColorManager.secondary,
+                        borderColor: ColorManager.secondary,
+                        borderWidth: 0.0.w,
+                        borderRadius: AppSize.s5
+                    ),
+                  );
+                })));
+  }
+
+  Widget brandButtons(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: SizedBox(
+            height: 40.h,
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics:
+              const AlwaysScrollableScrollPhysics(),
+              scrollDirection:
+              Axis.horizontal,
+              itemCount:
+              listOfBrands.length,
+              itemBuilder:
+                  (BuildContext context,
+                  int index) {
+                return BrandButton(
+                  id: listOfBrands[index]
+                      .id,
+                  brandName:
+                  listOfBrands[index]
+                      .name,
+                  selected:
+                  listOfBrands[index]
+                      .selected!,
+                  isSelected: (int itemId) {
+                    isSelected(itemId);
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget brandItems(BuildContext context) {
+    return Expanded(
+        child: GridView.count(
+            crossAxisCount: 5,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 11 / 16,
+            physics: const ScrollPhysics(),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            children: List.generate(
+                listOfProducts.length,
+                    (index) {
+                  return Bounceable(
+                    duration: Duration(
+                        milliseconds: AppConstants
+                            .durationOfBounceable),
+                    onTap: () async {
+                      await Future.delayed(Duration(
+                          milliseconds: AppConstants
+                              .durationOfBounceable));
+
+                      addToTmp(index,context);
+                    },
+                    child:
+                    containerComponent(
+                        context,
+                        itemModel(index,context),
+                        height: 400.h,
+                        width: 200.w,
+                        color: ColorManager.secondary,
+                        borderColor: ColorManager.secondary,
+                        borderWidth: 0.0.w,
+                        borderRadius: AppSize.s5
+                    ),
+                  );
+                })));
+  }
+
+  Future<bool> _onBackButtonPressed(BuildContext context) async {
+    bool exitApp = await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(AppStrings.warning.tr()),
+            content: Text(AppStrings.closeApp.tr()),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: Text(AppStrings.no.tr())),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: Text(AppStrings.yes.tr())),
+            ],
+          );
+        });
+    return exitApp ?? false;
+  }
+
+  _changeLanguage() {
+    _appPreferences.changeAppLanguage();
+    Phoenix.rebirth(context);
+  }
+
+  bool isRtl() {
+    return context.locale == ARABIC_LOCAL;
+  }
+}
