@@ -1,15 +1,12 @@
-import 'dart:math';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:poslix_app/pos/presentaion/ui/login_view/widgets/email_text.dart';
+import 'package:poslix_app/pos/presentaion/ui/login_view/widgets/email_text_field.dart';
 import 'package:poslix_app/pos/presentaion/ui/login_view/widgets/left_part.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/login_view/widgets/login_button.dart';
+import 'package:poslix_app/pos/presentaion/ui/login_view/widgets/pass_text_field.dart';
 
 import '../../../domain/requests/user_model.dart';
 import '../../../shared/constant/assets_manager.dart';
@@ -47,8 +44,7 @@ class _LoginViewState extends State<LoginView> {
   RegExp regexMail = RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-  GlobalKey<FormState> _loginFormKey = GlobalKey();
-  GlobalKey<FormState> _regitserFormKey = GlobalKey();
+  final GlobalKey<FormState> _loginFormKey = GlobalKey();
 
   final AppPreferences _appPreferences = sl<AppPreferences>();
 
@@ -228,7 +224,7 @@ class _LoginViewState extends State<LoginView> {
                               SizedBox(
                                 height: AppConstants.smallDistance,
                               ),
-                              passText(context)
+                              passText(context, _loginPassFN, _loginPassEditingController, showPass, toggleEye)
                             ],
                           ),
                         ),
@@ -239,7 +235,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
 
                 // sign in
-                buttons(context)
+                loginButton(context, loginAction, login!)
               ],
             ),
             padding: const EdgeInsets.all(AppPadding.p20),
@@ -250,95 +246,27 @@ class _LoginViewState extends State<LoginView> {
             borderWidth: 0));
   }
 
-  Widget passText(BuildContext context) {
-    return Expanded(
-      flex: 1,
-      child: TextFormField(
-          validator: (value) {
-            if (value!.isEmpty) {
-              return AppStrings.passwordFieldIsRequired.tr();
-            }
-          },
-          focusNode: _loginPassFN,
-          autofocus: false,
-          keyboardType: TextInputType.visiblePassword,
-          controller: _loginPassEditingController,
-          obscureText: !showPass,
-          decoration: InputDecoration(
-              errorStyle: const TextStyle(
-                height: AppSize.s16,
-              ),
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    showPass = !showPass;
-                  });
-                },
-                icon: Icon(
-                  showPass ? Icons.visibility : Icons.visibility_off,
-                  size: AppSize.s25,
-                  color: ColorManager.primary,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: ColorManager.grayText, width: AppSize.s1_5),
-                  borderRadius:
-                      const BorderRadius.all(Radius.circular(AppSize.s5))),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: ColorManager.grayText, width: AppSize.s1_5),
-                  borderRadius:
-                      const BorderRadius.all(Radius.circular(AppSize.s5))),
-              hintText: AppStrings.enterPassword.tr(),
-              hintStyle: TextStyle(fontSize: AppSize.s12.sp),
-              labelText: AppStrings.enterPassword.tr(),
-              labelStyle:
-                  TextStyle(fontSize: AppSize.s15.sp, color: ColorManager.gray),
-              border: InputBorder.none)),
-    );
+  void toggleEye(){
+    setState(() {
+      showPass = !showPass;
+    });
   }
 
-  Widget buttons(BuildContext context) {
-    return Bounceable(
-      duration: const Duration(milliseconds: 300),
-      onTap: () async {
-        await Future.delayed(const Duration(milliseconds: 200));
+  Future<void> loginAction(BuildContext context) async {
+    await Future.delayed(Duration(milliseconds: AppConstants.durationOfBounceable));
 
-        // TailorDialog.show(context, '44', 2, [], 'ccc', ['length', 'shoulder', 'chest', 'west'], [
-        //   {'name': 'fabric one', 'image': 'n'},
-        //   {'name': 'fabric two', 'image': 'n'},
-        //   {'name': 'fabric three', 'image': 'n'},
-        // ], 'ffff', 1);
+    if (_loginFormKey.currentState!.validate()) {
+      UserRequest userRequest = UserRequest(
+          email: _loginEmailEditingController.text,
+          password: _loginPassEditingController.text);
 
-        if (_loginFormKey.currentState!.validate()) {
-          UserRequest userRequest = UserRequest(
-              email: _loginEmailEditingController.text,
-              password: _loginPassEditingController.text);
+      await _appPreferences.setUserName(
+          USER_NAME, _loginEmailEditingController.text);
+      await _appPreferences.setPassword(
+          PASS, _loginPassEditingController.text);
 
-          await _appPreferences.setUserName(
-              USER_NAME, _loginEmailEditingController.text);
-          await _appPreferences.setPassword(
-              PASS, _loginPassEditingController.text);
-
-          LoginCubit.get(context).login(userRequest);
-        }
-      },
-      child: containerComponent(
-          context,
-          Center(
-              child: Text(
-            login! ? AppStrings.signIn.tr() : AppStrings.signUp.tr(),
-            style:
-                TextStyle(fontSize: AppSize.s20.sp, color: ColorManager.white),
-            textAlign: TextAlign.center,
-          )),
-          height: 50.h,
-          color: ColorManager.primary,
-          borderRadius: AppSize.s5,
-          borderColor: ColorManager.primary,
-          borderWidth: 1.w),
-    );
+      LoginCubit.get(context).login(userRequest);
+    }
   }
 
   _changeLanguage() {

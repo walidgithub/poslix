@@ -11,6 +11,8 @@ import 'package:poslix_app/pos/domain/response/taxes_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/login_view/login_cubit/login_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/register_pos_view/register_pos_cubit/register_pos_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/register_pos_view/register_pos_cubit/register_pos_state.dart';
+import 'package:poslix_app/pos/presentaion/ui/register_pos_view/widgets/choose_business.dart';
+import 'package:poslix_app/pos/presentaion/ui/register_pos_view/widgets/choose_location.dart';
 import 'package:poslix_app/pos/presentaion/ui/register_pos_view/widgets/initial_value.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/preferences/app_pref.dart';
@@ -281,8 +283,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                 CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  chooseBusiness(context),
-                  chooseLocation(context) ,
+                  chooseBusiness(context,listOfBusinesses, dropDown),
+                  chooseLocation(context,listOfLocations, dropDown) ,
                   putInitialValue(context,posInitialEditingController),
                   const Divider(
                     thickness: AppSize.s1,
@@ -300,356 +302,64 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             borderWidth: 1.w));
   }
 
-  Widget chooseBusiness(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: SizedBox(
-        width: 150.w,
-        height: 80.h,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-                alignment:
-                AlignmentDirectional
-                    .topStart,
-                child: Text(
-                    AppStrings.chooseBusiness
-                        .tr(),
-                    style: TextStyle(
-                        fontSize:
-                        AppSize.s20.sp,
-                        color: ColorManager
-                            .primary,
-                        fontWeight: FontWeight
-                            .bold))),
-            SizedBox(
-              height:
-              AppConstants.smallDistance,
-            ),
-            Expanded(
-                flex: 1,
-                child: containerComponent(
-                    context,
-                    DropdownButton(
-                      borderRadius:
-                      BorderRadius
-                          .circular(
-                          AppSize.s5),
-                      itemHeight: 50.h,
-                      underline: Container(),
-                      items: listOfBusinesses
-                          .map((item) {
-                        return DropdownMenuItem(
-                            value: item.name,
-                            child: Text(
-                              item.name,
-                              style: TextStyle(
-                                  fontSize:
-                                  AppSize
-                                      .s15
-                                      .sp),
-                            ));
-                      }).toList(),
-                      onChanged:
-                          (selectedBusiness) {
-                        setState(() {
-                          _selectedBusiness =
-                          selectedBusiness!;
 
-                          int index = 0;
-                          for (var i
-                          in listOfBusinesses) {
-                            if (i.name ==
-                                _selectedBusiness) {
-                              listOfBusinesses.indexWhere(
-                                      (element) =>
-                                  element
-                                      .name ==
-                                      _selectedBusiness);
-
-                              listOfLocations =
-                                  listOfBusinesses[
-                                  index]
-                                      .locations;
-
-                              _selectedLocation =
-                                  listOfLocations[
-                                  0]
-                                      .locationName;
-                              locationId =
-                                  listOfLocations[
-                                  0]
-                                      .locationId;
-
-                              decimalPlaces =
-                                  listOfLocations[
-                                  0]
-                                      .locationDecimalPlaces;
-
-                              _appPreferences
-                                  .setLocationId(
-                                  PREFS_KEY_LOCATION_ID,
-                                  locationId!);
-
-                              RegisterPOSCubit
-                                  .get(
-                                  context)
-                                  .openCloseRegister(
-                                  CloseRegisterReportRequest(
-                                      today:
-                                      true),
-                                  locationId!);
-
-                              RegisterPOSCubit
-                                  .get(
-                                  context)
-                                  .getTaxes(
-                                  locationId!);
-                              break;
-                            }
-
-                            index++;
-                          }
-
-                          index = 0;
-                          for (var i
-                          in listOfLocations) {
-                            if (i.locationName ==
-                                _selectedLocation) {
-                              index = listOfLocations.indexWhere(
-                                      (element) =>
-                                  element
-                                      .locationName ==
-                                      _selectedLocation);
-
-                              locationId =
-                                  listOfLocations[
-                                  index]
-                                      .locationId;
-
-                              decimalPlaces =
-                                  listOfLocations[
-                                  index]
-                                      .locationDecimalPlaces;
-
-                              _appPreferences
-                                  .setLocationId(
-                                  PREFS_KEY_LOCATION_ID,
-                                  locationId!);
-
-                              RegisterPOSCubit
-                                  .get(
-                                  context)
-                                  .openCloseRegister(
-                                  CloseRegisterReportRequest(
-                                      today:
-                                      true),
-                                  locationId!);
-
-                              RegisterPOSCubit
-                                  .get(
-                                  context)
-                                  .getTaxes(
-                                  locationId!);
-                              break;
-                            }
-                          }
-                        });
-                      },
-                      value:
-                      _selectedBusiness,
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          Text(
-                            AppStrings
-                                .chooseBusiness
-                                .tr(),
-                            style: TextStyle(
-                                color: ColorManager
-                                    .primary,
-                                fontSize:
-                                AppSize
-                                    .s15
-                                    .sp),
-                          ),
-                          SizedBox(
-                            width: AppConstants
-                                .smallDistance,
-                          )
-                        ],
-                      ),
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: ColorManager
-                            .primary,
-                        size: AppSize.s20.sp,
-                      ),
-                      style: TextStyle(
-                          color: ColorManager
-                              .primary,
-                          fontSize:
-                          AppSize.s20.sp),
-                    ),
-                    height: 10.h,
-                    padding: const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p2, AppPadding.p5, AppPadding.p2),
-                    borderRadius: AppSize.s5,
-                    borderColor:
-                    ColorManager.primary,
-                    borderWidth: 0.6.w)),
-          ],
-        ),
+  Widget dropDown(BuildContext context, List<dynamic> listOfBusinesses, String title) {
+    return DropdownButton(
+      borderRadius:
+      BorderRadius
+          .circular(
+          AppSize.s5),
+      itemHeight: 50.h,
+      underline: Container(),
+      items: listOfBusinesses
+          .map((item) {
+        return DropdownMenuItem(
+            value: item.name,
+            child: Text(
+              item.name,
+              style: TextStyle(
+                  fontSize:
+                  AppSize
+                      .s15
+                      .sp),
+            ));
+      }).toList(),
+      onChanged:
+          (selectedBusiness) {
+            getBusinessValues(context, selectedBusiness);
+      },
+      value:
+      _selectedBusiness,
+      isExpanded: true,
+      hint: Row(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+                color: ColorManager
+                    .primary,
+                fontSize:
+                AppSize
+                    .s15
+                    .sp),
+          ),
+          SizedBox(
+            width: AppConstants
+                .smallDistance,
+          )
+        ],
       ),
-    );
-  }
-
-  Widget chooseLocation(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: SizedBox(
-        width: 150.w,
-        height: 80.h,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-                alignment:
-                AlignmentDirectional
-                    .topStart,
-                child: Text(
-                    AppStrings.chooseLocation
-                        .tr(),
-                    style: TextStyle(
-                        fontSize:
-                        AppSize.s20.sp,
-                        color: ColorManager
-                            .primary,
-                        fontWeight: FontWeight
-                            .bold))),
-            SizedBox(
-              height:
-              AppConstants.smallDistance,
-            ),
-            Expanded(
-                flex: 1,
-                child: containerComponent(
-                    context,
-                    DropdownButton(
-                      borderRadius:
-                      BorderRadius
-                          .circular(
-                          AppSize.s5),
-                      itemHeight: 50.h,
-                      underline: Container(),
-                      items: listOfLocations
-                          .map((item) {
-                        return DropdownMenuItem(
-                            value: item
-                                .locationName,
-                            child: Text(
-                              item.locationName,
-                              style: TextStyle(
-                                  fontSize:
-                                  AppSize
-                                      .s15
-                                      .sp),
-                            ));
-                      }).toList(),
-                      onChanged:
-                          (selectedLocation) {
-                        setState(() {
-                          _selectedLocation =
-                          selectedLocation!;
-                          int index = 0;
-                          for (var i
-                          in listOfLocations) {
-                            if (i.locationName ==
-                                _selectedLocation) {
-                              index = listOfLocations.indexWhere(
-                                      (element) =>
-                                  element
-                                      .locationName ==
-                                      _selectedLocation);
-
-                              locationId =
-                                  listOfLocations[
-                                  index]
-                                      .locationId;
-
-                              decimalPlaces =
-                                  listOfLocations[
-                                  index]
-                                      .locationDecimalPlaces;
-
-                              _appPreferences
-                                  .setLocationId(
-                                  PREFS_KEY_LOCATION_ID,
-                                  locationId!);
-
-                              RegisterPOSCubit
-                                  .get(
-                                  context)
-                                  .openCloseRegister(
-                                  CloseRegisterReportRequest(
-                                      today:
-                                      true),
-                                  locationId!);
-
-                              RegisterPOSCubit
-                                  .get(
-                                  context)
-                                  .getTaxes(
-                                  locationId!);
-                              break;
-                            }
-                          }
-                        });
-                      },
-                      value:
-                      _selectedLocation,
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          Text(
-                            AppStrings
-                                .chooseLocation
-                                .tr(),
-                            style: TextStyle(
-                                color: ColorManager
-                                    .primary,
-                                fontSize:
-                                AppSize
-                                    .s15
-                                    .sp),
-                          ),
-                          SizedBox(
-                            width: AppConstants
-                                .smallDistance,
-                          )
-                        ],
-                      ),
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: ColorManager
-                            .primary,
-                        size: AppSize.s20.sp,
-                      ),
-                      style: TextStyle(
-                          color: ColorManager
-                              .primary,
-                          fontSize:
-                          AppSize.s20.sp),
-                    ),
-                    height: 20.h,
-                    padding: const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p2, AppPadding.p5, AppPadding.p2),
-                    borderRadius: AppSize.s5,
-                    borderColor:
-                    ColorManager.primary,
-                    borderWidth: 0.6.w)),
-          ],
-        ),
+      icon: Icon(
+        Icons.arrow_drop_down,
+        color: ColorManager
+            .primary,
+        size: AppSize.s20.sp,
       ),
+      style: TextStyle(
+          color: ColorManager
+              .primary,
+          fontSize:
+          AppSize.s20.sp),
     );
   }
 
@@ -664,50 +374,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                 milliseconds: AppConstants
                     .durationOfBounceable),
             onTap: () async {
-              await Future.delayed(
-                  Duration(
-                      milliseconds:
-                      AppConstants
-                          .durationOfBounceable));
-
-              // await RegisterPOSCubit.get(context).getPermissions(locationId!).then((value) {
-              //   for (var n in value) {
-              //     if (n.email == _appPreferences.getUserName(USER_NAME)!) {
-              //       if (n.permissions[0].name != 'pos') {
-              //         ErrorDialog.show(
-              //             context,
-              //             AppStrings.noPermission.tr(),
-              //             const Icon(Icons.wifi),
-              //             ColorManager.white,
-              //             AppConstants.durationOfSnackBar,
-              //             ColorManager.delete);
-              //         return;
-              //       }
-              //     }
-              //   }
-              // });
-
-              if (listOfBusinesses
-                  .isNotEmpty &&
-                  listOfLocations
-                      .isNotEmpty) {
-                OpenRegisterRequest
-                openRegisterRequest =
-                OpenRegisterRequest(
-                    handCash: double.parse(
-                        posInitialEditingController
-                            .text));
-                await RegisterPOSCubit
-                    .get(context)
-                    .openRegister(
-                    openRegisterRequest,
-                    locationId!);
-
-                Navigator.of(context)
-                    .pushReplacementNamed(
-                    Routes
-                        .mainRoute);
-              }
+              await startBusiness(context);
             },
             child: containerComponent(
                 context,
@@ -735,6 +402,209 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                 borderWidth: 0.6.w)),
       ],
     );
+  }
+
+  Future<void> startBusiness(BuildContext context) async {
+    await Future.delayed(
+        Duration(
+            milliseconds:
+            AppConstants
+                .durationOfBounceable));
+
+    // await RegisterPOSCubit.get(context).getPermissions(locationId!).then((value) {
+    //   for (var n in value) {
+    //     if (n.email == _appPreferences.getUserName(USER_NAME)!) {
+    //       if (n.permissions[0].name != 'pos') {
+    //         ErrorDialog.show(
+    //             context,
+    //             AppStrings.noPermission.tr(),
+    //             const Icon(Icons.wifi),
+    //             ColorManager.white,
+    //             AppConstants.durationOfSnackBar,
+    //             ColorManager.delete);
+    //         return;
+    //       }
+    //     }
+    //   }
+    // });
+
+    if (listOfBusinesses
+        .isNotEmpty &&
+        listOfLocations
+            .isNotEmpty) {
+      OpenRegisterRequest
+      openRegisterRequest =
+      OpenRegisterRequest(
+          handCash: double.parse(
+              posInitialEditingController
+                  .text));
+      await RegisterPOSCubit
+          .get(context)
+          .openRegister(
+          openRegisterRequest,
+          locationId!);
+
+      Navigator.of(context)
+          .pushReplacementNamed(
+          Routes
+              .mainRoute);
+    };
+  }
+
+  void getBusinessValues(BuildContext context, var selectedBusiness) {
+    setState(() {
+      _selectedBusiness =
+      selectedBusiness;
+
+      int index = 0;
+      for (var i
+      in listOfBusinesses) {
+        if (i.name ==
+            _selectedBusiness) {
+          listOfBusinesses.indexWhere(
+                  (element) =>
+              element
+                  .name ==
+                  _selectedBusiness);
+
+          listOfLocations =
+              listOfBusinesses[
+              index]
+                  .locations;
+
+          _selectedLocation =
+              listOfLocations[
+              0]
+                  .locationName;
+          locationId =
+              listOfLocations[
+              0]
+                  .locationId;
+
+          decimalPlaces =
+              listOfLocations[
+              0]
+                  .locationDecimalPlaces;
+
+          _appPreferences
+              .setLocationId(
+              PREFS_KEY_LOCATION_ID,
+              locationId!);
+
+          RegisterPOSCubit
+              .get(
+              context)
+              .openCloseRegister(
+              CloseRegisterReportRequest(
+                  today:
+                  true),
+              locationId!);
+
+          RegisterPOSCubit
+              .get(
+              context)
+              .getTaxes(
+              locationId!);
+          break;
+        }
+
+        index++;
+      }
+
+      index = 0;
+      for (var i
+      in listOfLocations) {
+        if (i.locationName ==
+            _selectedLocation) {
+          index = listOfLocations.indexWhere(
+                  (element) =>
+              element
+                  .locationName ==
+                  _selectedLocation);
+
+          locationId =
+              listOfLocations[
+              index]
+                  .locationId;
+
+          decimalPlaces =
+              listOfLocations[
+              index]
+                  .locationDecimalPlaces;
+
+          _appPreferences
+              .setLocationId(
+              PREFS_KEY_LOCATION_ID,
+              locationId!);
+
+          RegisterPOSCubit
+              .get(
+              context)
+              .openCloseRegister(
+              CloseRegisterReportRequest(
+                  today:
+                  true),
+              locationId!);
+
+          RegisterPOSCubit
+              .get(
+              context)
+              .getTaxes(
+              locationId!);
+          break;
+        }
+      }
+    });
+  }
+
+  void getLocationValues(BuildContext context, var selectedLocation) {
+    setState(() {
+      _selectedLocation =
+      selectedLocation;
+      int index = 0;
+      for (var i
+      in listOfLocations) {
+        if (i.locationName ==
+            _selectedLocation) {
+          index = listOfLocations.indexWhere(
+                  (element) =>
+              element
+                  .locationName ==
+                  _selectedLocation);
+
+          locationId =
+              listOfLocations[
+              index]
+                  .locationId;
+
+          decimalPlaces =
+              listOfLocations[
+              index]
+                  .locationDecimalPlaces;
+
+          _appPreferences
+              .setLocationId(
+              PREFS_KEY_LOCATION_ID,
+              locationId!);
+
+          RegisterPOSCubit
+              .get(
+              context)
+              .openCloseRegister(
+              CloseRegisterReportRequest(
+                  today:
+                  true),
+              locationId!);
+
+          RegisterPOSCubit
+              .get(
+              context)
+              .getTaxes(
+              locationId!);
+          break;
+        }
+      }
+    });
   }
 
   Future<bool> _onBackButtonPressed(BuildContext context) async {
