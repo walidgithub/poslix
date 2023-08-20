@@ -7,17 +7,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 
-import '../../../../domain/entities/customer_model.dart';
-import '../../../../shared/constant/padding_margin_values_manager.dart';
-import '../../../../shared/constant/strings_manager.dart';
-import '../../../../shared/preferences/app_pref.dart';
-import '../../../../shared/style/colors_manager.dart';
-import '../../../di/di.dart';
-import '../../components/close_button.dart';
-import '../../components/container_component.dart';
-import '../../components/text_component.dart';
-import '../../popup_dialogs/custom_dialog.dart';
-import '../main_view_cubit/main_view_state.dart';
+import '../../../../../domain/entities/customer_model.dart';
+import '../../../../../shared/constant/padding_margin_values_manager.dart';
+import '../../../../../shared/constant/strings_manager.dart';
+import '../../../../../shared/preferences/app_pref.dart';
+import '../../../../../shared/style/colors_manager.dart';
+import '../../../../di/di.dart';
+import '../../../components/close_button.dart';
+import '../../../components/container_component.dart';
+import '../../../components/text_component.dart';
+import '../../../popup_dialogs/custom_dialog.dart';
+import '../../main_view_cubit/main_view_state.dart';
+import 'custom_text_form_field.dart';
 
 class CustomerDialog extends StatefulWidget {
   String editType;
@@ -241,7 +242,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
       children: [
         Expanded(
             flex: 1,
-            child: customTextFormField(_fNameFN, _firstNameEditingController,
+            child: customTextFormField(context, _fNameFN, _firstNameEditingController,
                 AppStrings.first_name.tr(), AppStrings.first_name.tr(),
                 nextFN: _lNameFN,
                 validateText: AppStrings.firstNameFieldIsRequired.tr())),
@@ -250,7 +251,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
         ),
         Expanded(
             flex: 1,
-            child: customTextFormField(_lNameFN, _lastNameEditingController,
+            child: customTextFormField(context, _lNameFN, _lastNameEditingController,
                 AppStrings.lastName.tr(), AppStrings.lastName.tr(),
                 nextFN: _mobileFN,
                 validateText: AppStrings.lastNameFieldIsRequired.tr())),
@@ -259,7 +260,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
         ),
         Expanded(
             flex: 1,
-            child: customTextFormField(_mobileFN, _mobileEditingController,
+            child: customTextFormField(context, _mobileFN, _mobileEditingController,
                 AppStrings.mobile.tr(), AppStrings.mobile.tr(),
                 nextFN: _addressOneFN,
                 validateText: AppStrings.mobileFieldIsRequired.tr())),
@@ -323,7 +324,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(
+                child: customTextFormField(context,
                     _addressOneFN,
                     _addressOneEditingController,
                     AppStrings.addressLine1.tr(),
@@ -334,7 +335,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(
+                child: customTextFormField(context,
                     _addressTwoFN,
                     _addressTwoEditingController,
                     AppStrings.addressLine2.tr(),
@@ -349,7 +350,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
           children: [
             Expanded(
                 flex: 1,
-                child: customTextFormField(_cityFN, _cityEditingController,
+                child: customTextFormField(context, _cityFN, _cityEditingController,
                     AppStrings.city.tr(), AppStrings.city.tr(),
                     nextFN: _stateFN)),
             SizedBox(
@@ -357,7 +358,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(_stateFN, _stateEditingController,
+                child: customTextFormField(context, _stateFN, _stateEditingController,
                     AppStrings.state.tr(), AppStrings.state.tr(),
                     nextFN: _countryFN)),
             SizedBox(
@@ -365,7 +366,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(
+                child: customTextFormField(context,
                     _countryFN,
                     _countryEditingController,
                     AppStrings.country.tr(),
@@ -376,7 +377,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(
+                child: customTextFormField(context,
                     _zipCodeFN,
                     _zipCodeEditingController,
                     AppStrings.zipCode.tr(),
@@ -387,46 +388,13 @@ class _CustomerDialogState extends State<CustomerDialog> {
         Divider(
           color: ColorManager.primary,
         ),
-        customTextFormField(_shippingFN, _shippingAddressEditingController,
+        customTextFormField(context, _shippingFN, _shippingAddressEditingController,
             AppStrings.shippingAddress.tr(), AppStrings.shippingAddress.tr()),
         SizedBox(
           height: AppConstants.smallDistance,
         ),
       ],
     );
-  }
-
-  Widget customTextFormField(
-      FocusNode fn, TextEditingController controller, String hint, String label,
-      {FocusNode? nextFN, String? validateText}) {
-    return TextFormField(
-        onFieldSubmitted: (_) {
-          FocusScope.of(context).requestFocus(nextFN);
-        },
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            CustomDialog.show(
-                context,
-                validateText!,
-                const Icon(Icons.close),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
-          }
-          return null;
-        },
-        focusNode: fn,
-        autofocus: false,
-        keyboardType: TextInputType.text,
-        controller: controller,
-        decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-                fontSize: AppSize.s14.sp, color: ColorManager.primary),
-            labelText: label,
-            labelStyle: TextStyle(
-                fontSize: AppSize.s14.sp, color: ColorManager.primary),
-            border: InputBorder.none));
   }
 
   Widget buttons(BuildContext context) {

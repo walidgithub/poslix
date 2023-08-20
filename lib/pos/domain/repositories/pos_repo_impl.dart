@@ -378,7 +378,7 @@ class POSRepositoryImpl extends POSRepository {
         return await _dio.get('api/reports/register/$locationId',
             parameters: parameters.toJson(),
             headers: {'Authorization': 'Bearer $token'}).then((response) {
-          res = (response.data['result']['data'] as List).map((e) {
+          res = (response.data['result']['data']['data'] as List).map((e) {
             return CloseRegisterReportDataResponse.fromJson(e);
           }).toList();
           return res;

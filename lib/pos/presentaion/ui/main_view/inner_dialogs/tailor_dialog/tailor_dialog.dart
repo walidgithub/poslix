@@ -3,17 +3,20 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/size_name_Section.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/total_section.dart';
 
-import '../../../../domain/response/customer_model.dart';
-import '../../../../shared/constant/assets_manager.dart';
-import '../../../../shared/constant/constant_values_manager.dart';
-import '../../../../shared/constant/padding_margin_values_manager.dart';
-import '../../../../shared/constant/strings_manager.dart';
-import '../../../../shared/preferences/app_pref.dart';
-import '../../../../shared/style/colors_manager.dart';
-import '../../../di/di.dart';
-import '../../components/close_button.dart';
-import '../../components/container_component.dart';
+import '../../../../../domain/response/customer_model.dart';
+import '../../../../../shared/constant/assets_manager.dart';
+import '../../../../../shared/constant/constant_values_manager.dart';
+import '../../../../../shared/constant/padding_margin_values_manager.dart';
+import '../../../../../shared/constant/strings_manager.dart';
+import '../../../../../shared/preferences/app_pref.dart';
+import '../../../../../shared/style/colors_manager.dart';
+import '../../../../di/di.dart';
+import '../../../components/close_button.dart';
+import '../../../components/container_component.dart';
+import 'main_note.dart';
 
 class TailorDialog extends StatefulWidget {
   int itemIndex;
@@ -177,7 +180,7 @@ class _TailorDialogState extends State<TailorDialog> {
                             height: AppConstants.smallDistance,
                           ),
 
-                          sizeName(context),
+                          sizeName(context, _sizeNameEditingController),
 
                           SizedBox(
                             height: AppConstants.smallDistance,
@@ -208,7 +211,7 @@ class _TailorDialogState extends State<TailorDialog> {
                             thickness: AppSize.s1,
                           ),
 
-                          mainNotes(context),
+                          mainNotes(context, _notesEditingController),
 
                           SizedBox(
                             height: AppConstants.smallerDistance,
@@ -338,20 +341,6 @@ class _TailorDialogState extends State<TailorDialog> {
   //           borderRadius: AppSize.s5));
   // }
 
-  Widget sizeName(BuildContext context) {
-    return TextField(
-        autofocus: false,
-        keyboardType: TextInputType.text,
-        controller: _sizeNameEditingController,
-        decoration: InputDecoration(
-            hintText: AppStrings.sizeName.tr(),
-            hintStyle: TextStyle(fontSize: AppSize.s12.sp),
-            labelText: AppStrings.sizeName.tr(),
-            labelStyle: TextStyle(
-                fontSize: AppSize.s15.sp, color: ColorManager.primary),
-            border: InputBorder.none));
-  }
-
   Widget fabrics(BuildContext context) {
     return Expanded(
       flex: 1,
@@ -436,36 +425,6 @@ class _TailorDialogState extends State<TailorDialog> {
           borderColor: ColorManager.badge,
           borderWidth: 0.5.w,
           borderRadius: AppSize.s5),
-    );
-  }
-
-  Widget mainNotes(BuildContext context) {
-    return TextField(
-        autofocus: false,
-        keyboardType: TextInputType.text,
-        controller: _notesEditingController,
-        decoration: InputDecoration(
-            hintText: AppStrings.additionalNotes.tr(),
-            hintStyle: TextStyle(fontSize: AppSize.s12.sp),
-            labelText: AppStrings.additionalNotes.tr(),
-            labelStyle: TextStyle(
-                fontSize: AppSize.s15.sp, color: ColorManager.primary),
-            border: InputBorder.none));
-  }
-
-  Widget total(BuildContext context) {
-    return Row(
-      children: [
-        Text(AppStrings.lineTotal.tr(),
-            style: TextStyle(
-                color: ColorManager.primary, fontSize: AppSize.s14.sp)),
-        SizedBox(
-          width: AppConstants.smallDistance,
-        ),
-        Text(AppStrings.selectFirst.tr(),
-            style: TextStyle(
-                color: ColorManager.primary, fontSize: AppSize.s14.sp)),
-      ],
     );
   }
 

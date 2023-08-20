@@ -11,25 +11,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/domain/entities/order_model.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/totals.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_state.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:screenshot/screenshot.dart';
-import '../../../../domain/requests/cart_model.dart';
-import '../../../../domain/requests/check_out_model.dart';
-import '../../../../domain/requests/payment_types_model.dart';
-import '../../../../shared/constant/constant_values_manager.dart';
-import '../../../../shared/constant/padding_margin_values_manager.dart';
-import '../../../../shared/preferences/app_pref.dart';
-import '../../../../shared/style/colors_manager.dart';
-import '../../../di/di.dart';
+import '../../../../../domain/requests/cart_model.dart';
+import '../../../../../domain/requests/check_out_model.dart';
+import '../../../../../domain/requests/payment_types_model.dart';
+import '../../../../../shared/constant/constant_values_manager.dart';
+import '../../../../../shared/constant/padding_margin_values_manager.dart';
+import '../../../../../shared/preferences/app_pref.dart';
+import '../../../../../shared/style/colors_manager.dart';
+import '../../../../di/di.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
-import '../../components/close_button.dart';
-import '../../components/container_component.dart';
-import '../../components/text_component.dart';
-import '../../order/wi_fi_printer/ImagestorByte.dart';
-import '../../order/wi_fi_printer/printer.dart';
-import '../../popup_dialogs/custom_dialog.dart';
-import '../main_view_cubit/main_view_cubit.dart';
+import '../../../components/close_button.dart';
+import '../../../components/container_component.dart';
+import '../../../components/text_component.dart';
+import '../../../order/wi_fi_printer/ImagestorByte.dart';
+import '../../../order/wi_fi_printer/printer.dart';
+import '../../../popup_dialogs/custom_dialog.dart';
+import '../../main_view_cubit/main_view_cubit.dart';
+import '../tailor_dialog/main_note.dart';
+import 'main_payment _method.dart';
 
 class PaymentDialog extends StatefulWidget {
   double total;
@@ -126,6 +129,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
   }
 
   var selectedPaymentType;
+
   List selectedNewPaymentType = [AppStrings.cash.tr()];
 
   List<PaymentTypesRequest> paymentRequest = [];
@@ -313,13 +317,13 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                       height: AppConstants.smallDistance,
                                     ),
 
-                                    mainNotes(context),
+                                    mainNotes(context, _notesEditingController),
 
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),
 
-                                    mainPaymentMethod(context),
+                                    mainPaymentMethod(context, widget.total, selectMainPaymentMethod, _amountEditingController, _notesInLineEditingController, selectedPaymentType),
 
                                     newPaymentMethods(context),
 
@@ -333,7 +337,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                       height: AppConstants.smallerDistance,
                                     ),
 
-                                    totals(context),
+                                    totals(context, widget.total, changedTotal, changeReturn!, balance!, widget.currencyCode),
 
                                     SizedBox(
                                       height: AppConstants.smallerDistance,
@@ -364,132 +368,11 @@ class _PaymentDialogState extends State<PaymentDialog> {
     );
   }
 
-  Widget mainNotes(BuildContext context) {
-    return TextField(
-        autofocus: false,
-        keyboardType: TextInputType.text,
-        controller: _notesEditingController,
-        decoration: InputDecoration(
-            hintText:
-            AppStrings.paymentNotes.tr(),
-            hintStyle: TextStyle(
-                fontSize: AppSize.s12.sp),
-            labelText:
-            AppStrings.paymentNotes.tr(),
-            labelStyle: TextStyle(
-                fontSize: AppSize.s15.sp,
-                color: ColorManager.primary),
-            border: InputBorder.none));
-  }
-
-  Widget mainPaymentMethod(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 1,
-          child: TextField(
-              autofocus: false,
-              keyboardType:
-              TextInputType.number,
-              controller:
-              _amountEditingController,
-              decoration: InputDecoration(
-                  hintText:
-                  widget.total.toString(),
-                  hintStyle: TextStyle(
-                      fontSize: AppSize.s12.sp),
-                  labelText:
-                  AppStrings.amount.tr(),
-                  labelStyle: TextStyle(
-                      fontSize: AppSize.s15.sp,
-                      color:
-                      ColorManager.primary),
-                  border: InputBorder.none)),
-        ),
-        SizedBox(
-          width: AppConstants.smallDistance,
-        ),
-        Expanded(
-          flex: 1,
-          child: containerComponent(
-              context,
-              DropdownButton(
-                borderRadius:
-                BorderRadius.circular(
-                    AppSize.s5),
-                itemHeight: 50.h,
-                hint: textS14PrimaryComponent(context,
-                  AppStrings.cash.tr(),
-                ),
-                underline: Container(),
-                items: <String>[
-                  AppStrings.cash.tr(),
-                  AppStrings.bank.tr(),
-                  AppStrings.cheque.tr(),
-                  AppStrings.card.tr()
-                ].map<DropdownMenuItem<String>>(
-                        (String value) {
-                      return DropdownMenuItem<
-                          String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: TextStyle(
-                              fontSize:
-                              AppSize.s14.sp),
-                        ),
-                      );
-                    }).toList(),
-                onChanged: (selectedType) {
-                  setState(() {
-                    selectedPaymentType =
-                    selectedType!;
-                  });
-                },
-                value: selectedPaymentType,
-                isExpanded: true,
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  color: ColorManager.primary,
-                  size: AppSize.s20.sp,
-                ),
-                style: TextStyle(
-                    color: ColorManager.primary,
-                    fontSize: AppSize.s14.sp),
-              ),
-              height: 47.h,
-              padding: const EdgeInsets.fromLTRB(AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
-              borderColor: ColorManager.primary,
-              borderWidth: 0.5.w,
-              borderRadius: AppSize.s5),
-        ),
-        SizedBox(
-          width: AppConstants.smallDistance,
-        ),
-        Expanded(
-          flex: 1,
-          child: TextField(
-              autofocus: false,
-              keyboardType: TextInputType.text,
-              controller:
-              _notesInLineEditingController,
-              decoration: InputDecoration(
-                  hintText: AppStrings
-                      .paymentNotes
-                      .tr(),
-                  hintStyle: TextStyle(
-                      fontSize: AppSize.s12.sp),
-                  labelText: AppStrings
-                      .paymentNotes
-                      .tr(),
-                  labelStyle: TextStyle(
-                      fontSize: AppSize.s15.sp,
-                      color:
-                      ColorManager.primary),
-                  border: InputBorder.none)),
-        ),
-      ],
-    );
+  void selectMainPaymentMethod(String selectedType){
+    setState(() {
+      selectedPaymentType =
+      selectedType;
+    });
   }
 
   Widget newPaymentMethods(BuildContext context) {
@@ -838,81 +721,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
             borderRadius: AppSize.s5
         ),
       ),
-    );
-  }
-
-  Widget totals(BuildContext context) {
-    return containerComponent(
-        context,
-        Row(
-          mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                textS14WhiteComponent(context,
-                  AppStrings.totalPayable.tr(),
-                ),
-                SizedBox(
-                  height:
-                  AppConstants.smallDistance,
-                ),
-                textS14WhiteComponent(context,
-                  '${widget.total} ${widget.currencyCode}',
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                textS14WhiteComponent(context,
-                  AppStrings.totalPaying.tr(),
-                ),
-                SizedBox(
-                  height:
-                  AppConstants.smallDistance,
-                ),
-                textS14WhiteComponent(context,
-                  '$changedTotal ${widget.currencyCode}',
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                textS14WhiteComponent(context,
-                  AppStrings.changeReturn.tr(),
-                ),
-                SizedBox(
-                  height:
-                  AppConstants.smallDistance,
-                ),
-                textS14WhiteComponent(context,
-                  '$changeReturn ${widget.currencyCode}',
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                textS14WhiteComponent(context,
-                  AppStrings.balance.tr(),
-                ),
-                SizedBox(
-                  height:
-                  AppConstants.smallDistance,
-                ),
-                textS14WhiteComponent(context,
-                  '$balance ${widget.currencyCode}',
-                ),
-              ],
-            ),
-          ],
-        ),
-        height: 75.h,
-        width: 200.w,
-        padding: const EdgeInsets.all(AppPadding.p10),
-        color: ColorManager.primary,
-        borderColor: ColorManager.primary,
-        borderWidth: 0.6.w,
-        borderRadius: AppSize.s5
     );
   }
 

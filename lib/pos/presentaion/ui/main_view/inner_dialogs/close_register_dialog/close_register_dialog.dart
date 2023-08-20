@@ -5,22 +5,23 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../domain/requests/close_register_model.dart';
-import '../../../../domain/requests/close_register_report_model.dart';
-import '../../../../shared/constant/assets_manager.dart';
-import '../../../../shared/constant/constant_values_manager.dart';
-import '../../../../shared/constant/padding_margin_values_manager.dart';
-import '../../../../shared/constant/strings_manager.dart';
-import '../../../../shared/preferences/app_pref.dart';
-import '../../../../shared/style/colors_manager.dart';
-import '../../../di/di.dart';
-import '../../../router/app_router.dart';
-import '../../components/close_button.dart';
-import '../../components/container_component.dart';
-import '../../components/text_component.dart';
-import '../../popup_dialogs/custom_dialog.dart';
-import '../main_view_cubit/main_view_cubit.dart';
-import '../main_view_cubit/main_view_state.dart';
+import '../../../../../domain/requests/close_register_model.dart';
+import '../../../../../domain/requests/close_register_report_model.dart';
+import '../../../../../shared/constant/assets_manager.dart';
+import '../../../../../shared/constant/constant_values_manager.dart';
+import '../../../../../shared/constant/padding_margin_values_manager.dart';
+import '../../../../../shared/constant/strings_manager.dart';
+import '../../../../../shared/preferences/app_pref.dart';
+import '../../../../../shared/style/colors_manager.dart';
+import '../../../../di/di.dart';
+import '../../../../router/app_router.dart';
+import '../../../components/close_button.dart';
+import '../../../components/container_component.dart';
+import '../../../components/text_component.dart';
+import '../../../popup_dialogs/custom_dialog.dart';
+import '../../main_view_cubit/main_view_cubit.dart';
+import '../../main_view_cubit/main_view_state.dart';
+import 'money_methods.dart';
 
 class CloseRegisterDialog extends StatefulWidget {
   int locationId;
@@ -158,23 +159,23 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                     mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      collections(ImageAssets.moneyBillWave, AppStrings.cashInHand.tr(), cashInHand.toString()),
+                                      moneyMethods(context, ImageAssets.moneyBillWave, AppStrings.cashInHand.tr(), cashInHand.toString(), currencyCode),
                                       SizedBox(
                                         width: AppConstants.smallDistance,
                                       ),
-                                      collections(ImageAssets.moneyBillTransfer, AppStrings.cartPayment.tr(), total_cart.toString()),
+                                      moneyMethods(context, ImageAssets.moneyBillTransfer, AppStrings.cartPayment.tr(), total_cart.toString(), currencyCode),
                                       SizedBox(
                                         width: AppConstants.smallDistance,
                                       ),
-                                      collections(ImageAssets.building, AppStrings.bankPayment.tr(), total_bank.toString()),
+                                      moneyMethods(context, ImageAssets.building, AppStrings.bankPayment.tr(), total_bank.toString(), currencyCode),
                                       SizedBox(
                                         width: AppConstants.smallDistance,
                                       ),
-                                      collections(ImageAssets.creditCard, AppStrings.cashPayment.tr(), total_cash.toString()),
+                                      moneyMethods(context, ImageAssets.creditCard, AppStrings.cashPayment.tr(), total_cash.toString(), currencyCode),
                                       SizedBox(
                                         width: AppConstants.smallDistance,
                                       ),
-                                      collections(ImageAssets.moneyCheck, AppStrings.chequePayment.tr(), total_cheque.toString()),
+                                      moneyMethods(context, ImageAssets.moneyCheck, AppStrings.chequePayment.tr(), total_cheque.toString(), currencyCode),
                                     ]
                                 ),
 
@@ -236,69 +237,7 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                       height:
                                           AppConstants.heightBetweenElements,
                                     ),
-                                    Align(
-                                      alignment:
-                                          AlignmentDirectional.bottomStart,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          closeButton(context),
-                                          SizedBox(
-                                            width: AppConstants.smallDistance,
-                                          ),
-                                          Bounceable(
-                                            duration: Duration(milliseconds: AppConstants.durationOfBounceable),
-                                            onTap: () async {
-                                              await Future.delayed(
-                                                  Duration(milliseconds: AppConstants.durationOfBounceable));
-                                              CloseRegisterRequest
-                                                  closeRegisterRequest =
-                                                  CloseRegisterRequest(
-                                                      note:
-                                                          _notesEditingController
-                                                              .text,
-                                                      handCash: cashInHand!);
-                                              await MainViewCubit.get(context)
-                                                  .closeRegister(
-                                                      closeRegisterRequest,
-                                                      widget.locationId);
-
-                                              _appPreferences
-                                                  .removeDecimalPlaces(
-                                                      PREFS_KEY_DECIMAL_PLACES);
-                                              _appPreferences.removeLocationId(
-                                                  PREFS_KEY_LOCATION_ID);
-                                              _appPreferences.removeTaxValue(
-                                                  PREFS_KEY_TAX_VALUE);
-                                              _appPreferences
-                                                  .userClosedRegister();
-
-                                              Navigator.of(context)
-                                                  .pushReplacementNamed(
-                                                      Routes.registerPosRoute);
-                                            },
-                                            child:
-                                            containerComponent(
-                                                context,
-                                                Center(
-                                                    child: Text(
-                                                      AppStrings.closeRegister.tr(),
-                                                      style: TextStyle(
-                                                          color: ColorManager.white,
-                                                          fontSize: AppSize.s14.sp),
-                                                    )),
-                                                height: 30.h,
-                                                width: 50.w,
-                                                color: ColorManager.primary,
-                                                borderColor: ColorManager.primary,
-                                                borderWidth: 0.6.w,
-                                                borderRadius: AppSize.s5
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
+                                    buttons(context)
                                   ],
                                 ),
                               ))))));
@@ -307,50 +246,73 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
     );
   }
 
-  Widget collections(String image,String address,String value) {
-    return
-      containerComponent(
-          context,
-          Column(
-            mainAxisAlignment:
-            MainAxisAlignment.spaceEvenly,
-            children: [
-              SvgPicture.asset(
-                image,
-                width: AppSize.s60,
-                color: ColorManager.darkGray,
-              ),
-              SizedBox(
-                height: AppConstants
-                    .smallDistance,
-              ),
-              Text(
-                address,
-                style: TextStyle(
-                    fontSize: AppSize.s14.sp),
-              ),
-              SizedBox(
-                height: AppConstants
-                    .smallDistance,
-              ),
-              Text(
-                  '$value $currencyCode',
-                  style: TextStyle(
-                      fontSize: AppSize.s18.sp,
-                      fontWeight:
-                      FontWeight.bold,
-                      color: ColorManager
-                          .primary))
-            ],
+  Widget buttons(BuildContext context) {
+    return Align(
+      alignment:
+      AlignmentDirectional.bottomStart,
+      child: Row(
+        mainAxisAlignment:
+        MainAxisAlignment.end,
+        children: [
+          closeButton(context),
+          SizedBox(
+            width: AppConstants.smallDistance,
           ),
-          width: 50.w,
-          height: 200.h,
-          padding: const EdgeInsets.all(
-              AppPadding.p10),
-          color: ColorManager.secondary,
-          borderColor: ColorManager.secondary,
-          borderWidth: 0.1.w,
-          borderRadius: AppSize.s5
+          Bounceable(
+            duration: Duration(milliseconds: AppConstants.durationOfBounceable),
+            onTap: () async {
+              await closeRegister(context);
+            },
+            child:
+            containerComponent(
+                context,
+                Center(
+                    child: Text(
+                      AppStrings.closeRegister.tr(),
+                      style: TextStyle(
+                          color: ColorManager.white,
+                          fontSize: AppSize.s14.sp),
+                    )),
+                height: 30.h,
+                width: 50.w,
+                color: ColorManager.primary,
+                borderColor: ColorManager.primary,
+                borderWidth: 0.6.w,
+                borderRadius: AppSize.s5
+            ),
+          )
+        ],
+      ),
     );
+  }
+
+  Future<void> closeRegister(BuildContext context) async {
+    await Future.delayed(
+        Duration(milliseconds: AppConstants.durationOfBounceable));
+    CloseRegisterRequest
+    closeRegisterRequest =
+    CloseRegisterRequest(
+        note:
+        _notesEditingController
+            .text,
+        handCash: cashInHand!);
+    await MainViewCubit.get(context)
+        .closeRegister(
+        closeRegisterRequest,
+        widget.locationId);
+
+    _appPreferences
+        .removeDecimalPlaces(
+        PREFS_KEY_DECIMAL_PLACES);
+    _appPreferences.removeLocationId(
+        PREFS_KEY_LOCATION_ID);
+    _appPreferences.removeTaxValue(
+        PREFS_KEY_TAX_VALUE);
+    _appPreferences
+        .userClosedRegister();
+
+    Navigator.of(context)
+        .pushReplacementNamed(
+        Routes.registerPosRoute);
   }
 }

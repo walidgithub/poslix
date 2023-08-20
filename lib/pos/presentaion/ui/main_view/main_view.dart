@@ -14,13 +14,12 @@ import 'package:poslix_app/pos/domain/response/products_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/close_register_dialog.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/customer_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/customer_dialog/customer_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/discount_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/hold_dialog/hold_card_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/item_options_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports/orders_and_hold_dialog.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/payment_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/shipping_dialog.dart';
 import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 import 'package:poslix_app/pos/shared/constant/padding_margin_values_manager.dart';
@@ -45,6 +44,7 @@ import '../login_view/login_cubit/login_cubit.dart';
 import '../login_view/login_cubit/login_state.dart';
 import '../popup_dialogs/custom_dialog.dart';
 import '../popup_dialogs/loading_dialog.dart';
+import 'inner_dialogs/close_register_dialog/close_register_dialog.dart';
 import 'main_view_cubit/main_view_state.dart';
 
 class MainView extends StatefulWidget {
