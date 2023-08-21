@@ -552,7 +552,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             milliseconds:
             AppConstants
                 .durationOfBounceable));
-    print('startttt');
 
     if (listOfBusinesses
         .isNotEmpty &&
@@ -575,7 +574,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
           Routes
               .mainRoute);
     }
-    print('endddd');
   }
 
   void getBusinessValues(BuildContext context, var selectedBusiness) {

@@ -745,8 +745,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
                   milliseconds: AppConstants
                       .durationOfBounceable));
 
-              print('starttttttttttttt');
-
               paymentRequest.add(PaymentTypesRequest(
                   paymentId:
                   '1',
@@ -774,10 +772,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
                     n]
                         .text));
               }
-
-              // for (var n in paymentRequest) {
-              //   print(n.paymentId);
-              // }
 
               CheckOutRequest checkOutRequest =
               CheckOutRequest(

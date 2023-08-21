@@ -70,15 +70,9 @@ class MainViewCubit extends Cubit<MainViewState> {
 
         bool hasExpired = JwtDecoder.isExpired(token);
         if (hasExpired) {
-          print(token);
-          print('1111');
           await getUserParameters();
           await login(userRequest!);
 
-          // await Future.delayed(const Duration(seconds: 15));
-
-          print('2222');
-          print(_appPreferences.getToken(LOGGED_IN_TOKEN)!);
           res = await posRepositoryImpl.getCategories(
               _appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
           listOfCategories = res.toList();
@@ -87,10 +81,8 @@ class MainViewCubit extends Cubit<MainViewState> {
           listOfVariations = listOfCategories[0].products[0].variations;
           listOfStocks = listOfCategories[0].products[0].stocks;
           emit(LoadedCategories());
-          print('33333');
           return res;
         }
-        print('444444');
 
         res = await posRepositoryImpl.getCategories(token, locationId);
         listOfCategories = res.toList();

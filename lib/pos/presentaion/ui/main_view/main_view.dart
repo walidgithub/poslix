@@ -20,11 +20,13 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/item_optio
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports/orders_and_hold_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/payment_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/shipping_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/buttons.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category_button.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category_items.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/sales_table/sales_table_columns.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/sales_table/sales_table_head.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/search_text.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/totals.dart';
 import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 import 'package:poslix_app/pos/shared/constant/padding_margin_values_manager.dart';
 import 'package:poslix_app/pos/shared/style/colors_manager.dart';
@@ -329,7 +331,7 @@ class _MainViewState extends State<MainView> {
           backgroundColor: ColorManager.secondary,
           body: SingleChildScrollView(child: bodyContent(context)),
           floatingActionButton: AnimatedFloatingActionButton(
-              fabButtons: <Widget>[language(), logout(),register(), refresh()],
+              fabButtons: <Widget>[language(), logout(), register(), refresh()],
               key: floatingKey,
               colorStartAnimation: ColorManager.primary,
               colorEndAnimation: ColorManager.delete,
@@ -356,9 +358,14 @@ class _MainViewState extends State<MainView> {
         ..getCurrency(locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
-
           if (state is MainNoInternetState) {
-            CustomDialog.show(context,AppStrings.noInternet.tr(),const Icon(Icons.wifi),ColorManager.white,AppConstants.durationOfSnackBar,ColorManager.delete);
+            CustomDialog.show(
+                context,
+                AppStrings.noInternet.tr(),
+                const Icon(Icons.wifi),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.delete);
           }
 
           if (state is LoadingCategories) {
@@ -415,13 +422,10 @@ class _MainViewState extends State<MainView> {
             LoadingDialog.hide(context);
             CustomDialog.show(
                 context,
-                AppStrings.errorTryAgain
-                    .tr(),
-                const Icon(Icons
-                    .close),
+                AppStrings.errorTryAgain.tr(),
+                const Icon(Icons.close),
                 ColorManager.white,
-                AppConstants
-                    .durationOfSnackBar,
+                AppConstants.durationOfSnackBar,
                 ColorManager.delete);
           } else if (state is LoadingBrands) {
             LoadingDialog.show(context);
@@ -470,17 +474,16 @@ class _MainViewState extends State<MainView> {
             listOfProducts = [];
             CustomDialog.show(
                 context,
-                AppStrings.errorTryAgain
-                    .tr(),
-                const Icon(Icons
-                    .close),
+                AppStrings.errorTryAgain.tr(),
+                const Icon(Icons.close),
                 ColorManager.white,
-                AppConstants
-                    .durationOfSnackBar,
+                AppConstants.durationOfSnackBar,
                 ColorManager.delete);
           }
           if (state is LoadingCustomers) {
+            LoadingDialog.show(context);
           } else if (state is LoadedCustomers) {
+            LoadingDialog.hide(context);
             listOfCustomers = MainViewCubit.get(context).listOfCustomers;
             listOfCustomers.insert(
                 0,
@@ -512,7 +515,18 @@ class _MainViewState extends State<MainView> {
             _selectedCustomerId = listOfCustomers[0].id;
             _selectedCustomerTel = listOfCustomers[0].mobile;
           } else if (state is LoadingErrorCustomers) {
+            LoadingDialog.hide(context);
+            CustomDialog.show(
+                context,
+                AppStrings.errorTryAgain.tr(),
+                const Icon(Icons.close),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.delete);
+          } else if (state is LoadingCustomer) {
+            LoadingDialog.show(context);
           } else if (state is LoadedCustomer) {
+            LoadingDialog.hide(context);
             int index = listOfCustomers.indexWhere((element) =>
                 '${element.firstName} ${element.lastName} | ${element.mobile}' ==
                 '${_selectedCustomer?.firstName} ${_selectedCustomer?.lastName} | ${_selectedCustomer?.mobile}');
@@ -527,29 +541,38 @@ class _MainViewState extends State<MainView> {
                 });
               }
             });
+          } else if (state is LoadingErrorCustomer) {
+            LoadingDialog.hide(context);
+            CustomDialog.show(
+                context,
+                AppStrings.errorTryAgain.tr(),
+                const Icon(Icons.close),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.delete);
           }
 
           if (state is LoadedCurrency) {
             currencyCode = state.currencyCode;
           } else if (state is LoadingErrorCurrency) {
-
+            LoadingDialog.hide(context);
           }
         },
         builder: (context, state) {
-            return Padding(
-              padding: const EdgeInsets.all(AppPadding.p10),
-              child: Center(
-                child: Row(
-                  children: [
-                    leftPart(context),
-                    SizedBox(
-                      width: AppConstants.smallDistance,
-                    ),
-                    rightPart(context),
-                  ],
-                ),
+          return Padding(
+            padding: const EdgeInsets.all(AppPadding.p10),
+            child: Center(
+              child: Row(
+                children: [
+                  leftPart(context),
+                  SizedBox(
+                    width: AppConstants.smallDistance,
+                  ),
+                  rightPart(context),
+                ],
               ),
-            );
+            ),
+          );
         },
       ),
     );
@@ -582,7 +605,8 @@ class _MainViewState extends State<MainView> {
                       height: AppConstants.smallDistance,
                     ),
 
-                    searchText(context, _searchEditingController, addToTmp, listOfAllProducts, searchList),
+                    searchText(context, _searchEditingController, addToTmp,
+                        listOfAllProducts, searchList),
 
                     // tmp table of items
                     Expanded(
@@ -591,12 +615,27 @@ class _MainViewState extends State<MainView> {
                           scrollDirection: Axis.vertical,
                           child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: createDataTable(context, _currentSortColumn, _isSortAsc, createColumns(), createRows(context)))),
+                              child: createDataTable(
+                                  context,
+                                  _currentSortColumn,
+                                  _isSortAsc,
+                                  createColumns(),
+                                  createRows(context)))),
                     ),
 
-                    constantsAndTotal(context),
+                    constantsAndTotal(
+                        context,
+                        estimatedTax,
+                        tax,
+                        editShipping,
+                        editDiscount,
+                        shippingCharge,
+                        discount,
+                        currencyCode,
+                        totalAmount,
+                        differenceValue),
 
-                    buttons(context)
+                    buttons(context, hold, delete, getOrders, checkOut)
                   ],
                 ),
               ),
@@ -613,70 +652,52 @@ class _MainViewState extends State<MainView> {
   Widget customerDropDown(BuildContext context) {
     return Expanded(
         flex: 3,
-        child:
-        containerComponent(
+        child: containerComponent(
             context,
             DropdownButton(
-              borderRadius:
-              BorderRadius.circular(
-                  AppSize.s5),
+              borderRadius: BorderRadius.circular(AppSize.s5),
               itemHeight: 50.h,
               underline: Container(),
               value: _selectedCustomer,
-              items:
-              listOfCustomers.map((item) {
+              items: listOfCustomers.map((item) {
                 return DropdownMenuItem(
                     value: item,
                     child: Row(
                       children: [
-                        textS14PrimaryComponent(context,item.firstName,),
-                        SizedBox(
-                            width: AppConstants
-                                .smallerDistance),
-                        textS14PrimaryComponent(context,item.lastName),
-                        item.firstName ==
-                            AppStrings
-                                .firstName
+                        textS14PrimaryComponent(context, item.firstName),
+                        SizedBox(width: AppConstants.smallerDistance),
+                        textS14PrimaryComponent(context, item.lastName),
+                        item.firstName == AppStrings.firstName
                             ? Container()
                             : Row(
-                          children: [
-                            SizedBox(
-                                width: AppConstants
-                                    .smallerDistance),
-                            textS14PrimaryComponent(context,'|',),
-                            SizedBox(
-                                width: AppConstants
-                                    .smallerDistance),
-                            textS14PrimaryComponent(context,
-                                item
-                                    .mobile,)
-                          ],
-                        ),
+                                children: [
+                                  SizedBox(width: AppConstants.smallerDistance),
+                                  textS14PrimaryComponent(context, '|'),
+                                  SizedBox(width: AppConstants.smallerDistance),
+                                  textS14PrimaryComponent(context, item.mobile)
+                                ],
+                              ),
                       ],
                     ));
               }).toList(),
               onChanged: (selectedCustomer) {
                 setState(() {
-                  _selectedCustomer =
-                      selectedCustomer;
+                  _selectedCustomer = selectedCustomer;
                   _selectedCustomerName =
-                  '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
-                  _selectedCustomerId =
-                      selectedCustomer?.id;
-                  _selectedCustomerTel =
-                      selectedCustomer
-                          ?.mobile;
+                      '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
+                  _selectedCustomerId = selectedCustomer?.id;
+                  _selectedCustomerTel = selectedCustomer?.mobile;
                 });
               },
               isExpanded: true,
               hint: Row(
                 children: [
-                  textS14PrimaryComponent(context,
+                  textS14PrimaryComponent(
+                    context,
                     '${AppStrings.firstName} ${AppStrings.secondName}',
                   ),
                   SizedBox(
-                    width: AppConstants
-                        .smallDistance,
+                    width: AppConstants.smallDistance,
                   )
                 ],
               ),
@@ -686,873 +707,488 @@ class _MainViewState extends State<MainView> {
                 size: AppSize.s20.sp,
               ),
               style: TextStyle(
-                  color: ColorManager.primary,
-                  fontSize: AppSize.s14.sp),
+                  color: ColorManager.primary, fontSize: AppSize.s14.sp),
             ),
-            padding:
-            const EdgeInsets.fromLTRB(
-                AppPadding.p15,
-                AppPadding.p2,
-                AppPadding.p5,
-                AppPadding.p2),
+            padding: const EdgeInsets.fromLTRB(
+                AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
             height: 47.h,
             borderColor: ColorManager.primary,
             borderWidth: 0.5.w,
-            borderRadius: AppSize.s5
-        ));
+            borderRadius: AppSize.s5));
   }
 
   void getCustomer(BuildContext context) {
-    if (_selectedCustomerId !=
-        1) {
+    if (_selectedCustomerId != 1) {
       setState(() {
-        MainViewCubit.get(
-            context)
-            .getCustomer(
-            _selectedCustomerId!);
+        MainViewCubit.get(context).getCustomer(_selectedCustomerId!);
       });
     }
   }
 
   void addCustomer(BuildContext context) {
-    CustomerDialog.show(
-        context,
-        'Add',
-        [],
-        0,
-        locationId,
-            (done) {
-          if (done ==
-              'done') {
-            setState(() {
-              MainViewCubit.get(
-                  context)
-                  .getCustomers(
-                  locationId);
-            });
-          }
+    CustomerDialog.show(context, 'Add', [], 0, locationId, (done) {
+      if (done == 'done') {
+        setState(() {
+          MainViewCubit.get(context).getCustomers(locationId);
         });
+      }
+    });
   }
 
-  Widget constantsAndTotal(BuildContext context) {
-    return Column(
-      children: [
-        Divider(
-          height: 20.h,
-          color: ColorManager.primary,
-        ),
-
-        // tax and shipping
-        Row(
-          mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-                child: Row(
-                  mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
-                  children: [
-                    textS12Component(context,
-                      '${AppStrings.estimatedTax.tr()} ($tax%)',
-                    ),
-                    textS12Component(context,estimatedTax.toString(),),
-                  ],
-                )),
-            SizedBox(
-              width: AppConstants
-                  .smallWidthBetweenElements,
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
-                children: [
-                  textS12Component(context,AppStrings.shippingCharge.tr()),
-                  Bounceable(
-                    duration: Duration(
-                        milliseconds: AppConstants
-                            .durationOfBounceable),
-                    onTap: () async {
-                      await Future.delayed(Duration(
-                          milliseconds: AppConstants
-                              .durationOfBounceable));
-                      setState(() {
-                        ShippingDialog.show(context,
-                                (shippingValue) {
-                              getShippingValue(
-                                  shippingValue);
-                            });
-                      });
-                    },
-                    child: Icon(
-                      Icons.edit,
-                      color: ColorManager.primary,
-                      size: AppSize.s20.sp,
-                    ),
-                  ),
-                  textS12Component(context,shippingCharge.toString(),),
-                ],
-              ),
-            ),
-          ],
-        ),
-
-        SizedBox(
-          height: AppConstants.smallDistance,
-        ),
-
-        // discount and total
-        Row(
-          mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
-                children: [
-                  textS12Component(context,AppStrings.discount.tr(),),
-                  Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment
-                        .spaceBetween,
-                    children: [
-                      Bounceable(
-                        duration: Duration(
-                            milliseconds: AppConstants
-                                .durationOfBounceable),
-                        onTap: () async {
-                          await Future.delayed(Duration(
-                              milliseconds: AppConstants
-                                  .durationOfBounceable));
-                          setState(() {
-                            DiscountDialog.show(
-                                context,
-                                    (discountValue,
-                                    fixed) {
-                                  getDiscount(
-                                      discountValue,
-                                      fixed);
-                                }, (discountType) {
-                              selectedDiscountType ==
-                                  discountType;
-                            });
-                          });
-                        },
-                        child: Icon(
-                          Icons.edit,
-                          color: ColorManager.primary,
-                          size: AppSize.s20.sp,
-                        ),
-                      ),
-                      SizedBox(
-                        width: AppConstants
-                            .smallDistance,
-                      ),
-                      textS12Component(context,
-                          '${discount.toString()} $currencyCode',),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              width: AppConstants
-                  .smallWidthBetweenElements,
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
-                children: [
-                  textS12Component(context,AppStrings.totalAmount.tr()),
-                  textS12Component(context,totalAmount.toString()),
-                  textS12Component(context,currencyCode,),
-                ],
-              ),
-            )
-          ],
-        ),
-
-        SizedBox(
-          height: AppConstants.smallDistance,
-        ),
-
-        // difference
-        GlobalValues.getEditOrder
-            ? Row(
-          mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(''),
-            const Text(''),
-            textS12Component(context,AppStrings.difference.tr()),
-            textS12Component(context,differenceValue.toString()),
-          ],
-        )
-            : const SizedBox.shrink(),
-        SizedBox(
-          height: AppConstants.smallDistance,
-        ),
-      ],
-    );
+  void editDiscount(BuildContext context) {
+    setState(() {
+      DiscountDialog.show(context, (discountValue, fixed) {
+        getDiscount(discountValue, fixed);
+      }, (discountType) {
+        selectedDiscountType == discountType;
+      });
+    });
   }
 
-  Widget buttons(BuildContext context) {
-    return Column(
-      children: [
+  void editShipping(BuildContext context) {
+    setState(() {
+      ShippingDialog.show(context, (shippingValue) {
+        getShippingValue(shippingValue);
+      });
+    });
+  }
 
-        // delete and hold and orders
-        Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Bounceable(
-                duration: Duration(
-                    milliseconds: AppConstants
-                        .durationOfBounceable),
-                onTap: () async {
-                  await Future.delayed(Duration(
-                      milliseconds: AppConstants
-                          .durationOfBounceable));
-                  if (listOfTmpOrder.isEmpty) {
-                    CustomDialog.show(
-                        context,
-                        AppStrings.noDataToDelete
-                            .tr(),
-                        const Icon(Icons
-                            .warning_amber_rounded),
-                        ColorManager.white,
-                        AppConstants
-                            .durationOfSnackBar,
-                        ColorManager.hold);
+  void hold(BuildContext context) {
+    if (listOfTmpOrder.isEmpty) {
+      CustomDialog.show(
+          context,
+          AppStrings.noDataToHold.tr(),
+          const Icon(Icons.warning_amber_rounded),
+          ColorManager.white,
+          AppConstants.durationOfSnackBar,
+          ColorManager.hold);
+    } else {
+      listOfTmpOrder[0].orderDiscount = discount;
 
-                    setState(() {
-                      _selectedCustomer = listOfCustomers
-                          .where((element) =>
-                      "${element.firstName} ${element.lastName}" ==
-                          '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}')
-                          .first;
+      holdOrdersDialog(context, listOfTmpOrder, discount, _selectedCustomerTel!,
+          _selectedCustomerName!, (done) {
+        if (done == 'done') {
+          setState(() {
+            listOfTmpOrder.clear();
+          });
+        }
+      });
+      discount = 0;
+    }
+  }
 
-                      _selectedCustomerId =
-                          listOfCustomers[0].id;
+  void delete(BuildContext context) {
+    if (listOfTmpOrder.isEmpty) {
+      CustomDialog.show(
+          context,
+          AppStrings.noDataToDelete.tr(),
+          const Icon(Icons.warning_amber_rounded),
+          ColorManager.white,
+          AppConstants.durationOfSnackBar,
+          ColorManager.hold);
 
-                      _selectedCustomerName =
-                      '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
+      setState(() {
+        _selectedCustomer = listOfCustomers
+            .where((element) =>
+                "${element.firstName} ${element.lastName}" ==
+                '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}')
+            .first;
 
-                      _selectedCustomerTel =
-                          listOfCustomers[0].mobile;
+        _selectedCustomerId = listOfCustomers[0].id;
 
-                      discount = 0;
-                      differenceValue = 0;
-                      originalTotalValue = 0;
-                      estimatedTax = 0;
-                      shippingCharge = 0;
-                      GlobalValues.setEditOrder =
-                      false;
-                    });
-                  } else {
-                    setState(() {
-                      CustomDialog.show(
-                          context,
-                          AppStrings
-                              .orderDeletedSuccessfully
-                              .tr(),
-                          const Icon(Icons.check),
-                          ColorManager.white,
-                          AppConstants
-                              .durationOfSnackBar,
-                          ColorManager.success);
+        _selectedCustomerName =
+            '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
 
-                      listOfTmpOrder.clear();
+        _selectedCustomerTel = listOfCustomers[0].mobile;
 
-                      _selectedCustomer = listOfCustomers
-                          .where((element) =>
-                      "${element.firstName} ${element.lastName}" ==
-                          '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}')
-                          .first;
+        discount = 0;
+        differenceValue = 0;
+        originalTotalValue = 0;
+        estimatedTax = 0;
+        shippingCharge = 0;
+        GlobalValues.setEditOrder = false;
+      });
+    } else {
+      setState(() {
+        CustomDialog.show(
+            context,
+            AppStrings.orderDeletedSuccessfully.tr(),
+            const Icon(Icons.check),
+            ColorManager.white,
+            AppConstants.durationOfSnackBar,
+            ColorManager.success);
 
-                      _selectedCustomerId =
-                          listOfCustomers[0].id;
+        listOfTmpOrder.clear();
 
-                      _selectedCustomerName =
-                      '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
+        _selectedCustomer = listOfCustomers
+            .where((element) =>
+                "${element.firstName} ${element.lastName}" ==
+                '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}')
+            .first;
 
-                      _selectedCustomerTel =
-                          listOfCustomers[0].mobile;
+        _selectedCustomerId = listOfCustomers[0].id;
 
-                      discount = 0;
-                      differenceValue = 0;
-                      originalTotalValue = 0;
-                      estimatedTax = 0;
-                      shippingCharge = 0;
-                      GlobalValues.setEditOrder =
-                      false;
-                    });
-                  }
-                },
-                child:
-                containerComponent(
-                    context,
-                    Center(
-                        child: textS14WhiteComponent(context,
-                          AppStrings.delete.tr(),
-                        )),
-                    height: 30.h,
-                    color: ColorManager.delete,
-                    borderColor: ColorManager.delete,
-                    borderWidth: 1.w,
-                    borderRadius: AppSize.s5
-                ),
-              ),
-            ),
-            SizedBox(
-              width: AppConstants.smallDistance,
-            ),
-            Expanded(
-              flex: 2,
-              child: Bounceable(
-                duration: Duration(
-                    milliseconds: AppConstants
-                        .durationOfBounceable),
-                onTap: () async {
-                  await Future.delayed(Duration(
-                      milliseconds: AppConstants
-                          .durationOfBounceable));
-                  if (listOfTmpOrder.isEmpty) {
-                    CustomDialog.show(
-                        context,
-                        AppStrings.noDataToHold.tr(),
-                        const Icon(Icons
-                            .warning_amber_rounded),
-                        ColorManager.white,
-                        AppConstants
-                            .durationOfSnackBar,
-                        ColorManager.hold);
-                  } else {
-                    listOfTmpOrder[0].orderDiscount =
-                        discount;
+        _selectedCustomerName =
+            '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
 
-                    holdOrdersDialog(
-                        context,
-                        listOfTmpOrder,
-                        discount,
-                        _selectedCustomerTel!,
-                        _selectedCustomerName!,
-                            (done) {
-                          if (done == 'done') {
-                            setState(() {
-                              listOfTmpOrder.clear();
-                            });
-                          }
-                        });
-                    discount = 0;
-                  }
-                },
-                child:
-                containerComponent(
-                    context,
-                    Center(
-                        child: textS14WhiteComponent(context,
-                          AppStrings.holdCard.tr(),
-                        )),
-                    height: 30.h,
-                    color: ColorManager.hold,
-                    borderColor: ColorManager.hold,
-                    borderWidth: 1.w,
-                    borderRadius: AppSize.s5
-                ),
-              ),
-            ),
-            SizedBox(
-              width: AppConstants.smallDistance,
-            ),
-            Expanded(
-                flex: 1,
-                child: Bounceable(
-                  duration: Duration(
-                      milliseconds: AppConstants
-                          .durationOfBounceable),
-                  onTap: () async {
-                    await Future.delayed(Duration(
-                        milliseconds: AppConstants
-                            .durationOfBounceable));
-                    OrdersDialog.show(
-                        context, locationId,
-                            (customerName) {
-                          if (customerName ==
-                              '${AppStrings.firstName} ${AppStrings.secondName}') {
-                            _selectedCustomer =
-                                listOfCustomers
-                                    .where((element) =>
-                                "${element.firstName} ${element.lastName}" ==
-                                    customerName)
-                                    .first;
-                            int indexOfCustomer =
-                            listOfCustomers.indexWhere(
-                                    (element) =>
-                                "${element.firstName} ${element.lastName}" ==
-                                    customerName);
+        _selectedCustomerTel = listOfCustomers[0].mobile;
 
-                            _selectedCustomerId =
-                                listOfCustomers[
-                                indexOfCustomer]
-                                    .id;
-                            _selectedCustomerName =
-                            '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
-                            _selectedCustomerTel =
-                                listOfCustomers[
-                                indexOfCustomer]
-                                    .mobile;
-                          } else {
-                            _selectedCustomer =
-                                listOfCustomers
-                                    .where((element) =>
-                                "${element.firstName} ${element.lastName} | ${element.mobile}" ==
-                                    customerName)
-                                    .first;
-                            int indexOfCustomer =
-                            listOfCustomers.indexWhere(
-                                    (element) =>
-                                "${element.firstName} ${element.lastName} | ${element.mobile}" ==
-                                    customerName);
+        discount = 0;
+        differenceValue = 0;
+        originalTotalValue = 0;
+        estimatedTax = 0;
+        shippingCharge = 0;
+        GlobalValues.setEditOrder = false;
+      });
+    }
+  }
 
-                            _selectedCustomerId =
-                                listOfCustomers[
-                                indexOfCustomer]
-                                    .id;
-                            _selectedCustomerName =
-                            '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
-                            _selectedCustomerTel =
-                                listOfCustomers[
-                                indexOfCustomer]
-                                    .mobile;
-                          }
-                        }, (orderTotal) {
-                      originalTotalValue = orderTotal;
-                    }, (orderDiscount) {
-                      setState(() {
-                        discount = double.parse(
-                            orderDiscount.toString());
-                      });
-                    });
-                  },
-                  child:
-                  containerComponent(
-                      context,
-                      Center(
-                          child: textS14WhiteComponent(context,
-                            AppStrings.orders.tr(),
-                          )),
-                      height: 30.h,
-                      color: ColorManager.orders,
-                      borderColor: ColorManager.orders,
-                      borderWidth: 1.w,
-                      borderRadius: AppSize.s5
-                  ),
-                )),
-          ],
-        ),
+  void getOrders(BuildContext context) {
+    OrdersDialog.show(context, locationId, (customerName) {
+      if (customerName == '${AppStrings.firstName} ${AppStrings.secondName}') {
+        _selectedCustomer = listOfCustomers
+            .where((element) =>
+                "${element.firstName} ${element.lastName}" == customerName)
+            .first;
+        int indexOfCustomer = listOfCustomers.indexWhere((element) =>
+            "${element.firstName} ${element.lastName}" == customerName);
 
-        SizedBox(
-          height: AppConstants.smallDistance,
-        ),
+        _selectedCustomerId = listOfCustomers[indexOfCustomer].id;
+        _selectedCustomerName =
+            '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
+        _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
+      } else {
+        _selectedCustomer = listOfCustomers
+            .where((element) =>
+                "${element.firstName} ${element.lastName} | ${element.mobile}" ==
+                customerName)
+            .first;
+        int indexOfCustomer = listOfCustomers.indexWhere((element) =>
+            "${element.firstName} ${element.lastName} | ${element.mobile}" ==
+            customerName);
 
-        //check out
-        Bounceable(
-          duration: Duration(
-              milliseconds:
-              AppConstants.durationOfBounceable),
-          onTap: () async {
-            await Future.delayed(Duration(
-                milliseconds: AppConstants
-                    .durationOfBounceable));
-            if (listOfTmpOrder.isEmpty) {
-              CustomDialog.show(
-                  context,
-                  AppStrings.noDataToCheckOut.tr(),
-                  const Icon(
-                      Icons.warning_amber_rounded),
-                  ColorManager.white,
-                  AppConstants.durationOfSnackBar,
-                  ColorManager.hold);
-            } else {
-              for (var n in listOfTmpOrder) {
-                var itemStock = listOfBothProducts
-                    .where((element) =>
-                element.id == n.productId)
-                    .first;
+        _selectedCustomerId = listOfCustomers[indexOfCustomer].id;
+        _selectedCustomerName =
+            '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
+        _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
+      }
+    }, (orderTotal) {
+      originalTotalValue = orderTotal;
+    }, (orderDiscount) {
+      setState(() {
+        discount = double.parse(orderDiscount.toString());
+      });
+    });
+  }
 
-                int qty = itemStock.stock;
-                int indexOfList = listOfBothProducts
-                    .indexWhere((element) =>
-                element.id == n.productId);
+  void checkOut(BuildContext context) {
+    if (listOfTmpOrder.isEmpty) {
+      CustomDialog.show(
+          context,
+          AppStrings.noDataToCheckOut.tr(),
+          const Icon(Icons.warning_amber_rounded),
+          ColorManager.white,
+          AppConstants.durationOfSnackBar,
+          ColorManager.hold);
+    } else {
+      for (var n in listOfTmpOrder) {
+        var itemStock = listOfBothProducts
+            .where((element) => element.id == n.productId)
+            .first;
 
-                if (listOfBothProducts[indexOfList]
-                    .variations
-                    .isNotEmpty) {
-                  int indexOfVariationList = itemStock
-                      .variations
-                      .indexWhere((element) =>
-                  element.id ==
-                      n.variationId);
-                  qty =
-                      listOfBothProducts[indexOfList]
-                          .variations[
-                      indexOfVariationList]
-                          .stock;
-                }
+        int qty = itemStock.stock;
+        int indexOfList = listOfBothProducts
+            .indexWhere((element) => element.id == n.productId);
 
-                if (int.parse(
-                    n.itemQuantity.toString()) >
-                    qty) {
-                  CustomDialog.show(
-                      context,
-                      AppStrings.noCreditWhenCheck
-                          .tr(),
-                      const Icon(Icons
-                          .warning_amber_rounded),
-                      ColorManager.white,
-                      AppConstants.durationOfSnackBar,
-                      ColorManager.hold);
-                  return;
-                }
-              }
+        if (listOfBothProducts[indexOfList].variations.isNotEmpty) {
+          int indexOfVariationList = itemStock.variations
+              .indexWhere((element) => element.id == n.variationId);
+          qty = listOfBothProducts[indexOfList]
+              .variations[indexOfVariationList]
+              .stock;
+        }
 
-              listOfTmpOrder[0].orderDiscount =
-                  discount;
-
-              listOfOrders.clear();
-
-              for (var element in listOfTmpOrder) {
-                listOfOrders.add(OrderModel(
-                    id: element.id,
-                    date: element.date,
-                    category: element.category,
-                    brand: element.brand,
-                    customer: element.customer,
-                    itemAmount: element.itemAmount,
-                    itemName: element.itemName,
-                    itemPrice: element.itemPrice,
-                    itemQuantity:
-                    element.itemQuantity,
-                    orderDiscount:
-                    element.orderDiscount,
-                    customerTel: element.customerTel,
-                    itemOption: element.itemOption,
-                    variationId: element.variationId,
-                    productId: element.productId));
-              }
-
-              totalAmount = getTotalAmount();
-
-              originalTotalValue = 0;
-              differenceValue = 0;
-              GlobalValues.setEditOrder = false;
-
-              List<CartRequest> cartRequest = [];
-              for (var element in listOfTmpOrder) {
-                cartRequest.add(CartRequest(
-                    productId: element.productId!,
-                    variationId: element.variationId!,
-                    qty: element.itemQuantity!,
-                    note: ''));
-              }
-
-              PaymentDialog.show(
-                  context,
-                  currencyCode,
-                  totalAmount,
-                  cartRequest,
-                  locationId,
-                  _selectedCustomerId!,
-                  selectedDiscountType,
-                  discount,
-                  'fixed',
-                  estimatedTax, (done) {
-                if (done == 'done') {
-                  setState(() {
-                    categoryFilter = true;
-                    listOfBothProducts = [];
-                    listOfAllProducts = [];
-                    searchList = [];
-                    MainViewCubit.get(context)
-                        .getCategories(locationId);
-                  });
-                }
-              });
-
-              discount = 0;
-              estimatedTax = 0;
-              shippingCharge = 0;
-              totalAmount = 0;
-              differenceValue = 0;
-
-              listOfTmpOrder.clear();
-            }
-          },
-          child:
-          containerComponent(
+        if (int.parse(n.itemQuantity.toString()) > qty) {
+          CustomDialog.show(
               context,
-              Center(
-                  child: Text(
-                    GlobalValues.getEditOrder
-                        ? AppStrings.saveOrder.tr()
-                        : AppStrings.checkOut.tr(),
-                    style: TextStyle(
-                        color: ColorManager.white,
-                        fontSize: AppSize.s18.sp),
-                  )),
-              height: 40.h,
-              color: ColorManager.primary,
-              borderColor: ColorManager.primary,
-              borderWidth: 1.w,
-              borderRadius: AppSize.s5
-          ),
-        )
-      ],
-    );
+              AppStrings.noCreditWhenCheck.tr(),
+              const Icon(Icons.warning_amber_rounded),
+              ColorManager.white,
+              AppConstants.durationOfSnackBar,
+              ColorManager.hold);
+          return;
+        }
+      }
+
+      listOfTmpOrder[0].orderDiscount = discount;
+
+      listOfOrders.clear();
+
+      for (var element in listOfTmpOrder) {
+        listOfOrders.add(OrderModel(
+            id: element.id,
+            date: element.date,
+            category: element.category,
+            brand: element.brand,
+            customer: element.customer,
+            itemAmount: element.itemAmount,
+            itemName: element.itemName,
+            itemPrice: element.itemPrice,
+            itemQuantity: element.itemQuantity,
+            orderDiscount: element.orderDiscount,
+            customerTel: element.customerTel,
+            itemOption: element.itemOption,
+            variationId: element.variationId,
+            productId: element.productId));
+      }
+
+      totalAmount = getTotalAmount();
+
+      originalTotalValue = 0;
+      differenceValue = 0;
+      GlobalValues.setEditOrder = false;
+
+      List<CartRequest> cartRequest = [];
+      for (var element in listOfTmpOrder) {
+        cartRequest.add(CartRequest(
+            productId: element.productId!,
+            variationId: element.variationId!,
+            qty: element.itemQuantity!,
+            note: ''));
+      }
+
+      PaymentDialog.show(
+          context,
+          currencyCode,
+          totalAmount,
+          cartRequest,
+          locationId,
+          _selectedCustomerId!,
+          selectedDiscountType,
+          discount,
+          'fixed',
+          estimatedTax, (done) {
+        if (done == 'done') {
+          setState(() {
+            categoryFilter = true;
+            listOfBothProducts = [];
+            listOfAllProducts = [];
+            searchList = [];
+            MainViewCubit.get(context).getCategories(locationId);
+          });
+        }
+      });
+
+      discount = 0;
+      estimatedTax = 0;
+      shippingCharge = 0;
+      totalAmount = 0;
+      differenceValue = 0;
+
+      listOfTmpOrder.clear();
+    }
   }
 
   List<DataRow> createRows(BuildContext context) {
     return listOfTmpOrder
         .map((tmpOrder) => DataRow(cells: [
-      DataCell(Text(
-        getIndex(listOfTmpOrder.indexOf(tmpOrder)).toString(),
-        style: TextStyle(color: ColorManager.edit),
-      )),
-      DataCell(SizedBox(
-        width: 40.w,
-        child: Center(
-            child: Text(
-                listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-                    .itemName
-                    .toString(),
-                style: TextStyle(fontSize: AppSize.s12.sp),
-                textAlign: TextAlign.center)),
-      )),
-      DataCell(Center(
-          child: SizedBox(
-            width: 42.w,
-            child: Center(
-              child: Row(
-                children: [
-                  Center(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        Bounceable(
-                            duration: Duration(
-                                milliseconds:
-                                AppConstants
-                                    .durationOfBounceable),
-                            onTap: () async {
-                              await Future.delayed(
-                                  Duration(
-                                      milliseconds:
-                                      AppConstants
-                                          .durationOfBounceable));
-                            },
-                            child:
-                            containerComponent(
-                                context,
-                                Center(
-                                    child: Icon(
-                                      Icons.edit,
-                                      size:
-                                      AppSize.s15.sp,
-                                      color: ColorManager
-                                          .white,
-                                    )),
-                                height: 28.h,
-                                width: 10.w,
-                                margin:
-                                const EdgeInsets
-                                    .only(
-                                    bottom:
-                                    AppMargin
-                                        .m8),
-                                padding:
-                                const EdgeInsets
-                                    .all(
-                                    AppPadding
-                                        .p08),
-                                color: ColorManager.primary,
-                                borderColor: ColorManager.primary,
-                                borderWidth: 0.1.w,
-                                borderRadius: AppSize.s5
-                            )
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: AppConstants.smallerDistance,
-                  ),
-                  containerComponent(
-                      context,
-                      Padding(
-                        padding: const EdgeInsets.all(AppPadding.p2),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              DataCell(Text(
+                getIndex(listOfTmpOrder.indexOf(tmpOrder)).toString(),
+                style: TextStyle(color: ColorManager.edit),
+              )),
+              DataCell(SizedBox(
+                width: 40.w,
+                child: Center(
+                    child: Text(
+                        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                            .itemName
+                            .toString(),
+                        style: TextStyle(fontSize: AppSize.s12.sp),
+                        textAlign: TextAlign.center)),
+              )),
+              DataCell(Center(
+                  child: SizedBox(
+                width: 42.w,
+                child: Center(
+                  child: Row(
+                    children: [
+                      Center(
+                        child: Column(
                           children: [
-                            Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                  AppConstants.durationOfBounceable),
-                              onTap: () async {
-                                await decreaseCount(tmpOrder);
-                              },
-                              child:
-                              containerComponent(
-                                  context,
-                                  Icon(
-                                    listOfTmpOrder[listOfTmpOrder
-                                        .indexOf(tmpOrder)]
-                                        .itemQuantity ==
-                                        1
-                                        ? Icons.close
-                                        : Icons.remove,
-                                    size: AppSize.s10.sp,
-                                  ),
-                                  height: 20.h,
-                                  width: 10.w,
-                                  color: ColorManager.secondary,
-                                  borderColor: ColorManager.secondary,
-                                  borderWidth: 1.w,
-                                  borderRadius: AppSize.s5
-                              ),
-                            ),
-                            Text(
-                              listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-                                  .itemQuantity
-                                  .toString(),
-                              style: TextStyle(fontSize: AppSize.s12.sp),
-                              textAlign: TextAlign.center,
+                            SizedBox(
+                              height: 10.h,
                             ),
                             Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                  AppConstants.durationOfBounceable),
-                              onTap: () async {
-                                await increaseCount(tmpOrder);
-                              },
-                              child:
-                              containerComponent(
-                                  context,
-                                  Icon(
-                                    Icons.add,
-                                    size: AppSize.s10.sp,
-                                  ),
-                                  height: 20.h,
-                                  width: 10.w,
-                                  color: ColorManager.secondary,
-                                  borderColor: ColorManager.secondary,
-                                  borderWidth: 1.w,
-                                  borderRadius: AppSize.s5
-                              ),
-                            ),
+                                duration: Duration(
+                                    milliseconds:
+                                        AppConstants.durationOfBounceable),
+                                onTap: () async {
+                                  await Future.delayed(Duration(
+                                      milliseconds:
+                                          AppConstants.durationOfBounceable));
+                                },
+                                child: containerComponent(
+                                    context,
+                                    Center(
+                                        child: Icon(
+                                      Icons.edit,
+                                      size: AppSize.s15.sp,
+                                      color: ColorManager.white,
+                                    )),
+                                    height: 28.h,
+                                    width: 10.w,
+                                    margin: const EdgeInsets.only(
+                                        bottom: AppMargin.m8),
+                                    padding:
+                                        const EdgeInsets.all(AppPadding.p08),
+                                    color: ColorManager.primary,
+                                    borderColor: ColorManager.primary,
+                                    borderWidth: 0.1.w,
+                                    borderRadius: AppSize.s5))
                           ],
                         ),
                       ),
-                      height: 30.h,
-                      width: 30.w,
-                      color: ColorManager.white,
-                      borderColor: ColorManager.badge,
-                      borderWidth: 0.5.w,
-                      borderRadius: AppSize.s5)
-                ],
-              ),
-            ),
-          ))),
-      DataCell(SizedBox(
-        width: 20.w,
-        child: Center(
-            child: Text(
-                listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-                    .itemAmount
-                    .toString(),
-                style: TextStyle(fontSize: AppSize.s12.sp),
-                textAlign: TextAlign.center)),
-      ))
-    ]))
+                      SizedBox(
+                        width: AppConstants.smallerDistance,
+                      ),
+                      containerComponent(
+                          context,
+                          Padding(
+                            padding: const EdgeInsets.all(AppPadding.p2),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Bounceable(
+                                  duration: Duration(
+                                      milliseconds:
+                                          AppConstants.durationOfBounceable),
+                                  onTap: () async {
+                                    await decreaseCount(tmpOrder);
+                                  },
+                                  child: containerComponent(
+                                      context,
+                                      Icon(
+                                        listOfTmpOrder[listOfTmpOrder
+                                                        .indexOf(tmpOrder)]
+                                                    .itemQuantity ==
+                                                1
+                                            ? Icons.close
+                                            : Icons.remove,
+                                        size: AppSize.s10.sp,
+                                      ),
+                                      height: 20.h,
+                                      width: 10.w,
+                                      color: ColorManager.secondary,
+                                      borderColor: ColorManager.secondary,
+                                      borderWidth: 1.w,
+                                      borderRadius: AppSize.s5),
+                                ),
+                                Text(
+                                  listOfTmpOrder[
+                                          listOfTmpOrder.indexOf(tmpOrder)]
+                                      .itemQuantity
+                                      .toString(),
+                                  style: TextStyle(fontSize: AppSize.s12.sp),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Bounceable(
+                                  duration: Duration(
+                                      milliseconds:
+                                          AppConstants.durationOfBounceable),
+                                  onTap: () async {
+                                    await increaseCount(tmpOrder);
+                                  },
+                                  child: containerComponent(
+                                      context,
+                                      Icon(
+                                        Icons.add,
+                                        size: AppSize.s10.sp,
+                                      ),
+                                      height: 20.h,
+                                      width: 10.w,
+                                      color: ColorManager.secondary,
+                                      borderColor: ColorManager.secondary,
+                                      borderWidth: 1.w,
+                                      borderRadius: AppSize.s5),
+                                ),
+                              ],
+                            ),
+                          ),
+                          height: 30.h,
+                          width: 30.w,
+                          color: ColorManager.white,
+                          borderColor: ColorManager.badge,
+                          borderWidth: 0.5.w,
+                          borderRadius: AppSize.s5)
+                    ],
+                  ),
+                ),
+              ))),
+              DataCell(SizedBox(
+                width: 20.w,
+                child: Center(
+                    child: Text(
+                        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                            .itemAmount
+                            .toString(),
+                        style: TextStyle(fontSize: AppSize.s12.sp),
+                        textAlign: TextAlign.center)),
+              ))
+            ]))
         .toList();
   }
 
   Future<void> decreaseCount(TmpOrderModel tmpOrder) async {
-    await Future.delayed(Duration(
-        milliseconds:
-        AppConstants.durationOfBounceable));
+    await Future.delayed(
+        Duration(milliseconds: AppConstants.durationOfBounceable));
     setState(() {
-      int? itemCount = listOfTmpOrder[
-      listOfTmpOrder.indexOf(tmpOrder)]
-          .itemQuantity;
+      int? itemCount =
+          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
       itemCount = itemCount! - 1;
-      listOfTmpOrder[
-      listOfTmpOrder.indexOf(tmpOrder)]
-          .itemQuantity = itemCount;
+      listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
 
       double total = roundDouble(
           (itemCount *
-              double.parse(listOfTmpOrder[
-              listOfTmpOrder
-                  .indexOf(tmpOrder)]
+              double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
                   .itemPrice
                   .toString())),
           decimalPlaces);
 
-      listOfTmpOrder[
-      listOfTmpOrder.indexOf(tmpOrder)]
-          .itemAmount = total.toString();
+      listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+          total.toString();
       if (itemCount == 0) {
-        listOfTmpOrder.removeAt(
-            listOfTmpOrder.indexOf(tmpOrder));
+        listOfTmpOrder.removeAt(listOfTmpOrder.indexOf(tmpOrder));
       }
     });
   }
 
   Future<void> increaseCount(TmpOrderModel tmpOrder) async {
-    await Future.delayed(Duration(
-        milliseconds:
-        AppConstants.durationOfBounceable));
+    await Future.delayed(
+        Duration(milliseconds: AppConstants.durationOfBounceable));
     var itemStock = listOfBothProducts
         .where((element) =>
-    element.id ==
-        listOfTmpOrder[listOfTmpOrder
-            .indexOf(tmpOrder)]
-            .productId)
+            element.id ==
+            listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId)
         .first;
 
     int qty = itemStock.stock;
 
-    int indexOfList = listOfBothProducts.indexWhere(
-            (element) =>
+    int indexOfList = listOfBothProducts.indexWhere((element) =>
         element.id ==
-            listOfTmpOrder[listOfTmpOrder
-                .indexOf(tmpOrder)]
-                .productId);
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId);
 
-    if (listOfBothProducts[indexOfList]
-        .variations
-        .isNotEmpty) {
-      int indexOfVariationList = itemStock
-          .variations
-          .indexWhere((element) =>
-      element.id ==
-          listOfTmpOrder[listOfTmpOrder
-              .indexOf(tmpOrder)]
-              .variationId);
+    if (listOfBothProducts[indexOfList].variations.isNotEmpty) {
+      int indexOfVariationList = itemStock.variations.indexWhere((element) =>
+          element.id ==
+          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].variationId);
       qty = listOfBothProducts[indexOfList]
           .variations[indexOfVariationList]
           .stock;
     }
 
-    if (int.parse(listOfTmpOrder[
-    listOfTmpOrder.indexOf(tmpOrder)]
-        .itemQuantity
-        .toString()) >=
+    if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+            .itemQuantity
+            .toString()) >=
         qty) {
       CustomDialog.show(
           context,
@@ -1565,33 +1201,28 @@ class _MainViewState extends State<MainView> {
     }
 
     setState(() {
-      int? itemCount = listOfTmpOrder[
-      listOfTmpOrder.indexOf(tmpOrder)]
-          .itemQuantity;
+      int? itemCount =
+          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
 
       itemCount = itemCount! + 1;
 
-      listOfTmpOrder[
-      listOfTmpOrder.indexOf(tmpOrder)]
-          .itemQuantity = itemCount;
+      listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
 
       double total = roundDouble(
           (itemCount *
-              double.parse(listOfTmpOrder[
-              listOfTmpOrder
-                  .indexOf(tmpOrder)]
+              double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
                   .itemPrice
                   .toString())),
           decimalPlaces);
 
-      listOfTmpOrder[
-      listOfTmpOrder.indexOf(tmpOrder)]
-          .itemAmount = total.toString();
+      listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+          total.toString();
     });
   }
 
-  void addToTmp(int index,BuildContext context, bool searching) {
-    List<ProductsResponse> listToWork =  searching ? listOfAllProducts : listOfProducts;
+  void addToTmp(int index, BuildContext context, bool searching) {
+    List<ProductsResponse> listToWork =
+        searching ? listOfAllProducts : listOfProducts;
 
     if (listToWork[index].variations.isNotEmpty) {
       setState(() {
@@ -1608,13 +1239,13 @@ class _MainViewState extends State<MainView> {
     } else {
       ///////////////////////
       if (listOfTmpOrder.isNotEmpty) {
-        int listOfTmpOrderIndex = listOfTmpOrder.indexWhere(
-                (element) => element.productId == listToWork[index].id);
+        int listOfTmpOrderIndex = listOfTmpOrder
+            .indexWhere((element) => element.productId == listToWork[index].id);
 
         if (listOfTmpOrderIndex >= 0) {
           if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
-              .itemQuantity
-              .toString()) >=
+                  .itemQuantity
+                  .toString()) >=
               listToWork[index].stock) {
             CustomDialog.show(
                 context,
@@ -1645,7 +1276,7 @@ class _MainViewState extends State<MainView> {
         String customerName, tel = '';
         if (_selectedCustomer != null) {
           customerName =
-          '${_selectedCustomer!.firstName} ${_selectedCustomer!.lastName}';
+              '${_selectedCustomer!.firstName} ${_selectedCustomer!.lastName}';
           tel = _selectedCustomer!.mobile;
         } else {
           customerName = '${AppStrings.firstName} ${AppStrings.secondName}';
@@ -1670,9 +1301,9 @@ class _MainViewState extends State<MainView> {
           itemName: listToWork[index].name,
           itemQuantity: 1,
           itemAmount:
-          '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+              '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
           itemPrice:
-          '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+              '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
           customer: customerName,
           category: listToWork[index].categoryId.toString(),
           orderDiscount: discount,
@@ -1716,17 +1347,17 @@ class _MainViewState extends State<MainView> {
                       height: AppConstants.smallDistance,
                     ),
                     categoryFilter!
-                    // Category buttons -------------
+                        // Category buttons -------------
                         ? categoryButtons(context, listOfCategories, isSelected)
-                    // Brand buttons -------------
+                        // Brand buttons -------------
                         : brandButtons(context, listOfBrands, isSelected),
                     SizedBox(
                       height: AppConstants.smallDistance,
                     ),
                     categoryFilter!
-                    // Category items -------------
+                        // Category items -------------
                         ? categoryItems(context, addToTmp, listOfProducts)
-                    // Brand items -------------
+                        // Brand items -------------
                         : brandItems(context, addToTmp, listOfProducts)
                   ],
                 ),
@@ -1745,47 +1376,36 @@ class _MainViewState extends State<MainView> {
     return Expanded(
       flex: 1,
       child: Bounceable(
-        duration: Duration(
-            milliseconds: AppConstants
-                .durationOfBounceable),
+        duration: Duration(milliseconds: AppConstants.durationOfBounceable),
         onTap: () async {
-          await Future.delayed(Duration(
-              milliseconds: AppConstants
-                  .durationOfBounceable));
+          await Future.delayed(
+              Duration(milliseconds: AppConstants.durationOfBounceable));
           setState(() {
             if (!categoryFilter!) {
-              categoryFilter =
-              !categoryFilter!;
+              categoryFilter = !categoryFilter!;
               listOfAllProducts = [];
               searchList = [];
-              MainViewCubit.get(context)
-                  .getCategories(locationId);
+              MainViewCubit.get(context).getCategories(locationId);
             }
           });
         },
-        child:
-        containerComponent(
+        child: containerComponent(
             context,
             Center(
                 child: Text(
-                  AppStrings.category.tr(),
-                  style: TextStyle(
-                      color: categoryFilter!
-                          ? ColorManager.white
-                          : ColorManager.primary,
-                      fontSize: AppSize.s20.sp),
-                )),
+              AppStrings.category.tr(),
+              style: TextStyle(
+                  color: categoryFilter!
+                      ? ColorManager.white
+                      : ColorManager.primary,
+                  fontSize: AppSize.s20.sp),
+            )),
             height: 40.h,
-            width: MediaQuery.of(context)
-                .size
-                .width,
-            color: categoryFilter!
-                ? ColorManager.primary
-                : ColorManager.white,
+            width: MediaQuery.of(context).size.width,
+            color: categoryFilter! ? ColorManager.primary : ColorManager.white,
             borderColor: ColorManager.primary,
             borderWidth: 0.6.w,
-            borderRadius: AppSize.s5
-        ),
+            borderRadius: AppSize.s5),
       ),
     );
   }
@@ -1794,47 +1414,36 @@ class _MainViewState extends State<MainView> {
     return Expanded(
       flex: 1,
       child: Bounceable(
-        duration: Duration(
-            milliseconds: AppConstants
-                .durationOfBounceable),
+        duration: Duration(milliseconds: AppConstants.durationOfBounceable),
         onTap: () async {
-          await Future.delayed(Duration(
-              milliseconds: AppConstants
-                  .durationOfBounceable));
+          await Future.delayed(
+              Duration(milliseconds: AppConstants.durationOfBounceable));
           setState(() {
             if (categoryFilter!) {
-              categoryFilter =
-              !categoryFilter!;
+              categoryFilter = !categoryFilter!;
               listOfAllProducts = [];
               searchList = [];
-              MainViewCubit.get(context)
-                  .getBrands(locationId);
+              MainViewCubit.get(context).getBrands(locationId);
             }
           });
         },
-        child:
-        containerComponent(
+        child: containerComponent(
             context,
             Center(
                 child: Text(
-                  AppStrings.brand.tr(),
-                  style: TextStyle(
-                      color: categoryFilter!
-                          ? ColorManager.primary
-                          : ColorManager.white,
-                      fontSize: AppSize.s20.sp),
-                )),
+              AppStrings.brand.tr(),
+              style: TextStyle(
+                  color: categoryFilter!
+                      ? ColorManager.primary
+                      : ColorManager.white,
+                  fontSize: AppSize.s20.sp),
+            )),
             height: 40.h,
-            width: MediaQuery.of(context)
-                .size
-                .width,
-            color: categoryFilter!
-                ? ColorManager.white
-                : ColorManager.primary,
+            width: MediaQuery.of(context).size.width,
+            color: categoryFilter! ? ColorManager.white : ColorManager.primary,
             borderColor: ColorManager.primary,
             borderWidth: 0.6.w,
-            borderRadius: AppSize.s5
-        ),
+            borderRadius: AppSize.s5),
       ),
     );
   }

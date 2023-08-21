@@ -26,9 +26,6 @@ Widget searchText(BuildContext context, TextEditingController _searchEditingCont
               (element) =>
           element.name == selection);
 
-      print('startttttttttttt');
-      print(selection);
-      print(index);
       addToTmp(index,context,true);
     },
     fieldViewBuilder: (context,

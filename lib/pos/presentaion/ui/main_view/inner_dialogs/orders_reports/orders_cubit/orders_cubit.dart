@@ -66,7 +66,6 @@ class OrdersCubit extends Cubit<OrdersState> {
         return res;
       }
     } catch (e) {
-      print(e.toString());
       emit(OrderReportError(e.toString()));
       return Future.error(e);
     }
