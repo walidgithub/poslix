@@ -7,7 +7,7 @@ import '../../../../../shared/style/colors_manager.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
 
 Widget customTextFormField(BuildContext context,
-    FocusNode fn, TextEditingController controller, String hint, String label,
+    FocusNode fn, TextEditingController controller, String hint, String label, TextInputType textInputType,
     {FocusNode? nextFN, String? validateText}) {
   return TextFormField(
       onFieldSubmitted: (_) {
@@ -27,7 +27,7 @@ Widget customTextFormField(BuildContext context,
       },
       focusNode: fn,
       autofocus: false,
-      keyboardType: TextInputType.text,
+      keyboardType: textInputType,
       controller: controller,
       decoration: InputDecoration(
           hintText: hint,

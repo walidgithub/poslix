@@ -57,5 +57,10 @@
     <string>Need Location permission</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Need Location permission</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+    </dict>
 </dict>
 </plist>

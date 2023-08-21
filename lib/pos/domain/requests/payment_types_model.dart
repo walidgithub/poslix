@@ -1,22 +1,22 @@
 class PaymentTypesRequest {
   PaymentTypesRequest({
-    required this.paymentType,
+    required this.paymentId,
     required this.amount,
     required this.note,
   });
-  late final String paymentType;
+  late final String paymentId;
   late final double amount;
   late final String note;
 
   PaymentTypesRequest.fromJson(Map<String, dynamic> json){
-    paymentType = json['payment_type'];
+    paymentId = json['payment_id'];
     amount = json['amount'];
     note = json['note'];
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
-    data['payment_type'] = paymentType;
+    data['payment_id'] = paymentId;
     data['amount'] = amount;
     data['note'] = note;
     return data;

@@ -126,7 +126,7 @@ class _LoginViewState extends State<LoginView> {
             await Future.delayed(const Duration(seconds: 2));
 
             Navigator.of(context).pushReplacementNamed(
-                openedRegister ? Routes.mainRoute : Routes.registerPosRoute);
+                openedRegister ? Routes.mainRoute : Routes.introRoute);
           } else if (state is WrongEmailOrPass) {
             LoadingDialog.hide(context);
             CustomDialog.show(
@@ -252,7 +252,7 @@ class _LoginViewState extends State<LoginView> {
     });
   }
 
-  Future<void> loginAction(BuildContext context) async {
+  Future<void> loginAction(BuildContext context) async  {
     await Future.delayed(Duration(milliseconds: AppConstants.durationOfBounceable));
 
     if (_loginFormKey.currentState!.validate()) {

@@ -15,5 +15,5 @@ class AppConstants {
   static int durationOfBounceable = 300;
   static int durationOfDelay = 1000;
   static int durationOfDelayForCounter = 100;
-  static int splashDelay = 5;
+  static int introDelay = 5650;
 }

@@ -243,7 +243,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
         Expanded(
             flex: 1,
             child: customTextFormField(context, _fNameFN, _firstNameEditingController,
-                AppStrings.first_name.tr(), AppStrings.first_name.tr(),
+                AppStrings.first_name.tr(), AppStrings.first_name.tr(), TextInputType.text,
                 nextFN: _lNameFN,
                 validateText: AppStrings.firstNameFieldIsRequired.tr())),
         SizedBox(
@@ -252,7 +252,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
         Expanded(
             flex: 1,
             child: customTextFormField(context, _lNameFN, _lastNameEditingController,
-                AppStrings.lastName.tr(), AppStrings.lastName.tr(),
+                AppStrings.lastName.tr(), AppStrings.lastName.tr(), TextInputType.text,
                 nextFN: _mobileFN,
                 validateText: AppStrings.lastNameFieldIsRequired.tr())),
         SizedBox(
@@ -261,7 +261,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
         Expanded(
             flex: 1,
             child: customTextFormField(context, _mobileFN, _mobileEditingController,
-                AppStrings.mobile.tr(), AppStrings.mobile.tr(),
+                AppStrings.mobile.tr(), AppStrings.mobile.tr(), TextInputType.number,
                 nextFN: _addressOneFN,
                 validateText: AppStrings.mobileFieldIsRequired.tr())),
       ],
@@ -328,7 +328,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
                     _addressOneFN,
                     _addressOneEditingController,
                     AppStrings.addressLine1.tr(),
-                    AppStrings.addressLine1.tr(),
+                    AppStrings.addressLine1.tr(), TextInputType.text,
                     nextFN: _addressTwoFN)),
             SizedBox(
               width: AppConstants.smallDistance,
@@ -339,7 +339,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
                     _addressTwoFN,
                     _addressTwoEditingController,
                     AppStrings.addressLine2.tr(),
-                    AppStrings.addressLine2.tr(),
+                    AppStrings.addressLine2.tr(), TextInputType.text,
                     nextFN: _cityFN))
           ],
         ),
@@ -351,7 +351,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             Expanded(
                 flex: 1,
                 child: customTextFormField(context, _cityFN, _cityEditingController,
-                    AppStrings.city.tr(), AppStrings.city.tr(),
+                    AppStrings.city.tr(), AppStrings.city.tr(), TextInputType.text,
                     nextFN: _stateFN)),
             SizedBox(
               width: AppConstants.smallDistance,
@@ -359,7 +359,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             Expanded(
                 flex: 1,
                 child: customTextFormField(context, _stateFN, _stateEditingController,
-                    AppStrings.state.tr(), AppStrings.state.tr(),
+                    AppStrings.state.tr(), AppStrings.state.tr(), TextInputType.text,
                     nextFN: _countryFN)),
             SizedBox(
               width: AppConstants.smallDistance,
@@ -370,7 +370,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
                     _countryFN,
                     _countryEditingController,
                     AppStrings.country.tr(),
-                    AppStrings.country.tr(),
+                    AppStrings.country.tr(), TextInputType.text,
                     nextFN: _zipCodeFN)),
             SizedBox(
               width: AppConstants.smallDistance,
@@ -381,7 +381,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
                     _zipCodeFN,
                     _zipCodeEditingController,
                     AppStrings.zipCode.tr(),
-                    AppStrings.zipCode.tr(),
+                    AppStrings.zipCode.tr(), TextInputType.number,
                     nextFN: _shippingFN)),
           ],
         ),
@@ -389,7 +389,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
           color: ColorManager.primary,
         ),
         customTextFormField(context, _shippingFN, _shippingAddressEditingController,
-            AppStrings.shippingAddress.tr(), AppStrings.shippingAddress.tr()),
+            AppStrings.shippingAddress.tr(), AppStrings.shippingAddress.tr(), TextInputType.text,),
         SizedBox(
           height: AppConstants.smallDistance,
         ),

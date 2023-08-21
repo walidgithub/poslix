@@ -747,9 +747,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
               print('starttttttttttttt');
 
-              print(selectedPaymentType);
               paymentRequest.add(PaymentTypesRequest(
-                  paymentType:
+                  paymentId:
                   '1',
                   amount: roundDouble(
                       double.parse(
@@ -760,11 +759,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
                       .text));
 
               for (int n = 0; n < selectedNewPaymentType.length - 1; n++) {
-                print('new row payment');
-                print(
-                    selectedNewPaymentType[n]);
                 paymentRequest.add(PaymentTypesRequest(
-                    paymentType:
+                    paymentId:
                     selectedNewPaymentType[
                     n],
                     amount: roundDouble(
@@ -779,9 +775,9 @@ class _PaymentDialogState extends State<PaymentDialog> {
                         .text));
               }
 
-              for (var n in paymentRequest) {
-                print(n.paymentType);
-              }
+              // for (var n in paymentRequest) {
+              //   print(n.paymentId);
+              // }
 
               CheckOutRequest checkOutRequest =
               CheckOutRequest(
@@ -802,6 +798,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                   taxAmount:
                   widget.taxAmount,
                   payment: paymentRequest);
+
 
               await MainViewCubit.get(context)
                   .checkout(checkOutRequest);

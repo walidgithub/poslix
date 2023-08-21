@@ -1,6 +1,4 @@
 ﻿import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
-import 'package:awesome_dropdown/awesome_dropdown.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,8 +10,9 @@ import 'package:poslix_app/pos/domain/requests/cart_model.dart';
 import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/add_edit_customer_buttons.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand_button.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand_items.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/customer_dialog/customer_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/discount_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/hold_dialog/hold_card_dialog.dart';
@@ -21,10 +20,14 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/item_optio
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports/orders_and_hold_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/payment_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/shipping_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category_button.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category_items.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/sales_table/sales_table_columns.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/sales_table/sales_table_head.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/search_text.dart';
 import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 import 'package:poslix_app/pos/shared/constant/padding_margin_values_manager.dart';
 import 'package:poslix_app/pos/shared/style/colors_manager.dart';
-
 import '../../../domain/entities/order_model.dart';
 import '../../../domain/entities/tmp_order_model.dart';
 import '../../../domain/response/brands_model.dart';
@@ -109,8 +112,6 @@ class _MainViewState extends State<MainView> {
   double originalTotalValue = 0;
 
   bool? categoryFilter;
-
-  bool _isExpanded = false;
 
   double? sumItems() {
     double total = 0;
@@ -573,7 +574,7 @@ class _MainViewState extends State<MainView> {
                         SizedBox(
                           width: AppConstants.smallerDistance,
                         ),
-                        addAndEditCustomer(context)
+                        addAndEditCustomer(context, getCustomer, addCustomer)
                       ],
                     ),
 
@@ -581,7 +582,7 @@ class _MainViewState extends State<MainView> {
                       height: AppConstants.smallDistance,
                     ),
 
-                    searchText(context),
+                    searchText(context, _searchEditingController, addToTmp, listOfAllProducts, searchList),
 
                     // tmp table of items
                     Expanded(
@@ -590,7 +591,7 @@ class _MainViewState extends State<MainView> {
                           scrollDirection: Axis.vertical,
                           child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: _createDataTable())),
+                              child: createDataTable(context, _currentSortColumn, _isSortAsc, createColumns(), createRows(context)))),
                     ),
 
                     constantsAndTotal(context),
@@ -608,10 +609,6 @@ class _MainViewState extends State<MainView> {
       ),
     );
   }
-
-  bool _isBackPressedOrTouchedOutSide = false,
-      _isDropDownOpened = false,
-      _isPanDown = false;
 
   Widget customerDropDown(BuildContext context) {
     return Expanded(
@@ -636,7 +633,7 @@ class _MainViewState extends State<MainView> {
                         SizedBox(
                             width: AppConstants
                                 .smallerDistance),
-                        textS14PrimaryComponent(context,item.lastName,),
+                        textS14PrimaryComponent(context,item.lastName),
                         item.firstName ==
                             AppStrings
                                 .firstName
@@ -705,223 +702,36 @@ class _MainViewState extends State<MainView> {
         ));
   }
 
-  Widget addAndEditCustomer(BuildContext context) {
-    return Expanded(
-        flex: 1,
-        child: Column(
-          children: [
-            SizedBox(height: 7.h),
-            Row(
-              children: [
-                Expanded(
-                    flex: 5,
-                    child: Bounceable(
-                        duration: Duration(
-                            milliseconds:
-                            AppConstants
-                                .durationOfBounceable),
-                        onTap: () async {
-                          await Future.delayed(
-                              Duration(
-                                  milliseconds:
-                                  AppConstants
-                                      .durationOfBounceable));
-                          if (_selectedCustomerId !=
-                              1) {
-                            setState(() {
-                              MainViewCubit.get(
-                                  context)
-                                  .getCustomer(
-                                  _selectedCustomerId!);
-                            });
-                          }
-                        },
-                        child:
-                        containerComponent(
-                            context,
-                            Center(
-                                child: Icon(
-                                  Icons.edit,
-                                  size:
-                                  AppSize.s20.sp,
-                                  color: ColorManager
-                                      .white,
-                                )),
-                            height: 45.h,
-                            // width: 35.w,
-                            margin:
-                            const EdgeInsets
-                                .only(
-                                bottom:
-                                AppMargin
-                                    .m8),
-                            padding:
-                            const EdgeInsets
-                                .all(
-                                AppPadding
-                                    .p08),
-                            color: ColorManager.primary,
-                            borderColor: ColorManager.primary,
-                            borderWidth: 0.1.w,
-                            borderRadius: AppSize.s5
-                        )
-                    )),
-                SizedBox(
-                  width: AppConstants
-                      .smallerDistance,
-                ),
-                Expanded(
-                    flex: 5,
-                    child: Bounceable(
-                      duration: Duration(
-                          milliseconds:
-                          AppConstants
-                              .durationOfBounceable),
-                      onTap: () async {
-                        await Future.delayed(
-                            Duration(
-                                milliseconds:
-                                AppConstants
-                                    .durationOfBounceable));
-                        CustomerDialog.show(
-                            context,
-                            'Add',
-                            [],
-                            0,
-                            locationId,
-                                (done) {
-                              if (done ==
-                                  'done') {
-                                setState(() {
-                                  MainViewCubit.get(
-                                      context)
-                                      .getCustomers(
-                                      locationId);
-                                });
-                              }
-                            });
-                      },
-                      child:
-                      containerComponent(
-                          context,
-                          Center(
-                              child: Icon(
-                                Icons
-                                    .add_circle_outline,
-                                size:
-                                AppSize.s20.sp,
-                                color: ColorManager
-                                    .white,
-                              )),
-                          height: 45.h,
-                          margin:
-                          const EdgeInsets
-                              .only(
-                              bottom:
-                              AppMargin
-                                  .m8),
-                          padding:
-                          const EdgeInsets
-                              .all(
-                              AppPadding
-                                  .p08),
-                          color: ColorManager.primary,
-                          borderColor: ColorManager.primary,
-                          borderWidth: 0.0.w,
-                          borderRadius: AppSize.s5
-                      ),
-                    )),
-              ],
-            )
-          ],
-        ));
+  void getCustomer(BuildContext context) {
+    if (_selectedCustomerId !=
+        1) {
+      setState(() {
+        MainViewCubit.get(
+            context)
+            .getCustomer(
+            _selectedCustomerId!);
+      });
+    }
   }
 
-  Widget searchText(BuildContext context) {
-    return Autocomplete<String>(
-      optionsBuilder:
-          (TextEditingValue textEditingValue) {
-        if (textEditingValue.text.isEmpty) {
-          return const Iterable<String>.empty();
-        } else {
-          return searchList.where((word) => word
-              .toLowerCase()
-              .contains(textEditingValue.text
-              .toLowerCase()));
-        }
-      },
-      onSelected: (String selection) {
-        int index = listOfAllProducts.indexWhere(
-                (element) =>
-            element.name == selection);
-
-        addToTmp(index,context);
-      },
-      fieldViewBuilder: (context,
-          textEditingController,
-          focusNode,
-          onFieldSubmitted) {
-        _searchEditingController =
-            textEditingController;
-        return TextField(
-            autofocus: false,
-            keyboardType: TextInputType.text,
-            controller: _searchEditingController,
-            focusNode: focusNode,
-            onEditingComplete: onFieldSubmitted,
-            decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.search,
-                  size: AppSize.s25.sp,
-                ),
-                hintText: AppStrings
-                    .searchByProduct
-                    .tr(),
-                hintStyle: TextStyle(
-                    fontSize: AppSize.s14,
-                    color: ColorManager.primary),
-                border: InputBorder.none));
-      },
-      optionsViewBuilder:
-          (context, onSelected, options) => Align(
-        alignment: Alignment.topLeft,
-        child: Material(
-          child:
-          containerComponent(
-              context,
-              ListView(
-                children: options
-                    .map((e) => Padding(
-                  padding:
-                  const EdgeInsets.only(
-                      top: AppPadding
-                          .p15),
-                  child: ListTile(
-                    onTap: () =>
-                        onSelected(e),
-                    title: Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-                      children: [
-                        Text(e),
-                        const Divider()
-                      ],
-                    ),
-                  ),
-                ))
-                    .toList(),
-              ),
-              width: 120.w,
-              height: 200.h,
-              color: ColorManager.white,
-              borderColor: ColorManager.secondary,
-              borderWidth: 0.5.w,
-              borderRadius: AppSize.s5
-          ),
-        ),
-      ),
-    );
+  void addCustomer(BuildContext context) {
+    CustomerDialog.show(
+        context,
+        'Add',
+        [],
+        0,
+        locationId,
+            (done) {
+          if (done ==
+              'done') {
+            setState(() {
+              MainViewCubit.get(
+                  context)
+                  .getCustomers(
+                  locationId);
+            });
+          }
+        });
   }
 
   Widget constantsAndTotal(BuildContext context) {
@@ -1504,41 +1314,7 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  DataTable _createDataTable() {
-    return DataTable(
-      horizontalMargin: 5,
-      columnSpacing: 20,
-      dividerThickness: 2.sp,
-      columns: _createColumns(),
-      rows: _createRows(context),
-      sortColumnIndex: _currentSortColumn,
-      sortAscending: _isSortAsc,
-    );
-  }
-
-  List<DataColumn> _createColumns() {
-    return [
-      const DataColumn(
-        label: Text('#'),
-      ),
-      DataColumn(
-        label: SizedBox(
-            width: 40.w, child: Center(child: Text(AppStrings.product.tr()))),
-      ),
-      DataColumn(
-          label: SizedBox(
-              width: 42.w,
-              child: Center(
-                  child: Text(
-                    AppStrings.quantity.tr(),
-                  )))),
-      DataColumn(
-          label: SizedBox(
-              width: 20.w, child: Center(child: Text(AppStrings.amount.tr()))))
-    ];
-  }
-
-  List<DataRow> _createRows(BuildContext context) {
+  List<DataRow> createRows(BuildContext context) {
     return listOfTmpOrder
         .map((tmpOrder) => DataRow(cells: [
       DataCell(Text(
@@ -1627,35 +1403,7 @@ class _MainViewState extends State<MainView> {
                                   milliseconds:
                                   AppConstants.durationOfBounceable),
                               onTap: () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                    AppConstants.durationOfBounceable));
-                                setState(() {
-                                  int? itemCount = listOfTmpOrder[
-                                  listOfTmpOrder.indexOf(tmpOrder)]
-                                      .itemQuantity;
-                                  itemCount = itemCount! - 1;
-                                  listOfTmpOrder[
-                                  listOfTmpOrder.indexOf(tmpOrder)]
-                                      .itemQuantity = itemCount;
-
-                                  double total = roundDouble(
-                                      (itemCount *
-                                          double.parse(listOfTmpOrder[
-                                          listOfTmpOrder
-                                              .indexOf(tmpOrder)]
-                                              .itemPrice
-                                              .toString())),
-                                      decimalPlaces);
-
-                                  listOfTmpOrder[
-                                  listOfTmpOrder.indexOf(tmpOrder)]
-                                      .itemAmount = total.toString();
-                                  if (itemCount == 0) {
-                                    listOfTmpOrder.removeAt(
-                                        listOfTmpOrder.indexOf(tmpOrder));
-                                  }
-                                });
+                                await decreaseCount(tmpOrder);
                               },
                               child:
                               containerComponent(
@@ -1689,80 +1437,7 @@ class _MainViewState extends State<MainView> {
                                   milliseconds:
                                   AppConstants.durationOfBounceable),
                               onTap: () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                    AppConstants.durationOfBounceable));
-                                var itemStock = listOfBothProducts
-                                    .where((element) =>
-                                element.id ==
-                                    listOfTmpOrder[listOfTmpOrder
-                                        .indexOf(tmpOrder)]
-                                        .productId)
-                                    .first;
-
-                                int qty = itemStock.stock;
-
-                                int indexOfList = listOfBothProducts.indexWhere(
-                                        (element) =>
-                                    element.id ==
-                                        listOfTmpOrder[listOfTmpOrder
-                                            .indexOf(tmpOrder)]
-                                            .productId);
-
-                                if (listOfBothProducts[indexOfList]
-                                    .variations
-                                    .isNotEmpty) {
-                                  int indexOfVariationList = itemStock
-                                      .variations
-                                      .indexWhere((element) =>
-                                  element.id ==
-                                      listOfTmpOrder[listOfTmpOrder
-                                          .indexOf(tmpOrder)]
-                                          .variationId);
-                                  qty = listOfBothProducts[indexOfList]
-                                      .variations[indexOfVariationList]
-                                      .stock;
-                                }
-
-                                if (int.parse(listOfTmpOrder[
-                                listOfTmpOrder.indexOf(tmpOrder)]
-                                    .itemQuantity
-                                    .toString()) >=
-                                    qty) {
-                                  CustomDialog.show(
-                                      context,
-                                      AppStrings.noCredit.tr(),
-                                      const Icon(Icons.warning_amber_rounded),
-                                      ColorManager.white,
-                                      AppConstants.durationOfSnackBar,
-                                      ColorManager.hold);
-                                  return;
-                                }
-
-                                setState(() {
-                                  int? itemCount = listOfTmpOrder[
-                                  listOfTmpOrder.indexOf(tmpOrder)]
-                                      .itemQuantity;
-
-                                  itemCount = itemCount! + 1;
-
-                                  listOfTmpOrder[
-                                  listOfTmpOrder.indexOf(tmpOrder)]
-                                      .itemQuantity = itemCount;
-
-                                  double total = roundDouble(
-                                      (itemCount *
-                                          double.parse(listOfTmpOrder[
-                                          listOfTmpOrder
-                                              .indexOf(tmpOrder)]
-                                              .itemPrice
-                                              .toString())),
-                                      decimalPlaces);
-
-                                  listOfTmpOrder[
-                                  listOfTmpOrder.indexOf(tmpOrder)]
-                                      .itemAmount = total.toString();
-                                });
+                                await increaseCount(tmpOrder);
                               },
                               child:
                               containerComponent(
@@ -1806,15 +1481,126 @@ class _MainViewState extends State<MainView> {
         .toList();
   }
 
-  void addToTmp(int index,BuildContext context) {
-    if (listOfProducts[index].variations.isNotEmpty) {
+  Future<void> decreaseCount(TmpOrderModel tmpOrder) async {
+    await Future.delayed(Duration(
+        milliseconds:
+        AppConstants.durationOfBounceable));
+    setState(() {
+      int? itemCount = listOfTmpOrder[
+      listOfTmpOrder.indexOf(tmpOrder)]
+          .itemQuantity;
+      itemCount = itemCount! - 1;
+      listOfTmpOrder[
+      listOfTmpOrder.indexOf(tmpOrder)]
+          .itemQuantity = itemCount;
+
+      double total = roundDouble(
+          (itemCount *
+              double.parse(listOfTmpOrder[
+              listOfTmpOrder
+                  .indexOf(tmpOrder)]
+                  .itemPrice
+                  .toString())),
+          decimalPlaces);
+
+      listOfTmpOrder[
+      listOfTmpOrder.indexOf(tmpOrder)]
+          .itemAmount = total.toString();
+      if (itemCount == 0) {
+        listOfTmpOrder.removeAt(
+            listOfTmpOrder.indexOf(tmpOrder));
+      }
+    });
+  }
+
+  Future<void> increaseCount(TmpOrderModel tmpOrder) async {
+    await Future.delayed(Duration(
+        milliseconds:
+        AppConstants.durationOfBounceable));
+    var itemStock = listOfBothProducts
+        .where((element) =>
+    element.id ==
+        listOfTmpOrder[listOfTmpOrder
+            .indexOf(tmpOrder)]
+            .productId)
+        .first;
+
+    int qty = itemStock.stock;
+
+    int indexOfList = listOfBothProducts.indexWhere(
+            (element) =>
+        element.id ==
+            listOfTmpOrder[listOfTmpOrder
+                .indexOf(tmpOrder)]
+                .productId);
+
+    if (listOfBothProducts[indexOfList]
+        .variations
+        .isNotEmpty) {
+      int indexOfVariationList = itemStock
+          .variations
+          .indexWhere((element) =>
+      element.id ==
+          listOfTmpOrder[listOfTmpOrder
+              .indexOf(tmpOrder)]
+              .variationId);
+      qty = listOfBothProducts[indexOfList]
+          .variations[indexOfVariationList]
+          .stock;
+    }
+
+    if (int.parse(listOfTmpOrder[
+    listOfTmpOrder.indexOf(tmpOrder)]
+        .itemQuantity
+        .toString()) >=
+        qty) {
+      CustomDialog.show(
+          context,
+          AppStrings.noCredit.tr(),
+          const Icon(Icons.warning_amber_rounded),
+          ColorManager.white,
+          AppConstants.durationOfSnackBar,
+          ColorManager.hold);
+      return;
+    }
+
+    setState(() {
+      int? itemCount = listOfTmpOrder[
+      listOfTmpOrder.indexOf(tmpOrder)]
+          .itemQuantity;
+
+      itemCount = itemCount! + 1;
+
+      listOfTmpOrder[
+      listOfTmpOrder.indexOf(tmpOrder)]
+          .itemQuantity = itemCount;
+
+      double total = roundDouble(
+          (itemCount *
+              double.parse(listOfTmpOrder[
+              listOfTmpOrder
+                  .indexOf(tmpOrder)]
+                  .itemPrice
+                  .toString())),
+          decimalPlaces);
+
+      listOfTmpOrder[
+      listOfTmpOrder.indexOf(tmpOrder)]
+          .itemAmount = total.toString();
+    });
+  }
+
+  void addToTmp(int index,BuildContext context, bool searching) {
+    List<ProductsResponse> listToWork =  searching ? listOfAllProducts : listOfProducts;
+
+    if (listToWork[index].variations.isNotEmpty) {
       setState(() {
         ItemOptionsDialog.show(
             context,
             currencyCode,
             index,
-            listOfProducts[index].variations,
-            listOfProducts,
+            listToWork[index].variations,
+            listToWork,
             _selectedCustomerTel!,
             _selectedCustomerName!,
             discount);
@@ -1823,13 +1609,13 @@ class _MainViewState extends State<MainView> {
       ///////////////////////
       if (listOfTmpOrder.isNotEmpty) {
         int listOfTmpOrderIndex = listOfTmpOrder.indexWhere(
-                (element) => element.productId == listOfProducts[index].id);
+                (element) => element.productId == listToWork[index].id);
 
         if (listOfTmpOrderIndex >= 0) {
           if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
               .itemQuantity
               .toString()) >=
-              listOfProducts[index].stock) {
+              listToWork[index].stock) {
             CustomDialog.show(
                 context,
                 AppStrings.noCredit.tr(),
@@ -1845,7 +1631,7 @@ class _MainViewState extends State<MainView> {
       ///////////////////////
       setState(() {
         for (var entry in listOfTmpOrder) {
-          if (listOfProducts[index].name == entry.itemName) {
+          if (listToWork[index].name == entry.itemName) {
             int? itemCount = entry.itemQuantity;
             itemCount = itemCount! + 1;
             entry.itemQuantity = itemCount;
@@ -1866,7 +1652,7 @@ class _MainViewState extends State<MainView> {
           tel = '';
         }
 
-        if (listOfProducts[index].stock == 0) {
+        if (listToWork[index].stock == 0) {
           CustomDialog.show(
               context,
               AppStrings.noCredit.tr(),
@@ -1877,34 +1663,33 @@ class _MainViewState extends State<MainView> {
           return;
         }
 
-        String sellPrice = listOfProducts[index].sellPrice;
+        String sellPrice = listToWork[index].sellPrice;
 
         listOfTmpOrder.add(TmpOrderModel(
-          id: listOfProducts[index].id,
-          itemName: listOfProducts[index].name,
+          id: listToWork[index].id,
+          itemName: listToWork[index].name,
           itemQuantity: 1,
           itemAmount:
           '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
           itemPrice:
           '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
           customer: customerName,
-          category: listOfProducts[index].categoryId.toString(),
+          category: listToWork[index].categoryId.toString(),
           orderDiscount: discount,
-          brand: listOfProducts[index].brandId.toString(),
+          brand: listToWork[index].brandId.toString(),
           customerTel: tel,
           date: today.toString().split(" ")[0],
           itemOption: listOfVariations.isNotEmpty
-              ? listOfProducts[index].variations[index].name
+              ? listToWork[index].variations[index].name
               : '',
-          productId: listOfProducts[index].id,
-          variationId: listOfProducts[index].variations.isNotEmpty
-              ? listOfProducts[index].variations[index].id
+          productId: listToWork[index].id,
+          variationId: listToWork[index].variations.isNotEmpty
+              ? listToWork[index].variations[index].id
               : 0,
         ));
       });
     }
   }
-
 
   // right part --------------------------------------------------------------
   Widget rightPart(BuildContext context) {
@@ -1932,17 +1717,17 @@ class _MainViewState extends State<MainView> {
                     ),
                     categoryFilter!
                     // Category buttons -------------
-                        ? categoryButtons(context)
+                        ? categoryButtons(context, listOfCategories, isSelected)
                     // Brand buttons -------------
-                        : brandButtons(context),
+                        : brandButtons(context, listOfBrands, isSelected),
                     SizedBox(
                       height: AppConstants.smallDistance,
                     ),
                     categoryFilter!
                     // Category items -------------
-                        ? categoryItems(context)
+                        ? categoryItems(context, addToTmp, listOfProducts)
                     // Brand items -------------
-                        : brandItems(context)
+                        : brandItems(context, addToTmp, listOfProducts)
                   ],
                 ),
               ),
@@ -1953,79 +1738,6 @@ class _MainViewState extends State<MainView> {
               borderRadius: AppSize.s5),
         ],
       ),
-    );
-  }
-
-  Widget itemModel(int index,BuildContext context){
-    return Column(
-      mainAxisAlignment:
-      MainAxisAlignment
-          .spaceBetween,
-      children: [
-        Container(
-          width: 200.w,
-          height: 105.h,
-          decoration: BoxDecoration(
-              shape: BoxShape
-                  .rectangle,
-              image: listOfProducts[
-              index]
-                  .image
-                  .toString() ==
-                  "n"
-                  ? const DecorationImage(
-                  image: AssetImage(
-                      ImageAssets
-                          .noItem),
-                  fit: BoxFit
-                      .fill)
-                  : DecorationImage(
-                  image: CachedNetworkImageProvider(listOfProducts[
-                  index]
-                      .image
-                      .toString()),
-                  fit: BoxFit
-                      .fill)),
-        ),
-        Container(
-          width: 50.w,
-          height: 40.h,
-          decoration: BoxDecoration(
-              color:
-              ColorManager
-                  .badge,
-              border: Border.all(
-                  color: ColorManager
-                      .badge,
-                  width: 1.5.w),
-              borderRadius: const BorderRadius
-                  .only(
-                  bottomLeft: Radius
-                      .circular(
-                      AppSize
-                          .s5),
-                  bottomRight:
-                  Radius.circular(
-                      AppSize
-                          .s5))),
-          child: Center(
-            child: Text(
-              listOfProducts[
-              index]
-                  .name
-                  .toString(),
-              style: TextStyle(
-                  color:
-                  ColorManager
-                      .white,
-                  fontSize:
-                  AppSize
-                      .s14
-                      .sp),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -2125,163 +1837,6 @@ class _MainViewState extends State<MainView> {
         ),
       ),
     );
-  }
-
-  Widget categoryButtons(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: SizedBox(
-            height: 40.h,
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics:
-              const AlwaysScrollableScrollPhysics(),
-              scrollDirection:
-              Axis.horizontal,
-              itemCount:
-              listOfCategories.length,
-              itemBuilder:
-                  (BuildContext context,
-                  int index) {
-                return CategoryButton(
-                  id: listOfCategories[
-                  index]
-                      .id,
-                  categoryName:
-                  listOfCategories[
-                  index]
-                      .name,
-                  selected:
-                  listOfCategories[
-                  index]
-                      .selected!,
-                  isSelected: (int itemId) {
-                    isSelected(itemId);
-                  },
-                );
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget categoryItems(BuildContext context) {
-    return Expanded(
-        child: GridView.count(
-            crossAxisCount: 5,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 11 / 16,
-            physics: const ScrollPhysics(),
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            children: List.generate(
-                listOfProducts.length,
-                    (index) {
-                  return Bounceable(
-                    duration: Duration(
-                        milliseconds: AppConstants
-                            .durationOfBounceable),
-                    onTap: () async {
-                      await Future.delayed(Duration(
-                          milliseconds: AppConstants
-                              .durationOfBounceable));
-
-                      addToTmp(index,context);
-                    },
-                    child:
-                    containerComponent(
-                        context,
-                        itemModel(index,context),
-                        height: 400.h,
-                        width: 200.w,
-                        color: ColorManager.secondary,
-                        borderColor: ColorManager.secondary,
-                        borderWidth: 0.0.w,
-                        borderRadius: AppSize.s5
-                    ),
-                  );
-                })));
-  }
-
-  Widget brandButtons(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: SizedBox(
-            height: 40.h,
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics:
-              const AlwaysScrollableScrollPhysics(),
-              scrollDirection:
-              Axis.horizontal,
-              itemCount:
-              listOfBrands.length,
-              itemBuilder:
-                  (BuildContext context,
-                  int index) {
-                return BrandButton(
-                  id: listOfBrands[index]
-                      .id,
-                  brandName:
-                  listOfBrands[index]
-                      .name,
-                  selected:
-                  listOfBrands[index]
-                      .selected!,
-                  isSelected: (int itemId) {
-                    isSelected(itemId);
-                  },
-                );
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget brandItems(BuildContext context) {
-    return Expanded(
-        child: GridView.count(
-            crossAxisCount: 5,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 11 / 16,
-            physics: const ScrollPhysics(),
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            children: List.generate(
-                listOfProducts.length,
-                    (index) {
-                  return Bounceable(
-                    duration: Duration(
-                        milliseconds: AppConstants
-                            .durationOfBounceable),
-                    onTap: () async {
-                      await Future.delayed(Duration(
-                          milliseconds: AppConstants
-                              .durationOfBounceable));
-
-                      addToTmp(index,context);
-                    },
-                    child:
-                    containerComponent(
-                        context,
-                        itemModel(index,context),
-                        height: 400.h,
-                        width: 200.w,
-                        color: ColorManager.secondary,
-                        borderColor: ColorManager.secondary,
-                        borderWidth: 0.0.w,
-                        borderRadius: AppSize.s5
-                    ),
-                  );
-                })));
   }
 
   Future<bool> _onBackButtonPressed(BuildContext context) async {

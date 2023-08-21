@@ -55,7 +55,7 @@ class CheckOutResponse {
   String? taxes;
   String? currencyId;
   late final List<ProductsCheckOutResponse> products;
-  late final PaymentResponse payment;
+  late final List<PaymentResponse> payment;
 
   CheckOutResponse.fromJson(Map<String, dynamic> json){
     id = json['id'];
@@ -83,7 +83,7 @@ class CheckOutResponse {
     taxes = json['taxes'] ?? '';
     currencyId = json['currencyId'] ?? '';
     products = List.from(json['products']).map((e)=>ProductsCheckOutResponse.fromJson(e)).toList();
-    payment = PaymentResponse.fromJson(json['payment']);
+    payment = List.from(json['payment']).map((e)=>PaymentResponse.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -113,7 +113,7 @@ class CheckOutResponse {
     _data['taxes'] = taxes;
     _data['currency_id'] = currencyId;
     _data['products'] = products.map((e)=>e.toJson()).toList();
-    _data['payment'] = payment.toJson();
+    _data['payment'] = payment.map((e)=>e.toJson()).toList();
     return _data;
   }
 }

@@ -12,7 +12,7 @@ Widget createOrdersDataTable(
     children: [
       DataTable(
         horizontalMargin: 10,
-        columnSpacing: 130,
+        columnSpacing: 60,
         dividerThickness: 2.sp,
         columns: _createOrdersColumns,
         rows:

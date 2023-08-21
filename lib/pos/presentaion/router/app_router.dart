@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:poslix_app/pos/presentaion/ui/intro/intro.dart';
 import '../../shared/constant/strings_manager.dart';
 import '../ui/login_view/login_view.dart';
 import '../ui/main_view/main_view.dart';
@@ -10,6 +11,7 @@ class Routes {
   static const String thermalPrint = "/thermalPrint";
   static const String loginRoute = "/login";
   static const String registerPosRoute = "/registerPos";
+  static const String introRoute = "/intro";
 }
 
 class RouteGenerator {
@@ -23,6 +25,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const LoginView());
       case Routes.registerPosRoute:
         return MaterialPageRoute(builder: (_) => const RegisterPosView());
+      case Routes.introRoute:
+        return MaterialPageRoute(builder: (_) => const IntroView());
       default:
         return unDefinedRoute();
     }
