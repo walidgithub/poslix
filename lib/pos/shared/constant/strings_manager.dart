@@ -19,6 +19,7 @@ class AppStrings{
   static const errorInCloseRegister  = 'Error In Close Register';
   static const errorInPayment  = 'Error In Payment';
   static const noPermission  = 'You have no permission';
+  static const someThingWentWrong  = 'Something went wrong';
 
   static const wrongEmailOrPassword  = 'Wrong email or password';
 

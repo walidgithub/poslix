@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../shared/constant/constant_values_manager.dart';
 import '../../../../shared/constant/padding_margin_values_manager.dart';
@@ -14,7 +16,14 @@ class ShippingDialog extends StatefulWidget {
 
   Function getShippingValue;
 
-  static void show(BuildContext context, Function getShippingValue) => showDialog<void>(
+  static void show(BuildContext context, Function getShippingValue) =>
+      isApple() ? showCupertinoDialog<void>(context: context,
+          useRootNavigator: false,
+          barrierDismissible: false,
+          builder: (_) => ShippingDialog(
+        getShippingValue: getShippingValue,
+      )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
+      showDialog<void>(
     context: context,
     useRootNavigator: false,
     barrierDismissible: false,

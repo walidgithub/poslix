@@ -1,5 +1,6 @@
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -22,6 +23,7 @@ import '../../../shared/constant/constant_values_manager.dart';
 import '../../../shared/constant/language_manager.dart';
 import '../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../shared/style/colors_manager.dart';
+import '../../../shared/utils/utils.dart';
 import '../../di/di.dart';
 import '../../router/app_router.dart';
 import '../components/container_component.dart';
@@ -140,7 +142,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => _onBackButtonPressed(context),
+      onWillPop: () => isApple() ? onBackButtonPressedInIOS(context) : onBackButtonPressed(context),
       child: SafeArea(
           child: Scaffold(
         backgroundColor: ColorManager.secondary,
@@ -730,30 +732,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
         }
       }
     });
-  }
-
-  Future<bool> _onBackButtonPressed(BuildContext context) async {
-    bool exitApp = await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(AppStrings.warning.tr()),
-            content: Text(AppStrings.closeApp.tr()),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: Text(AppStrings.no.tr())),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  child: Text(AppStrings.yes.tr())),
-            ],
-          );
-        });
-    return exitApp ?? false;
   }
 
   _changeLanguage() {

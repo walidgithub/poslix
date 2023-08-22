@@ -1,7 +1,5 @@
-import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -9,9 +7,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/presentaion/di/di.dart';
 import 'package:poslix_app/pos/presentaion/router/app_router.dart';
 import 'package:poslix_app/pos/shared/constant/language_manager.dart';
+import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/preferences/app_pref.dart';
+import 'package:poslix_app/pos/shared/style/colors_manager.dart';
 import 'package:poslix_app/pos/shared/style/theme_constants.dart';
 import 'package:poslix_app/pos/shared/style/theme_manager.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,12 @@ void main() async {
       supportedLocales: const [ARABIC_LOCAL, ENGLISH_LOCAL],
       path: ASSET_PATH_LOCALISATIONS,
       child: Phoenix(child: const MyApp())));
+
+  ErrorWidget.builder = (FlutterErrorDetails details) => Scaffold(
+    body: Center(
+      child: Text(AppStrings.price.tr(),style: TextStyle(color: ColorManager.primary),),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -98,7 +105,7 @@ class _MyAppState extends State<MyApp> {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
+        return isApple() ? const CupertinoApp() : MaterialApp(
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,

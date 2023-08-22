@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/requests/close_register_model.dart';
 import '../../../../../domain/requests/close_register_report_model.dart';
@@ -26,7 +28,16 @@ import 'money_methods.dart';
 class CloseRegisterDialog extends StatefulWidget {
   int locationId;
   static void show(BuildContext context, int locationId) =>
-      showDialog<void>(
+     isApple() ? showCupertinoDialog<void>(
+         context: context,
+         useRootNavigator: false,
+         barrierDismissible: false,
+         builder: (_) {
+           return CloseRegisterDialog(
+             locationId: locationId,
+           );
+         }).then((_) => FocusScope.of(context).requestFocus(FocusNode()))
+         : showDialog<void>(
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,

@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_rep
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports/widgets/orders_table/orders_columns.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports/widgets/orders_table/orders_head_table.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports/widgets/search_section.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/entities/hold_order_items_model.dart';
 import '../../../../../domain/entities/hold_order_names_model.dart';
@@ -47,7 +49,13 @@ class OrdersDialog extends StatefulWidget {
   int locationId;
   static void show(BuildContext context, int locationId, Function customerName,
           Function orderTotalAmount, Function orderDiscount) =>
-      showDialog<void>(
+     isApple() ? showCupertinoDialog<void>(context: context,useRootNavigator: false,
+         barrierDismissible: false, builder: (_) => OrdersDialog(
+       locationId: locationId,
+       customerName: customerName,
+       orderTotalAmount: orderTotalAmount,
+       orderDiscount: orderDiscount,
+     )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) : showDialog<void>(
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,

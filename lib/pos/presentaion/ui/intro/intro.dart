@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../shared/constant/constant_values_manager.dart';
+import '../../../shared/utils/utils.dart';
 import '../../router/app_router.dart';
 
 class IntroView extends StatefulWidget {
@@ -44,10 +46,14 @@ class _IntroViewState extends State<IntroView> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      body: Center(
-        child: VideoPlayer(_videoPlayerController),
-      ),
+      body: bodyContent(context),
     ));
+  }
+
+  Widget bodyContent(BuildContext context) {
+    return Center(
+      child: VideoPlayer(_videoPlayerController),
+    );
   }
 
   void startVideo() {

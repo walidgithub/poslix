@@ -1,10 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:poslix_app/pos/shared/style/colors_manager.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../shared/constant/padding_margin_values_manager.dart';
 
 class LoadingDialog extends StatefulWidget {
-  static void show(BuildContext context) => showDialog<void>(
+  static void show(BuildContext context) =>
+      isApple() ? showCupertinoDialog<void>(context: context,
+          useRootNavigator: false,
+          barrierDismissible: false,
+          builder: (_) => const LoadingDialog()).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
+      showDialog<void>(
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,
@@ -41,7 +48,7 @@ class _LoadingDialogState extends State<LoadingDialog> {
               SizedBox(
                   height: AppSize.s75,
                   width: AppSize.s75,
-                  child: CircularProgressIndicator(
+                  child: isApple() ? const CupertinoActivityIndicator() : CircularProgressIndicator(
                     color: ColorManager.primary,
                   )),
             ],

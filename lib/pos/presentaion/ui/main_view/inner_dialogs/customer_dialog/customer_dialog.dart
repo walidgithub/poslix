@@ -6,6 +6,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/entities/customer_model.dart';
 import '../../../../../shared/constant/padding_margin_values_manager.dart';
@@ -29,6 +30,15 @@ class CustomerDialog extends StatefulWidget {
 
   static void show(BuildContext context, String editType, var customerData,
           int customerId, int locationId, Function done) =>
+  isApple() ? showCupertinoDialog<void>(context: context,
+      useRootNavigator: false,
+      barrierDismissible: false,
+      builder: (_) => CustomerDialog(
+          editType: editType,
+          customerData: customerData,
+          customerId: customerId,
+          locationId: locationId,
+          done: done)).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
       showDialog<void>(
         context: context,
         useRootNavigator: false,

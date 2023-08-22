@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/shared/style/colors_manager.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 import 'package:simple_progress_indicators/simple_progress_indicators.dart';
 import '../../../shared/constant/padding_margin_values_manager.dart';
 
@@ -11,7 +13,23 @@ class CustomDialog extends StatefulWidget {
   int messageTime;
   Color messageColor;
 
-  static void show(BuildContext context, String messageText, Icon iconName, Color iconColor, int messageTime, Color messageColor) => showDialog<void>(
+  static void show(BuildContext context, String messageText, Icon iconName, Color iconColor, int messageTime, Color messageColor) =>
+      isApple() ? showCupertinoDialog(context: context,
+          useRootNavigator: false,
+          barrierDismissible: false,
+          builder: (dialogContext) {
+            Future.delayed(Duration(milliseconds: messageTime), () {
+              Navigator.of(dialogContext).pop(true);
+            });
+            return CustomDialog(
+              messageText: messageText,
+              iconName: iconName,
+              iconColor: iconColor,
+              messageTime: messageTime,
+              messageColor: messageColor,
+            );
+          }).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
+      showDialog<void>(
       context: context,
       useRootNavigator: false,
       barrierDismissible: false,

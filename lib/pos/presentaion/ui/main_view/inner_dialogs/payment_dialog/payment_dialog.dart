@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,6 +15,7 @@ import 'package:poslix_app/pos/domain/entities/order_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/totals.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_state.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 import 'package:screenshot/screenshot.dart';
 import '../../../../../domain/requests/cart_model.dart';
 import '../../../../../domain/requests/check_out_model.dart';
@@ -58,6 +60,22 @@ class PaymentDialog extends StatefulWidget {
     double taxAmount,
     Function done,
   ) =>
+
+  isApple() ? showCupertinoDialog<void>(context: context,
+      useRootNavigator: false,
+      barrierDismissible: false,
+      builder: (_) => PaymentDialog(
+    currencyCode: currencyCode,
+    total: total,
+    cartRequest: cartRequest,
+    locationId: locationId,
+    customerId: customerId,
+    discountType: discountType,
+    discountAmount: discountAmount,
+    taxType: taxType,
+    taxAmount: taxAmount,
+    done: done,
+  )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
       showDialog<void>(
         context: context,
         useRootNavigator: false,

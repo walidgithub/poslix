@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/size_name_Section.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/total_section.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/response/customer_model.dart';
 import '../../../../../shared/constant/assets_manager.dart';
@@ -40,6 +42,19 @@ class TailorDialog extends StatefulWidget {
           List listOfFabrics,
           String selectedCustomer,
           double discount) =>
+  isApple() ? showCupertinoDialog<void>(context: context,
+      useRootNavigator: false,
+      barrierDismissible: false,
+      builder: (_) => TailorDialog(
+      currencyCode: currencyCode,
+      itemIndex: itemIndex,
+      selectedCustomerTel: selectedCustomerTel,
+      selectedListName: selectedListName,
+      listOfChoices: listOfChoices,
+      listOfFabrics: listOfFabrics,
+      // listOfCustomers: listOfCustomers,
+      selectedCustomer: selectedCustomer,
+      discount: discount)) :
       showDialog<void>(
         context: context,
         useRootNavigator: false,

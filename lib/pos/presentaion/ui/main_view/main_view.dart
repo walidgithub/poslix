@@ -1,5 +1,6 @@
 ﻿import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -30,6 +31,7 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/totals.dart';
 import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 import 'package:poslix_app/pos/shared/constant/padding_margin_values_manager.dart';
 import 'package:poslix_app/pos/shared/style/colors_manager.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 import '../../../domain/entities/order_model.dart';
 import '../../../domain/entities/tmp_order_model.dart';
 import '../../../domain/response/brands_model.dart';
@@ -325,7 +327,7 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => _onBackButtonPressed(context),
+      onWillPop: () => isApple() ? onBackButtonPressedInIOS(context) : onBackButtonPressed(context),
       child: SafeArea(
         child: Scaffold(
           backgroundColor: ColorManager.secondary,
@@ -1448,29 +1450,6 @@ class _MainViewState extends State<MainView> {
     );
   }
 
-  Future<bool> _onBackButtonPressed(BuildContext context) async {
-    bool exitApp = await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(AppStrings.warning.tr()),
-            content: Text(AppStrings.closeApp.tr()),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: Text(AppStrings.no.tr())),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  child: Text(AppStrings.yes.tr())),
-            ],
-          );
-        });
-    return exitApp ?? false;
-  }
 
   _changeLanguage() {
     _appPreferences.changeAppLanguage();

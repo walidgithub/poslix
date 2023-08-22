@@ -5,6 +5,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
+import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../domain/entities/tmp_order_model.dart';
 import '../../../../shared/constant/constant_values_manager.dart';
@@ -35,7 +36,15 @@ class ItemOptionsDialog extends StatefulWidget {
           String selectedCustomerTel,
           String selectedCustomer,
           double discount) =>
-      showDialog<void>(
+     isApple() ? showCupertinoDialog<void>(context: context, useRootNavigator: false,
+         barrierDismissible: false, builder: (_) => ItemOptionsDialog(
+         currencyCode: currencyCode,
+         itemIndex: itemIndex,
+         itemOptions: itemOptions,
+         selectedCustomerTel: selectedCustomerTel,
+         selectedListName: selectedListName,
+         selectedCustomer: selectedCustomer,
+         discount: discount)).then((_) => FocusScope.of(context).requestFocus(FocusNode())) : showDialog<void>(
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,
