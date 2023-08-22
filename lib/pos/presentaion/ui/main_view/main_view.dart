@@ -361,13 +361,7 @@ class _MainViewState extends State<MainView> {
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
-            CustomDialog.show(
-                context,
-                AppStrings.noInternet.tr(),
-                const Icon(Icons.wifi),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            showNoInternet(context);
           }
 
           if (state is LoadingCategories) {
@@ -422,13 +416,7 @@ class _MainViewState extends State<MainView> {
           } else if (state is LoadingErrorCategories) {
             listOfProducts = [];
             LoadingDialog.hide(context);
-            CustomDialog.show(
-                context,
-                AppStrings.errorTryAgain.tr(),
-                const Icon(Icons.close),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            tryAgainLater(context);
           } else if (state is LoadingBrands) {
             LoadingDialog.show(context);
           } else if (state is LoadedBrands) {
@@ -474,13 +462,7 @@ class _MainViewState extends State<MainView> {
           } else if (state is LoadingErrorBrands) {
             // LoadingDialog.hide(context);
             listOfProducts = [];
-            CustomDialog.show(
-                context,
-                AppStrings.errorTryAgain.tr(),
-                const Icon(Icons.close),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            tryAgainLater(context);
           }
           if (state is LoadingCustomers) {
             LoadingDialog.show(context);
@@ -518,13 +500,7 @@ class _MainViewState extends State<MainView> {
             _selectedCustomerTel = listOfCustomers[0].mobile;
           } else if (state is LoadingErrorCustomers) {
             LoadingDialog.hide(context);
-            CustomDialog.show(
-                context,
-                AppStrings.errorTryAgain.tr(),
-                const Icon(Icons.close),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            tryAgainLater(context);
           } else if (state is LoadingCustomer) {
             LoadingDialog.show(context);
           } else if (state is LoadedCustomer) {
@@ -545,13 +521,7 @@ class _MainViewState extends State<MainView> {
             });
           } else if (state is LoadingErrorCustomer) {
             LoadingDialog.hide(context);
-            CustomDialog.show(
-                context,
-                AppStrings.errorTryAgain.tr(),
-                const Icon(Icons.close),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            tryAgainLater(context);
           }
 
           if (state is LoadedCurrency) {
@@ -1192,13 +1162,7 @@ class _MainViewState extends State<MainView> {
             .itemQuantity
             .toString()) >=
         qty) {
-      CustomDialog.show(
-          context,
-          AppStrings.noCredit.tr(),
-          const Icon(Icons.warning_amber_rounded),
-          ColorManager.white,
-          AppConstants.durationOfSnackBar,
-          ColorManager.hold);
+
       return;
     }
 
@@ -1249,13 +1213,7 @@ class _MainViewState extends State<MainView> {
                   .itemQuantity
                   .toString()) >=
               listToWork[index].stock) {
-            CustomDialog.show(
-                context,
-                AppStrings.noCredit.tr(),
-                const Icon(Icons.warning_amber_rounded),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.hold);
+            noCredit(context);
             return;
           }
         }
@@ -1286,13 +1244,7 @@ class _MainViewState extends State<MainView> {
         }
 
         if (listToWork[index].stock == 0) {
-          CustomDialog.show(
-              context,
-              AppStrings.noCredit.tr(),
-              const Icon(Icons.warning_amber_rounded),
-              ColorManager.white,
-              AppConstants.durationOfSnackBar,
-              ColorManager.hold);
+          noCredit(context);
           return;
         }
 
@@ -1449,7 +1401,6 @@ class _MainViewState extends State<MainView> {
       ),
     );
   }
-
 
   _changeLanguage() {
     _appPreferences.changeAppLanguage();

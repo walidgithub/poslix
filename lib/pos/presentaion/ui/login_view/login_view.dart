@@ -16,6 +16,7 @@ import '../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../shared/constant/strings_manager.dart';
 import '../../../shared/preferences/app_pref.dart';
 import '../../../shared/style/colors_manager.dart';
+import '../../../shared/utils/utils.dart';
 import '../../di/di.dart';
 import '../../router/app_router.dart';
 import '../components/container_component.dart';
@@ -106,13 +107,7 @@ class _LoginViewState extends State<LoginView> {
       child: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) async {
           if (state is LoginNoInternetState) {
-            CustomDialog.show(
-                context,
-                AppStrings.noInternet.tr(),
-                const Icon(Icons.wifi),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            showNoInternet(context);
           }
 
           if (state is LoginLoading) {
@@ -138,13 +133,7 @@ class _LoginViewState extends State<LoginView> {
                 ColorManager.delete);
           } else if (state is LoginFailed) {
             LoadingDialog.hide(context);
-            CustomDialog.show(
-                context,
-                AppStrings.errorTryAgain.tr(),
-                const Icon(Icons.close),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            tryAgainLater(context);
           }
         },
         builder: (context, state) {

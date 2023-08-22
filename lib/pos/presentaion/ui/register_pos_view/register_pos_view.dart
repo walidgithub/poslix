@@ -164,7 +164,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
       child: BlocConsumer<RegisterPOSCubit, RegisterPOSState>(
         listener: (context, state) async {
           if (state is RegisterNoInternetState) {
-            CustomDialog.show(context,AppStrings.noInternet.tr(),const Icon(Icons.wifi),ColorManager.white,AppConstants.durationOfSnackBar,ColorManager.delete);
+            showNoInternet(context);
           }
 
           if (state is RegisterPOSLoading) {

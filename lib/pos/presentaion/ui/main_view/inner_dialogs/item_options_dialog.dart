@@ -264,26 +264,14 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
     if (widget.selectedListName[widget.itemIndex].stock == 0) {
-      CustomDialog.show(
-          context,
-          AppStrings.noCredit.tr(),
-          const Icon(Icons.warning_amber_rounded),
-          ColorManager.white,
-          AppConstants.durationOfSnackBar,
-          ColorManager.hold);
+      noCredit(context);
       return;
     }
 
     int qty = widget.selectedListName[widget.itemIndex].variations[index].stock;
 
     if (qty == 0) {
-      CustomDialog.show(
-          context,
-          AppStrings.noCredit.tr(),
-          const Icon(Icons.warning_amber_rounded),
-          ColorManager.white,
-          AppConstants.durationOfSnackBar,
-          ColorManager.hold);
+      noCredit(context);
       return;
     }
 
@@ -295,13 +283,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
         if (int.parse(
                 listOfTmpOrder[listOfTmpOrderIndex].itemQuantity.toString()) >=
             widget.selectedListName[widget.itemIndex].variations[index].stock) {
-          CustomDialog.show(
-              context,
-              AppStrings.noCredit.tr(),
-              const Icon(Icons.warning_amber_rounded),
-              ColorManager.white,
-              AppConstants.durationOfSnackBar,
-              ColorManager.hold);
+          noCredit(context);
           return;
         }
       }

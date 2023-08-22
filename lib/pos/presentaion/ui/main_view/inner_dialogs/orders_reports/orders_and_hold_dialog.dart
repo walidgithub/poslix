@@ -337,13 +337,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
       child: BlocConsumer<OrdersCubit, OrdersState>(
         listener: (context, state) async {
           if (state is OrdersNoInternetState) {
-            CustomDialog.show(
-                context,
-                AppStrings.noInternet.tr(),
-                const Icon(Icons.wifi),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            showNoInternet(context);
 
             await Future.delayed(
                 Duration(milliseconds: AppConstants.durationOfSnackBar));
@@ -400,13 +394,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
             }
           } else if (state is AllOrderReportError) {
             LoadingDialog.hide(context);
-            CustomDialog.show(
-                context,
-                AppStrings.errorTryAgain.tr(),
-                const Icon(Icons.close),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            tryAgainLater(context);
           }
         },
         builder: (context, state) {
@@ -507,13 +495,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                           child: BlocConsumer<OrdersCubit, OrdersState>(
                             listener: (context, state) async {
                               if (state is OrdersNoInternetState) {
-                                CustomDialog.show(
-                                    context,
-                                    AppStrings.noInternet.tr(),
-                                    const Icon(Icons.wifi),
-                                    ColorManager.white,
-                                    AppConstants.durationOfSnackBar,
-                                    ColorManager.delete);
+                                showNoInternet(context);
 
                                 await Future.delayed(Duration(
                                     milliseconds:
@@ -553,13 +535,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                                 }
                               } else if (state is OrderReportError) {
                                 LoadingDialog.hide(context);
-                                CustomDialog.show(
-                                    context,
-                                    AppStrings.errorTryAgain.tr(),
-                                    const Icon(Icons.close),
-                                    ColorManager.white,
-                                    AppConstants.durationOfSnackBar,
-                                    ColorManager.delete);
+                                tryAgainLater(context);
                               }
                             },
                             builder: (context, state) {
@@ -643,13 +619,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
         child: BlocConsumer<OrdersCubit, OrdersState>(
           listener: (context, state) async {
             if (state is OrdersNoInternetState) {
-              CustomDialog.show(
-                  context,
-                  AppStrings.noInternet.tr(),
-                  const Icon(Icons.wifi),
-                  ColorManager.white,
-                  AppConstants.durationOfSnackBar,
-                  ColorManager.delete);
+              showNoInternet(context);
 
               await Future.delayed(
                   Duration(milliseconds: AppConstants.durationOfSnackBar));
@@ -684,13 +654,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
               }
             } else if (state is OrderReportError) {
               LoadingDialog.hide(context);
-              CustomDialog.show(
-                  context,
-                  AppStrings.errorTryAgain.tr(),
-                  const Icon(Icons.close),
-                  ColorManager.white,
-                  AppConstants.durationOfSnackBar,
-                  ColorManager.delete);
+              tryAgainLater(context);
             }
           },
           builder: (context, state) {
@@ -1094,13 +1058,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
             child: BlocConsumer<OrdersCubit, OrdersState>(
               listener: (context, state) async {
                 if (state is OrdersNoInternetState) {
-                  CustomDialog.show(
-                      context,
-                      AppStrings.noInternet.tr(),
-                      const Icon(Icons.wifi),
-                      ColorManager.white,
-                      AppConstants.durationOfSnackBar,
-                      ColorManager.delete);
+                  showNoInternet(context);
 
                   await Future.delayed(Duration(
                       milliseconds: AppConstants.durationOfSnackBar));
@@ -1186,13 +1144,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   OrdersDialog.hide(context);
                 } else if (state is OrderReportItemsError) {
                   LoadingDialog.hide(context);
-                  CustomDialog.show(
-                      context,
-                      AppStrings.errorTryAgain.tr(),
-                      const Icon(Icons.close),
-                      ColorManager.white,
-                      AppConstants.durationOfSnackBar,
-                      ColorManager.delete);
+                  tryAgainLater(context);
                 }
               },
               builder: (context, state) {
@@ -1227,13 +1179,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
             child: BlocConsumer<OrdersCubit, OrdersState>(
               listener: (context, state) async {
                 if (state is OrdersNoInternetState) {
-                  CustomDialog.show(
-                      context,
-                      AppStrings.noInternet.tr(),
-                      const Icon(Icons.wifi),
-                      ColorManager.white,
-                      AppConstants.durationOfSnackBar,
-                      ColorManager.delete);
+                  showNoInternet(context);
 
                   await Future.delayed(Duration(
                       milliseconds: AppConstants.durationOfSnackBar));
@@ -1253,13 +1199,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   });
                 } else if (state is OrderReportItemsError) {
                   LoadingDialog.hide(context);
-                  CustomDialog.show(
-                      context,
-                      AppStrings.errorTryAgain.tr(),
-                      const Icon(Icons.close),
-                      ColorManager.white,
-                      AppConstants.durationOfSnackBar,
-                      ColorManager.delete);
+                  tryAgainLater(context);
                 }
               },
               builder: (context, state) {
@@ -1333,13 +1273,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
             child: BlocConsumer<OrdersCubit, OrdersState>(
               listener: (context, state) async {
                 if (state is OrdersNoInternetState) {
-                  CustomDialog.show(
-                      context,
-                      AppStrings.noInternet.tr(),
-                      const Icon(Icons.wifi),
-                      ColorManager.white,
-                      AppConstants.durationOfSnackBar,
-                      ColorManager.delete);
+                  showNoInternet(context);
 
                   await Future.delayed(Duration(
                       milliseconds: AppConstants.durationOfSnackBar));
@@ -1423,13 +1357,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   OrdersDialog.hide(context);
                 } else if (state is OrderReportItemsError) {
                   LoadingDialog.hide(context);
-                  CustomDialog.show(
-                      context,
-                      AppStrings.errorTryAgain.tr(),
-                      const Icon(Icons.close),
-                      ColorManager.white,
-                      AppConstants.durationOfSnackBar,
-                      ColorManager.delete);
+                  tryAgainLater(context);
                 }
               },
               builder: (context, state) {
@@ -1464,13 +1392,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
             child: BlocConsumer<OrdersCubit, OrdersState>(
               listener: (context, state) async {
                 if (state is OrdersNoInternetState) {
-                  CustomDialog.show(
-                      context,
-                      AppStrings.noInternet.tr(),
-                      const Icon(Icons.wifi),
-                      ColorManager.white,
-                      AppConstants.durationOfSnackBar,
-                      ColorManager.delete);
+                  showNoInternet(context);
 
                   await Future.delayed(Duration(
                       milliseconds: AppConstants.durationOfSnackBar));
@@ -1490,13 +1412,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   });
                 } else if (state is OrderReportItemsError) {
                   LoadingDialog.hide(context);
-                  CustomDialog.show(
-                      context,
-                      AppStrings.errorTryAgain.tr(),
-                      const Icon(Icons.close),
-                      ColorManager.white,
-                      AppConstants.durationOfSnackBar,
-                      ColorManager.delete);
+                  tryAgainLater(context);
                 }
               },
               builder: (context, state) {

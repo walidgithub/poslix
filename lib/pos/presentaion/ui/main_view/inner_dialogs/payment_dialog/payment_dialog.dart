@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 import 'dart:ui';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,9 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:poslix_app/pos/domain/entities/order_model.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/bill_format.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/check_out_button.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/totals.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_state.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
@@ -26,15 +24,14 @@ import '../../../../../shared/preferences/app_pref.dart';
 import '../../../../../shared/style/colors_manager.dart';
 import '../../../../di/di.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
-import '../../../components/close_button.dart';
-import '../../../components/container_component.dart';
-import '../../../components/text_component.dart';
 import '../../../order/wi_fi_printer/ImagestorByte.dart';
 import '../../../order/wi_fi_printer/printer.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
 import '../../main_view_cubit/main_view_cubit.dart';
 import '../tailor_dialog/main_note.dart';
+import 'add_payment_row.dart';
 import 'main_payment _method.dart';
+import 'new_payment_methods.dart';
 
 class PaymentDialog extends StatefulWidget {
   double total;
@@ -60,39 +57,41 @@ class PaymentDialog extends StatefulWidget {
     double taxAmount,
     Function done,
   ) =>
-
-  isApple() ? showCupertinoDialog<void>(context: context,
-      useRootNavigator: false,
-      barrierDismissible: false,
-      builder: (_) => PaymentDialog(
-    currencyCode: currencyCode,
-    total: total,
-    cartRequest: cartRequest,
-    locationId: locationId,
-    customerId: customerId,
-    discountType: discountType,
-    discountAmount: discountAmount,
-    taxType: taxType,
-    taxAmount: taxAmount,
-    done: done,
-  )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
-      showDialog<void>(
-        context: context,
-        useRootNavigator: false,
-        barrierDismissible: false,
-        builder: (_) => PaymentDialog(
-          currencyCode: currencyCode,
-          total: total,
-          cartRequest: cartRequest,
-          locationId: locationId,
-          customerId: customerId,
-          discountType: discountType,
-          discountAmount: discountAmount,
-          taxType: taxType,
-          taxAmount: taxAmount,
-          done: done,
-        ),
-      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
+      isApple()
+          ? showCupertinoDialog<void>(
+                  context: context,
+                  useRootNavigator: false,
+                  barrierDismissible: false,
+                  builder: (_) => PaymentDialog(
+                        currencyCode: currencyCode,
+                        total: total,
+                        cartRequest: cartRequest,
+                        locationId: locationId,
+                        customerId: customerId,
+                        discountType: discountType,
+                        discountAmount: discountAmount,
+                        taxType: taxType,
+                        taxAmount: taxAmount,
+                        done: done,
+                      ))
+              .then((_) => FocusScope.of(context).requestFocus(FocusNode()))
+          : showDialog<void>(
+              context: context,
+              useRootNavigator: false,
+              barrierDismissible: false,
+              builder: (_) => PaymentDialog(
+                currencyCode: currencyCode,
+                total: total,
+                cartRequest: cartRequest,
+                locationId: locationId,
+                customerId: customerId,
+                discountType: discountType,
+                discountAmount: discountAmount,
+                taxType: taxType,
+                taxAmount: taxAmount,
+                done: done,
+              ),
+            ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
   static void hide(BuildContext context) => Navigator.of(context).pop();
 
@@ -261,13 +260,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
-            CustomDialog.show(
-                context,
-                AppStrings.noInternet.tr(),
-                const Icon(Icons.wifi),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.delete);
+            showNoInternet(context);
 
             await Future.delayed(
                 Duration(milliseconds: AppConstants.durationOfSnackBar));
@@ -281,7 +274,13 @@ class _PaymentDialogState extends State<PaymentDialog> {
             widget.done('done');
           } else if (state is CheckOutError) {
             print('erroooorrrrrrrrrrrrrrrrrr');
-            CustomDialog.show(context,AppStrings.errorInPayment.tr(),const Icon(Icons.close),ColorManager.white,AppConstants.durationOfSnackBar,ColorManager.delete);
+            CustomDialog.show(
+                context,
+                AppStrings.errorInPayment.tr(),
+                const Icon(Icons.close),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.delete);
 
             await Future.delayed(
                 Duration(milliseconds: AppConstants.durationOfSnackBar));
@@ -319,7 +318,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
                               child: Column(
                                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-
                                     Align(
                                       alignment: AlignmentDirectional.topStart,
                                       child: Text(
@@ -330,49 +328,55 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
-
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),
-
                                     mainNotes(context, _notesEditingController),
-
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),
-
-                                    mainPaymentMethod(context, widget.total, selectMainPaymentMethod, _amountEditingController, _notesInLineEditingController, selectedPaymentType),
-
-                                    newPaymentMethods(context),
-
+                                    mainPaymentMethod(
+                                        context,
+                                        widget.total,
+                                        selectMainPaymentMethod,
+                                        _amountEditingController,
+                                        _notesInLineEditingController,
+                                        selectedPaymentType),
+                                    newPaymentMethods(
+                                        context,
+                                        deletePaymentMethod,
+                                        newPayment,
+                                        innerHeight,
+                                        paymentMethods,
+                                        _paymentControllers,
+                                        widget.total,
+                                        _paymentNotesControllers,
+                                        selectPaymentType),
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),
-
-                                    addNewPaymentRow(context),
-
+                                    addNewPaymentRow(context, addNewPaymentRow),
                                     SizedBox(
                                       height: AppConstants.smallerDistance,
                                     ),
-
-                                    totals(context, widget.total, changedTotal, changeReturn!, balance!, widget.currencyCode),
-
+                                    totals(
+                                        context,
+                                        widget.total,
+                                        changedTotal,
+                                        changeReturn!,
+                                        balance!,
+                                        widget.currencyCode),
                                     SizedBox(
                                       height: AppConstants.smallerDistance,
                                     ),
-
                                     const Divider(
                                       thickness: AppSize.s1,
                                     ),
-
-                                    buttons(context),
-
+                                    checkOutButtons(context, checkOut),
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),
-
-                                    billModel(context),
-
+                                    billModel(context, screenshotController, today, businessName, businessImage, businessTell, orderId, widget.taxAmount, widget.discountAmount, widget.total, totalPaying!, due!),
                                     SizedBox(
                                       height: 25.h,
                                     ),
@@ -386,962 +390,149 @@ class _PaymentDialogState extends State<PaymentDialog> {
     );
   }
 
-  void selectMainPaymentMethod(String selectedType){
+  void selectMainPaymentMethod(String selectedType) {
     setState(() {
-      selectedPaymentType =
-      selectedType;
+      selectedPaymentType = selectedType;
     });
   }
 
-  Widget newPaymentMethods(BuildContext context) {
-    return newPayment
-        ? SingleChildScrollView(
-      physics:
-      const AlwaysScrollableScrollPhysics(),
-      child: Column(
-        children: [
-          SizedBox(
-            height: AppConstants
-                .smallerDistance,
-          ),
-          SizedBox(
-            width: 200.w,
-            height: innerHeight,
-            child: ListView.builder(
-              itemCount:
-              paymentMethods.length,
-              padding:
-              const EdgeInsets.only(
-                  top: AppSize.s10),
-              itemBuilder:
-                  (BuildContext context,
-                  int index) {
-                return Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: TextField(
-                              autofocus:
-                              false,
-                              keyboardType:
-                              TextInputType
-                                  .number,
-                              controller:
-                              _paymentControllers[
-                              index],
-                              decoration: InputDecoration(
-                                  hintText: widget
-                                      .total
-                                      .toString(),
-                                  hintStyle: TextStyle(
-                                      fontSize: AppSize
-                                          .s12.sp),
-                                  labelText: AppStrings
-                                      .amount
-                                      .tr(),
-                                  labelStyle: TextStyle(
-                                      fontSize: AppSize
-                                          .s15.sp,
-                                      color: ColorManager
-                                          .primary),
-                                  border:
-                                  InputBorder.none)),
-                        ),
-                        SizedBox(
-                          width: AppConstants
-                              .smallDistance,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child:
-                          containerComponent(
-                              context,
-                              DropdownButton(
-                                borderRadius:
-                                BorderRadius.circular(AppSize.s5),
-                                itemHeight:
-                                50.h,
-                                hint:
-                                textS14PrimaryComponent(context,
-                                  selectedNewPaymentType[index],
-                                ),
-                                underline:
-                                Container(),
-                                items: <
-                                    String>[
-                                  AppStrings.cash.tr(),
-                                  AppStrings.bank.tr(),
-                                  AppStrings.cheque.tr(),
-                                  AppStrings.card.tr()
-                                ].map<DropdownMenuItem<String>>((String
-                                value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(fontSize: AppSize.s14.sp),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged:
-                                    (selectedType) {
-                                  setState(() {
-                                    selectedNewPaymentType[index] = selectedType!;
-                                  });
-                                },
-                                value:
-                                selectedNewPaymentType[index],
-                                isExpanded:
-                                true,
-                                icon:
-                                Icon(
-                                  Icons.arrow_drop_down,
-                                  color:
-                                  ColorManager.primary,
-                                  size:
-                                  AppSize.s20.sp,
-                                ),
-                                style: TextStyle(
-                                    color: ColorManager.primary,
-                                    fontSize: AppSize.s14.sp),
-                              ),
-                              height: 47
-                                  .h,
-                              padding: const EdgeInsets.fromLTRB(AppPadding
-                                  .p15, AppPadding
-                                  .p2, AppPadding
-                                  .p5, AppPadding
-                                  .p2),
-                              color: ColorManager
-                                  .white,
-                              borderColor:
-                              ColorManager
-                                  .primary,
-                              borderWidth:
-                              0.5
-                                  .w,
-                              borderRadius:
-                              AppSize.s5),
-                        ),
-                        SizedBox(
-                          width: AppConstants
-                              .smallDistance,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: TextField(
-                              autofocus:
-                              false,
-                              keyboardType:
-                              TextInputType
-                                  .text,
-                              controller:
-                              _paymentNotesControllers[
-                              index],
-                              decoration: InputDecoration(
-                                  hintText: AppStrings
-                                      .paymentNotes
-                                      .tr(),
-                                  hintStyle: TextStyle(
-                                      fontSize: AppSize
-                                          .s12.sp),
-                                  labelText: AppStrings
-                                      .paymentNotes
-                                      .tr(),
-                                  labelStyle: TextStyle(
-                                      fontSize:
-                                      AppSize.s15.sp,
-                                      color: ColorManager.primary),
-                                  border: InputBorder.none)),
-                        ),
-                        SizedBox(
-                          width: AppConstants
-                              .smallDistance,
-                        ),
-                        Column(
-                          mainAxisAlignment:
-                          MainAxisAlignment
-                              .spaceBetween,
-                          children: [
-                            Text(
-                              AppStrings
-                                  .action
-                                  .tr(),
-                              style: TextStyle(
-                                  color: ColorManager
-                                      .primary,
-                                  fontSize: AppSize
-                                      .s18
-                                      .sp),
-                            ),
-                            Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                  AppConstants.durationOfBounceable),
-                              onTap:
-                                  () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                    AppConstants.durationOfBounceable));
-                                setState(
-                                        () {
-                                      _paymentControllers
-                                          .removeAt(index);
-                                      _paymentNotesControllers
-                                          .removeAt(index);
-                                      paymentMethods
-                                          .removeAt(index);
-
-                                      selectedNewPaymentType
-                                          .removeAt(index);
-
-                                      paymentWaysCount--;
-
-                                      if (paymentMethods.length ==
-                                          1) {
-                                        innerHeight =
-                                            60.h;
-                                        sizedHeight =
-                                            410.h;
-                                      } else if (paymentMethods.length >
-                                          1) {
-                                        innerHeight =
-                                            125.h;
-                                        sizedHeight =
-                                            470.h;
-                                      } else if (paymentMethods
-                                          .isEmpty) {
-                                        newPayment =
-                                        false;
-                                        sizedHeight =
-                                            340.h;
-                                      }
-                                    });
-                              },
-                              child: Icon(
-                                Icons
-                                    .delete,
-                                color: ColorManager
-                                    .delete,
-                                size: AppSize
-                                    .s30
-                                    .sp,
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: AppConstants
-                          .smallDistance,
-                    ),
-                  ],
-                );
-              },
-            ),
-          )
-        ],
-      ),
-    )
-        : const SizedBox.shrink();
+  void selectPaymentType(int index, var selectedType) {
+    setState(() {
+      selectedNewPaymentType[index] = selectedType;
+    });
   }
 
-  Widget addNewPaymentRow(BuildContext context) {
-    return Align(
-      alignment:
-      AlignmentDirectional.centerStart,
-      child: Bounceable(
-        duration: Duration(
-            milliseconds: AppConstants
-                .durationOfBounceable),
-        onTap: () async {
-          await Future.delayed(Duration(
-              milliseconds: AppConstants
-                  .durationOfBounceable));
-          setState(() {
-            _paymentNotesControllers
-                .add(TextEditingController());
-            _paymentControllers
-                .add(TextEditingController());
+  void deletePaymentMethod(BuildContext context, int index) {
+    setState(() {
+      _paymentControllers.removeAt(index);
+      _paymentNotesControllers.removeAt(index);
+      paymentMethods.removeAt(index);
 
-            _paymentControllers[
-            paymentWaysCount]
-                .addListener(goToCalc);
+      selectedNewPaymentType.removeAt(index);
 
-            selectedNewPaymentType
-                .add(AppStrings.cash.tr());
+      paymentWaysCount--;
 
-            totalNewPaying = 0.0;
-            for (var controller
-            in _paymentControllers) {
-              if (controller.text != '') {
-                totalNewPaying =
-                    totalNewPaying +
-                        double.parse(controller
-                            .text
-                            .toString());
-              }
-            }
-
-            if (double.parse(
-                _amountEditingController
-                    .text) +
-                totalNewPaying >
-                widget.total) {
-              _paymentControllers[
-              paymentWaysCount]
-                  .text = '0.0';
-            } else {
-              _paymentControllers[
-              paymentWaysCount]
-                  .text = roundDouble(
-                  (widget.total -
-                      (double.parse(
-                          _amountEditingController
-                              .text) +
-                          totalNewPaying)),
-                  decimalPlaces)
-                  .toString();
-            }
-
-            newPayment = true;
-            paymentMethods
-                .add(paymentWaysCount);
-            if (paymentMethods.length == 1) {
-              innerHeight = 60.h;
-              sizedHeight = 410.h;
-            } else if (paymentMethods.length >
-                1) {
-              innerHeight = 125.h;
-              sizedHeight = 470.h;
-            } else if (paymentMethods.isEmpty) {
-              newPayment = false;
-              sizedHeight = 340.h;
-            }
-            paymentWaysCount++;
-          });
-        },
-        child:
-        containerComponent(
-            context,
-            Center(
-                child: textS14WhiteComponent(context,
-                  AppStrings.addPaymentRow.tr(),
-                )),
-            height: 30.h,
-            width: 50.w,
-            color: ColorManager.primary,
-            borderColor: ColorManager.primary,
-            borderWidth: 0.6.w,
-            borderRadius: AppSize.s5
-        ),
-      ),
-    );
+      if (paymentMethods.length == 1) {
+        innerHeight = 60.h;
+        sizedHeight = 410.h;
+      } else if (paymentMethods.length > 1) {
+        innerHeight = 125.h;
+        sizedHeight = 470.h;
+      } else if (paymentMethods.isEmpty) {
+        newPayment = false;
+        sizedHeight = 340.h;
+      }
+    });
   }
 
-  Widget buttons(BuildContext context) {
-    return Align(
-      alignment:
-      AlignmentDirectional.bottomStart,
-      child: Row(
-        mainAxisAlignment:
-        MainAxisAlignment.end,
-        children: [
-          closeButton(context),
-          SizedBox(
-            width: AppConstants.smallDistance,
-          ),
-          Bounceable(
-            duration: Duration(
-                milliseconds: AppConstants
-                    .durationOfBounceable),
-            onTap: () async {
-              await Future.delayed(Duration(
-                  milliseconds: AppConstants
-                      .durationOfBounceable));
+  void addPaymentRow(BuildContext context) {
+    setState(() {
+      _paymentNotesControllers.add(TextEditingController());
+      _paymentControllers.add(TextEditingController());
 
-              paymentRequest.add(PaymentTypesRequest(
-                  paymentId:
-                  '1',
-                  amount: roundDouble(
-                      double.parse(
-                          _amountEditingController
-                              .text),
-                      decimalPlaces),
-                  note: _notesEditingController
-                      .text));
+      _paymentControllers[paymentWaysCount].addListener(goToCalc);
 
-              for (int n = 0; n < selectedNewPaymentType.length - 1; n++) {
-                paymentRequest.add(PaymentTypesRequest(
-                    paymentId:
-                    selectedNewPaymentType[
-                    n],
-                    amount: roundDouble(
-                        double.parse(
-                            _paymentControllers[
-                            n]
-                                .text),
-                        decimalPlaces),
-                    note:
-                    _paymentNotesControllers[
-                    n]
-                        .text));
-              }
+      selectedNewPaymentType.add(AppStrings.cash.tr());
 
-              CheckOutRequest checkOutRequest =
-              CheckOutRequest(
-                  locationId:
-                  widget.locationId,
-                  customerId:
-                  widget.customerId,
-                  discountType:
-                  widget.discountType,
-                  discountAmount: widget
-                      .discountAmount
-                      .toString(),
-                  notes:
-                  _notesInLineEditingController
-                      .text,
-                  cart: widget.cartRequest,
-                  taxType: widget.taxType,
-                  taxAmount:
-                  widget.taxAmount,
-                  payment: paymentRequest);
+      totalNewPaying = 0.0;
+      for (var controller in _paymentControllers) {
+        if (controller.text != '') {
+          totalNewPaying =
+              totalNewPaying + double.parse(controller.text.toString());
+        }
+      }
 
+      if (double.parse(_amountEditingController.text) + totalNewPaying >
+          widget.total) {
+        _paymentControllers[paymentWaysCount].text = '0.0';
+      } else {
+        _paymentControllers[paymentWaysCount].text = roundDouble(
+            (widget.total -
+                (double.parse(_amountEditingController.text) +
+                    totalNewPaying)),
+            decimalPlaces)
+            .toString();
+      }
 
-              await MainViewCubit.get(context)
-                  .checkout(checkOutRequest);
-              setState(() {});
-
-              for (var n
-              in _paymentControllers) {
-                totalPaying = roundDouble(
-                    double.parse(n.text),
-                    decimalPlaces);
-              }
-
-              totalPaying = totalPaying! +
-                  roundDouble(
-                      double.parse(
-                          _amountEditingController
-                              .text),
-                      decimalPlaces);
-
-              due = widget.total - totalPaying!;
-
-              await Future.delayed(
-                  const Duration(
-                      milliseconds: 1000));
-
-              screenshotController
-                  .capture(
-                  delay: const Duration(
-                      milliseconds: 10))
-                  .then((capturedImage) async {
-                theImageThatComesFromThePrinter =
-                capturedImage!;
-                setState(() {
-                  theImageThatComesFromThePrinter =
-                      capturedImage;
-                  testPrint(
-                      AppConstants.printerIp,
-                      theImageThatComesFromThePrinter);
-                });
-
-                PaymentDialog.hide(context);
-              }).catchError((onError) {
-                if (kDebugMode) {
-                  print(onError);
-                }
-              });
-
-              // Navigator.of(context).pushNamed(
-              //     Routes.thermalPrint,
-              //     arguments: GoToThermal(
-              //         total: widget.total.toString()));
-            },
-            child:
-            containerComponent(
-                context,
-                Center(
-                    child: textS14WhiteComponent(context,
-                      AppStrings.completeOrder.tr(),
-                    )),
-                height: 30.h,
-                width: 50.w,
-                color: ColorManager.primary,
-                borderColor: ColorManager.primary,
-                borderWidth: 0.6.w,
-                borderRadius: AppSize.s5
-            ),
-          )
-        ],
-      ),
-    );
+      newPayment = true;
+      paymentMethods.add(paymentWaysCount);
+      if (paymentMethods.length == 1) {
+        innerHeight = 60.h;
+        sizedHeight = 410.h;
+      } else if (paymentMethods.length > 1) {
+        innerHeight = 125.h;
+        sizedHeight = 470.h;
+      } else if (paymentMethods.isEmpty) {
+        newPayment = false;
+        sizedHeight = 340.h;
+      }
+      paymentWaysCount++;
+    });
   }
 
-  Widget billModel(BuildContext context) {
-    return Screenshot(
-      controller: screenshotController,
-      child: SizedBox(
-          width: 200.w,
-          child: Column(
-            children: [
-              Column(
-                children: [
-                  Container(
-                    width: 50.w,
-                    height: 150.h,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: ColorManager
-                                .badge,
-                            width: 0.5.w),
-                        borderRadius:
-                        BorderRadius
-                            .circular(
-                            AppSize.s5),
-                        shape:
-                        BoxShape.rectangle,
-                        image: DecorationImage(
-                            image: CachedNetworkImageProvider(
-                                businessImage),
-                            fit: BoxFit.fill)),
-                  ),
-                  SizedBox(
-                      height: AppConstants
-                          .smallDistance),
-                  Text(
-                    businessName,
-                    style: TextStyle(
-                        fontSize:
-                        AppSize.s20.sp),
-                  ),
-                  SizedBox(
-                      height: AppConstants
-                          .smallDistance),
-                  Text(businessTell,
-                      style: TextStyle(
-                          fontSize:
-                          AppSize.s20.sp)),
-                  SizedBox(
-                      height: AppConstants
-                          .smallDistance),
-                  Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
-                      children: [
-                        Text(
-                            AppStrings.customer,
-                            style: TextStyle(
-                                fontSize:
-                                AppSize.s20
-                                    .sp)),
-                        Text(
-                            listOfOrders[0]
-                                .customer!,
-                            style: TextStyle(
-                                fontSize:
-                                AppSize.s20
-                                    .sp)),
-                      ]),
-                  SizedBox(
-                      height: AppConstants
-                          .smallDistance),
-                  Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
-                      children: [
-                        Text(AppStrings.orderNo,
-                            style: TextStyle(
-                                fontSize:
-                                AppSize.s20
-                                    .sp)),
-                        Text(
-                            orderId.toString()),
-                      ]),
-                  SizedBox(
-                      height: AppConstants
-                          .smallDistance),
-                  Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
-                      children: [
-                        Text(AppStrings.date,
-                            style: TextStyle(
-                                fontSize:
-                                AppSize.s20
-                                    .sp)),
-                        Text(
-                            today
-                                .toString()
-                                .substring(
-                                0, 10),
-                            style: TextStyle(
-                                fontSize:
-                                AppSize.s20
-                                    .sp)),
-                      ]),
-                  Divider(
-                    thickness: 2,
-                    color: ColorManager.black,
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment:
-                MainAxisAlignment
-                    .spaceBetween,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Center(
-                      child: Text("Qty",
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.center),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 6,
-                    child: Center(
-                      child: Text("Item",
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.center),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Center(
-                      child: Text(
-                        "Total",
-                        style: TextStyle(
-                            fontSize:
-                            AppSize.s20.sp),
-                        textAlign:
-                        TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height:
-                AppConstants.smallDistance,
-              ),
-              Divider(
-                thickness: 2,
-                color: ColorManager.black,
-              ),
-              ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: const ScrollPhysics(),
-                itemCount: listOfOrders.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment
-                            .spaceBetween,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Center(
-                              child: Text(
-                                  listOfOrders[
-                                  index]
-                                      .itemQuantity
-                                      .toString(),
-                                  style: TextStyle(
-                                      fontSize:
-                                      AppSize
-                                          .s16
-                                          .sp),
-                                  textAlign:
-                                  TextAlign
-                                      .center),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 6,
-                            child: Center(
-                              child: Text(
-                                  listOfOrders[
-                                  index]
-                                      .itemName
-                                      .toString(),
-                                  style: TextStyle(
-                                      fontSize:
-                                      AppSize
-                                          .s16
-                                          .sp),
-                                  textAlign:
-                                  TextAlign
-                                      .center),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Center(
-                              child: Text(
-                                listOfOrders[
-                                index]
-                                    .itemAmount
-                                    .toString(),
-                                style: TextStyle(
-                                    fontSize:
-                                    AppSize
-                                        .s16
-                                        .sp),
-                                textAlign:
-                                TextAlign
-                                    .center,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: AppConstants
-                            .smallDistance,
-                      ),
-                      const Divider(
-                        thickness: 0.5,
-                        color: Colors.black,
-                      )
-                    ],
-                  );
-                },
-              ),
-              Divider(
-                thickness: 2,
-                color: ColorManager.black,
-              ),
-              Column(
-                mainAxisAlignment:
-                MainAxisAlignment
-                    .spaceEvenly,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets
-                        .fromLTRB(
-                        AppPadding.p20,
-                        AppPadding.p5,
-                        AppPadding.p20,
-                        AppPadding.p5),
-                    child: Row(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
-                      children: [
-                        Text(
-                          AppStrings.tax.tr(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                        Text(
-                          widget.taxAmount
-                              .toString(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    thickness: 2,
-                    color: ColorManager.black,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets
-                        .fromLTRB(
-                        AppPadding.p20,
-                        AppPadding.p5,
-                        AppPadding.p20,
-                        AppPadding.p5),
-                    child: Row(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
-                      children: [
-                        Text(
-                          AppStrings.discount3
-                              .tr(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                        Text(
-                          widget.discountAmount
-                              .toString(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    thickness: 2,
-                    color: ColorManager.black,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets
-                        .fromLTRB(
-                        AppPadding.p20,
-                        AppPadding.p5,
-                        AppPadding.p20,
-                        AppPadding.p5),
-                    child: Row(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
-                      children: [
-                        Text(
-                          AppStrings.total2
-                              .tr(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                        Text(
-                          widget.total
-                              .toString(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    thickness: 2,
-                    color: ColorManager.black,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets
-                        .fromLTRB(
-                        AppPadding.p20,
-                        AppPadding.p5,
-                        AppPadding.p20,
-                        AppPadding.p5),
-                    child: Row(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
-                      children: [
-                        Text(
-                          AppStrings.amountPaid
-                              .tr(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                        Text(
-                          totalPaying
-                              .toString(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    thickness: 2,
-                    color: ColorManager.black,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets
-                        .fromLTRB(
-                        AppPadding.p20,
-                        AppPadding.p5,
-                        AppPadding.p20,
-                        AppPadding.p5),
-                    child: Row(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
-                      children: [
-                        Text(
-                          AppStrings.totalDue
-                              .tr(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                        Text(
-                          due.toString(),
-                          style: TextStyle(
-                              fontSize: AppSize
-                                  .s20.sp),
-                          textAlign:
-                          TextAlign.start,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Divider(
-                thickness: 2,
-                color: ColorManager.black,
-              ),
-              Text(
-                  AppStrings.termsAndConditions
-                      .tr(),
-                  style: TextStyle(
-                      fontSize: AppSize.s20.sp))
-            ],
-          )),
-    );
+  Future<void> checkOut(BuildContext context) async {
+    paymentRequest.add(PaymentTypesRequest(
+        paymentId: '1',
+        amount: roundDouble(
+            double.parse(_amountEditingController.text),
+            decimalPlaces),
+        note: _notesEditingController.text));
+
+    for (int n = 0; n < selectedNewPaymentType.length - 1; n++) {
+      paymentRequest.add(PaymentTypesRequest(
+          paymentId: selectedNewPaymentType[n],
+          amount: roundDouble(
+              double.parse(_paymentControllers[n].text),
+              decimalPlaces),
+          note: _paymentNotesControllers[n].text));
+    }
+
+    CheckOutRequest checkOutRequest = CheckOutRequest(
+        locationId: widget.locationId,
+        customerId: widget.customerId,
+        discountType: widget.discountType,
+        discountAmount: widget.discountAmount.toString(),
+        notes: _notesInLineEditingController.text,
+        cart: widget.cartRequest,
+        taxType: widget.taxType,
+        taxAmount: widget.taxAmount,
+        payment: paymentRequest);
+
+    await MainViewCubit.get(context).checkout(checkOutRequest);
+    setState(() {});
+
+    for (var n in _paymentControllers) {
+      totalPaying = roundDouble(double.parse(n.text), decimalPlaces);
+    }
+
+    totalPaying = totalPaying! +
+        roundDouble(double.parse(_amountEditingController.text),
+            decimalPlaces);
+
+    due = widget.total - totalPaying!;
+
+    await Future.delayed(const Duration(milliseconds: 1000));
+
+    screenshotController
+        .capture(delay: const Duration(milliseconds: 10))
+        .then((capturedImage) async {
+      theImageThatComesFromThePrinter = capturedImage!;
+      setState(() {
+        theImageThatComesFromThePrinter = capturedImage;
+        testPrint(
+            AppConstants.printerIp, theImageThatComesFromThePrinter);
+      });
+
+      PaymentDialog.hide(context);
+    }).catchError((onError) {
+      if (kDebugMode) {
+        print(onError);
+      }
+    });
+
+    // Navigator.of(context).pushNamed(
+    //     Routes.thermalPrint,
+    //     arguments: GoToThermal(
+    //         total: widget.total.toString()));
   }
 }

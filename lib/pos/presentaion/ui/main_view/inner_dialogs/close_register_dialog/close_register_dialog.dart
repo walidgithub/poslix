@@ -100,7 +100,7 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
-            CustomDialog.show(context,AppStrings.noInternet.tr(),const Icon(Icons.wifi),ColorManager.white,AppConstants.durationOfSnackBar,ColorManager.delete);
+            showNoInternet(context);
           }
 
           if (state is CloseRegisterSucceed) {

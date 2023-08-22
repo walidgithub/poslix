@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:poslix_app/pos/shared/style/colors_manager.dart';
 
+import '../../presentaion/ui/popup_dialogs/custom_dialog.dart';
+import '../constant/constant_values_manager.dart';
 import '../constant/strings_manager.dart';
 
 void errorToast({
@@ -76,6 +78,36 @@ Future<bool> onBackButtonPressedInIOS(BuildContext context) async {
         );
       });
   return exitApp ?? false;
+}
+
+void showNoInternet(BuildContext context) {
+  CustomDialog.show(
+      context,
+      AppStrings.noInternet.tr(),
+      const Icon(Icons.wifi),
+      ColorManager.white,
+      AppConstants.durationOfSnackBar,
+      ColorManager.delete);
+}
+
+void tryAgainLater(BuildContext context) {
+  CustomDialog.show(
+      context,
+      AppStrings.errorTryAgain.tr(),
+      const Icon(Icons.close),
+      ColorManager.white,
+      AppConstants.durationOfSnackBar,
+      ColorManager.delete);
+}
+
+void noCredit(BuildContext context) {
+  CustomDialog.show(
+      context,
+      AppStrings.noCredit.tr(),
+      const Icon(Icons.warning_amber_rounded),
+      ColorManager.white,
+      AppConstants.durationOfSnackBar,
+      ColorManager.hold);
 }
 
 String getClearName(String? firstName, String? lastName, {bool comma = false}) {
