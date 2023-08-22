@@ -9,10 +9,6 @@ class SalesReportItemsResponse {
     required this.contactFirstName,
     required this.contactLastName,
     required this.contactMobile,
-    // required this.qty,
-    // this.price,
-    // this.cost,
-    // required this.tax,
     required this.date,
     required this.status,
     required this.type,
@@ -40,10 +36,6 @@ class SalesReportItemsResponse {
     contactFirstName = json['contact_first_name'];
     contactLastName = json['contact_last_name'];
     contactMobile = json['contact_mobile'];
-    // qty = json['qty'] ?? '';
-    // price = json['price'] ?? 0;
-    // tax = json['cost'] ?? 0;
-    // tax = json['tax'];
     date = json['date'];
     status = json['status'];
     type = json['type'];
@@ -58,10 +50,6 @@ class SalesReportItemsResponse {
     _data['contact_first_name'] = contactFirstName;
     _data['contact_last_name'] = contactLastName;
     _data['contact_mobile'] = contactMobile;
-    _data['qty'] = qty;
-    _data['price'] = price;
-    _data['cost'] = cost;
-    _data['tax'] = tax;
     _data['date'] = date;
     _data['status'] = status;
     _data['type'] = type;

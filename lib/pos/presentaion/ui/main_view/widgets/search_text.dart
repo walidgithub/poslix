@@ -8,7 +8,7 @@ import '../../../../shared/constant/strings_manager.dart';
 import '../../../../shared/style/colors_manager.dart';
 import '../../components/container_component.dart';
 
-Widget searchText(BuildContext context, TextEditingController _searchEditingController, Function addToTmp, List<ProductsResponse> listOfAllProducts, List<String> searchList) {
+Widget searchText(BuildContext context, TextEditingController searchEditingController, Function addToTmp, List<ProductsResponse> listOfAllProducts, List<String> searchList) {
   return Autocomplete<String>(
     optionsBuilder:
         (TextEditingValue textEditingValue) {
@@ -32,12 +32,12 @@ Widget searchText(BuildContext context, TextEditingController _searchEditingCont
         textEditingController,
         focusNode,
         onFieldSubmitted) {
-      _searchEditingController =
+      searchEditingController =
           textEditingController;
       return TextField(
           autofocus: false,
           keyboardType: TextInputType.text,
-          controller: _searchEditingController,
+          controller: searchEditingController,
           focusNode: focusNode,
           onEditingComplete: onFieldSubmitted,
           decoration: InputDecoration(

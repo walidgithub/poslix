@@ -243,7 +243,7 @@ class _MainViewState extends State<MainView> {
         MaterialPageRoute(builder: (BuildContext context) => super.widget));
   }
 
-  TextEditingController _searchEditingController = TextEditingController();
+  final TextEditingController _searchEditingController = TextEditingController();
 
   Widget language() {
     return FloatingActionButton(
@@ -537,8 +537,8 @@ class _MainViewState extends State<MainView> {
               if (done == 'done') {
                 setState(() {
                   listOfCustomers = [];
-                  CustomerResponse? _selectedCustomer2;
-                  _selectedCustomer = _selectedCustomer2;
+                  CustomerResponse? selectedCustomer2;
+                  _selectedCustomer = selectedCustomer2;
                   MainViewCubit.get(context).getCustomers(locationId);
                 });
               }

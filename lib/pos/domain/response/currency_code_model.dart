@@ -36,17 +36,17 @@ class CurrencyCodeResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['country'] = country;
-    _data['currency'] = currency;
-    _data['code'] = code;
-    _data['symbol'] = symbol;
-    _data['thousand_separator'] = thousandSeparator;
-    _data['decimal_separator'] = decimalSeparator;
-    _data['exchange_rate'] = exchangeRate;
-    _data['created_at'] = createdAt;
-    _data['updated_at'] = updatedAt;
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['country'] = country;
+    data['currency'] = currency;
+    data['code'] = code;
+    data['symbol'] = symbol;
+    data['thousand_separator'] = thousandSeparator;
+    data['decimal_separator'] = decimalSeparator;
+    data['exchange_rate'] = exchangeRate;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    return data;
   }
 }

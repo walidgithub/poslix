@@ -6,11 +6,11 @@ import '../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../shared/constant/strings_manager.dart';
 import '../../../../../shared/style/colors_manager.dart';
 
-Widget mainNotes(BuildContext context, TextEditingController _notesEditingController) {
+Widget mainNotes(BuildContext context, TextEditingController notesEditingController) {
   return TextField(
       autofocus: false,
       keyboardType: TextInputType.text,
-      controller: _notesEditingController,
+      controller: notesEditingController,
       decoration: InputDecoration(
           hintText:
           AppStrings.paymentNotes.tr(),

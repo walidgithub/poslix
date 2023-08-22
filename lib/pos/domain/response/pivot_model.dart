@@ -42,19 +42,19 @@ class PivotResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['transaction_id'] = transactionId;
-    _data['product_id'] = productId;
-    _data['id'] = id;
-    _data['variation_id'] = variationId;
-    _data['discount_amount'] = discountAmount;
-    _data['qty'] = qty;
-    _data['qty_returned'] = qtyReturned;
-    _data['tax_amount'] = taxAmount;
-    _data['cost'] = cost;
-    _data['price'] = price;
-    _data['tailoring_txt'] = tailoringTxt;
-    _data['tailoring_custom'] = tailoringCustom;
-    return _data;
+    final data = <String, dynamic>{};
+    data['transaction_id'] = transactionId;
+    data['product_id'] = productId;
+    data['id'] = id;
+    data['variation_id'] = variationId;
+    data['discount_amount'] = discountAmount;
+    data['qty'] = qty;
+    data['qty_returned'] = qtyReturned;
+    data['tax_amount'] = taxAmount;
+    data['cost'] = cost;
+    data['price'] = price;
+    data['tailoring_txt'] = tailoringTxt;
+    data['tailoring_custom'] = tailoringCustom;
+    return data;
   }
 }

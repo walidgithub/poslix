@@ -69,28 +69,28 @@ class CustomerResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['location_id'] = locationId;
-    _data['type'] = type;
-    _data['first_name'] = firstName;
-    _data['last_name'] = lastName;
-    _data['name'] = name;
-    _data['email'] = email;
-    _data['contact_id'] = contactId;
-    _data['contact_status'] = contactStatus;
-    _data['city'] = city;
-    _data['state'] = state;
-    _data['country'] = country;
-    _data['address_line_1'] = addressLine_1;
-    _data['address_line_2'] = addressLine_2;
-    _data['zip_code'] = zipCode;
-    _data['mobile'] = mobile;
-    _data['created_by'] = createdBy;
-    _data['shipping_address'] = shippingAddress;
-    _data['deleted_at'] = deletedAt;
-    _data['created_at'] = createdAt;
-    _data['updated_at'] = updatedAt;
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['location_id'] = locationId;
+    data['type'] = type;
+    data['first_name'] = firstName;
+    data['last_name'] = lastName;
+    data['name'] = name;
+    data['email'] = email;
+    data['contact_id'] = contactId;
+    data['contact_status'] = contactStatus;
+    data['city'] = city;
+    data['state'] = state;
+    data['country'] = country;
+    data['address_line_1'] = addressLine_1;
+    data['address_line_2'] = addressLine_2;
+    data['zip_code'] = zipCode;
+    data['mobile'] = mobile;
+    data['created_by'] = createdBy;
+    data['shipping_address'] = shippingAddress;
+    data['deleted_at'] = deletedAt;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    return data;
   }
 }

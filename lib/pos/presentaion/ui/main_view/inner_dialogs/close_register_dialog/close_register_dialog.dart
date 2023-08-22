@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/requests/close_register_model.dart';
@@ -19,7 +18,6 @@ import '../../../../di/di.dart';
 import '../../../../router/app_router.dart';
 import '../../../components/close_button.dart';
 import '../../../components/container_component.dart';
-import '../../../components/text_component.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
 import '../../main_view_cubit/main_view_cubit.dart';
 import '../../main_view_cubit/main_view_state.dart';
@@ -62,10 +60,10 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
 
   int? cashInHand;
 
-  double? total_cash;
-  double? total_cheque;
-  double? total_bank;
-  double? total_cart;
+  double? totalCash;
+  double? totalCheque;
+  double? totalBank;
+  double? totalCart;
   double? totalAmount;
 
   String currencyCode = '';
@@ -73,10 +71,10 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
   @override
   void initState() {
     cashInHand = 0;
-    total_cash = 0;
-    total_cheque = 0;
-    total_bank = 0;
-    total_cart = 0;
+    totalCash = 0;
+    totalCheque = 0;
+    totalBank = 0;
+    totalCart = 0;
     totalAmount = 0;
     super.initState();
   }
@@ -88,7 +86,7 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
   }
 
   String calcTotal() {
-    return (cashInHand! + total_cash! + total_cheque! + total_bank! + total_cart!).toString();
+    return (cashInHand! + totalCash! + totalCheque! + totalBank! + totalCart!).toString();
   }
 
   @override
@@ -118,10 +116,10 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
 
           if (state is LoadedRegisterData) {
             setState(() {
-              total_cash = MainViewCubit.get(context).total_cash;
-              total_cheque = MainViewCubit.get(context).total_cheque;
-              total_bank = MainViewCubit.get(context).total_bank;
-              total_cart = MainViewCubit.get(context).total_cart;
+              totalCash = MainViewCubit.get(context).totalCash;
+              totalCheque = MainViewCubit.get(context).totalCheque;
+              totalBank = MainViewCubit.get(context).totalBank;
+              totalCart = MainViewCubit.get(context).totalCart;
             });
           } else if (state is LoadingErrorRegisterData) {
 
@@ -174,19 +172,19 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                       SizedBox(
                                         width: AppConstants.smallDistance,
                                       ),
-                                      moneyMethods(context, ImageAssets.moneyBillTransfer, AppStrings.cartPayment.tr(), total_cart.toString(), currencyCode),
+                                      moneyMethods(context, ImageAssets.moneyBillTransfer, AppStrings.cartPayment.tr(), totalCart.toString(), currencyCode),
                                       SizedBox(
                                         width: AppConstants.smallDistance,
                                       ),
-                                      moneyMethods(context, ImageAssets.building, AppStrings.bankPayment.tr(), total_bank.toString(), currencyCode),
+                                      moneyMethods(context, ImageAssets.building, AppStrings.bankPayment.tr(), totalBank.toString(), currencyCode),
                                       SizedBox(
                                         width: AppConstants.smallDistance,
                                       ),
-                                      moneyMethods(context, ImageAssets.creditCard, AppStrings.cashPayment.tr(), total_cash.toString(), currencyCode),
+                                      moneyMethods(context, ImageAssets.creditCard, AppStrings.cashPayment.tr(), totalCash.toString(), currencyCode),
                                       SizedBox(
                                         width: AppConstants.smallDistance,
                                       ),
-                                      moneyMethods(context, ImageAssets.moneyCheck, AppStrings.chequePayment.tr(), total_cheque.toString(), currencyCode),
+                                      moneyMethods(context, ImageAssets.moneyCheck, AppStrings.chequePayment.tr(), totalCheque.toString(), currencyCode),
                                     ]
                                 ),
 

@@ -18,11 +18,11 @@ class StuffResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['sales'] = sales;
-    _data['quotations'] = quotations;
-    _data['products'] = products;
-    _data['pos'] = pos;
-    return _data;
+    final data = <String, dynamic>{};
+    data['sales'] = sales;
+    data['quotations'] = quotations;
+    data['products'] = products;
+    data['pos'] = pos;
+    return data;
   }
 }

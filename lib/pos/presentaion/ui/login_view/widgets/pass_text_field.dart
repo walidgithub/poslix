@@ -6,7 +6,7 @@ import '../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../shared/constant/strings_manager.dart';
 import '../../../../shared/style/colors_manager.dart';
 
-Widget passText(BuildContext context, FocusNode _loginPassFN, TextEditingController _loginPassEditingController, bool showPass, Function toggleEye) {
+Widget passText(BuildContext context, FocusNode loginPassFN, TextEditingController loginPassEditingController, bool showPass, Function toggleEye) {
   return Expanded(
     flex: 1,
     child: TextFormField(
@@ -14,11 +14,12 @@ Widget passText(BuildContext context, FocusNode _loginPassFN, TextEditingControl
           if (value!.isEmpty) {
             return AppStrings.passwordFieldIsRequired.tr();
           }
+          return null;
         },
-        focusNode: _loginPassFN,
+        focusNode: loginPassFN,
         autofocus: false,
         keyboardType: TextInputType.visiblePassword,
-        controller: _loginPassEditingController,
+        controller: loginPassEditingController,
         obscureText: !showPass,
         decoration: InputDecoration(
             errorStyle: const TextStyle(

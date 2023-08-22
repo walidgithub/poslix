@@ -7,7 +7,6 @@ import 'package:poslix_app/pos/domain/response/appearance_model.dart';
 import 'package:poslix_app/pos/domain/response/authorization_model.dart';
 import 'package:poslix_app/pos/domain/response/business_model.dart';
 import 'package:poslix_app/pos/domain/response/check_out_model.dart';
-import 'package:poslix_app/pos/domain/response/permissions_model.dart';
 import 'package:poslix_app/pos/domain/response/taxes_model.dart';
 
 import 'package:poslix_app/pos/domain/response/user_model.dart';

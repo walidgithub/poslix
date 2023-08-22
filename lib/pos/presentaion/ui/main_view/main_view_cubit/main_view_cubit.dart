@@ -44,10 +44,10 @@ class MainViewCubit extends Cubit<MainViewState> {
   List<CustomerResponse> listOfCustomers = [];
 
   int? cashInHand;
-  double? total_cash;
-  double? total_cheque;
-  double? total_bank;
-  double? total_cart;
+  double? totalCash;
+  double? totalCheque;
+  double? totalBank;
+  double? totalCart;
 
   String? userName;
   String? password;
@@ -380,10 +380,10 @@ class MainViewCubit extends Cubit<MainViewState> {
 
           res = await posRepositoryImpl.getRegisterData(locationId, token);
 
-          total_bank = res.bank;
-          total_cheque = res.cheque;
-          total_cash = res.cash;
-          total_cart = res.card;
+          totalBank = res.bank;
+          totalCheque = res.cheque;
+          totalCash = res.cash;
+          totalCart = res.card;
 
           emit(LoadedRegisterData());
           return res;
@@ -391,10 +391,10 @@ class MainViewCubit extends Cubit<MainViewState> {
 
         res = await posRepositoryImpl.getRegisterData(locationId, token);
 
-        total_bank = res.bank;
-        total_cheque = res.cheque;
-        total_cash = res.cash;
-        total_cart = res.card;
+        totalBank = res.bank;
+        totalCheque = res.cheque;
+        totalCash = res.cash;
+        totalCart = res.card;
 
         emit(LoadedRegisterData());
         return res;

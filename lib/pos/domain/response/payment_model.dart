@@ -27,14 +27,14 @@ class PaymentResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['transaction_id'] = transactionId;
-    _data['payment_type'] = paymentType;
-    _data['amount'] = amount;
-    _data['created_by'] = createdBy;
-    _data['created_at'] = createdAt;
-    _data['notes'] = notes;
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['transaction_id'] = transactionId;
+    data['payment_type'] = paymentType;
+    data['amount'] = amount;
+    data['created_by'] = createdBy;
+    data['created_at'] = createdAt;
+    data['notes'] = notes;
+    return data;
   }
 }

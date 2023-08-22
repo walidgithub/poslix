@@ -12,9 +12,9 @@ class PivotTaxResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['parent_id'] = parentId;
-    _data['tax_id'] = taxId;
-    return _data;
+    final data = <String, dynamic>{};
+    data['parent_id'] = parentId;
+    data['tax_id'] = taxId;
+    return data;
   }
 }

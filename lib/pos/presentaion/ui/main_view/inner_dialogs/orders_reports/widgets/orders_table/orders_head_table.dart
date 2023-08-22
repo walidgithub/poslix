@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget createOrdersDataTable(
-    int _currentSortColumn,
-    bool _isSortAsc,
+    int currentSortColumn,
+    bool isSortAsc,
     bool searching,
-    List<DataColumn> _createOrdersColumns,
-    List<DataRow> _createOrdersRows,
-    List<DataRow> _createOrdersRowsForSearch) {
+    List<DataColumn> createOrdersColumns,
+    List<DataRow> createOrdersRows,
+    List<DataRow> createOrdersRowsForSearch) {
   return Column(
     children: [
       DataTable(
         horizontalMargin: 10,
         columnSpacing: 60,
         dividerThickness: 2.sp,
-        columns: _createOrdersColumns,
+        columns: createOrdersColumns,
         rows:
-        searching ? _createOrdersRowsForSearch : _createOrdersRows,
-        sortColumnIndex: _currentSortColumn,
-        sortAscending: _isSortAsc,
+        searching ? createOrdersRowsForSearch : createOrdersRows,
+        sortColumnIndex: currentSortColumn,
+        sortAscending: isSortAsc,
       )
     ],
   );

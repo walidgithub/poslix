@@ -4,10 +4,10 @@ import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:image/image.dart';
 
 Future<void> testReceipt(
-    NetworkPrinter printer,  Uint8List theimageThatC) async {
+    NetworkPrinter printer,  Uint8List theImageThatC) async {
 
 
-  final Image? image = decodeImage(theimageThatC);
+  final Image? image = decodeImage(theImageThatC);
   printer.image(image! , align: PosAlign.center);
 
 

@@ -87,33 +87,33 @@ class CheckOutResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['location_id'] = locationId;
-    _data['type'] = type;
-    _data['sub_type'] = subType;
-    _data['status'] = status;
-    _data['sub_status'] = subStatus;
-    _data['is_quotation'] = isQuotation;
-    _data['payment_status'] = paymentStatus;
-    _data['contact_id'] = contactId;
-    _data['invoice_no'] = invoiceNo;
-    _data['ref_no'] = refNo;
-    _data['tax_amount'] = taxAmount;
-    _data['discount_type'] = discountType;
-    _data['discount_amount'] = discountAmount;
-    _data['notes'] = notes;
-    _data['total_price'] = totalPrice;
-    _data['document'] = document;
-    _data['exchange_rate'] = exchangeRate;
-    _data['created_by'] = createdBy;
-    _data['created_at'] = createdAt;
-    _data['updated_at'] = updatedAt;
-    _data['total_taxes'] = totalTaxes;
-    _data['taxes'] = taxes;
-    _data['currency_id'] = currencyId;
-    _data['products'] = products.map((e)=>e.toJson()).toList();
-    _data['payment'] = payment.map((e)=>e.toJson()).toList();
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['location_id'] = locationId;
+    data['type'] = type;
+    data['sub_type'] = subType;
+    data['status'] = status;
+    data['sub_status'] = subStatus;
+    data['is_quotation'] = isQuotation;
+    data['payment_status'] = paymentStatus;
+    data['contact_id'] = contactId;
+    data['invoice_no'] = invoiceNo;
+    data['ref_no'] = refNo;
+    data['tax_amount'] = taxAmount;
+    data['discount_type'] = discountType;
+    data['discount_amount'] = discountAmount;
+    data['notes'] = notes;
+    data['total_price'] = totalPrice;
+    data['document'] = document;
+    data['exchange_rate'] = exchangeRate;
+    data['created_by'] = createdBy;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['total_taxes'] = totalTaxes;
+    data['taxes'] = taxes;
+    data['currency_id'] = currencyId;
+    data['products'] = products.map((e)=>e.toJson()).toList();
+    data['payment'] = payment.map((e)=>e.toJson()).toList();
+    return data;
   }
 }

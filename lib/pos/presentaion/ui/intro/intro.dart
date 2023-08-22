@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../shared/constant/constant_values_manager.dart';
-import '../../../shared/utils/utils.dart';
 import '../../router/app_router.dart';
 
 class IntroView extends StatefulWidget {

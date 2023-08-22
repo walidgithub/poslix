@@ -66,26 +66,26 @@ class CategoriesResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['name'] = name;
-    _data['location_id'] = locationId;
-    _data['short_code'] = shortCode;
-    _data['parent_id'] = parentId;
-    _data['created_by'] = createdBy;
-    _data['woocommerce_cat_id'] = woocommerceCatId;
-    _data['category_type'] = categoryType;
-    _data['description'] = description;
-    _data['slug'] = slug;
-    _data['tax_id'] = taxId;
-    _data['never_tax'] = neverTax;
-    _data['deleted_at'] = deletedAt;
-    _data['created_at'] = createdAt;
-    _data['updated_at'] = updatedAt;
-    _data['show_in_list'] = showInList;
-    _data['products_count'] = productsCount;
-    _data['selected'] = selected;
-    _data['products'] = products.map((e)=>e.toJson()).toList();
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['location_id'] = locationId;
+    data['short_code'] = shortCode;
+    data['parent_id'] = parentId;
+    data['created_by'] = createdBy;
+    data['woocommerce_cat_id'] = woocommerceCatId;
+    data['category_type'] = categoryType;
+    data['description'] = description;
+    data['slug'] = slug;
+    data['tax_id'] = taxId;
+    data['never_tax'] = neverTax;
+    data['deleted_at'] = deletedAt;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['show_in_list'] = showInList;
+    data['products_count'] = productsCount;
+    data['selected'] = selected;
+    data['products'] = products.map((e)=>e.toJson()).toList();
+    return data;
   }
 }

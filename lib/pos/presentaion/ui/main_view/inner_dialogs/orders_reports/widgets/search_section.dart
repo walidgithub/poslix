@@ -7,7 +7,7 @@ import '../../../../../../shared/constant/strings_manager.dart';
 import '../../../../../../shared/style/colors_manager.dart';
 import '../../../../components/container_component.dart';
 
-Widget searchSection(BuildContext context, Function searchAction, TextEditingController _searchEditingController, bool orderFilter, var selectedSearchType) {
+Widget searchSection(BuildContext context, Function searchAction, TextEditingController searchEditingController, bool orderFilter, var selectedSearchType) {
   return Expanded(
     flex: 1,
     child: containerComponent(
@@ -35,7 +35,7 @@ Widget searchSection(BuildContext context, Function searchAction, TextEditingCon
             );
           }).toList(),
           onChanged: (selectedSearch) {
-            _searchEditingController.text = '';
+            searchEditingController.text = '';
             searchAction(selectedSearch);
           },
           value: selectedSearchType,

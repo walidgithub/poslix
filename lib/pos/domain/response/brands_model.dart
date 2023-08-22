@@ -7,7 +7,6 @@ class BrandsResponse {
     required this.name,
     required this.description,
     required this.createdBy,
-    // this.taxId,
     required this.neverTax,
     this.deletedAt,
     this.createdAt,
@@ -22,7 +21,6 @@ class BrandsResponse {
   late final String name;
   late final String description;
   late final int createdBy;
-  // int? taxId;
   late final int neverTax;
   String? deletedAt;
   String? createdAt;
@@ -38,7 +36,6 @@ class BrandsResponse {
     name = json['name'];
     description = json['description'];
     createdBy = json['created_by'];
-    // taxId = json['taxId'] ?? '';
     neverTax = json['never_tax'];
     deletedAt = json['deletedAt'] ?? '';
     createdAt = json['createdAt'] ?? '';
@@ -50,21 +47,20 @@ class BrandsResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['location_id'] = locationId;
-    _data['name'] = name;
-    _data['description'] = description;
-    _data['created_by'] = createdBy;
-    // _data['tax_id'] = taxId;
-    _data['never_tax'] = neverTax;
-    _data['deleted_at'] = deletedAt;
-    _data['created_at'] = createdAt;
-    _data['updated_at'] = updatedAt;
-    _data['use_for_repair'] = useForRepair;
-    _data['products_count'] = productsCount;
-    _data['selected'] = selected;
-    _data['products'] = products.map((e)=>e.toJson()).toList();
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['location_id'] = locationId;
+    data['name'] = name;
+    data['description'] = description;
+    data['created_by'] = createdBy;
+    data['never_tax'] = neverTax;
+    data['deleted_at'] = deletedAt;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['use_for_repair'] = useForRepair;
+    data['products_count'] = productsCount;
+    data['selected'] = selected;
+    data['products'] = products.map((e)=>e.toJson()).toList();
+    return data;
   }
 }

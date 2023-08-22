@@ -56,23 +56,23 @@ class VariationsResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['location_id'] = locationId;
-    _data['parent_id'] = parentId;
-    _data['name'] = name;
-    _data['name2'] = name2;
-    _data['sku'] = sku;
-    _data['cost'] = cost;
-    _data['price'] = price;
-    _data['sell_over_stock'] = sellOverStock;
-    _data['is_selling_multi_price'] = isSellingMultiPrice;
-    _data['is_service'] = isService;
-    _data['is_active'] = isActive;
-    _data['created_by'] = createdBy;
-    _data['created_at'] = createdAt;
-    _data['stock'] = stock;
-    _data['stocks'] = stocks.map((e)=>e.toJson()).toList();
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['location_id'] = locationId;
+    data['parent_id'] = parentId;
+    data['name'] = name;
+    data['name2'] = name2;
+    data['sku'] = sku;
+    data['cost'] = cost;
+    data['price'] = price;
+    data['sell_over_stock'] = sellOverStock;
+    data['is_selling_multi_price'] = isSellingMultiPrice;
+    data['is_service'] = isService;
+    data['is_active'] = isActive;
+    data['created_by'] = createdBy;
+    data['created_at'] = createdAt;
+    data['stock'] = stock;
+    data['stocks'] = stocks.map((e)=>e.toJson()).toList();
+    return data;
   }
 }

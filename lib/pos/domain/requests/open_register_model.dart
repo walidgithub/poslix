@@ -9,8 +9,8 @@ class OpenRegisterRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['hand_cash'] = handCash;
-    return _data;
+    final data = <String, dynamic>{};
+    data['hand_cash'] = handCash;
+    return data;
   }
 }

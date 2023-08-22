@@ -12,9 +12,9 @@ class CloseRegisterRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['hand_cash'] = handCash;
-    _data['note'] = note;
-    return _data;
+    final data = <String, dynamic>{};
+    data['hand_cash'] = handCash;
+    data['note'] = note;
+    return data;
   }
 }

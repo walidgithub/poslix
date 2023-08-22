@@ -48,21 +48,21 @@ class SalesReportDataModel {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['user_name'] = userName;
-    _data['contact_name'] = contactName;
-    _data['contact_mobile'] = contactMobile;
-    _data['sub_total'] = subTotal;
-    _data['payed'] = payed;
-    _data['due'] = due;
-    _data['discount'] = discount;
-    _data['tax'] = tax;
-    _data['date'] = date;
-    _data['transaction_status'] = transactionStatus;
-    _data['payment_status'] = paymentStatus;
-    _data['payment_method'] = paymentMethod;
-    _data['type'] = type;
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_name'] = userName;
+    data['contact_name'] = contactName;
+    data['contact_mobile'] = contactMobile;
+    data['sub_total'] = subTotal;
+    data['payed'] = payed;
+    data['due'] = due;
+    data['discount'] = discount;
+    data['tax'] = tax;
+    data['date'] = date;
+    data['transaction_status'] = transactionStatus;
+    data['payment_status'] = paymentStatus;
+    data['payment_method'] = paymentMethod;
+    data['type'] = type;
+    return data;
   }
 }

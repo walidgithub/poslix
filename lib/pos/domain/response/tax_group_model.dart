@@ -62,25 +62,25 @@ class TaxGroupResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['location_id'] = locationId;
-    _data['name'] = name;
-    _data['amount'] = amount;
-    _data['is_tax_group'] = isTaxGroup;
-    _data['for_tax_group'] = forTaxGroup;
-    _data['created_by'] = createdBy;
-    _data['woocommerce_tax_rate_id'] = woocommerceTaxRateId;
-    _data['deleted_at'] = deletedAt;
-    _data['created_at'] = createdAt;
-    _data['updated_at'] = updatedAt;
-    _data['for_tax_inclusive'] = forTaxInclusive;
-    _data['for_tax_exclusive'] = forTaxExclusive;
-    _data['is_inc_or_exc'] = isIncOrExc;
-    _data['type'] = type;
-    _data['is_primary'] = isPrimary;
-    _data['tax_type'] = taxType;
-    _data['pivot'] = pivot.toJson();
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['location_id'] = locationId;
+    data['name'] = name;
+    data['amount'] = amount;
+    data['is_tax_group'] = isTaxGroup;
+    data['for_tax_group'] = forTaxGroup;
+    data['created_by'] = createdBy;
+    data['woocommerce_tax_rate_id'] = woocommerceTaxRateId;
+    data['deleted_at'] = deletedAt;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['for_tax_inclusive'] = forTaxInclusive;
+    data['for_tax_exclusive'] = forTaxExclusive;
+    data['is_inc_or_exc'] = isIncOrExc;
+    data['type'] = type;
+    data['is_primary'] = isPrimary;
+    data['tax_type'] = taxType;
+    data['pivot'] = pivot.toJson();
+    return data;
   }
 }

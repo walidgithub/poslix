@@ -9,8 +9,8 @@ class OldTokenRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['oldToken'] = oldToken;
-    return _data;
+    final data = <String, dynamic>{};
+    data['oldToken'] = oldToken;
+    return data;
   }
 }

@@ -12,9 +12,9 @@ class AuthorizationResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['token'] = token;
-    _data['type'] = type;
-    return _data;
+    final data = <String, dynamic>{};
+    data['token'] = token;
+    data['type'] = type;
+    return data;
   }
 }

@@ -19,7 +19,6 @@ import '../../../domain/response/currency_code_model.dart';
 import '../../../domain/response/customer_model.dart';
 import '../../../domain/response/logout_response.dart';
 import '../../../domain/response/open_register_response.dart';
-import '../../../domain/response/permissions_model.dart';
 import '../../../domain/response/sales_report_data_model.dart';
 import '../../../domain/response/taxes_model.dart';
 import '../../../domain/response/user_model.dart';

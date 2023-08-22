@@ -17,10 +17,10 @@ class PermissionsResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['name'] = name;
-    _data['stuff'] = stuff.toJson();
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['stuff'] = stuff.toJson();
+    return data;
   }
 }

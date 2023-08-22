@@ -47,20 +47,20 @@ class UserResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['user_type'] = userType;
-    _data['first_name'] = firstName;
-    _data['last_name'] = lastName;
-    _data['username'] = username;
-    _data['contact_number'] = contactNumber;
-    _data['email'] = email;
-    _data['owner_id'] = ownerId;
-    _data['status'] = status;
-    _data['deleted_at'] = deletedAt;
-    _data['created_at'] = createdAt;
-    _data['updated_at'] = updatedAt;
-    _data['permissions'] = permissions.map((e)=>e.toJson()).toList();
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_type'] = userType;
+    data['first_name'] = firstName;
+    data['last_name'] = lastName;
+    data['username'] = username;
+    data['contact_number'] = contactNumber;
+    data['email'] = email;
+    data['owner_id'] = ownerId;
+    data['status'] = status;
+    data['deleted_at'] = deletedAt;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['permissions'] = permissions.map((e)=>e.toJson()).toList();
+    return data;
   }
 }

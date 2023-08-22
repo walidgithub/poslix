@@ -15,10 +15,10 @@ class CurrencyResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['currency_name'] = currencyName;
-    _data['currency_code'] = currencyCode;
-    _data['currency_symbol'] = currencySymbol;
-    return _data;
+    final data = <String, dynamic>{};
+    data['currency_name'] = currencyName;
+    data['currency_code'] = currencyCode;
+    data['currency_symbol'] = currencySymbol;
+    return data;
   }
 }

@@ -6,7 +6,7 @@ import '../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../shared/constant/strings_manager.dart';
 import '../../../../shared/style/colors_manager.dart';
 
-Widget emailText(BuildContext context, RegExp regexMail,FocusNode _loginPassFN, FocusNode _loginEmailFN, TextEditingController _loginEmailEditingController) {
+Widget emailText(BuildContext context, RegExp regexMail,FocusNode loginPassFN, FocusNode loginEmailFN, TextEditingController loginEmailEditingController) {
   return Expanded(
     flex: 1,
     child: TextFormField(
@@ -28,15 +28,15 @@ Widget emailText(BuildContext context, RegExp regexMail,FocusNode _loginPassFN, 
         onFieldSubmitted: (_) {
           FocusScope.of(context)
               .requestFocus(
-              _loginPassFN);
+              loginPassFN);
         },
-        focusNode: _loginEmailFN,
+        focusNode: loginEmailFN,
         autofocus: false,
         keyboardType:
         TextInputType
             .emailAddress,
         controller:
-        _loginEmailEditingController,
+        loginEmailEditingController,
         decoration:
         InputDecoration(
             errorStyle:

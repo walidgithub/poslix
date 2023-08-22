@@ -841,14 +841,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
                   delay: const Duration(
                       milliseconds: 10))
                   .then((capturedImage) async {
-                theimageThatComesfromThePrinter =
+                theImageThatComesFromThePrinter =
                 capturedImage!;
                 setState(() {
-                  theimageThatComesfromThePrinter =
+                  theImageThatComesFromThePrinter =
                       capturedImage;
                   testPrint(
                       AppConstants.printerIp,
-                      theimageThatComesfromThePrinter);
+                      theImageThatComesFromThePrinter);
                 });
 
                 PaymentDialog.hide(context);

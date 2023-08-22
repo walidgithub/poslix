@@ -9,8 +9,8 @@ class CloseRegisterReportRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['today'] = today;
-    return _data;
+    final data = <String, dynamic>{};
+    data['today'] = today;
+    return data;
   }
 }

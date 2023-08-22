@@ -1,5 +1,3 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class AppMargin {
   static const double m0 = 0.0;
   static const double m5 = 5.0;

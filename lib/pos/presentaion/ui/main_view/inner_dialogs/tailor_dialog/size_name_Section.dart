@@ -6,11 +6,11 @@ import '../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../shared/constant/strings_manager.dart';
 import '../../../../../shared/style/colors_manager.dart';
 
-Widget sizeName(BuildContext context, TextEditingController _sizeNameEditingController) {
+Widget sizeName(BuildContext context, TextEditingController sizeNameEditingController) {
   return TextField(
       autofocus: false,
       keyboardType: TextInputType.text,
-      controller: _sizeNameEditingController,
+      controller: sizeNameEditingController,
       decoration: InputDecoration(
           hintText: AppStrings.sizeName.tr(),
           hintStyle: TextStyle(fontSize: AppSize.s12.sp),

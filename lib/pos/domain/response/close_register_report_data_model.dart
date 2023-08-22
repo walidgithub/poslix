@@ -39,18 +39,18 @@ class CloseRegisterReportDataResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['first_name'] = firstName;
-    _data['last_name'] = lastName;
-    _data['hand_cash'] = handCash;
-    _data['cart'] = cart;
-    _data['cash'] = cash;
-    _data['cheque'] = cheque;
-    _data['bank'] = bank;
-    _data['date'] = date;
-    _data['note'] = note;
-    _data['status'] = status;
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['first_name'] = firstName;
+    data['last_name'] = lastName;
+    data['hand_cash'] = handCash;
+    data['cart'] = cart;
+    data['cash'] = cash;
+    data['cheque'] = cheque;
+    data['bank'] = bank;
+    data['date'] = date;
+    data['note'] = note;
+    data['status'] = status;
+    return data;
   }
 }

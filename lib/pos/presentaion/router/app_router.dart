@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:poslix_app/pos/presentaion/ui/intro/intro.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
-import '../../shared/constant/strings_manager.dart';
 import '../ui/login_view/login_view.dart';
 import '../ui/main_view/main_view.dart';
 import '../ui/register_pos_view/register_pos_view.dart';

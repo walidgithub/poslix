@@ -9,7 +9,7 @@ import '../../../../../shared/style/colors_manager.dart';
 import '../../../components/container_component.dart';
 import '../../../components/text_component.dart';
 
-Widget mainPaymentMethod(BuildContext context, double total, Function selectMainPaymentMethod, TextEditingController _amountEditingController, TextEditingController _notesInLineEditingController, String selectedPaymentType) {
+Widget mainPaymentMethod(BuildContext context, double total, Function selectMainPaymentMethod, TextEditingController amountEditingController, TextEditingController _notesInLineEditingController, String selectedPaymentType) {
   return Row(
     children: [
       Expanded(
@@ -19,7 +19,7 @@ Widget mainPaymentMethod(BuildContext context, double total, Function selectMain
             keyboardType:
             TextInputType.number,
             controller:
-            _amountEditingController,
+            amountEditingController,
             decoration: InputDecoration(
                 hintText:
                 total.toString(),

@@ -16,7 +16,6 @@ import '../../../../../shared/style/colors_manager.dart';
 import '../../../../di/di.dart';
 import '../../../components/close_button.dart';
 import '../../../components/container_component.dart';
-import '../../../components/text_component.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
 import '../../main_view_cubit/main_view_state.dart';
 import 'custom_text_form_field.dart';

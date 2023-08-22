@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../constant/constant_values_manager.dart';
-import '../../utils/utils.dart';
 
 
 /// Class that makes API call easier

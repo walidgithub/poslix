@@ -36,17 +36,17 @@ class CustomerRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['first_name'] = first_name;
-    _data['last_name'] = last_name;
-    _data['mobile'] = mobile;
-    _data['city'] = city;
-    _data['state'] = state;
-    _data['country'] = country;
-    _data['address_line_1'] = address_line_1;
-    _data['address_line_2'] = address_line_2;
-    _data['zip_code'] = zip_code;
-    _data['shipping_address'] = shipping_address;
-    return _data;
+    final data = <String, dynamic>{};
+    data['first_name'] = first_name;
+    data['last_name'] = last_name;
+    data['mobile'] = mobile;
+    data['city'] = city;
+    data['state'] = state;
+    data['country'] = country;
+    data['address_line_1'] = address_line_1;
+    data['address_line_2'] = address_line_2;
+    data['zip_code'] = zip_code;
+    data['shipping_address'] = shipping_address;
+    return data;
   }
 }

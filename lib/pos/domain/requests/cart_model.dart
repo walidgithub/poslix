@@ -18,11 +18,11 @@ class CartRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['product_id'] = productId;
-    _data['variation_id'] = variationId;
-    _data['qty'] = qty;
-    _data['note'] = note;
-    return _data;
+    final data = <String, dynamic>{};
+    data['product_id'] = productId;
+    data['variation_id'] = variationId;
+    data['qty'] = qty;
+    data['note'] = note;
+    return data;
   }
 }

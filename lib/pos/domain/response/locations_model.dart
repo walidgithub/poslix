@@ -27,14 +27,14 @@ class LocationsResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['location_id'] = locationId;
-    _data['location_name'] = locationName;
-    _data['location_decimal_places'] = locationDecimalPlaces;
-    _data['currency_id'] = currencyId;
-    _data['currency_name'] = currencyName;
-    _data['currency_code'] = currencyCode;
-    _data['currency_symbol'] = currencySymbol;
-    return _data;
+    final data = <String, dynamic>{};
+    data['location_id'] = locationId;
+    data['location_name'] = locationName;
+    data['location_decimal_places'] = locationDecimalPlaces;
+    data['currency_id'] = currencyId;
+    data['currency_name'] = currencyName;
+    data['currency_code'] = currencyCode;
+    data['currency_symbol'] = currencySymbol;
+    return data;
   }
 }
