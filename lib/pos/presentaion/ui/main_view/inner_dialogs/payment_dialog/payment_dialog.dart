@@ -8,9 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/bill_format.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/check_out_button.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/totals.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_printer/ImagestorByte.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_printer/printer.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/widgets/bill_format.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/widgets/check_out_button.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/widgets/new_payment_methods.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/widgets/totals.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_state.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
@@ -24,14 +27,11 @@ import '../../../../../shared/preferences/app_pref.dart';
 import '../../../../../shared/style/colors_manager.dart';
 import '../../../../di/di.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
-import '../../../order/wi_fi_printer/ImagestorByte.dart';
-import '../../../order/wi_fi_printer/printer.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
 import '../../main_view_cubit/main_view_cubit.dart';
-import '../tailor_dialog/main_note.dart';
-import 'add_payment_row.dart';
-import 'main_payment _method.dart';
-import 'new_payment_methods.dart';
+import '../tailor_dialog/widgets/main_note.dart';
+import 'widgets/add_payment_row.dart';
+import 'widgets/main_payment _method.dart';
 
 class PaymentDialog extends StatefulWidget {
   double total;
@@ -351,11 +351,11 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         _paymentControllers,
                                         widget.total,
                                         _paymentNotesControllers,
-                                        selectPaymentType),
+                                        selectPaymentType, selectedNewPaymentType),
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),
-                                    addNewPaymentRow(context, addNewPaymentRow),
+                                    addNewPaymentRow(context, addPaymentRow),
                                     SizedBox(
                                       height: AppConstants.smallerDistance,
                                     ),
@@ -402,7 +402,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
     });
   }
 
-  void deletePaymentMethod(BuildContext context, int index) {
+  void deletePaymentMethod(int index) {
     setState(() {
       _paymentControllers.removeAt(index);
       _paymentNotesControllers.removeAt(index);

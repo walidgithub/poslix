@@ -18,7 +18,7 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/customer_d
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/discount_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/hold_dialog/hold_card_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/item_options_dialog.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports/orders_and_hold_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/orders_and_hold_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/payment_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/shipping_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/buttons.dart';

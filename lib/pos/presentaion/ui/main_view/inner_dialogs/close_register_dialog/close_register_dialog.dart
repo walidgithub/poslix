@@ -21,7 +21,7 @@ import '../../../components/container_component.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
 import '../../main_view_cubit/main_view_cubit.dart';
 import '../../main_view_cubit/main_view_state.dart';
-import 'money_methods.dart';
+import 'widgets/money_methods.dart';
 
 class CloseRegisterDialog extends StatefulWidget {
   int locationId;

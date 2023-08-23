@@ -18,7 +18,7 @@ import '../../../components/close_button.dart';
 import '../../../components/container_component.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
 import '../../main_view_cubit/main_view_state.dart';
-import 'custom_text_form_field.dart';
+import 'widgets/custom_text_form_field.dart';
 
 class CustomerDialog extends StatefulWidget {
   String editType;

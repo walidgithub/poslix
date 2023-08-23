@@ -24,7 +24,7 @@ Widget searchSection(BuildContext context, Function searchAction, TextEditingCon
           items: <String>[
             AppStrings.customer.tr(),
             AppStrings.tel.tr(),
-            orderFilter! ? AppStrings.orderId.tr() : AppStrings.holdName.tr()
+            orderFilter ? AppStrings.orderId.tr() : AppStrings.holdName.tr()
           ].map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,

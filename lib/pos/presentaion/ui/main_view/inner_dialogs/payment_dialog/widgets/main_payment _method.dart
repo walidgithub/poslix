@@ -2,12 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../shared/constant/constant_values_manager.dart';
-import '../../../../../shared/constant/padding_margin_values_manager.dart';
-import '../../../../../shared/constant/strings_manager.dart';
-import '../../../../../shared/style/colors_manager.dart';
-import '../../../components/container_component.dart';
-import '../../../components/text_component.dart';
+import '../../../../../../shared/constant/constant_values_manager.dart';
+import '../../../../../../shared/constant/padding_margin_values_manager.dart';
+import '../../../../../../shared/constant/strings_manager.dart';
+import '../../../../../../shared/style/colors_manager.dart';
+import '../../../../components/container_component.dart';
+import '../../../../components/text_component.dart';
 
 Widget mainPaymentMethod(BuildContext context, double total, Function selectMainPaymentMethod, TextEditingController amountEditingController, TextEditingController _notesInLineEditingController, String selectedPaymentType) {
   return Row(

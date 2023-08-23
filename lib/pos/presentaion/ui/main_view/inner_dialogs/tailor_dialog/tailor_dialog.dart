@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/size_name_Section.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/total_section.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/widgets/size_name_Section.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/widgets/total_section.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/response/customer_model.dart';
@@ -18,7 +18,7 @@ import '../../../../../shared/style/colors_manager.dart';
 import '../../../../di/di.dart';
 import '../../../components/close_button.dart';
 import '../../../components/container_component.dart';
-import 'main_note.dart';
+import 'widgets/main_note.dart';
 
 class TailorDialog extends StatefulWidget {
   int itemIndex;

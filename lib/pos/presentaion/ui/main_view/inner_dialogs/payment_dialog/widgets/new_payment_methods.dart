@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../shared/constant/constant_values_manager.dart';
-import '../../../../../shared/constant/padding_margin_values_manager.dart';
-import '../../../../../shared/constant/strings_manager.dart';
-import '../../../../../shared/style/colors_manager.dart';
-import '../../../components/container_component.dart';
-import '../../../components/text_component.dart';
+import '../../../../../../shared/constant/constant_values_manager.dart';
+import '../../../../../../shared/constant/padding_margin_values_manager.dart';
+import '../../../../../../shared/constant/strings_manager.dart';
+import '../../../../../../shared/style/colors_manager.dart';
+import '../../../../components/container_component.dart';
+import '../../../../components/text_component.dart';
 
-Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, bool newPayment, double innerHeight, List paymentMethods, List<TextEditingController> paymentControllers, double total, List<TextEditingController> paymentNotesControllers, Function selectPaymentType) {
+Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, bool newPayment, double innerHeight, List paymentMethods, List<TextEditingController> paymentControllers, double total, List<TextEditingController> paymentNotesControllers, Function selectPaymentType, var selectedNewPaymentType) {
   return newPayment
       ? SingleChildScrollView(
     physics:
@@ -33,7 +33,6 @@ Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, boo
             itemBuilder:
                 (BuildContext context,
                 int index) {
-              var selectedNewPaymentType;
               return Column(
                 children: [
                   Row(
@@ -104,7 +103,7 @@ Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, boo
                               }).toList(),
                               onChanged:
                                   (selectedType) {
-                                selectPaymentType(selectedType);
+                                selectPaymentType(index, selectedType);
                               },
                               value:
                               selectedNewPaymentType[index],
@@ -200,7 +199,7 @@ Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, boo
                               await Future.delayed(Duration(
                                   milliseconds:
                                   AppConstants.durationOfBounceable));
-                              deletePaymentMethod(context);
+                              deletePaymentMethod(index);
                             },
                             child: Icon(
                               Icons

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../../shared/constant/constant_values_manager.dart';
-import '../../../../../shared/constant/padding_margin_values_manager.dart';
-import '../../../../../shared/style/colors_manager.dart';
-import '../../../components/container_component.dart';
+import '../../../../../../shared/constant/constant_values_manager.dart';
+import '../../../../../../shared/constant/padding_margin_values_manager.dart';
+import '../../../../../../shared/style/colors_manager.dart';
+import '../../../../components/container_component.dart';
 
 Widget moneyMethods(BuildContext context, String image,String address,String value, String currencyCode) {
   return

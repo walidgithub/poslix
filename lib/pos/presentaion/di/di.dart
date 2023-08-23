@@ -14,7 +14,7 @@ import '../../shared/preferences/app_pref.dart';
 import '../../shared/style/theme_manager.dart';
 import '../ui/login_view/login_cubit/login_cubit.dart';
 import '../ui/main_view/inner_dialogs/hold_dialog/local_main_view_cubit/local_main_view_cubit.dart';
-import '../ui/main_view/inner_dialogs/orders_reports/orders_cubit/orders_cubit.dart';
+import '../ui/main_view/inner_dialogs/orders_reports_dialog/orders_cubit/orders_cubit.dart';
 
 
 final sl = GetIt.instance;
