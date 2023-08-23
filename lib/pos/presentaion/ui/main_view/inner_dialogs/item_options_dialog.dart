@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 
@@ -16,7 +15,6 @@ import '../../../di/di.dart';
 import '../../components/close_button.dart';
 import '../../components/container_component.dart';
 import '../../components/text_component.dart';
-import '../../popup_dialogs/custom_dialog.dart';
 
 class ItemOptionsDialog extends StatefulWidget {
   int itemIndex;
@@ -89,11 +87,6 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
 
   void getDecimalPlaces() async {
     decimalPlaces = _appPreferences.getLocationId(PREFS_KEY_DECIMAL_PLACES)!;
-  }
-
-  double roundDouble(double value, int places) {
-    String roundedNumber = value.toStringAsFixed(places);
-    return double.parse(roundedNumber);
   }
 
   @override

@@ -103,6 +103,7 @@ flutter:
     - assets/images/money-bill-wave.svg
     - assets/images/hold-hand.svg
     - assets/images/orders-list.svg
+    - assets/images/unavailable.svg
     - assets/images/image.png
     - assets/translations/ar-SA.json
     - assets/translations/en-US.json

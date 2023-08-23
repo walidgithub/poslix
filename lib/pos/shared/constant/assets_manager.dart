@@ -8,6 +8,7 @@ class ImageAssets {
   static const String logout = '$imagePath/logout.svg';
   static const String language = '$imagePath/language.svg';
   static const String reload = '$imagePath/reload.svg';
+  static const String unavailable = '$imagePath/unavailable.svg';
 
   static const String hold = '$imagePath/hold-hand.svg';
   static const String listOrders = '$imagePath/orders-list.svg';

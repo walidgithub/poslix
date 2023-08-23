@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/others/auto_complete.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/hold_table/hold_columns.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/hold_table/hold_head_table.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/orders_items_table/items_rows.dart';
@@ -15,9 +14,10 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_rep
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/orders_items_table/orders_items_table.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/orders_table/orders_columns.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/orders_table/orders_head_table.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/others/auto_complete.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/others/back_button.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/others/hold_button.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/search_section.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/orders_reports_dialog/widgets/others/search_section.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/entities/hold_order_items_model.dart';
@@ -35,12 +35,11 @@ import '../../../../../shared/utils/global_values.dart';
 import '../../../../di/di.dart';
 import '../../../components/close_button.dart';
 import '../../../components/container_component.dart';
-import '../../../popup_dialogs/custom_dialog.dart';
 import '../../../popup_dialogs/loading_dialog.dart';
 import '../hold_dialog/local_main_view_cubit/local_main_view_cubit.dart';
 import '../hold_dialog/local_main_view_cubit/local_main_view_state.dart';
-import '../orders_reports_dialog/orders_cubit/orders_cubit.dart';
-import '../orders_reports_dialog/orders_cubit/orders_state.dart';
+import 'orders_cubit/orders_cubit.dart';
+import 'orders_cubit/orders_state.dart';
 
 class OrdersDialog extends StatefulWidget {
   Function customerName;
@@ -48,14 +47,14 @@ class OrdersDialog extends StatefulWidget {
   Function orderTotalAmount;
   int locationId;
   static void show(BuildContext context, int locationId, Function customerName,
-          Function orderTotalAmount, Function orderDiscount) =>
-     isApple() ? showCupertinoDialog<void>(context: context,useRootNavigator: false,
-         barrierDismissible: false, builder: (_) => OrdersDialog(
-       locationId: locationId,
-       customerName: customerName,
-       orderTotalAmount: orderTotalAmount,
-       orderDiscount: orderDiscount,
-     )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) : showDialog<void>(
+      Function orderTotalAmount, Function orderDiscount) =>
+      isApple() ? showCupertinoDialog<void>(context: context,useRootNavigator: false,
+          barrierDismissible: false, builder: (_) => OrdersDialog(
+            locationId: locationId,
+            customerName: customerName,
+            orderTotalAmount: orderTotalAmount,
+            orderDiscount: orderDiscount,
+          )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) : showDialog<void>(
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,
@@ -71,10 +70,10 @@ class OrdersDialog extends StatefulWidget {
 
   OrdersDialog(
       {required this.locationId,
-      required this.customerName,
-      required this.orderTotalAmount,
-      required this.orderDiscount,
-      super.key});
+        required this.customerName,
+        required this.orderTotalAmount,
+        required this.orderDiscount,
+        super.key});
 
   @override
   State<OrdersDialog> createState() => _OrdersDialogState();
@@ -263,8 +262,8 @@ class _OrdersDialogState extends State<OrdersDialog> {
                       orderItems!
                           ? Container()
                           : SizedBox(
-                              width: AppConstants.smallDistance,
-                            ),
+                        width: AppConstants.smallDistance,
+                      ),
                       orderItems! ? Container() : searchSection(context, searchAction, _searchEditingController,orderFilter!, selectedSearchType),
                     ],
                   ),
@@ -286,8 +285,8 @@ class _OrdersDialogState extends State<OrdersDialog> {
                       closeButton(context),
                       orderFilter!
                           ? SizedBox(
-                              width: AppConstants.smallDistance,
-                            )
+                        width: AppConstants.smallDistance,
+                      )
                           : Container(),
                       orderFilter! ? pagination(context) : Container(),
                       orderItems! ? backButton(context, backAction) : Container(),
@@ -432,8 +431,8 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   color: orderItems!
                       ? ColorManager.primary
                       : orderFilter!
-                          ? ColorManager.primary
-                          : ColorManager.white,
+                      ? ColorManager.primary
+                      : ColorManager.white,
                   border: Border.all(color: ColorManager.primary, width: 0.5.w),
                   borderRadius: const BorderRadius.only(
                       bottomRight: Radius.circular(AppSize.s5),
@@ -447,21 +446,21 @@ class _OrdersDialogState extends State<OrdersDialog> {
                     color: orderItems!
                         ? ColorManager.white
                         : orderFilter!
-                            ? ColorManager.white
-                            : ColorManager.primary,
+                        ? ColorManager.white
+                        : ColorManager.primary,
                   ),
                   Center(
                       child: Text(
-                    AppStrings.orders.tr(),
-                    style: TextStyle(
-                        decoration: TextDecoration.none,
-                        color: orderItems!
-                            ? ColorManager.white
-                            : orderFilter!
+                        AppStrings.orders.tr(),
+                        style: TextStyle(
+                            decoration: TextDecoration.none,
+                            color: orderItems!
+                                ? ColorManager.white
+                                : orderFilter!
                                 ? ColorManager.white
                                 : ColorManager.primary,
-                        fontSize: AppSize.s18.sp),
-                  ))
+                            fontSize: AppSize.s18.sp),
+                      ))
                 ],
               ),
             ),
@@ -480,115 +479,115 @@ class _OrdersDialogState extends State<OrdersDialog> {
               scrollDirection: Axis.horizontal,
               child: orderItems!
                   ? BlocProvider(
-                      create: (context) => sl<OrdersCubit>(),
-                      child: BlocBuilder<OrdersCubit, OrdersState>(
-                        builder: (context, state) {
-                          return createOrderItemsDataTable(_currentSortColumn, _isSortAsc, createOrderItemsColumns(), createOrderItemsRows(decimalPlaces, listOfOrderItems));
-                        },
-                      ),
-                    )
+                create: (context) => sl<OrdersCubit>(),
+                child: BlocBuilder<OrdersCubit, OrdersState>(
+                  builder: (context, state) {
+                    return createOrderItemsDataTable(_currentSortColumn, _isSortAsc, createOrderItemsColumns(), createOrderItemsRows(decimalPlaces, listOfOrderItems));
+                  },
+                ),
+              )
                   : orderFilter!
-                      ? BlocProvider(
-                          create: (context) => sl<OrdersCubit>()
-                            ..getOrderReportByPage(
-                                widget.locationId, currentPage),
-                          child: BlocConsumer<OrdersCubit, OrdersState>(
-                            listener: (context, state) async {
-                              if (state is OrdersNoInternetState) {
-                                showNoInternet(context);
+                  ? BlocProvider(
+                create: (context) => sl<OrdersCubit>()
+                  ..getOrderReportByPage(
+                      widget.locationId, currentPage),
+                child: BlocConsumer<OrdersCubit, OrdersState>(
+                  listener: (context, state) async {
+                    if (state is OrdersNoInternetState) {
+                      showNoInternet(context);
 
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                        AppConstants.durationOfSnackBar));
+                      await Future.delayed(Duration(
+                          milliseconds:
+                          AppConstants.durationOfSnackBar));
 
-                                OrdersDialog.hide(context);
-                              }
+                      OrdersDialog.hide(context);
+                    }
 
-                              if (state is LoadingOrderReport) {
-                                LoadingDialog.show(context);
-                              }
+                    if (state is LoadingOrderReport) {
+                      LoadingDialog.show(context);
+                    }
 
-                              if (state is OrderReportSucceed) {
-                                LoadingDialog.hide(context);
-                                listOfOrderHead =
-                                    OrdersCubit.get(context).listOfOrderHead;
+                    if (state is OrderReportSucceed) {
+                      LoadingDialog.hide(context);
+                      listOfOrderHead =
+                          OrdersCubit.get(context).listOfOrderHead;
 
-                                _searchEditingController.text = '';
-                                searchList = [];
+                      _searchEditingController.text = '';
+                      searchList = [];
 
-                                if (selectedSearchType ==
-                                    AppStrings.holdName.tr()) {
-                                  selectedSearchType = AppStrings.orderId.tr();
-                                }
+                      if (selectedSearchType ==
+                          AppStrings.holdName.tr()) {
+                        selectedSearchType = AppStrings.orderId.tr();
+                      }
 
-                                for (var element in listOfOrderHead) {
-                                  if (selectedSearchType ==
-                                      AppStrings.orderId.tr()) {
-                                    searchList.add(element.id.toString());
-                                  } else if (selectedSearchType ==
-                                      AppStrings.customer.tr()) {
-                                    searchList.add(element.contactName);
-                                  } else if (selectedSearchType ==
-                                      AppStrings.tel.tr()) {
-                                    searchList.add(element.contactMobile);
-                                  }
-                                }
-                              } else if (state is OrderReportError) {
-                                LoadingDialog.hide(context);
-                                tryAgainLater(context);
-                              }
-                            },
-                            builder: (context, state) {
-                              return createOrdersDataTable(_currentSortColumn, _isSortAsc, searching, createOrdersColumns(), _createOrdersRows(), _createOrdersRowsForSearch());
-                            },
-                          ),
-                        )
-                      : BlocProvider(
-                          create: (context) =>
-                              sl<MainViewLocalCubit>()..getHoldCards(),
-                          child: BlocConsumer<MainViewLocalCubit,
-                              MainViewLocalState>(
-                            listener: (context, state) {
-                              if (state is LoadingHoldCards) {
-                              } else if (state is LoadedHoldCards) {
-                                listOfHoldOrderNames =
-                                    MainViewLocalCubit.get(context)
-                                        .listOfHoldOrderNames;
+                      for (var element in listOfOrderHead) {
+                        if (selectedSearchType ==
+                            AppStrings.orderId.tr()) {
+                          searchList.add(element.id.toString());
+                        } else if (selectedSearchType ==
+                            AppStrings.customer.tr()) {
+                          searchList.add(element.contactName);
+                        } else if (selectedSearchType ==
+                            AppStrings.tel.tr()) {
+                          searchList.add(element.contactMobile);
+                        }
+                      }
+                    } else if (state is OrderReportError) {
+                      LoadingDialog.hide(context);
+                      tryAgainLater(context);
+                    }
+                  },
+                  builder: (context, state) {
+                    return createOrdersDataTable(_currentSortColumn, _isSortAsc, searching, createOrdersColumns(), _createOrdersRows(), _createOrdersRowsForSearch());
+                  },
+                ),
+              )
+                  : BlocProvider(
+                create: (context) =>
+                sl<MainViewLocalCubit>()..getHoldCards(),
+                child: BlocConsumer<MainViewLocalCubit,
+                    MainViewLocalState>(
+                  listener: (context, state) {
+                    if (state is LoadingHoldCards) {
+                    } else if (state is LoadedHoldCards) {
+                      listOfHoldOrderNames =
+                          MainViewLocalCubit.get(context)
+                              .listOfHoldOrderNames;
 
-                                _searchEditingController.text = '';
-                                searchList = [];
+                      _searchEditingController.text = '';
+                      searchList = [];
 
-                                if (selectedSearchType ==
-                                    AppStrings.orderId.tr()) {
-                                  selectedSearchType = AppStrings.holdName.tr();
-                                }
+                      if (selectedSearchType ==
+                          AppStrings.orderId.tr()) {
+                        selectedSearchType = AppStrings.holdName.tr();
+                      }
 
-                                for (var element in listOfHoldOrderNames) {
-                                  if (selectedSearchType ==
-                                      AppStrings.holdName.tr()) {
-                                    searchList.add(element.holdText!);
-                                  } else if (selectedSearchType ==
-                                      AppStrings.customer.tr()) {
-                                    searchList.add(element.customer!);
-                                  } else if (selectedSearchType ==
-                                      AppStrings.tel.tr()) {
-                                    searchList.add(element.customerTel!);
-                                  }
-                                }
-                              } else if (state is LoadingErrorHoldCards) {}
-                            },
-                            builder: (context, state) {
-                              return createHoldOrdersDataTable(_currentSortColumn, _isSortAsc, searching, createHoldOrdersColumns(), _createHoldOrdersRows(), _createHoldOrdersForSearchRows());
-                            },
-                          ),
-                        ))),
+                      for (var element in listOfHoldOrderNames) {
+                        if (selectedSearchType ==
+                            AppStrings.holdName.tr()) {
+                          searchList.add(element.holdText!);
+                        } else if (selectedSearchType ==
+                            AppStrings.customer.tr()) {
+                          searchList.add(element.customer!);
+                        } else if (selectedSearchType ==
+                            AppStrings.tel.tr()) {
+                          searchList.add(element.customerTel!);
+                        }
+                      }
+                    } else if (state is LoadingErrorHoldCards) {}
+                  },
+                  builder: (context, state) {
+                    return createHoldOrdersDataTable(_currentSortColumn, _isSortAsc, searching, createHoldOrdersColumns(), _createHoldOrdersRows(), _createHoldOrdersForSearchRows());
+                  },
+                ),
+              ))),
     );
   }
 
   void searchAction(String selectedSearch) {
     setState(() {
       searchList = [];
-      selectedSearchType = selectedSearch!;
+      selectedSearchType = selectedSearch;
       if (!orderFilter!) {
         for (var element in listOfHoldOrderNames) {
           if (selectedSearchType == AppStrings.holdName.tr()) {
@@ -759,25 +758,25 @@ class _OrdersDialogState extends State<OrdersDialog> {
 
                 totalPages >= 5
                     ? middlePages[0] - 1 > 1
-                        ? Text(
-                            '..',
-                            style: TextStyle(
-                                color: ColorManager.primary, fontSize: 20.sp),
-                          )
-                        : Container()
+                    ? Text(
+                  '..',
+                  style: TextStyle(
+                      color: ColorManager.primary, fontSize: 20.sp),
+                )
+                    : Container()
                     : Container(),
 
                 totalPages >= 5
                     ? middlePages[0] - 1 > 1
-                        ? SizedBox(
-                            width: AppConstants.smallerDistance,
-                          )
-                        : Container()
+                    ? SizedBox(
+                  width: AppConstants.smallerDistance,
+                )
+                    : Container()
                     : Container(),
 
-                SizedBox(
+                currentPage > 1 ? SizedBox(
                   width: AppConstants.smallerDistance,
-                ),
+                ) : Container(),
 
                 // middle current pages
                 Row(
@@ -795,17 +794,17 @@ class _OrdersDialogState extends State<OrdersDialog> {
                               Bounceable(
                                   duration: Duration(
                                       milliseconds:
-                                          AppConstants.durationOfBounceable),
+                                      AppConstants.durationOfBounceable),
                                   onTap: () async {
                                     await Future.delayed(Duration(
                                         milliseconds:
-                                            AppConstants.durationOfBounceable));
+                                        AppConstants.durationOfBounceable));
                                     setState(() {
                                       currentPage = middlePages[index];
 
                                       OrdersCubit.get(context)
                                           .getOrderReportByPage(
-                                              widget.locationId, currentPage);
+                                          widget.locationId, currentPage);
 
                                       if (totalPages >= 5) {
                                         if (currentPage == middlePages[0] &&
@@ -848,7 +847,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                                               middlePages[index].toString(),
                                               style: TextStyle(
                                                   color: currentPage ==
-                                                          middlePages[index]
+                                                      middlePages[index]
                                                       ? ColorManager.white
                                                       : ColorManager.primary,
                                                   fontSize: 20.sp))),
@@ -861,9 +860,9 @@ class _OrdersDialogState extends State<OrdersDialog> {
                                           ? ColorManager.primary
                                           : ColorManager.white,
                                       borderColor:
-                                          currentPage == middlePages[index]
-                                              ? ColorManager.primary
-                                              : ColorManager.white,
+                                      currentPage == middlePages[index]
+                                          ? ColorManager.primary
+                                          : ColorManager.white,
                                       borderWidth: 0.0.w,
                                       borderRadius: AppSize.s5))
                             ],
@@ -880,81 +879,81 @@ class _OrdersDialogState extends State<OrdersDialog> {
 
                 totalPages >= 5
                     ? middlePages[2] < totalPages - 1
-                        ? Text(
-                            '..',
-                            style: TextStyle(
-                                color: ColorManager.primary, fontSize: 20.sp),
-                          )
-                        : Container()
+                    ? Text(
+                  '..',
+                  style: TextStyle(
+                      color: ColorManager.primary, fontSize: 20.sp),
+                )
+                    : Container()
                     : Container(),
 
                 totalPages >= 5
                     ? middlePages[2] < totalPages - 1
-                        ? SizedBox(
-                            width: AppConstants.smallerDistance,
-                          )
-                        : Container()
+                    ? SizedBox(
+                  width: AppConstants.smallerDistance,
+                )
+                    : Container()
                     : Container(),
 
                 // last current page
                 totalPages > 1
                     ? Row(
-                        children: [
-                          Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                      AppConstants.durationOfBounceable),
-                              onTap: () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                        AppConstants.durationOfBounceable));
-                                setState(() {
-                                  currentPage = totalPages;
-                                  OrdersCubit.get(context).getOrderReportByPage(
-                                      widget.locationId, currentPage);
+                  children: [
+                    Bounceable(
+                        duration: Duration(
+                            milliseconds:
+                            AppConstants.durationOfBounceable),
+                        onTap: () async {
+                          await Future.delayed(Duration(
+                              milliseconds:
+                              AppConstants.durationOfBounceable));
+                          setState(() {
+                            currentPage = totalPages;
+                            OrdersCubit.get(context).getOrderReportByPage(
+                                widget.locationId, currentPage);
 
-                                  if (totalPages >= 5) {
-                                    middlePages = [
-                                      currentPage - 3,
-                                      currentPage - 2,
-                                      currentPage - 1
-                                    ];
-                                  }
-                                });
-                              },
-                              child: containerComponent(
-                                  context,
-                                  Center(
-                                    child: Text(totalPages.toString(),
-                                        style: TextStyle(
-                                            color: currentPage == totalPages
-                                                ? ColorManager.white
-                                                : ColorManager.primary,
-                                            fontSize: 20.sp)),
-                                  ),
-                                  height: 30.h,
-                                  // width: 20.w,
-                                  padding: const EdgeInsets.fromLTRB(
-                                      AppPadding.p5,
-                                      AppPadding.p0,
-                                      AppPadding.p5,
-                                      AppPadding.p0),
-                                  color: totalPages == currentPage
-                                      ? ColorManager.primary
-                                      : ColorManager.badge,
-                                  borderColor: totalPages == currentPage
-                                      ? ColorManager.primary
-                                      : ColorManager.badge,
-                                  borderWidth: 0.0.w,
-                                  borderRadius: AppSize.s5))
-                        ],
-                      )
+                            if (totalPages >= 5) {
+                              middlePages = [
+                                currentPage - 3,
+                                currentPage - 2,
+                                currentPage - 1
+                              ];
+                            }
+                          });
+                        },
+                        child: containerComponent(
+                            context,
+                            Center(
+                              child: Text(totalPages.toString(),
+                                  style: TextStyle(
+                                      color: currentPage == totalPages
+                                          ? ColorManager.white
+                                          : ColorManager.primary,
+                                      fontSize: 20.sp)),
+                            ),
+                            height: 30.h,
+                            // width: 20.w,
+                            padding: const EdgeInsets.fromLTRB(
+                                AppPadding.p5,
+                                AppPadding.p0,
+                                AppPadding.p5,
+                                AppPadding.p0),
+                            color: totalPages == currentPage
+                                ? ColorManager.primary
+                                : ColorManager.badge,
+                            borderColor: totalPages == currentPage
+                                ? ColorManager.primary
+                                : ColorManager.badge,
+                            borderWidth: 0.0.w,
+                            borderRadius: AppSize.s5))
+                  ],
+                )
                     : Container(),
 
                 totalPages > 1
                     ? SizedBox(
-                        width: AppConstants.smallDistance,
-                      )
+                  width: AppConstants.smallDistance,
+                )
                     : Container(),
 
                 // increase current page
@@ -1452,279 +1451,279 @@ class _OrdersDialogState extends State<OrdersDialog> {
   List<DataRow> _createHoldOrdersRows() {
     return listOfHoldOrderNames
         .map((holdOrder) => DataRow(cells: [
-              DataCell(Text(
-                  listOfHoldOrderNames[listOfHoldOrderNames.indexOf(holdOrder)]
-                      .id
-                      .toString(),
-                  style: TextStyle(color: ColorManager.edit))),
-              DataCell(SizedBox(
-                width: 40.w,
-                child: Center(
-                    child: Text(
-                        listOfHoldOrderNames[
-                                listOfHoldOrderNames.indexOf(holdOrder)]
-                            .holdText
-                            .toString(),
-                        style: TextStyle(fontSize: AppSize.s14.sp),
-                        textAlign: TextAlign.center)),
-              )),
-              DataCell(Padding(
-                padding: const EdgeInsets.only(left: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    BlocProvider(
-                        create: (context) => sl<MainViewLocalCubit>(),
-                        child: BlocConsumer<MainViewLocalCubit,
-                            MainViewLocalState>(listener: (context, state) {
-                          if (state is LoadingHoldCardsItemsById) {
-                          } else if (state is LoadedHoldCardsItemsById) {
-                            listOfTmpOrder = [];
+      DataCell(Text(
+          listOfHoldOrderNames[listOfHoldOrderNames.indexOf(holdOrder)]
+              .id
+              .toString(),
+          style: TextStyle(color: ColorManager.edit))),
+      DataCell(SizedBox(
+        width: 40.w,
+        child: Center(
+            child: Text(
+                listOfHoldOrderNames[
+                listOfHoldOrderNames.indexOf(holdOrder)]
+                    .holdText
+                    .toString(),
+                style: TextStyle(fontSize: AppSize.s14.sp),
+                textAlign: TextAlign.center)),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BlocProvider(
+                create: (context) => sl<MainViewLocalCubit>(),
+                child: BlocConsumer<MainViewLocalCubit,
+                    MainViewLocalState>(listener: (context, state) {
+                  if (state is LoadingHoldCardsItemsById) {
+                  } else if (state is LoadedHoldCardsItemsById) {
+                    listOfTmpOrder = [];
 
-                            listOfHoldOrderItems =
-                                MainViewLocalCubit.get(context)
-                                    .listOfHoldOrderItems;
+                    listOfHoldOrderItems =
+                        MainViewLocalCubit.get(context)
+                            .listOfHoldOrderItems;
 
-                            for (var element in listOfHoldOrderItems) {
-                              listOfTmpOrder.add(TmpOrderModel(
-                                  id: element.id,
-                                  date: element.date,
-                                  category: element.category,
-                                  brand: element.brand,
-                                  customer: element.customer,
-                                  itemAmount: element.itemAmount,
-                                  itemName: element.itemName,
-                                  itemPrice: element.itemPrice,
-                                  itemQuantity: element.itemQuantity,
-                                  orderDiscount:
-                                      double.parse(element.discount.toString()),
-                                  itemOption: element.itemOption,
-                                  productId: element.productId,
-                                  variationId: element.variationId,
-                                  customerTel: element.customerTel));
-                            }
+                    for (var element in listOfHoldOrderItems) {
+                      listOfTmpOrder.add(TmpOrderModel(
+                          id: element.id,
+                          date: element.date,
+                          category: element.category,
+                          brand: element.brand,
+                          customer: element.customer,
+                          itemAmount: element.itemAmount,
+                          itemName: element.itemName,
+                          itemPrice: element.itemPrice,
+                          itemQuantity: element.itemQuantity,
+                          orderDiscount:
+                          double.parse(element.discount.toString()),
+                          itemOption: element.itemOption,
+                          productId: element.productId,
+                          variationId: element.variationId,
+                          customerTel: element.customerTel));
+                    }
 
-                            GlobalValues.setEditOrder = false;
+                    GlobalValues.setEditOrder = false;
 
-                            if (holdOrder.customer ==
-                                '${AppStrings.firstName} ${AppStrings.secondName}') {
-                              widget.customerName('${holdOrder.customer}');
-                            } else {
-                              widget.customerName(
-                                  '${holdOrder.customer} | ${holdOrder.customerTel}');
-                            }
+                    if (holdOrder.customer ==
+                        '${AppStrings.firstName} ${AppStrings.secondName}') {
+                      widget.customerName('${holdOrder.customer}');
+                    } else {
+                      widget.customerName(
+                          '${holdOrder.customer} | ${holdOrder.customerTel}');
+                    }
 
-                            widget.orderDiscount(holdOrder.discount!);
+                    widget.orderDiscount(holdOrder.discount!);
 
-                            OrdersDialog.hide(context);
-                          } else if (state is LoadingErrorHoldCardsItemsById) {}
-                        }, builder: (context, state) {
-                          return Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                      AppConstants.durationOfBounceable),
-                              onTap: () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                        AppConstants.durationOfBounceable));
-                                listOfHoldOrderItems = [];
+                    OrdersDialog.hide(context);
+                  } else if (state is LoadingErrorHoldCardsItemsById) {}
+                }, builder: (context, state) {
+                  return Bounceable(
+                      duration: Duration(
+                          milliseconds:
+                          AppConstants.durationOfBounceable),
+                      onTap: () async {
+                        await Future.delayed(Duration(
+                            milliseconds:
+                            AppConstants.durationOfBounceable));
+                        listOfHoldOrderItems = [];
 
-                                await MainViewLocalCubit.get(context)
-                                    .getHoldCardsItems(listOfHoldOrderNames[
-                                            listOfHoldOrderNames
-                                                .indexOf(holdOrder)]
-                                        .id!);
-                              },
-                              child: Icon(
-                                Icons.downloading,
-                                color: ColorManager.edit,
-                                size: AppSize.s20.sp,
-                              ));
-                        })),
-                    SizedBox(
-                      width: AppConstants.smallDistance,
-                    ),
-                    BlocProvider(
-                      create: (context) => sl<MainViewLocalCubit>(),
-                      child:
-                          BlocConsumer<MainViewLocalCubit, MainViewLocalState>(
-                        listener: (context, state) {
-                          if (state is DeleteHoldCards) {
-                          } else if (state is DeleteErrorHoldCards) {}
-                        },
-                        builder: (context, state) {
-                          return Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                      AppConstants.durationOfBounceable),
-                              onTap: () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                        AppConstants.durationOfBounceable));
-                                await MainViewLocalCubit.get(context)
-                                    .deleteHoldCard(holdOrder.id!);
-                                setState(() {
-                                  listOfHoldOrderNames.removeWhere((element) =>
-                                      element.holdText == holdOrder.holdText);
-                                  listOfHoldOrderItems.removeWhere((element) =>
-                                      element.holdText == holdOrder.holdText);
-                                });
-                              },
-                              child: Icon(
-                                Icons.delete,
-                                color: ColorManager.delete,
-                                size: AppSize.s20.sp,
-                              ));
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ))
-            ]))
+                        await MainViewLocalCubit.get(context)
+                            .getHoldCardsItems(listOfHoldOrderNames[
+                        listOfHoldOrderNames
+                            .indexOf(holdOrder)]
+                            .id!);
+                      },
+                      child: Icon(
+                        Icons.downloading,
+                        color: ColorManager.edit,
+                        size: AppSize.s20.sp,
+                      ));
+                })),
+            SizedBox(
+              width: AppConstants.smallDistance,
+            ),
+            BlocProvider(
+              create: (context) => sl<MainViewLocalCubit>(),
+              child:
+              BlocConsumer<MainViewLocalCubit, MainViewLocalState>(
+                listener: (context, state) {
+                  if (state is DeleteHoldCards) {
+                  } else if (state is DeleteErrorHoldCards) {}
+                },
+                builder: (context, state) {
+                  return Bounceable(
+                      duration: Duration(
+                          milliseconds:
+                          AppConstants.durationOfBounceable),
+                      onTap: () async {
+                        await Future.delayed(Duration(
+                            milliseconds:
+                            AppConstants.durationOfBounceable));
+                        await MainViewLocalCubit.get(context)
+                            .deleteHoldCard(holdOrder.id!);
+                        setState(() {
+                          listOfHoldOrderNames.removeWhere((element) =>
+                          element.holdText == holdOrder.holdText);
+                          listOfHoldOrderItems.removeWhere((element) =>
+                          element.holdText == holdOrder.holdText);
+                        });
+                      },
+                      child: Icon(
+                        Icons.delete,
+                        color: ColorManager.delete,
+                        size: AppSize.s20.sp,
+                      ));
+                },
+              ),
+            ),
+          ],
+        ),
+      ))
+    ]))
         .toList();
   }
 
   List<DataRow> _createHoldOrdersForSearchRows() {
     return listOfHoldOrderNamesForSearch
         .map((holdOrder) => DataRow(cells: [
-              DataCell(Text(
-                  listOfHoldOrderNamesForSearch[
-                          listOfHoldOrderNamesForSearch.indexOf(holdOrder)]
-                      .id
-                      .toString(),
-                  style: TextStyle(color: ColorManager.edit))),
-              DataCell(SizedBox(
-                width: 40.w,
-                child: Center(
-                    child: Text(
-                        listOfHoldOrderNamesForSearch[
-                                listOfHoldOrderNamesForSearch
-                                    .indexOf(holdOrder)]
-                            .holdText
-                            .toString(),
-                        style: TextStyle(fontSize: AppSize.s14.sp),
-                        textAlign: TextAlign.center)),
-              )),
-              DataCell(Padding(
-                padding: const EdgeInsets.only(left: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    BlocProvider(
-                        create: (context) => sl<MainViewLocalCubit>(),
-                        child: BlocConsumer<MainViewLocalCubit,
-                            MainViewLocalState>(listener: (context, state) {
-                          if (state is LoadingHoldCardsItemsById) {
-                          } else if (state is LoadedHoldCardsItemsById) {
-                            listOfTmpOrder = [];
+      DataCell(Text(
+          listOfHoldOrderNamesForSearch[
+          listOfHoldOrderNamesForSearch.indexOf(holdOrder)]
+              .id
+              .toString(),
+          style: TextStyle(color: ColorManager.edit))),
+      DataCell(SizedBox(
+        width: 40.w,
+        child: Center(
+            child: Text(
+                listOfHoldOrderNamesForSearch[
+                listOfHoldOrderNamesForSearch
+                    .indexOf(holdOrder)]
+                    .holdText
+                    .toString(),
+                style: TextStyle(fontSize: AppSize.s14.sp),
+                textAlign: TextAlign.center)),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BlocProvider(
+                create: (context) => sl<MainViewLocalCubit>(),
+                child: BlocConsumer<MainViewLocalCubit,
+                    MainViewLocalState>(listener: (context, state) {
+                  if (state is LoadingHoldCardsItemsById) {
+                  } else if (state is LoadedHoldCardsItemsById) {
+                    listOfTmpOrder = [];
 
-                            listOfHoldOrderItems =
-                                MainViewLocalCubit.get(context)
-                                    .listOfHoldOrderItems;
+                    listOfHoldOrderItems =
+                        MainViewLocalCubit.get(context)
+                            .listOfHoldOrderItems;
 
-                            for (var element in listOfHoldOrderItems) {
-                              listOfTmpOrder.add(TmpOrderModel(
-                                  id: element.id,
-                                  date: element.date,
-                                  category: element.category,
-                                  brand: element.brand,
-                                  customer: element.customer,
-                                  itemAmount: element.itemAmount,
-                                  itemName: element.itemName,
-                                  itemPrice: element.itemPrice,
-                                  itemQuantity: element.itemQuantity,
-                                  orderDiscount:
-                                      double.parse(element.discount.toString()),
-                                  itemOption: element.itemOption,
-                                  productId: element.productId,
-                                  variationId: element.variationId,
-                                  customerTel: element.customerTel));
-                            }
+                    for (var element in listOfHoldOrderItems) {
+                      listOfTmpOrder.add(TmpOrderModel(
+                          id: element.id,
+                          date: element.date,
+                          category: element.category,
+                          brand: element.brand,
+                          customer: element.customer,
+                          itemAmount: element.itemAmount,
+                          itemName: element.itemName,
+                          itemPrice: element.itemPrice,
+                          itemQuantity: element.itemQuantity,
+                          orderDiscount:
+                          double.parse(element.discount.toString()),
+                          itemOption: element.itemOption,
+                          productId: element.productId,
+                          variationId: element.variationId,
+                          customerTel: element.customerTel));
+                    }
 
-                            GlobalValues.setEditOrder = false;
+                    GlobalValues.setEditOrder = false;
 
-                            if (holdOrder.customer ==
-                                '${AppStrings.firstName} ${AppStrings.secondName}') {
-                              widget.customerName('${holdOrder.customer}');
-                            } else {
-                              widget.customerName(
-                                  '${holdOrder.customer} | ${holdOrder.customerTel}');
-                            }
+                    if (holdOrder.customer ==
+                        '${AppStrings.firstName} ${AppStrings.secondName}') {
+                      widget.customerName('${holdOrder.customer}');
+                    } else {
+                      widget.customerName(
+                          '${holdOrder.customer} | ${holdOrder.customerTel}');
+                    }
 
-                            widget.orderDiscount(holdOrder.discount!);
+                    widget.orderDiscount(holdOrder.discount!);
 
-                            OrdersDialog.hide(context);
-                          } else if (state is LoadingErrorHoldCardsItemsById) {}
-                        }, builder: (context, state) {
-                          return Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                      AppConstants.durationOfBounceable),
-                              onTap: () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                        AppConstants.durationOfBounceable));
-                                listOfHoldOrderItems = [];
+                    OrdersDialog.hide(context);
+                  } else if (state is LoadingErrorHoldCardsItemsById) {}
+                }, builder: (context, state) {
+                  return Bounceable(
+                      duration: Duration(
+                          milliseconds:
+                          AppConstants.durationOfBounceable),
+                      onTap: () async {
+                        await Future.delayed(Duration(
+                            milliseconds:
+                            AppConstants.durationOfBounceable));
+                        listOfHoldOrderItems = [];
 
-                                await MainViewLocalCubit.get(context)
-                                    .getHoldCardsItems(
-                                        listOfHoldOrderNamesForSearch[
-                                                listOfHoldOrderNamesForSearch
-                                                    .indexOf(holdOrder)]
-                                            .id!);
-                              },
-                              child: Icon(
-                                Icons.downloading,
-                                color: ColorManager.edit,
-                                size: AppSize.s20.sp,
-                              ));
-                        })),
-                    SizedBox(
-                      width: AppConstants.smallDistance,
-                    ),
-                    BlocProvider(
-                      create: (context) => sl<MainViewLocalCubit>(),
-                      child:
-                          BlocConsumer<MainViewLocalCubit, MainViewLocalState>(
-                        listener: (context, state) {
-                          if (state is DeleteHoldCards) {
-                          } else if (state is DeleteErrorHoldCards) {}
-                        },
-                        builder: (context, state) {
-                          return Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                      AppConstants.durationOfBounceable),
-                              onTap: () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                        AppConstants.durationOfBounceable));
-                                await MainViewLocalCubit.get(context)
-                                    .deleteHoldCard(holdOrder.id!);
-                                setState(() {
-                                  listOfHoldOrderNamesForSearch.removeWhere(
-                                      (element) =>
-                                          element.holdText ==
-                                          holdOrder.holdText);
-                                  listOfHoldOrderItems.removeWhere((element) =>
-                                      element.holdText == holdOrder.holdText);
-                                });
-                              },
-                              child: Icon(
-                                Icons.delete,
-                                color: ColorManager.delete,
-                                size: AppSize.s20.sp,
-                              ));
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ))
-            ]))
+                        await MainViewLocalCubit.get(context)
+                            .getHoldCardsItems(
+                            listOfHoldOrderNamesForSearch[
+                            listOfHoldOrderNamesForSearch
+                                .indexOf(holdOrder)]
+                                .id!);
+                      },
+                      child: Icon(
+                        Icons.downloading,
+                        color: ColorManager.edit,
+                        size: AppSize.s20.sp,
+                      ));
+                })),
+            SizedBox(
+              width: AppConstants.smallDistance,
+            ),
+            BlocProvider(
+              create: (context) => sl<MainViewLocalCubit>(),
+              child:
+              BlocConsumer<MainViewLocalCubit, MainViewLocalState>(
+                listener: (context, state) {
+                  if (state is DeleteHoldCards) {
+                  } else if (state is DeleteErrorHoldCards) {}
+                },
+                builder: (context, state) {
+                  return Bounceable(
+                      duration: Duration(
+                          milliseconds:
+                          AppConstants.durationOfBounceable),
+                      onTap: () async {
+                        await Future.delayed(Duration(
+                            milliseconds:
+                            AppConstants.durationOfBounceable));
+                        await MainViewLocalCubit.get(context)
+                            .deleteHoldCard(holdOrder.id!);
+                        setState(() {
+                          listOfHoldOrderNamesForSearch.removeWhere(
+                                  (element) =>
+                              element.holdText ==
+                                  holdOrder.holdText);
+                          listOfHoldOrderItems.removeWhere((element) =>
+                          element.holdText == holdOrder.holdText);
+                        });
+                      },
+                      child: Icon(
+                        Icons.delete,
+                        color: ColorManager.delete,
+                        size: AppSize.s20.sp,
+                      ));
+                },
+              ),
+            ),
+          ],
+        ),
+      ))
+    ]))
         .toList();
   }
 }

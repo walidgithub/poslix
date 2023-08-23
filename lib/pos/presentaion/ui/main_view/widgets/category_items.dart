@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../domain/response/products_model.dart';
 import '../../../../shared/constant/assets_manager.dart';
@@ -50,74 +51,89 @@ Widget categoryItems(BuildContext context, Function addToTmp, List<ProductsRespo
 }
 
 Widget itemContainer(int index,BuildContext context, List<ProductsResponse> listOfProducts){
-  return Column(
-    mainAxisAlignment:
-    MainAxisAlignment
-        .spaceBetween,
+  return Stack(
     children: [
-      Container(
-        width: 200.w,
-        height: 105.h,
-        decoration: BoxDecoration(
-            shape: BoxShape
-                .rectangle,
-            image: listOfProducts[
-            index]
-                .image
-                .toString() ==
-                "n"
-                ? const DecorationImage(
-                image: AssetImage(
-                    ImageAssets
-                        .noItem),
-                fit: BoxFit
-                    .fill)
-                : DecorationImage(
-                image: CachedNetworkImageProvider(listOfProducts[
+      Column(
+        mainAxisAlignment:
+        MainAxisAlignment
+            .spaceBetween,
+        children: [
+          Container(
+            width: 200.w,
+            height: 105.h,
+            decoration: BoxDecoration(
+                shape: BoxShape
+                    .rectangle,
+                image: listOfProducts[
                 index]
                     .image
-                    .toString()),
-                fit: BoxFit
-                    .fill)),
-      ),
-      Container(
-        width: 50.w,
-        height: 40.h,
-        decoration: BoxDecoration(
-            color:
-            ColorManager
-                .badge,
-            border: Border.all(
-                color: ColorManager
-                    .badge,
-                width: 1.5.w),
-            borderRadius: const BorderRadius
-                .only(
-                bottomLeft: Radius
-                    .circular(
-                    AppSize
-                        .s5),
-                bottomRight:
-                Radius.circular(
-                    AppSize
-                        .s5))),
-        child: Center(
-          child: Text(
-            listOfProducts[
-            index]
-                .name
-                .toString(),
-            style: TextStyle(
+                    .toString() ==
+                    "n"
+                    ? const DecorationImage(
+                    image: AssetImage(
+                        ImageAssets
+                            .noItem),
+                    fit: BoxFit
+                        .fill)
+                    : DecorationImage(
+                    image: CachedNetworkImageProvider(listOfProducts[
+                    index]
+                        .image
+                        .toString()),
+                    fit: BoxFit
+                        .fill)),
+          ),
+          Container(
+            width: 50.w,
+            height: 40.h,
+            decoration: BoxDecoration(
                 color:
                 ColorManager
-                    .white,
-                fontSize:
-                AppSize
-                    .s14
-                    .sp),
+                    .badge,
+                border: Border.all(
+                    color: ColorManager
+                        .badge,
+                    width: 1.5.w),
+                borderRadius: const BorderRadius
+                    .only(
+                    bottomLeft: Radius
+                        .circular(
+                        AppSize
+                            .s5),
+                    bottomRight:
+                    Radius.circular(
+                        AppSize
+                            .s5))),
+            child: Center(
+              child: Text(
+                listOfProducts[
+                index]
+                    .name
+                    .toString(),
+                style: TextStyle(
+                    color:
+                    ColorManager
+                        .white,
+                    fontSize:
+                    AppSize
+                        .s14
+                        .sp),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
-    ],
+
+      listOfProducts[
+      index].stock == 0 ? Positioned(
+          top: 5,
+          left: 5,
+          child: SvgPicture.asset(
+        ImageAssets.unavailable,
+        width: AppSize.s20,
+        color: ColorManager.delete,
+      )) : Container()
+    ]
+
   );
 }

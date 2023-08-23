@@ -23,10 +23,8 @@ import 'widgets/main_note.dart';
 class TailorDialog extends StatefulWidget {
   int itemIndex;
   String currencyCode;
-  String selectedCustomerTel;
   var selectedListName;
-  String selectedCustomer;
-  // List<CustomerResponse> listOfCustomers;
+  List<CustomerResponse> listOfCustomers;
   List listOfChoices;
   List listOfFabrics;
   double? discount;
@@ -36,11 +34,9 @@ class TailorDialog extends StatefulWidget {
           String currencyCode,
           int itemIndex,
           var selectedListName,
-          String selectedCustomerTel,
-          // List<CustomerResponse> listOfCustomers,
           List listOfChoices,
           List listOfFabrics,
-          String selectedCustomer,
+          List<CustomerResponse> listOfCustomers,
           double discount) =>
   isApple() ? showCupertinoDialog<void>(context: context,
       useRootNavigator: false,
@@ -48,12 +44,10 @@ class TailorDialog extends StatefulWidget {
       builder: (_) => TailorDialog(
       currencyCode: currencyCode,
       itemIndex: itemIndex,
-      selectedCustomerTel: selectedCustomerTel,
       selectedListName: selectedListName,
       listOfChoices: listOfChoices,
       listOfFabrics: listOfFabrics,
-      // listOfCustomers: listOfCustomers,
-      selectedCustomer: selectedCustomer,
+      listOfCustomers: listOfCustomers,
       discount: discount)) :
       showDialog<void>(
         context: context,
@@ -62,26 +56,23 @@ class TailorDialog extends StatefulWidget {
         builder: (_) => TailorDialog(
             currencyCode: currencyCode,
             itemIndex: itemIndex,
-            selectedCustomerTel: selectedCustomerTel,
             selectedListName: selectedListName,
             listOfChoices: listOfChoices,
             listOfFabrics: listOfFabrics,
-            // listOfCustomers: listOfCustomers,
-            selectedCustomer: selectedCustomer,
+            listOfCustomers: listOfCustomers,
             discount: discount),
       ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
   static void hide(BuildContext context) => Navigator.of(context).pop();
 
   TailorDialog(
-      {required this.currencyCode,
+      {
+        required this.currencyCode,
       required this.itemIndex,
-      required this.selectedListName,
-      // required this.listOfCustomers,
-      required this.selectedCustomerTel,
-      required this.selectedCustomer,
-      required this.listOfChoices,
-      required this.listOfFabrics,
+        required this.selectedListName,
+        required this.listOfChoices,
+        required this.listOfFabrics,
+      required this.listOfCustomers,
       required this.discount,
       super.key});
 
@@ -96,17 +87,19 @@ class _TailorDialogState extends State<TailorDialog> {
   final TextEditingController _sizeNameEditingController =
       TextEditingController();
 
+  final ScrollController _scrollController = ScrollController();
+
   final List<TextEditingController> _choicesControllers = [];
+
+  CustomerResponse? _selectedCustomer;
+
+  String? _selectedCustomerName;
+
+  int? _selectedCustomerId;
 
   DateTime today = DateTime.now();
 
   int decimalPlaces = 2;
-
-  CustomerResponse? _selectedCustomer;
-  String? _selectedCustomerName;
-
-  int? _selectedCustomerId;
-  String? _selectedCustomerTel;
 
   double dialogWidth = 200.w;
 
@@ -135,11 +128,6 @@ class _TailorDialogState extends State<TailorDialog> {
     decimalPlaces = _appPreferences.getLocationId(PREFS_KEY_DECIMAL_PLACES)!;
   }
 
-  double roundDouble(double value, int places) {
-    String roundedNumber = value.toStringAsFixed(places);
-    return double.parse(roundedNumber);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,7 +135,7 @@ class _TailorDialogState extends State<TailorDialog> {
         body: Center(
             child: SingleChildScrollView(
                 child: Container(
-                    height: 550.h,
+                    height: 580.h,
                     width: dialogWidth,
                     decoration: BoxDecoration(
                         color: ColorManager.white,
@@ -155,7 +143,7 @@ class _TailorDialogState extends State<TailorDialog> {
                         borderRadius: BorderRadius.circular(AppSize.s5),
                         boxShadow: [BoxShadow(color: ColorManager.badge)]),
                     child: Padding(
-                      padding: const EdgeInsets.all(AppPadding.p20),
+                      padding: const EdgeInsets.fromLTRB(AppPadding.p20,AppPadding.p20,AppPadding.p20,AppPadding.p10),
                       child: Column(
                         children: [
                           Align(
@@ -174,7 +162,11 @@ class _TailorDialogState extends State<TailorDialog> {
                           ),
 
                           // -----------------------------------------------------------
-                          // customerDropDown(context),
+                          customerDropDown(context),
+
+                          SizedBox(
+                            height: AppConstants.smallDistance,
+                          ),
                           // -----------------------------------------------------------
 
                           // Choices Fields
@@ -192,7 +184,7 @@ class _TailorDialogState extends State<TailorDialog> {
                               borderRadius: AppSize.s5),
 
                           SizedBox(
-                            height: AppConstants.smallDistance,
+                            height: AppConstants.smallerDistance,
                           ),
 
                           sizeName(context, _sizeNameEditingController),
@@ -250,111 +242,113 @@ class _TailorDialogState extends State<TailorDialog> {
 
   Widget choicesFields(BuildContext context) {
     return Expanded(
-        child: GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 2,
-            childAspectRatio: 4 / 1,
-            physics: const ScrollPhysics(),
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            children: List.generate(widget.listOfChoices.length, (index) {
-              return Padding(
-                padding: const EdgeInsets.only(top: AppPadding.p5),
-                child: TextField(
-                    autofocus: false,
-                    keyboardType: TextInputType.number,
-                    controller: _choicesControllers[index],
-                    decoration: InputDecoration(
-                        hintText: widget.listOfChoices[index].toString(),
-                        hintStyle: TextStyle(fontSize: AppSize.s12.sp),
-                        labelText: widget.listOfChoices[index].toString(),
-                        labelStyle: TextStyle(
-                            fontSize: AppSize.s15.sp,
-                            color: ColorManager.primary),
-                        border: InputBorder.none)),
-              );
-            })));
+        child: Scrollbar(
+          thumbVisibility: true,
+          controller: _scrollController,
+          child: GridView.count(
+            controller: _scrollController,
+              crossAxisCount: 3,
+              crossAxisSpacing: 4,
+              mainAxisSpacing: 0,
+              childAspectRatio: 6 / 2,
+              physics: const ScrollPhysics(),
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              children: List.generate(widget.listOfChoices.length, (index) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(AppPadding.p0,AppPadding.p5,AppPadding.p5,AppPadding.p5),
+                  child: TextField(
+                      autofocus: false,
+                      keyboardType: TextInputType.number,
+                      controller: _choicesControllers[index],
+                      decoration: InputDecoration(
+                          hintText: widget.listOfChoices[index].toString(),
+                          hintStyle: TextStyle(fontSize: AppSize.s12.sp),
+                          labelText: widget.listOfChoices[index].toString(),
+                          labelStyle: TextStyle(
+                              fontSize: AppSize.s15.sp,
+                              color: ColorManager.primary),
+                          border: InputBorder.none)),
+                );
+              })),
+        ));
   }
 
-  // Widget customerDropDown(BuildContext context) {
-  //   return Expanded(
-  //       flex: 3,
-  //       child: containerComponent(
-  //           context,
-  //           DropdownButton(
-  //             borderRadius: BorderRadius.circular(AppSize.s5),
-  //             itemHeight: 50.h,
-  //             underline: Container(),
-  //             value: _selectedCustomer,
-  //             items: widget.listOfCustomers.map((item) {
-  //               return DropdownMenuItem(
-  //                   value: item,
-  //                   child: Row(
-  //                     children: [
-  //                       Text(item.firstName,
-  //                           style: TextStyle(
-  //                               color: ColorManager.primary,
-  //                               fontSize: AppSize.s14.sp)),
-  //                       SizedBox(width: AppConstants.smallerDistance),
-  //                       Text(item.lastName,
-  //                           style: TextStyle(
-  //                               color: ColorManager.primary,
-  //                               fontSize: AppSize.s14.sp)),
-  //                       Row(
-  //                         children: [
-  //                           SizedBox(width: AppConstants.smallerDistance),
-  //                           Text('|',
-  //                               style: TextStyle(
-  //                                   color: ColorManager.primary,
-  //                                   fontSize: AppSize.s14.sp)),
-  //                           SizedBox(width: AppConstants.smallerDistance),
-  //                           Text(item.mobile,
-  //                               style: TextStyle(
-  //                                   color: ColorManager.primary,
-  //                                   fontSize: AppSize.s14.sp))
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   ));
-  //             }).toList(),
-  //             onChanged: (selectedCustomer) {
-  //               setState(() {
-  //                 _selectedCustomer = selectedCustomer;
-  //                 _selectedCustomerName =
-  //                     '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
-  //                 _selectedCustomerId = selectedCustomer?.id;
-  //                 _selectedCustomerTel = selectedCustomer?.mobile;
-  //               });
-  //             },
-  //             isExpanded: true,
-  //             hint: Row(
-  //               children: [
-  //                 Text(
-  //                   AppStrings.selectFromPrev.tr(),
-  //                   style: TextStyle(
-  //                       color: ColorManager.primary, fontSize: AppSize.s14.sp),
-  //                 ),
-  //                 SizedBox(
-  //                   width: AppConstants.smallDistance,
-  //                 )
-  //               ],
-  //             ),
-  //             icon: Icon(
-  //               Icons.arrow_drop_down,
-  //               color: ColorManager.primary,
-  //               size: AppSize.s20.sp,
-  //             ),
-  //             style: TextStyle(
-  //                 color: ColorManager.primary, fontSize: AppSize.s14.sp),
-  //           ),
-  //           padding: const EdgeInsets.fromLTRB(
-  //               AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
-  //           height: 47.h,
-  //           borderColor: ColorManager.primary,
-  //           borderWidth: 0.5.w,
-  //           borderRadius: AppSize.s5));
-  // }
+  Widget customerDropDown(BuildContext context) {
+    return containerComponent(
+        context,
+        DropdownButton(
+          borderRadius: BorderRadius.circular(AppSize.s5),
+          itemHeight: 50.h,
+          underline: Container(),
+          value: _selectedCustomer,
+          items: widget.listOfCustomers.map((item) {
+            return DropdownMenuItem(
+                value: item,
+                child: Row(
+                  children: [
+                    Text(item.firstName,
+                        style: TextStyle(
+                            color: ColorManager.primary,
+                            fontSize: AppSize.s14.sp)),
+                    SizedBox(width: AppConstants.smallerDistance),
+                    Text(item.lastName,
+                        style: TextStyle(
+                            color: ColorManager.primary,
+                            fontSize: AppSize.s14.sp)),
+                    Row(
+                      children: [
+                        SizedBox(width: AppConstants.smallerDistance),
+                        Text('|',
+                            style: TextStyle(
+                                color: ColorManager.primary,
+                                fontSize: AppSize.s14.sp)),
+                        SizedBox(width: AppConstants.smallerDistance),
+                        Text(item.mobile,
+                            style: TextStyle(
+                                color: ColorManager.primary,
+                                fontSize: AppSize.s14.sp))
+                      ],
+                    ),
+                  ],
+                ));
+          }).toList(),
+          onChanged: (selectedCustomer) {
+            setState(() {
+              _selectedCustomer = selectedCustomer;
+              _selectedCustomerName =
+                  '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
+              _selectedCustomerId = selectedCustomer?.id;
+            });
+          },
+          isExpanded: true,
+          hint: Row(
+            children: [
+              Text(
+                AppStrings.selectFromPrev.tr(),
+                style: TextStyle(
+                    color: ColorManager.primary, fontSize: AppSize.s14.sp),
+              ),
+              SizedBox(
+                width: AppConstants.smallDistance,
+              )
+            ],
+          ),
+          icon: Icon(
+            Icons.arrow_drop_down,
+            color: ColorManager.primary,
+            size: AppSize.s20.sp,
+          ),
+          style: TextStyle(
+              color: ColorManager.primary, fontSize: AppSize.s14.sp),
+        ),
+        padding: const EdgeInsets.fromLTRB(
+            AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
+        height: 47.h,
+        borderColor: ColorManager.primary,
+        borderWidth: 0.5.w,
+        borderRadius: AppSize.s5);
+  }
 
   Widget fabrics(BuildContext context) {
     return Expanded(
@@ -365,7 +359,7 @@ class _TailorDialogState extends State<TailorDialog> {
           Column(
             children: [
               SizedBox(
-                height: 103.h,
+                height: 90.h,
                 width: 190.w,
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -389,7 +383,7 @@ class _TailorDialogState extends State<TailorDialog> {
                             Column(
                               children: [
                                 Container(
-                                  height: 70.h,
+                                  height: 60.h,
                                   width: ((200.w - 25.w) /widget.listOfFabrics.length).ceilToDouble(),
                                   decoration: BoxDecoration(
                                       shape: BoxShape.rectangle,
@@ -405,7 +399,7 @@ class _TailorDialogState extends State<TailorDialog> {
                                           fit: BoxFit.fill)),
                                 ),
                                 Container(
-                                  height: 23.h,
+                                  height: 20.h,
                                   width: ((200.w - 25.w)/widget.listOfFabrics.length).ceilToDouble(),
                                   decoration: BoxDecoration(
                                       color: ColorManager.badge,

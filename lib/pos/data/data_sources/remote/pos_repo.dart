@@ -7,6 +7,7 @@ import 'package:poslix_app/pos/domain/response/sales_report_items_model.dart';
 import '../../../domain/entities/customer_model.dart';
 import '../../../domain/requests/check_out_model.dart';
 import '../../../domain/requests/close_register_report_model.dart';
+import '../../../domain/requests/save_order_model.dart';
 import '../../../domain/requests/user_model.dart';
 import '../../../domain/response/appearance_model.dart';
 import '../../../domain/response/authorization_model.dart';
@@ -43,6 +44,7 @@ abstract class POSRepository {
   Future<void> updateCustomer(final int customerId, final String token, final CustomerModel parameters);
 
   Future<CheckOutResponse> checkout(final CheckOutRequest parameters, String token);
+  Future<CheckOutResponse> saveOrder(final SaveOrder parameters, String token, int orderId);
 
   Future<CloseRegisterResponse> closeRegister(final CloseRegisterRequest parameters, int locationId, String token);
   Future<RegisterDataResponse> getRegisterData(int locationId, String token);

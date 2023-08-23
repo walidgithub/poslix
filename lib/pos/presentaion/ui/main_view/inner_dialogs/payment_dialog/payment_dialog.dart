@@ -126,11 +126,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   int decimalPlaces = 2;
 
-  double roundDouble(double value, int places) {
-    String roundedNumber = value.toStringAsFixed(places);
-    return double.parse(roundedNumber);
-  }
-
   @override
   void dispose() {
     _notesEditingController.dispose();

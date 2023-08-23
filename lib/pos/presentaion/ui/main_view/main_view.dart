@@ -80,6 +80,12 @@ class _MainViewState extends State<MainView> {
   List<VariationsResponse> listOfVariations = [];
   List<StocksResponse> listOfStocks = [];
 
+  List listOfFabrics = [
+  {'name' : 'fff','image' : 'n'},
+  {'name' : 'ttt','image' : 'n'}
+  ];
+  List<String> listOfChoices = ['size', 'width' , 'height', 'chest', 'ggg'];
+
   List<CustomerResponse> listOfCustomers = [];
 
   String selectedDiscountType = '';
@@ -87,6 +93,8 @@ class _MainViewState extends State<MainView> {
   int decimalPlaces = 2;
   int locationId = 0;
   int tax = 0;
+
+  bool tailor = false;
 
   int getIndex(int index) {
     int finalIndex = index + 1;
@@ -107,7 +115,7 @@ class _MainViewState extends State<MainView> {
 
   int? _selectedCustomerId;
   String? _selectedCustomerTel;
-  String? _selectedCategory;
+  String _selectedCategory = '';
 
   double shippingCharge = 0;
   double discount = 0;
@@ -139,11 +147,6 @@ class _MainViewState extends State<MainView> {
   double getEstimatedTax() {
     estimatedTax = roundDouble((tax / 100) * sumItems()!, decimalPlaces);
     return estimatedTax;
-  }
-
-  double roundDouble(double value, int places) {
-    String roundedNumber = value.toStringAsFixed(places);
-    return double.parse(roundedNumber);
   }
 
   void isSelected(int itemId) {
@@ -526,9 +529,7 @@ class _MainViewState extends State<MainView> {
 
           if (state is LoadedCurrency) {
             currencyCode = state.currencyCode;
-          } else if (state is LoadingErrorCurrency) {
-            LoadingDialog.hide(context);
-          }
+          } else if (state is LoadingErrorCurrency) {}
         },
         builder: (context, state) {
           return Padding(
@@ -726,6 +727,8 @@ class _MainViewState extends State<MainView> {
   }
 
   void hold(BuildContext context) {
+    // int itemIndex = 1;
+    // TailorDialog.show(context, currencyCode, itemIndex, listOfProducts, listOfChoices, listOfFabrics, listOfCustomers, discount);
     if (listOfTmpOrder.isEmpty) {
       CustomDialog.show(
           context,
@@ -990,7 +993,7 @@ class _MainViewState extends State<MainView> {
                             SizedBox(
                               height: 10.h,
                             ),
-                            Bounceable(
+                            tailor ? Bounceable(
                                 duration: Duration(
                                     milliseconds:
                                         AppConstants.durationOfBounceable),
@@ -1016,12 +1019,14 @@ class _MainViewState extends State<MainView> {
                                     color: ColorManager.primary,
                                     borderColor: ColorManager.primary,
                                     borderWidth: 0.1.w,
-                                    borderRadius: AppSize.s5))
+                                    borderRadius: AppSize.s5)) : Container()
                           ],
                         ),
                       ),
-                      SizedBox(
+                      tailor ? SizedBox(
                         width: AppConstants.smallerDistance,
+                      ) : SizedBox(
+                        width: AppConstants.smallDistance,
                       ),
                       containerComponent(
                           context,

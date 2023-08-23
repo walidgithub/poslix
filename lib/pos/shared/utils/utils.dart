@@ -51,7 +51,7 @@ Future<bool> onBackButtonPressed(BuildContext context) async {
           ],
         );
       });
-  return exitApp ?? false;
+  return exitApp;
 }
 
 Future<bool> onBackButtonPressedInIOS(BuildContext context) async {
@@ -77,7 +77,7 @@ Future<bool> onBackButtonPressedInIOS(BuildContext context) async {
           ],
         );
       });
-  return exitApp ?? false;
+  return exitApp;
 }
 
 void showNoInternet(BuildContext context) {
@@ -108,6 +108,11 @@ void noCredit(BuildContext context) {
       ColorManager.white,
       AppConstants.durationOfSnackBar,
       ColorManager.hold);
+}
+
+double roundDouble(double value, int places) {
+  String roundedNumber = value.toStringAsFixed(places);
+  return double.parse(roundedNumber);
 }
 
 String getClearName(String? firstName, String? lastName, {bool comma = false}) {

@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:poslix_app/pos/domain/requests/close_register_model.dart';
+import 'package:poslix_app/pos/domain/requests/save_order_model.dart';
 import 'package:poslix_app/pos/domain/requests/user_model.dart';
 import 'package:poslix_app/pos/domain/response/appearance_model.dart';
 
@@ -250,6 +249,24 @@ class POSRepositoryImpl extends POSRepository {
           .post('${AppConstants.baseUrl}api/checkout',
               headers: {'Authorization': 'Bearer $token'},
               body: parameters.toJson())
+          .then((response) {
+        res = response.data['result'];
+        return CheckOutResponse.fromJson(res);
+      });
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  @override
+  Future<CheckOutResponse> saveOrder(
+      SaveOrder parameters, String token, int orderId) async {
+    var res;
+    try {
+      return await _dio
+          .post('${AppConstants.baseUrl}api/sales/$orderId',
+          headers: {'Authorization': 'Bearer $token'},
+          body: parameters.toJson())
           .then((response) {
         res = response.data['result'];
         return CheckOutResponse.fromJson(res);
