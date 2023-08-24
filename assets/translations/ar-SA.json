@@ -21,10 +21,15 @@
   "Additional Notes": "ملاحظات اضافية",
   "Something went wrong": "هناك خطأ ما",
   "There is no stock from item": "لا يوجد رصيد من منتج",
+  "Thank you for your business.": "شكرا لمتجرك",
 
   "Tel": "التليفون",
+  "INVOICE": "فاتورة",
   "Order Id": "رقم الفاتورة",
-
+  "Billed From": "Billed From",
+  "Billed To": "Billed To",
+  "INVOICE NUMBER ": "رقم الفاتورة ",
+  "INVOICE DATE ": "تاريخ الفاتورة ",
   "Email field is required": "حقل الايميل مطلوبة",
   "Password field is required": "حقل كلمة المرور مطلوبة",
 

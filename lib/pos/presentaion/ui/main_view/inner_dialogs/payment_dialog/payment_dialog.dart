@@ -8,15 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_printer/ImagestorByte.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_printer/printer.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/widgets/bill_format.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/a4_printer/printable_data.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/ImagestorByte.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/printer.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/bill_format.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/widgets/check_out_button.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/widgets/new_payment_methods.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/widgets/totals.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_state.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
+import 'package:printing/printing.dart';
 import 'package:screenshot/screenshot.dart';
 import '../../../../../domain/requests/cart_model.dart';
 import '../../../../../domain/requests/check_out_model.dart';
@@ -32,6 +34,8 @@ import '../../main_view_cubit/main_view_cubit.dart';
 import '../tailor_dialog/widgets/main_note.dart';
 import 'widgets/add_payment_row.dart';
 import 'widgets/main_payment _method.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class PaymentDialog extends StatefulWidget {
   double total;
@@ -182,6 +186,9 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   int orderId = 0;
 
+  List printTypes = ['Bluetooth', 'A4', 'Wi_Fi_Thermal'];
+  String? printType = '';
+
   double sizedHeight = 340.h;
   double innerHeight = 50.h;
   int paymentWaysCount = 0;
@@ -195,6 +202,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
   @override
   void initState() {
     getDecimalPlaces();
+
+    printType = printTypes[1];
 
     totalNewPaying = 0;
     totalPaying = 0;
@@ -346,7 +355,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         _paymentControllers,
                                         widget.total,
                                         _paymentNotesControllers,
-                                        selectPaymentType, selectedNewPaymentType),
+                                        selectPaymentType,
+                                        selectedNewPaymentType),
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),
@@ -371,7 +381,19 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),
-                                    billModel(context, screenshotController, today, businessName, businessImage, businessTell, orderId, widget.taxAmount, widget.discountAmount, widget.total, totalPaying!, due!),
+                                    billModel(
+                                        context,
+                                        screenshotController,
+                                        today,
+                                        businessName,
+                                        businessImage,
+                                        businessTell,
+                                        orderId,
+                                        widget.taxAmount,
+                                        widget.discountAmount,
+                                        widget.total,
+                                        totalPaying!,
+                                        due!),
                                     SizedBox(
                                       height: 25.h,
                                     ),
@@ -442,10 +464,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
         _paymentControllers[paymentWaysCount].text = '0.0';
       } else {
         _paymentControllers[paymentWaysCount].text = roundDouble(
-            (widget.total -
-                (double.parse(_amountEditingController.text) +
-                    totalNewPaying)),
-            decimalPlaces)
+                (widget.total -
+                    (double.parse(_amountEditingController.text) +
+                        totalNewPaying)),
+                decimalPlaces)
             .toString();
       }
 
@@ -469,16 +491,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
     paymentRequest.add(PaymentTypesRequest(
         paymentId: '1',
         amount: roundDouble(
-            double.parse(_amountEditingController.text),
-            decimalPlaces),
+            double.parse(_amountEditingController.text), decimalPlaces),
         note: _notesEditingController.text));
 
     for (int n = 0; n < selectedNewPaymentType.length - 1; n++) {
       paymentRequest.add(PaymentTypesRequest(
           paymentId: selectedNewPaymentType[n],
           amount: roundDouble(
-              double.parse(_paymentControllers[n].text),
-              decimalPlaces),
+              double.parse(_paymentControllers[n].text), decimalPlaces),
           note: _paymentNotesControllers[n].text));
     }
 
@@ -501,33 +521,53 @@ class _PaymentDialogState extends State<PaymentDialog> {
     }
 
     totalPaying = totalPaying! +
-        roundDouble(double.parse(_amountEditingController.text),
-            decimalPlaces);
+        roundDouble(double.parse(_amountEditingController.text), decimalPlaces);
 
     due = widget.total - totalPaying!;
 
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    screenshotController
-        .capture(delay: const Duration(milliseconds: 10))
-        .then((capturedImage) async {
-      theImageThatComesFromThePrinter = capturedImage!;
-      setState(() {
-        theImageThatComesFromThePrinter = capturedImage;
-        testPrint(
-            AppConstants.printerIp, theImageThatComesFromThePrinter);
+    if (printType == 'Bluetooth') {
+      // Navigator.of(context).pushNamed(
+      //     Routes.thermalPrint,
+      //     arguments: GoToThermal(
+      //         total: widget.total.toString()));
+    } else if (printType == 'A4') {
+      final image = await imageFromAssetBundle(
+        "assets/images/logo.jpeg",
+      );
+      final doc = pw.Document();
+      doc.addPage(pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context context) {
+            return buildPrintableData(image,today,
+                businessName,
+                businessImage,
+                businessTell,
+                orderId,
+                widget.taxAmount,
+                widget.discountAmount,
+                widget.total,
+                totalPaying!,
+                due!);
+          }));
+      await Printing.layoutPdf(
+          onLayout: (PdfPageFormat format) async => doc.save());
+    } else if (printType == 'Wi_Fi_Thermal') {
+      screenshotController
+          .capture(delay: const Duration(milliseconds: 10))
+          .then((capturedImage) async {
+        theImageThatComesFromThePrinter = capturedImage!;
+        setState(() {
+          theImageThatComesFromThePrinter = capturedImage;
+          testPrint(AppConstants.printerIp, theImageThatComesFromThePrinter);
+        });
+      }).catchError((onError) {
+        if (kDebugMode) {
+          print(onError);
+        }
       });
-
-      PaymentDialog.hide(context);
-    }).catchError((onError) {
-      if (kDebugMode) {
-        print(onError);
-      }
-    });
-
-    // Navigator.of(context).pushNamed(
-    //     Routes.thermalPrint,
-    //     arguments: GoToThermal(
-    //         total: widget.total.toString()));
+    }
+    PaymentDialog.hide(context);
   }
 }

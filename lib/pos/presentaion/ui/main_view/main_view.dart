@@ -1,4 +1,6 @@
-﻿import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
+﻿import 'dart:async';
+
+import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +66,8 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   final AppPreferences _appPreferences = sl<AppPreferences>();
 
+  Timer? _timer;
+
   final GlobalKey<AnimatedFloatingActionButtonState> floatingKey =
       GlobalKey<AnimatedFloatingActionButtonState>();
 
@@ -104,6 +108,7 @@ class _MainViewState extends State<MainView> {
   @override
   void dispose() {
     _searchEditingController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -347,6 +352,10 @@ class _MainViewState extends State<MainView> {
     );
   }
 
+  showLoadingDialog(BuildContext context) {
+    LoadingDialog.show(context);
+  }
+
   Widget bodyContent(BuildContext context) {
     totalAmount = getTotalAmount();
 
@@ -368,7 +377,7 @@ class _MainViewState extends State<MainView> {
           }
 
           if (state is LoadingCategories) {
-            LoadingDialog.show(context);
+            _timer = Timer(Duration(milliseconds: AppConstants.waitingLoading), showLoadingDialog(context));
           } else if (state is LoadedCategories) {
             LoadingDialog.hide(context);
             listOfCategories = MainViewCubit.get(context).listOfCategories;
@@ -421,7 +430,7 @@ class _MainViewState extends State<MainView> {
             LoadingDialog.hide(context);
             tryAgainLater(context);
           } else if (state is LoadingBrands) {
-            LoadingDialog.show(context);
+            _timer = Timer(Duration(milliseconds: AppConstants.waitingLoading), showLoadingDialog(context));
           } else if (state is LoadedBrands) {
             LoadingDialog.hide(context);
             listOfBrands = MainViewCubit.get(context).listOfBrands;
@@ -468,7 +477,7 @@ class _MainViewState extends State<MainView> {
             tryAgainLater(context);
           }
           if (state is LoadingCustomers) {
-            LoadingDialog.show(context);
+            _timer = Timer(Duration(milliseconds: AppConstants.waitingLoading), showLoadingDialog(context));
           } else if (state is LoadedCustomers) {
             LoadingDialog.hide(context);
             listOfCustomers = MainViewCubit.get(context).listOfCustomers;
@@ -505,7 +514,7 @@ class _MainViewState extends State<MainView> {
             LoadingDialog.hide(context);
             tryAgainLater(context);
           } else if (state is LoadingCustomer) {
-            LoadingDialog.show(context);
+            _timer = Timer(Duration(milliseconds: AppConstants.waitingLoading), showLoadingDialog(context));
           } else if (state is LoadedCustomer) {
             LoadingDialog.hide(context);
             int index = listOfCustomers.indexWhere((element) =>

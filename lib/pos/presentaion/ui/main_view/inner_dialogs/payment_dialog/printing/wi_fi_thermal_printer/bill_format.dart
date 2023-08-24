@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:screenshot/screenshot.dart';
 
-import '../../../../../../domain/entities/order_model.dart';
-import '../../../../../../shared/constant/constant_values_manager.dart';
-import '../../../../../../shared/constant/padding_margin_values_manager.dart';
-import '../../../../../../shared/constant/strings_manager.dart';
-import '../../../../../../shared/style/colors_manager.dart';
+import '../../../../../../../domain/entities/order_model.dart';
+import '../../../../../../../shared/constant/constant_values_manager.dart';
+import '../../../../../../../shared/constant/padding_margin_values_manager.dart';
+import '../../../../../../../shared/constant/strings_manager.dart';
+import '../../../../../../../shared/style/colors_manager.dart';
 
 Widget billModel(BuildContext context, ScreenshotController screenshotController, DateTime today, String businessName, String businessImage, String businessTell, int orderId, double taxAmount, double discountAmount, double total, double totalPaying, double due) {
   return Screenshot(

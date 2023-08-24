@@ -151,10 +151,16 @@ class AppStrings{
   static const changeReturn  = 'Change return';
   static const balance  = 'Balance';
   static const termsAndConditions  = 'Terms and Conditions';
+  static const thankYouForYourBusiness  = 'Thank you for your business.';
   static const totalDue  = 'Total Due:';
   static const amountPaid  = 'Amount Paid:';
   static const tax  = 'Tax:';
   static const discount3  = 'Discount:';
   static const total2  = 'Total:';
+  static const invoice  = 'INVOICE';
+  static const billedFrom  = 'Billed From';
+  static const billedTo  = 'Billed To';
+  static const invoiceDate  = 'INVOICE DATE ';
+  static const invoiceNumber  = 'INVOICE NUMBER ';
   static const noInternet  = 'No Internet';
 }
