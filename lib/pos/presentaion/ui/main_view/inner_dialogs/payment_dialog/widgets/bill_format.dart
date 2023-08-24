@@ -14,7 +14,7 @@ Widget billModel(BuildContext context, ScreenshotController screenshotController
   return Screenshot(
     controller: screenshotController,
     child: SizedBox(
-        width: 200.w,
+        width: 150.w,
         child: Column(
           children: [
             Column(
