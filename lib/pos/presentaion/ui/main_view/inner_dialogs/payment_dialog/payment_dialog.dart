@@ -157,6 +157,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
   String businessImage = '';
   String businessName = '';
   String businessTell = '';
+  String businessAddress = '';
+  String businessEmail = '';
+  String businessVat = '';
+  String customerNumber = '';
 
   List paymentMethods = [];
 
@@ -295,6 +299,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
             businessImage = state.appearanceResponse.logo;
             businessName = state.appearanceResponse.name;
             businessTell = state.appearanceResponse.tell;
+            businessEmail = state.appearanceResponse.email;
+            businessAddress = state.appearanceResponse.address;
+            businessVat = state.appearanceResponse.vatNumber;
+            customerNumber = state.appearanceResponse.customerNumber;
           } else if (state is LoadingErrorAppearance) {}
         },
         builder: (context, state) {
@@ -540,7 +548,13 @@ class _PaymentDialogState extends State<PaymentDialog> {
       doc.addPage(pw.Page(
           pageFormat: PdfPageFormat.a4,
           build: (pw.Context context) {
-            return buildPrintableData(image,today,
+            return buildPrintableData(image,
+                businessAddress,
+                businessEmail,
+                businessVat,
+                customerNumber,
+                widget.currencyCode
+                ,today,
                 businessName,
                 businessImage,
                 businessTell,
@@ -553,6 +567,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
           }));
       await Printing.layoutPdf(
           onLayout: (PdfPageFormat format) async => doc.save());
+
     } else if (printType == 'Wi_Fi_Thermal') {
       screenshotController
           .capture(delay: const Duration(milliseconds: 10))
@@ -570,4 +585,5 @@ class _PaymentDialogState extends State<PaymentDialog> {
     }
     PaymentDialog.hide(context);
   }
+
 }

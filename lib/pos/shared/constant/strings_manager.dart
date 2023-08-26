@@ -40,6 +40,7 @@ class AppStrings{
   static const discount  = 'Discount (-)';
   static const discount2  = 'Discount';
   static const totalAmount  = 'Total Amount';
+  static const subTotal  = 'Sub Total';
   static const omr  = 'OMR';
   static const delete  = 'Delete';
   static const holdCard  = 'Hold Card';
@@ -155,12 +156,16 @@ class AppStrings{
   static const totalDue  = 'Total Due:';
   static const amountPaid  = 'Amount Paid:';
   static const tax  = 'Tax:';
+  static const taxBill  = 'Tax';
   static const discount3  = 'Discount:';
   static const total2  = 'Total:';
   static const invoice  = 'INVOICE';
   static const billedFrom  = 'Billed From';
+  static const vatNumber  = 'VAT Number:';
   static const billedTo  = 'Billed To';
   static const invoiceDate  = 'INVOICE DATE ';
   static const invoiceNumber  = 'INVOICE NUMBER ';
+  static const description  = 'Description';
+  static const unitPrice  = 'Unit Price';
   static const noInternet  = 'No Internet';
 }

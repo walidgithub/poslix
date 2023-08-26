@@ -22,7 +22,7 @@
   "Something went wrong": "هناك خطأ ما",
   "There is no stock from item": "لا يوجد رصيد من منتج",
   "Thank you for your business.": "شكرا لمتجرك",
-
+  "Tax": "الضريبة",
   "Tel": "التليفون",
   "INVOICE": "فاتورة",
   "Order Id": "رقم الفاتورة",
@@ -30,6 +30,10 @@
   "Billed To": "Billed To",
   "INVOICE NUMBER ": "رقم الفاتورة ",
   "INVOICE DATE ": "تاريخ الفاتورة ",
+  "Sub Total": "قبل الإجمالى",
+  "Description": "الوصف",
+  "VAT Number:": "VAT Number:",
+  "Unit Price": "سعر الوحدة",
   "Email field is required": "حقل الايميل مطلوبة",
   "Password field is required": "حقل كلمة المرور مطلوبة",
 
