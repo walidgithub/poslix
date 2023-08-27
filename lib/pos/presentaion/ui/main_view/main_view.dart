@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:poslix_app/pos/domain/requests/cart_model.dart';
 import 'package:poslix_app/pos/domain/response/customer_model.dart';
+import 'package:poslix_app/pos/domain/response/prices_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/add_edit_customer_buttons.dart';
@@ -86,6 +87,7 @@ class _MainViewState extends State<MainView> {
   List<StocksResponse> listOfStocks = [];
 
   List listOfFabrics = [];
+  List<PricesResponse> listOfPackagePrices = [];
   List<TailoringTypesModel> listOfTailoringTypes = [];
 
   List<CustomerResponse> listOfCustomers = [];
@@ -1243,6 +1245,7 @@ class _MainViewState extends State<MainView> {
       if (listOfProducts[index].packages.isNotEmpty) {
         listOfFabrics =
             listOfProducts[index].packages[0].fabricIds!.split(',').toList();
+        listOfPackagePrices = listOfProducts[index].packages[0].pricesJson!;
       } else {
         CustomDialog.show(
             context,
@@ -1254,7 +1257,7 @@ class _MainViewState extends State<MainView> {
         return;
       }
       TailorDialog.show(context, currencyCode, index, listOfProducts,
-          listOfTailoringTypes, listOfFabrics, listOfCustomers, discount);
+          listOfTailoringTypes, listOfFabrics, listOfPackagePrices, listOfCustomers, discount);
       return;
     }
 

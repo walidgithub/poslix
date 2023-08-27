@@ -166,7 +166,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   ScreenshotController screenshotController = ScreenshotController();
 
-  void testPrint(String printerIp, Uint8List theimageThatComesfr) async {
+  void goToPrint(String printerIp, Uint8List theimageThatComesfr) async {
     const PaperSize paper = PaperSize.mm80;
     final profile = await CapabilityProfile.load();
     final printer = NetworkPrinter(paper, profile);
@@ -575,7 +575,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
         theImageThatComesFromThePrinter = capturedImage!;
         setState(() {
           theImageThatComesFromThePrinter = capturedImage;
-          testPrint(AppConstants.printerIp, theImageThatComesFromThePrinter);
+          goToPrint(AppConstants.printerIp, theImageThatComesFromThePrinter);
         });
       }).catchError((onError) {
         if (kDebugMode) {
@@ -585,5 +585,4 @@ class _PaymentDialogState extends State<PaymentDialog> {
     }
     PaymentDialog.hide(context);
   }
-
 }

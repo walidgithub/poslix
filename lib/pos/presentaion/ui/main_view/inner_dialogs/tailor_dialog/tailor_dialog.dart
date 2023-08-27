@@ -10,6 +10,7 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dia
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/response/customer_model.dart';
+import '../../../../../domain/response/prices_model.dart';
 import '../../../../../domain/response/tailoring_types_model.dart';
 import '../../../../../shared/constant/assets_manager.dart';
 import '../../../../../shared/constant/constant_values_manager.dart';
@@ -23,12 +24,13 @@ import '../../../components/container_component.dart';
 import 'widgets/main_note.dart';
 
 class TailorDialog extends StatefulWidget {
-  int itemIndex;
   String currencyCode;
+  int itemIndex;
   var selectedListName;
-  List<CustomerResponse> listOfCustomers;
   List<TailoringTypesModel> listOfTailoringTypes;
   List listOfFabrics;
+  List<PricesResponse> listOfPackagePrices;
+  List<CustomerResponse> listOfCustomers;
   double? discount;
 
   static void show(
@@ -38,6 +40,7 @@ class TailorDialog extends StatefulWidget {
           var selectedListName,
           List<TailoringTypesModel> listOfTailoringTypes,
           List listOfFabrics,
+          List<PricesResponse> listOfPackagePrices,
           List<CustomerResponse> listOfCustomers,
           double discount) =>
       isApple()
@@ -51,6 +54,7 @@ class TailorDialog extends StatefulWidget {
                   selectedListName: selectedListName,
                   listOfTailoringTypes: listOfTailoringTypes,
                   listOfFabrics: listOfFabrics,
+                  listOfPackagePrices: listOfPackagePrices,
                   listOfCustomers: listOfCustomers,
                   discount: discount))
           : showDialog<void>(
@@ -63,6 +67,7 @@ class TailorDialog extends StatefulWidget {
                   selectedListName: selectedListName,
                   listOfTailoringTypes: listOfTailoringTypes,
                   listOfFabrics: listOfFabrics,
+                  listOfPackagePrices: listOfPackagePrices,
                   listOfCustomers: listOfCustomers,
                   discount: discount),
             ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
@@ -75,6 +80,7 @@ class TailorDialog extends StatefulWidget {
       required this.selectedListName,
       required this.listOfTailoringTypes,
       required this.listOfFabrics,
+      required this.listOfPackagePrices,
       required this.listOfCustomers,
       required this.discount,
       super.key});
@@ -108,6 +114,16 @@ class _TailorDialogState extends State<TailorDialog> {
 
   double dialogWidth = 200.w;
 
+  double calcTotal = 0;
+
+  void isSelected(int itemId) {
+    setState(() {
+      final currentId =
+      fabricDetails.indexWhere((element) => element.id == itemId);
+      fabricDetails[currentId].selected = !fabricDetails[currentId].selected!;
+    });
+  }
+
   @override
   void initState() {
     for (int i = 0; i < widget.listOfTailoringTypes.length; i++) {
@@ -119,14 +135,11 @@ class _TailorDialogState extends State<TailorDialog> {
         for (var nToImage in widget.selectedListName) {
           if (nToId.toString() == nToImage.id.toString()) {
             fabricDetails.add(FabricsModel(
-                id: nToId, itemImage: nToImage.image, itemName: nToImage.name));
+                id: int.parse(nToId), itemImage: nToImage.image, itemName: nToImage.name,selected: false));
           }
         }
       }
     }
-
-    print('hereeeee');
-    print(widget.listOfTailoringTypes.length);
 
     getDecimalPlaces();
     super.initState();
@@ -145,6 +158,13 @@ class _TailorDialogState extends State<TailorDialog> {
 
   void getDecimalPlaces() async {
     decimalPlaces = _appPreferences.getLocationId(PREFS_KEY_DECIMAL_PLACES)!;
+  }
+
+  void goToCalc() {
+    setState(() {
+      calcTotal = 0.0;
+
+    });
   }
 
   @override
@@ -218,7 +238,7 @@ class _TailorDialogState extends State<TailorDialog> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
-                                AppStrings.selectFabric.tr(),
+                                calcTotal == 0 ? AppStrings.selectFabric.tr() : calcTotal.toString(),
                                 style: TextStyle(
                                     color: ColorManager.primary,
                                     fontSize: AppSize.s14.sp,
@@ -396,6 +416,8 @@ class _TailorDialogState extends State<TailorDialog> {
                         onTap: () async {
                           await Future.delayed(Duration(
                               milliseconds: AppConstants.durationOfBounceable));
+
+                          isSelected(fabricDetails[index].id!);
                         },
                         child: containerComponent(
                             context,
@@ -427,8 +449,8 @@ class _TailorDialogState extends State<TailorDialog> {
                                               fit: BoxFit.contain)),
                                 ),
                                 Container(
-                                  height: 20.h,
-                                  width: ((200.w - 25.w) / fabricDetails.length)
+                                  height: 19.5.h,
+                                  width: ((200.w - 25.5.w) / fabricDetails.length)
                                       .ceilToDouble(),
                                   decoration: BoxDecoration(
                                       color: ColorManager.badge,
@@ -438,11 +460,30 @@ class _TailorDialogState extends State<TailorDialog> {
                                           bottomRight:
                                               Radius.circular(AppSize.s5))),
                                   child: Center(
-                                    child: Text(
-                                      fabricDetails[index].itemName.toString(),
-                                      style: TextStyle(
-                                          color: ColorManager.white,
-                                          fontSize: AppSize.s10.sp),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          fabricDetails[index].itemName.toString(),
+                                          style: TextStyle(
+                                              color: ColorManager.white,
+                                              fontSize: AppSize.s12.sp),
+                                        ),
+                                        SizedBox(width: AppConstants.smallDistance),
+                                        Text(
+                                          '-',
+                                          style: TextStyle(
+                                              color: ColorManager.white,
+                                              fontSize: AppSize.s12.sp),
+                                        ),
+                                        SizedBox(width: AppConstants.smallDistance),
+                                        Text(
+                                          widget.listOfPackagePrices[index].price.toString(),
+                                          style: TextStyle(
+                                              color: ColorManager.white,
+                                              fontSize: AppSize.s12.sp),
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -450,7 +491,7 @@ class _TailorDialogState extends State<TailorDialog> {
                             ),
                             height: 50.h,
                             color: ColorManager.white,
-                            borderColor: ColorManager.primary,
+                            borderColor: fabricDetails[index].selected! ? ColorManager.delete : ColorManager.primary,
                             borderWidth: 0.0.w,
                             borderRadius: AppSize.s5),
                       ),
