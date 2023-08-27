@@ -49,7 +49,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         await login(userRequest!);
 
         res =
-            await posRepositoryImpl.getOrderReportByPage(token, locationId, pageNum);
+            await posRepositoryImpl.getOrderReportByPage(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId, pageNum);
         emit(OrderReportSucceed());
         listOfOrderHead = res;
         return res;
@@ -83,7 +83,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         await login(userRequest!);
 
         res =
-        await posRepositoryImpl.getOrderReport(token, locationId);
+        await posRepositoryImpl.getOrderReport(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
         emit(AllOrderReportSucceed());
         listOfAllOrderHead = res;
         return res;
@@ -121,7 +121,7 @@ class OrdersCubit extends Cubit<OrdersState> {
           await login(userRequest!);
 
           res = await posRepositoryImpl.getOrderReportItems(
-              token, locationId, orderId);
+              _appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId, orderId);
           emit(OrderReportItemsSucceed());
           listOfOrderItems = res;
           return res;

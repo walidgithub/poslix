@@ -59,7 +59,7 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getBusinesses(token);
+          res = await posRepositoryImpl.getBusinesses(_appPreferences.getToken(LOGGED_IN_TOKEN)!);
 
           emit(RegisterPOSLoaded());
           listOfBusinesses = res.toList();
@@ -96,7 +96,7 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getTaxes(token, locationId);
+          res = await posRepositoryImpl.getTaxes(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
 
           emit(TaxesLoaded());
           listOfTaxes = res.toList();
@@ -130,7 +130,7 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
           await login(userRequest!);
 
           res = await posRepositoryImpl.openRegister(
-              parameters, locationId, token);
+              parameters, locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
           emit(OpenRegisterSucceed());
           return res;
         }
@@ -162,7 +162,7 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
           await login(userRequest!);
 
           res = await posRepositoryImpl.openCloseRegister(
-              parameters, locationId, token);
+              parameters, locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
           emit(OpenCloseRegisterSucceed());
           if (res[0].status == 'open') {
             String cash = res[0].cash;
@@ -203,7 +203,7 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getPermissions(token, locationId);
+          res = await posRepositoryImpl.getPermissions(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
           emit(GetPermissionsSucceed());
           return res;
         }

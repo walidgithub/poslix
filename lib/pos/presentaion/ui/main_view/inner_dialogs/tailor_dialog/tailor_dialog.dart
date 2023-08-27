@@ -4,11 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poslix_app/pos/domain/entities/fabrics_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/widgets/size_name_Section.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/tailor_dialog/widgets/total_section.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/response/customer_model.dart';
+import '../../../../../domain/response/tailoring_types_model.dart';
 import '../../../../../shared/constant/assets_manager.dart';
 import '../../../../../shared/constant/constant_values_manager.dart';
 import '../../../../../shared/constant/padding_margin_values_manager.dart';
@@ -25,7 +27,7 @@ class TailorDialog extends StatefulWidget {
   String currencyCode;
   var selectedListName;
   List<CustomerResponse> listOfCustomers;
-  List listOfChoices;
+  List<TailoringTypesModel> listOfTailoringTypes;
   List listOfFabrics;
   double? discount;
 
@@ -34,44 +36,45 @@ class TailorDialog extends StatefulWidget {
           String currencyCode,
           int itemIndex,
           var selectedListName,
-          List listOfChoices,
+          List<TailoringTypesModel> listOfTailoringTypes,
           List listOfFabrics,
           List<CustomerResponse> listOfCustomers,
           double discount) =>
-  isApple() ? showCupertinoDialog<void>(context: context,
-      useRootNavigator: false,
-      barrierDismissible: false,
-      builder: (_) => TailorDialog(
-      currencyCode: currencyCode,
-      itemIndex: itemIndex,
-      selectedListName: selectedListName,
-      listOfChoices: listOfChoices,
-      listOfFabrics: listOfFabrics,
-      listOfCustomers: listOfCustomers,
-      discount: discount)) :
-      showDialog<void>(
-        context: context,
-        useRootNavigator: false,
-        barrierDismissible: false,
-        builder: (_) => TailorDialog(
-            currencyCode: currencyCode,
-            itemIndex: itemIndex,
-            selectedListName: selectedListName,
-            listOfChoices: listOfChoices,
-            listOfFabrics: listOfFabrics,
-            listOfCustomers: listOfCustomers,
-            discount: discount),
-      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
+      isApple()
+          ? showCupertinoDialog<void>(
+              context: context,
+              useRootNavigator: false,
+              barrierDismissible: false,
+              builder: (_) => TailorDialog(
+                  currencyCode: currencyCode,
+                  itemIndex: itemIndex,
+                  selectedListName: selectedListName,
+                  listOfTailoringTypes: listOfTailoringTypes,
+                  listOfFabrics: listOfFabrics,
+                  listOfCustomers: listOfCustomers,
+                  discount: discount))
+          : showDialog<void>(
+              context: context,
+              useRootNavigator: false,
+              barrierDismissible: false,
+              builder: (_) => TailorDialog(
+                  currencyCode: currencyCode,
+                  itemIndex: itemIndex,
+                  selectedListName: selectedListName,
+                  listOfTailoringTypes: listOfTailoringTypes,
+                  listOfFabrics: listOfFabrics,
+                  listOfCustomers: listOfCustomers,
+                  discount: discount),
+            ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
   static void hide(BuildContext context) => Navigator.of(context).pop();
 
   TailorDialog(
-      {
-        required this.currencyCode,
+      {required this.currencyCode,
       required this.itemIndex,
-        required this.selectedListName,
-        required this.listOfChoices,
-        required this.listOfFabrics,
+      required this.selectedListName,
+      required this.listOfTailoringTypes,
+      required this.listOfFabrics,
       required this.listOfCustomers,
       required this.discount,
       super.key});
@@ -89,9 +92,11 @@ class _TailorDialogState extends State<TailorDialog> {
 
   final ScrollController _scrollController = ScrollController();
 
-  final List<TextEditingController> _choicesControllers = [];
+  final List<TextEditingController> _tailoringTypesControllers = [];
 
   CustomerResponse? _selectedCustomer;
+
+  List<FabricsModel> fabricDetails = [];
 
   String? _selectedCustomerName;
 
@@ -105,9 +110,23 @@ class _TailorDialogState extends State<TailorDialog> {
 
   @override
   void initState() {
-    for (int i = 0; i < widget.listOfChoices.length; i++) {
-      _choicesControllers.add(TextEditingController());
+    for (int i = 0; i < widget.listOfTailoringTypes.length; i++) {
+      _tailoringTypesControllers.add(TextEditingController());
     }
+
+    for (var nToId in widget.listOfFabrics) {
+      if (nToId != '') {
+        for (var nToImage in widget.selectedListName) {
+          if (nToId.toString() == nToImage.id.toString()) {
+            fabricDetails.add(FabricsModel(
+                id: nToId, itemImage: nToImage.image, itemName: nToImage.name));
+          }
+        }
+      }
+    }
+
+    print('hereeeee');
+    print(widget.listOfTailoringTypes.length);
 
     getDecimalPlaces();
     super.initState();
@@ -118,7 +137,7 @@ class _TailorDialogState extends State<TailorDialog> {
     _notesEditingController.dispose();
     _sizeNameEditingController.dispose();
 
-    for (var controller in _choicesControllers) {
+    for (var controller in _tailoringTypesControllers) {
       controller.dispose();
     }
     super.dispose();
@@ -143,7 +162,8 @@ class _TailorDialogState extends State<TailorDialog> {
                         borderRadius: BorderRadius.circular(AppSize.s5),
                         boxShadow: [BoxShadow(color: ColorManager.badge)]),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(AppPadding.p20,AppPadding.p20,AppPadding.p20,AppPadding.p10),
+                      padding: const EdgeInsets.fromLTRB(AppPadding.p20,
+                          AppPadding.p20, AppPadding.p20, AppPadding.p10),
                       child: Column(
                         children: [
                           Align(
@@ -174,7 +194,7 @@ class _TailorDialogState extends State<TailorDialog> {
                               context,
                               Column(
                                 children: [
-                                  choicesFields(context),
+                                  tailoringTypesFields(context),
                                 ],
                               ),
                               height: 120.h,
@@ -240,38 +260,39 @@ class _TailorDialogState extends State<TailorDialog> {
                     )))));
   }
 
-  Widget choicesFields(BuildContext context) {
+  Widget tailoringTypesFields(BuildContext context) {
     return Expanded(
         child: Scrollbar(
-          thumbVisibility: true,
+      thumbVisibility: true,
+      controller: _scrollController,
+      child: GridView.count(
           controller: _scrollController,
-          child: GridView.count(
-            controller: _scrollController,
-              crossAxisCount: 3,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 0,
-              childAspectRatio: 6 / 2,
-              physics: const ScrollPhysics(),
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              children: List.generate(widget.listOfChoices.length, (index) {
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(AppPadding.p0,AppPadding.p5,AppPadding.p5,AppPadding.p5),
-                  child: TextField(
-                      autofocus: false,
-                      keyboardType: TextInputType.number,
-                      controller: _choicesControllers[index],
-                      decoration: InputDecoration(
-                          hintText: widget.listOfChoices[index].toString(),
-                          hintStyle: TextStyle(fontSize: AppSize.s12.sp),
-                          labelText: widget.listOfChoices[index].toString(),
-                          labelStyle: TextStyle(
-                              fontSize: AppSize.s15.sp,
-                              color: ColorManager.primary),
-                          border: InputBorder.none)),
-                );
-              })),
-        ));
+          crossAxisCount: 3,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 0,
+          childAspectRatio: 6 / 2,
+          physics: const ScrollPhysics(),
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          children: List.generate(widget.listOfTailoringTypes.length, (index) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppPadding.p0, AppPadding.p5, AppPadding.p5, AppPadding.p5),
+              child: TextField(
+                  autofocus: false,
+                  keyboardType: TextInputType.number,
+                  controller: _tailoringTypesControllers[index],
+                  decoration: InputDecoration(
+                      hintText: widget.listOfTailoringTypes[index].name.toString(),
+                      hintStyle: TextStyle(fontSize: AppSize.s12.sp),
+                      labelText: widget.listOfTailoringTypes[index].name.toString(),
+                      labelStyle: TextStyle(
+                          fontSize: AppSize.s15.sp,
+                          color: ColorManager.primary),
+                      border: InputBorder.none)),
+            );
+          })),
+    ));
   }
 
   Widget customerDropDown(BuildContext context) {
@@ -339,8 +360,8 @@ class _TailorDialogState extends State<TailorDialog> {
             color: ColorManager.primary,
             size: AppSize.s20.sp,
           ),
-          style: TextStyle(
-              color: ColorManager.primary, fontSize: AppSize.s14.sp),
+          style:
+              TextStyle(color: ColorManager.primary, fontSize: AppSize.s14.sp),
         ),
         padding: const EdgeInsets.fromLTRB(
             AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
@@ -365,52 +386,63 @@ class _TailorDialogState extends State<TailorDialog> {
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
                   scrollDirection: Axis.horizontal,
-                  itemCount: widget.listOfFabrics.length,
-                  itemBuilder:
-                      (BuildContext context, int index) {
+                  itemCount: fabricDetails.length,
+                  itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: const EdgeInsets.all(AppPadding.p5),
                       child: Bounceable(
                         duration: Duration(
-                            milliseconds: AppConstants
-                                .durationOfBounceable),
+                            milliseconds: AppConstants.durationOfBounceable),
                         onTap: () async {
                           await Future.delayed(Duration(
-                              milliseconds: AppConstants
-                                  .durationOfBounceable));
+                              milliseconds: AppConstants.durationOfBounceable));
                         },
-                        child: containerComponent(context,
+                        child: containerComponent(
+                            context,
                             Column(
                               children: [
                                 Container(
                                   height: 60.h,
-                                  width: ((200.w - 25.w) /widget.listOfFabrics.length).ceilToDouble(),
+                                  width: ((200.w - 25.w) / fabricDetails.length)
+                                      .ceilToDouble(),
                                   decoration: BoxDecoration(
                                       shape: BoxShape.rectangle,
                                       borderRadius: const BorderRadius.only(
                                           topLeft: Radius.circular(AppSize.s5),
-                                          topRight: Radius.circular(AppSize.s5)),
-                                      image: widget.listOfFabrics[index]['image'].toString() == 'n'
+                                          topRight:
+                                              Radius.circular(AppSize.s5)),
+                                      image: fabricDetails[index]
+                                                  .itemImage
+                                                  .toString() ==
+                                              'n'
                                           ? const DecorationImage(
-                                          image: AssetImage(ImageAssets.noItem), fit: BoxFit.fill)
+                                              image: AssetImage(
+                                                  ImageAssets.noItem),
+                                              fit: BoxFit.cover)
                                           : DecorationImage(
-                                          image: CachedNetworkImageProvider(
-                                              widget.listOfFabrics[index]['image'].toString()),
-                                          fit: BoxFit.fill)),
+                                              image: CachedNetworkImageProvider(
+                                                  fabricDetails[index]
+                                                      .itemImage
+                                                      .toString()),
+                                              fit: BoxFit.contain)),
                                 ),
                                 Container(
                                   height: 20.h,
-                                  width: ((200.w - 25.w)/widget.listOfFabrics.length).ceilToDouble(),
+                                  width: ((200.w - 25.w) / fabricDetails.length)
+                                      .ceilToDouble(),
                                   decoration: BoxDecoration(
                                       color: ColorManager.badge,
                                       borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(AppSize.s5),
-                                          bottomRight: Radius.circular(AppSize.s5))),
+                                          bottomLeft:
+                                              Radius.circular(AppSize.s5),
+                                          bottomRight:
+                                              Radius.circular(AppSize.s5))),
                                   child: Center(
                                     child: Text(
-                                      widget.listOfFabrics[index]['name'].toString(),
+                                      fabricDetails[index].itemName.toString(),
                                       style: TextStyle(
-                                          color: ColorManager.white, fontSize: AppSize.s10.sp),
+                                          color: ColorManager.white,
+                                          fontSize: AppSize.s10.sp),
                                     ),
                                   ),
                                 ),
@@ -418,8 +450,7 @@ class _TailorDialogState extends State<TailorDialog> {
                             ),
                             height: 50.h,
                             color: ColorManager.white,
-                            borderColor:
-                            ColorManager.primary,
+                            borderColor: ColorManager.primary,
                             borderWidth: 0.0.w,
                             borderRadius: AppSize.s5),
                       ),
@@ -451,20 +482,19 @@ class _TailorDialogState extends State<TailorDialog> {
               ),
               Bounceable(
                 duration:
-                Duration(milliseconds: AppConstants.durationOfBounceable),
+                    Duration(milliseconds: AppConstants.durationOfBounceable),
                 onTap: () async {
-                  await Future.delayed(
-                      Duration(milliseconds: AppConstants.durationOfBounceable));
+                  await Future.delayed(Duration(
+                      milliseconds: AppConstants.durationOfBounceable));
                 },
                 child: containerComponent(
                     context,
                     Center(
                         child: Text(
-                          AppStrings.save.tr(),
-                          style: TextStyle(
-                              color: ColorManager.white,
-                              fontSize: AppSize.s14.sp),
-                        )),
+                      AppStrings.save.tr(),
+                      style: TextStyle(
+                          color: ColorManager.white, fontSize: AppSize.s14.sp),
+                    )),
                     height: 30.h,
                     width: 50.w,
                     color: ColorManager.primary,

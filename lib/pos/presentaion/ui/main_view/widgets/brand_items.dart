@@ -11,7 +11,8 @@ import '../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../shared/style/colors_manager.dart';
 import '../../components/container_component.dart';
 
-Widget brandItems(BuildContext context, Function addToTmp, List<ProductsResponse> listOfProducts) {
+Widget brandItems(BuildContext context, Function addToTmp,
+    List<ProductsResponse> listOfProducts, String businessType) {
   return Expanded(
       child: GridView.count(
           crossAxisCount: 5,
@@ -21,119 +22,93 @@ Widget brandItems(BuildContext context, Function addToTmp, List<ProductsResponse
           physics: const ScrollPhysics(),
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
-          children: List.generate(
-              listOfProducts.length,
-                  (index) {
-                return Bounceable(
-                  duration: Duration(
-                      milliseconds: AppConstants
-                          .durationOfBounceable),
-                  onTap: () async {
-                    await Future.delayed(Duration(
-                        milliseconds: AppConstants
-                            .durationOfBounceable));
+          children: List.generate(listOfProducts.length, (index) {
+            return Bounceable(
+              duration:
+                  Duration(milliseconds: AppConstants.durationOfBounceable),
+              onTap: () async {
+                await Future.delayed(
+                    Duration(milliseconds: AppConstants.durationOfBounceable));
 
-                    addToTmp(index,context,false);
-                  },
-                  child:
-                  containerComponent(
-                      context,
-                      itemContainer(index,context,listOfProducts),
-                      height: 400.h,
-                      width: 200.w,
-                      color: ColorManager.secondary,
-                      borderColor: ColorManager.secondary,
-                      borderWidth: 0.0.w,
-                      borderRadius: AppSize.s5
-                  ),
-                );
-              })));
+                addToTmp(index, context, false);
+              },
+              child: containerComponent(context,
+                  itemContainer(index, context, listOfProducts, businessType),
+                  height: 400.h,
+                  width: 200.w,
+                  color: ColorManager.secondary,
+                  borderColor: ColorManager.secondary,
+                  borderWidth: 0.0.w,
+                  borderRadius: AppSize.s5),
+            );
+          })));
 }
 
-Widget itemContainer(int index,BuildContext context, List<ProductsResponse> listOfProducts){
-  return
-    Stack(
-      children: [
-        Column(
-          mainAxisAlignment:
-          MainAxisAlignment
-              .spaceBetween,
-          children: [
-            Container(
-              width: 200.w,
-              height: 105.h,
-              decoration: BoxDecoration(
-                  shape: BoxShape
-                      .rectangle,
-                  image: listOfProducts[
-                  index]
-                      .image
-                      .toString() ==
-                      "n"
-                      ? const DecorationImage(
-                      image: AssetImage(
-                          ImageAssets
-                              .noItem),
-                      fit: BoxFit
-                          .fill)
-                      : DecorationImage(
-                      image: CachedNetworkImageProvider(listOfProducts[
-                      index]
-                          .image
-                          .toString()),
-                      fit: BoxFit
-                          .fill)),
-            ),
-            Container(
-              width: 50.w,
-              height: 40.h,
-              decoration: BoxDecoration(
-                  color:
-                  ColorManager
-                      .badge,
-                  border: Border.all(
-                      color: ColorManager
-                          .badge,
-                      width: 1.5.w),
-                  borderRadius: const BorderRadius
-                      .only(
-                      bottomLeft: Radius
-                          .circular(
-                          AppSize
-                              .s5),
-                      bottomRight:
-                      Radius.circular(
-                          AppSize
-                              .s5))),
-              child: Center(
-                child: Text(
-                  listOfProducts[
-                  index]
-                      .name
-                      .toString(),
-                  style: TextStyle(
-                      color:
-                      ColorManager
-                          .white,
-                      fontSize:
-                      AppSize
-                          .s14
-                          .sp),
-                ),
+Widget itemContainer(int index, BuildContext context,
+    List<ProductsResponse> listOfProducts, String businessType) {
+  return Stack(
+    children: [
+      Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: 200.w,
+            height: 105.h,
+            decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                image: listOfProducts[index].image.toString() == "n"
+                    ? const DecorationImage(
+                        image: AssetImage(ImageAssets.noItem), fit: BoxFit.fill)
+                    : DecorationImage(
+                        image: CachedNetworkImageProvider(
+                            listOfProducts[index].image.toString()),
+                        fit: BoxFit.fill)),
+          ),
+          Container(
+            width: 50.w,
+            height: 40.h,
+            decoration: BoxDecoration(
+                color: ColorManager.badge,
+                border: Border.all(color: ColorManager.badge, width: 1.5.w),
+                borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(AppSize.s5),
+                    bottomRight: Radius.circular(AppSize.s5))),
+            child: Center(
+              child: Text(
+                listOfProducts[index].name.toString(),
+                style: TextStyle(
+                    color: ColorManager.white, fontSize: AppSize.s14.sp),
               ),
             ),
-          ],
-        ),
-
-        listOfProducts[
-        index].stock == 0 ? Positioned(
-            top: 5,
-            left: 5,
-            child: SvgPicture.asset(
-              ImageAssets.unavailable,
-              width: AppSize.s20,
-              color: ColorManager.delete,
-            )) : Container()
-      ],
-    );
+          ),
+        ],
+      ),
+      listOfProducts[index].stock == 0
+          ? Positioned(
+              top: 5,
+              left: 5,
+              child: businessType == 'Tailor'
+                  ? listOfProducts[index].type != 'tailoring_package'
+                      ? SvgPicture.asset(
+                          ImageAssets.unavailable,
+                          width: AppSize.s20,
+                          color: ColorManager.delete,
+                        )
+                      : CircleAvatar(
+                          radius: 12.h, //radius of avatar
+                          backgroundColor: ColorManager.white, //color
+                          child: Padding(
+                            padding: const EdgeInsets.all(
+                                AppPadding.p2), // Border radius
+                            child: ClipOval(
+                                child: Image.asset(ImageAssets.tailor)),
+                          ))
+                  : SvgPicture.asset(
+                      ImageAssets.unavailable,
+                      width: AppSize.s20,
+                      color: ColorManager.delete,
+                    ))
+          : Container()
+    ],
+  );
 }

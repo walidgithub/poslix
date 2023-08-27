@@ -15,8 +15,9 @@ class HoldOrderItemsModel {
   String? itemOption;
   int? productId;
   int? variationId;
+  String? productType;
 
-  HoldOrderItemsModel({this.id,this.holdOrderId,this.itemName,this.itemQuantity,this.itemAmount,this.customer,this.customerTel,this.category,this.brand,this.date,this.itemPrice,this.holdText,this.discount,this.itemOption,this.productId,this.variationId});
+  HoldOrderItemsModel({this.id,this.holdOrderId,this.itemName,this.itemQuantity,this.itemAmount,this.customer,this.customerTel,this.category,this.brand,this.date,this.itemPrice,this.holdText,this.discount,this.itemOption,this.productId,this.variationId,this.productType});
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -36,6 +37,7 @@ class HoldOrderItemsModel {
     data["itemOption"] = itemOption;
     data["productId"] = productId;
     data["variationId"] = variationId;
+    data["productType"] = productType;
     return data;
   }
 
@@ -56,6 +58,7 @@ class HoldOrderItemsModel {
     itemOption = map["itemOption"];
     productId = map["productId"];
     variationId = map["variationId"];
+    productType = map["productType"];
   }
 }
 

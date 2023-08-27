@@ -9,7 +9,7 @@ class DbHelper {
 
   static int? insertedNewHoldId;
 
-  String dbdName = 'poslix_hold_orders3.db';
+  String dbdName = 'poslix_hold_orders4.db';
 
   Future<Database> get database async {
     if (_db != null) {
@@ -31,7 +31,7 @@ class DbHelper {
         'create table poslix_hold_head(id integer primary key autoincrement, customerTel varchar(15), customer varchar(255), discount varchar(15), holdText varchar(15), date TEXT NOT NULL)');
 
     await db.execute(
-        'create table poslix_hold_items(id integer primary key autoincrement, holdOrderId integer, category varchar(15), itemAmount varchar(15), itemName varchar(15), itemPrice varchar(15), itemQuantity integer, brand varchar(15), itemOption varchar(15), productId integer, variationId integer, customerTel varchar(15), customer varchar(255), discount varchar(15), holdText varchar(15), date TEXT NOT NULL)');
+        'create table poslix_hold_items(id integer primary key autoincrement, holdOrderId integer, category varchar(15), itemAmount varchar(15), itemName varchar(15), itemPrice varchar(15), productType varchar(15), itemQuantity integer, brand varchar(15), itemOption varchar(15), productId integer, variationId integer, customerTel varchar(15), customer varchar(255), discount varchar(15), holdText varchar(15), date TEXT NOT NULL)');
 
   }
 

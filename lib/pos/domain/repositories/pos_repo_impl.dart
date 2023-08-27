@@ -6,6 +6,7 @@ import 'package:poslix_app/pos/domain/response/appearance_model.dart';
 import 'package:poslix_app/pos/domain/response/authorization_model.dart';
 import 'package:poslix_app/pos/domain/response/business_model.dart';
 import 'package:poslix_app/pos/domain/response/check_out_model.dart';
+import 'package:poslix_app/pos/domain/response/tailoring_types_model.dart';
 import 'package:poslix_app/pos/domain/response/taxes_model.dart';
 
 import 'package:poslix_app/pos/domain/response/user_model.dart';
@@ -429,6 +430,23 @@ class POSRepositoryImpl extends POSRepository {
           headers: {'Authorization': 'Bearer $token'}).then((response) {
         res = response.data['result'];
         return AppearanceResponse.fromJson(res);
+      });
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  //Tailoring
+  @override
+  Future<List<TailoringTypesModel>> getTailoringTypes(String token, int locationId) async {
+    List<TailoringTypesModel> res = <TailoringTypesModel>[];
+    try {
+      return await _dio.get('api/tailoring-package-types/$locationId',
+          headers: {'Authorization': 'Bearer $token'}).then((response) {
+        res = (response.data['result'] as List).map((e) {
+          return TailoringTypesModel.fromJson(e);
+        }).toList();
+        return res;
       });
     } catch (e) {
       throw e.toString();

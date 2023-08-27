@@ -1128,6 +1128,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                             .variations[listOfOrderHead.indexOf(order)]
                             .id
                             : 0,
+                        productType: element.type,
                         customerTel: getOrdersItems.first.contactMobile));
                   }
                   GlobalValues.setEditOrder = true;
@@ -1341,6 +1342,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                         listOfOrderHead.indexOf(order)]
                             .id
                             : 0,
+                        productType: element.type,
                         customerTel: getOrdersItems.first.contactMobile));
                   }
                   GlobalValues.setEditOrder = true;
@@ -1501,6 +1503,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                           itemOption: element.itemOption,
                           productId: element.productId,
                           variationId: element.variationId,
+                          productType: element.productType,
                           customerTel: element.customerTel));
                     }
 
@@ -1640,6 +1643,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                           itemOption: element.itemOption,
                           productId: element.productId,
                           variationId: element.variationId,
+                          productType: element.productType,
                           customerTel: element.customerTel));
                     }
 

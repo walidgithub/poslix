@@ -21,6 +21,7 @@ import '../../../domain/response/customer_model.dart';
 import '../../../domain/response/logout_response.dart';
 import '../../../domain/response/open_register_response.dart';
 import '../../../domain/response/sales_report_data_model.dart';
+import '../../../domain/response/tailoring_types_model.dart';
 import '../../../domain/response/taxes_model.dart';
 import '../../../domain/response/user_model.dart';
 
@@ -37,6 +38,8 @@ abstract class POSRepository {
 
   Future<List<CategoriesResponse>> getCategories(final String token, final int locationId);
   Future<List<BrandsResponse>> getBrands(final String token, final int locationId);
+
+  Future<List<TailoringTypesModel>> getTailoringTypes(final String token, final int locationId);
 
   Future<List<CustomerResponse>> getCustomers(final String token, final int locationId);
   Future<CustomerResponse> getCustomer(final int customerId, final String token);

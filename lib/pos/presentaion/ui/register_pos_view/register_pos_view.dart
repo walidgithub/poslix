@@ -54,6 +54,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   var _selectedBusiness;
   var _selectedLocation;
   int? locationId;
+  String? businessType;
   int? decimalPlaces;
   int? tax;
 
@@ -177,6 +178,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             _selectedBusiness = listOfBusinesses[0].name;
             _selectedLocation = listOfLocations[0].locationName;
             locationId = listOfLocations[0].locationId;
+            businessType = listOfBusinesses[0].type;
             decimalPlaces = listOfLocations[0].locationDecimalPlaces;
 
             _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
@@ -583,6 +585,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
       _selectedBusiness =
       selectedBusiness;
 
+      businessType = _selectedBusiness.type;
+
       int index = 0;
       for (var i
       in listOfBusinesses) {
@@ -617,6 +621,11 @@ class _RegisterPosViewState extends State<RegisterPosView> {
               .setLocationId(
               PREFS_KEY_LOCATION_ID,
               locationId!);
+
+          _appPreferences
+              .setBusinessType(
+              PREFS_KEY_BUSINESS_TYPE,
+              businessType!);
 
           RegisterPOSCubit
               .get(
@@ -663,6 +672,11 @@ class _RegisterPosViewState extends State<RegisterPosView> {
               .setLocationId(
               PREFS_KEY_LOCATION_ID,
               locationId!);
+
+          _appPreferences
+              .setBusinessType(
+              PREFS_KEY_BUSINESS_TYPE,
+              businessType!);
 
           RegisterPOSCubit
               .get(

@@ -268,7 +268,9 @@ Future holdOrdersDialog(
                                                 holdNameEditingController.text,
                                             itemOption: element.itemOption,
                                             variationId: element.variationId,
-                                            productId: element.productId);
+                                            productId: element.productId,
+                                            productType: element.productType,
+                                        );
                                     await MainViewLocalCubit.get(context)
                                         .insertHoldCardItems(
                                             holdOrderItemsModel);

@@ -38,7 +38,9 @@ import '../../../domain/entities/order_model.dart';
 import '../../../domain/entities/tmp_order_model.dart';
 import '../../../domain/response/brands_model.dart';
 import '../../../domain/response/categories_model.dart';
+import '../../../domain/response/packages_model.dart';
 import '../../../domain/response/stocks_model.dart';
+import '../../../domain/response/tailoring_types_model.dart';
 import '../../../domain/response/variations_model.dart';
 import '../../../shared/constant/assets_manager.dart';
 import '../../../shared/constant/language_manager.dart';
@@ -54,6 +56,7 @@ import '../login_view/login_cubit/login_state.dart';
 import '../popup_dialogs/custom_dialog.dart';
 import '../popup_dialogs/loading_dialog.dart';
 import 'inner_dialogs/close_register_dialog/close_register_dialog.dart';
+import 'inner_dialogs/tailor_dialog/tailor_dialog.dart';
 import 'main_view_cubit/main_view_state.dart';
 
 class MainView extends StatefulWidget {
@@ -65,8 +68,6 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   final AppPreferences _appPreferences = sl<AppPreferences>();
-
-  Timer? _timer;
 
   final GlobalKey<AnimatedFloatingActionButtonState> floatingKey =
       GlobalKey<AnimatedFloatingActionButtonState>();
@@ -84,18 +85,16 @@ class _MainViewState extends State<MainView> {
   List<VariationsResponse> listOfVariations = [];
   List<StocksResponse> listOfStocks = [];
 
-  List listOfFabrics = [
-  {'name' : 'fff','image' : 'n'},
-  {'name' : 'ttt','image' : 'n'}
-  ];
-  List<String> listOfChoices = ['size', 'width' , 'height', 'chest', 'ggg'];
+  List listOfFabrics = [];
+  List<TailoringTypesModel> listOfTailoringTypes = [];
 
   List<CustomerResponse> listOfCustomers = [];
 
   String selectedDiscountType = '';
 
   int decimalPlaces = 2;
-  int locationId = 0;
+  int locationId = 142;
+  String businessType = 'Tailor';
   int tax = 0;
 
   bool tailor = false;
@@ -108,7 +107,6 @@ class _MainViewState extends State<MainView> {
   @override
   void dispose() {
     _searchEditingController.dispose();
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -188,7 +186,6 @@ class _MainViewState extends State<MainView> {
         if (listOfBrands[currentId].products.isNotEmpty) {
           listOfVariations =
               listOfBrands[currentId].products[currentId].variations;
-
           listOfStocks = listOfBrands[currentId].products[currentId].stocks;
         } else {
           listOfVariations = [];
@@ -221,25 +218,24 @@ class _MainViewState extends State<MainView> {
     categoryFilter = true;
 
     listOfTmpOrder = [];
-
-    getToken();
     getDecimalPlaces();
-    getLocationId();
+    // getLocationId();
+    // getBusinessType();
     getTax();
 
     super.initState();
   }
 
-  void getToken() async {
-    _appPreferences.getToken(LOGGED_IN_TOKEN)!;
-  }
-
   void getDecimalPlaces() async {
-    decimalPlaces = _appPreferences.getLocationId(PREFS_KEY_DECIMAL_PLACES)!;
+    decimalPlaces = _appPreferences.getDecimalPlaces(PREFS_KEY_DECIMAL_PLACES)!;
   }
 
   void getLocationId() async {
     locationId = _appPreferences.getLocationId(PREFS_KEY_LOCATION_ID)!;
+  }
+
+  void getBusinessType() async {
+    businessType = _appPreferences.getBusinessType(PREFS_KEY_BUSINESS_TYPE)!;
   }
 
   void getTax() async {
@@ -251,7 +247,8 @@ class _MainViewState extends State<MainView> {
         MaterialPageRoute(builder: (BuildContext context) => super.widget));
   }
 
-  final TextEditingController _searchEditingController = TextEditingController();
+  final TextEditingController _searchEditingController =
+      TextEditingController();
 
   Widget language() {
     return FloatingActionButton(
@@ -335,7 +332,9 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => isApple() ? onBackButtonPressedInIOS(context) : onBackButtonPressed(context),
+      onWillPop: () => isApple()
+          ? onBackButtonPressedInIOS(context)
+          : onBackButtonPressed(context),
       child: SafeArea(
         child: Scaffold(
           backgroundColor: ColorManager.secondary,
@@ -356,6 +355,84 @@ class _MainViewState extends State<MainView> {
     LoadingDialog.show(context);
   }
 
+  void loadCategories() {
+    for (var element in listOfCategories) {
+      listOfAllProducts.addAll(Set.of(element.products));
+      listOfBothProducts.addAll(Set.of(element.products));
+    }
+
+    for (var element in listOfAllProducts) {
+      searchList.add(element.name);
+    }
+
+    listOfCategories.insert(
+        0,
+        CategoriesResponse(
+            id: 0,
+            selected: false,
+            name: AppStrings.all.tr(),
+            description: '',
+            locationId: locationId,
+            createdBy: 1,
+            neverTax: 0,
+            parentId: 0,
+            products: listOfAllProducts,
+            productsCount: listOfAllProducts.length,
+            deletedAt: '',
+            createdAt: '',
+            updatedAt: '',
+            taxId: 0,
+            slug: '',
+            woocommerceCatId: 0,
+            showInList: 'on',
+            categoryType: 'single',
+            shortCode: ''));
+
+    listOfProducts = listOfAllProducts;
+    listOfVariations = listOfCategories[0].products[0].variations;
+    listOfStocks = listOfCategories[0].products[0].stocks;
+
+    for (var element in listOfCategories) {
+      element.selected = false;
+    }
+
+    listOfCategories[0].selected = true;
+
+    _selectedCategory = listOfCategories[0].name;
+  }
+
+  void loadCustomers() {
+    listOfCustomers.insert(
+        0,
+        CustomerResponse(
+            firstName: AppStrings.firstName,
+            lastName: AppStrings.secondName,
+            locationId: locationId,
+            addressLine_1: '',
+            addressLine_2: '',
+            city: '',
+            contactStatus: '',
+            country: '',
+            createdAt: '',
+            createdBy: 0,
+            id: 1,
+            mobile: '',
+            shippingAddress: '',
+            state: '',
+            type: '',
+            zipCode: '',
+            contactId: '',
+            deletedAt: '',
+            email: '',
+            name: '',
+            updatedAt: ''));
+
+    _selectedCustomerName =
+    '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
+    _selectedCustomerId = listOfCustomers[0].id;
+    _selectedCustomerTel = listOfCustomers[0].mobile;
+  }
+
   Widget bodyContent(BuildContext context) {
     totalAmount = getTotalAmount();
 
@@ -366,71 +443,48 @@ class _MainViewState extends State<MainView> {
         : differenceValue = 0;
 
     return BlocProvider(
-      create: (context) => sl<MainViewCubit>()
-        ..getCategories(locationId)
-        ..getCustomers(locationId)
-        ..getCurrency(locationId),
+      create: (context) => sl<MainViewCubit>()..getHomeData(locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
             showNoInternet(context);
           }
+          // get Home Data
+          if (state is LoadingHomeData) {
+            showLoadingDialog(context);
+          } else if (state is LoadedHomeData) {
+            LoadingDialog.hide(context);
+            listOfCategories = MainViewCubit.get(context).listOfCategories;
+            loadCategories();
 
+            listOfCustomers = MainViewCubit.get(context).listOfCustomers;
+            loadCustomers();
+
+            currencyCode = MainViewCubit.get(context).currencyCode;
+
+            listOfTailoringTypes =
+                MainViewCubit.get(context).listOfTailoringTypes;
+          } else if (state is LoadingErrorHomeData) {
+            LoadingDialog.hide(context);
+            listOfProducts = [];
+            tryAgainLater(context);
+          }
+
+          // get Categories -----------------------------------------------------------------------------------------------------------------
           if (state is LoadingCategories) {
-            _timer = Timer(Duration(milliseconds: AppConstants.waitingLoading), showLoadingDialog(context));
+            showLoadingDialog(context);
           } else if (state is LoadedCategories) {
             LoadingDialog.hide(context);
             listOfCategories = MainViewCubit.get(context).listOfCategories;
-
-            for (var element in listOfCategories) {
-              listOfAllProducts.addAll(Set.of(element.products));
-              listOfBothProducts.addAll(Set.of(element.products));
-            }
-
-            for (var element in listOfAllProducts) {
-              searchList.add(element.name);
-            }
-
-            listOfCategories.insert(
-                0,
-                CategoriesResponse(
-                    id: 0,
-                    selected: false,
-                    name: AppStrings.all.tr(),
-                    description: '',
-                    locationId: locationId,
-                    createdBy: 1,
-                    neverTax: 0,
-                    parentId: 0,
-                    products: listOfAllProducts,
-                    productsCount: listOfAllProducts.length,
-                    deletedAt: '',
-                    createdAt: '',
-                    updatedAt: '',
-                    taxId: 0,
-                    slug: '',
-                    woocommerceCatId: 0,
-                    showInList: 'on',
-                    categoryType: 'single',
-                    shortCode: ''));
-
-            listOfProducts = listOfAllProducts;
-            listOfVariations = listOfCategories[0].products[0].variations;
-            listOfStocks = listOfCategories[0].products[0].stocks;
-
-            for (var element in listOfCategories) {
-              element.selected = false;
-            }
-
-            listOfCategories[0].selected = true;
-
-            _selectedCategory = listOfCategories[0].name;
+            loadCategories();
           } else if (state is LoadingErrorCategories) {
             listOfProducts = [];
             LoadingDialog.hide(context);
             tryAgainLater(context);
-          } else if (state is LoadingBrands) {
-            _timer = Timer(Duration(milliseconds: AppConstants.waitingLoading), showLoadingDialog(context));
+          }
+          // get Brands -----------------------------------------------------------------------------------------------------------------
+          if (state is LoadingBrands) {
+            showLoadingDialog(context);
           } else if (state is LoadedBrands) {
             LoadingDialog.hide(context);
             listOfBrands = MainViewCubit.get(context).listOfBrands;
@@ -472,51 +526,28 @@ class _MainViewState extends State<MainView> {
 
             _selectedCategory = listOfBrands[0].name;
           } else if (state is LoadingErrorBrands) {
-            // LoadingDialog.hide(context);
+            LoadingDialog.hide(context);
             listOfProducts = [];
             tryAgainLater(context);
           }
+          // get Customers -----------------------------------------------------------------------------------------------------------------
           if (state is LoadingCustomers) {
-            _timer = Timer(Duration(milliseconds: AppConstants.waitingLoading), showLoadingDialog(context));
+            showLoadingDialog(context);
           } else if (state is LoadedCustomers) {
             LoadingDialog.hide(context);
-            listOfCustomers = MainViewCubit.get(context).listOfCustomers;
-            listOfCustomers.insert(
-                0,
-                CustomerResponse(
-                    firstName: AppStrings.firstName,
-                    lastName: AppStrings.secondName,
-                    locationId: locationId,
-                    addressLine_1: '',
-                    addressLine_2: '',
-                    city: '',
-                    contactStatus: '',
-                    country: '',
-                    createdAt: '',
-                    createdBy: 0,
-                    id: 1,
-                    mobile: '',
-                    shippingAddress: '',
-                    state: '',
-                    type: '',
-                    zipCode: '',
-                    contactId: '',
-                    deletedAt: '',
-                    email: '',
-                    name: '',
-                    updatedAt: ''));
 
-            _selectedCustomerName =
-                '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
-            _selectedCustomerId = listOfCustomers[0].id;
-            _selectedCustomerTel = listOfCustomers[0].mobile;
+            listOfCustomers = MainViewCubit.get(context).listOfCustomers;
+            loadCustomers();
           } else if (state is LoadingErrorCustomers) {
             LoadingDialog.hide(context);
             tryAgainLater(context);
-          } else if (state is LoadingCustomer) {
-            _timer = Timer(Duration(milliseconds: AppConstants.waitingLoading), showLoadingDialog(context));
+          }
+          // get Customer data -----------------------------------------------------------------------------------------------------------------
+          if (state is LoadingCustomer) {
+            showLoadingDialog(context);
           } else if (state is LoadedCustomer) {
             LoadingDialog.hide(context);
+
             int index = listOfCustomers.indexWhere((element) =>
                 '${element.firstName} ${element.lastName} | ${element.mobile}' ==
                 '${_selectedCustomer?.firstName} ${_selectedCustomer?.lastName} | ${_selectedCustomer?.mobile}');
@@ -535,10 +566,6 @@ class _MainViewState extends State<MainView> {
             LoadingDialog.hide(context);
             tryAgainLater(context);
           }
-
-          if (state is LoadedCurrency) {
-            currencyCode = state.currencyCode;
-          } else if (state is LoadingErrorCurrency) {}
         },
         builder: (context, state) {
           return Padding(
@@ -736,8 +763,6 @@ class _MainViewState extends State<MainView> {
   }
 
   void hold(BuildContext context) {
-    // int itemIndex = 1;
-    // TailorDialog.show(context, currencyCode, itemIndex, listOfProducts, listOfChoices, listOfFabrics, listOfCustomers, discount);
     if (listOfTmpOrder.isEmpty) {
       CustomDialog.show(
           context,
@@ -1002,41 +1027,49 @@ class _MainViewState extends State<MainView> {
                             SizedBox(
                               height: 10.h,
                             ),
-                            tailor ? Bounceable(
-                                duration: Duration(
-                                    milliseconds:
-                                        AppConstants.durationOfBounceable),
-                                onTap: () async {
-                                  await Future.delayed(Duration(
-                                      milliseconds:
-                                          AppConstants.durationOfBounceable));
-                                },
-                                child: containerComponent(
-                                    context,
-                                    Center(
-                                        child: Icon(
-                                      Icons.edit,
-                                      size: AppSize.s15.sp,
-                                      color: ColorManager.white,
-                                    )),
-                                    height: 28.h,
-                                    width: 10.w,
-                                    margin: const EdgeInsets.only(
-                                        bottom: AppMargin.m8),
-                                    padding:
-                                        const EdgeInsets.all(AppPadding.p08),
-                                    color: ColorManager.primary,
-                                    borderColor: ColorManager.primary,
-                                    borderWidth: 0.1.w,
-                                    borderRadius: AppSize.s5)) : Container()
+                            listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                                        .productType ==
+                                    'tailoring_package'
+                                ? Bounceable(
+                                    duration: Duration(
+                                        milliseconds:
+                                            AppConstants.durationOfBounceable),
+                                    onTap: () async {
+                                      await Future.delayed(Duration(
+                                          milliseconds: AppConstants
+                                              .durationOfBounceable));
+                                    },
+                                    child: containerComponent(
+                                        context,
+                                        Center(
+                                            child: Icon(
+                                          Icons.edit,
+                                          size: AppSize.s15.sp,
+                                          color: ColorManager.white,
+                                        )),
+                                        height: 28.h,
+                                        width: 10.w,
+                                        margin: const EdgeInsets.only(
+                                            bottom: AppMargin.m8),
+                                        padding: const EdgeInsets.all(
+                                            AppPadding.p08),
+                                        color: ColorManager.primary,
+                                        borderColor: ColorManager.primary,
+                                        borderWidth: 0.1.w,
+                                        borderRadius: AppSize.s5))
+                                : Container()
                           ],
                         ),
                       ),
-                      tailor ? SizedBox(
-                        width: AppConstants.smallerDistance,
-                      ) : SizedBox(
-                        width: AppConstants.smallDistance,
-                      ),
+                      listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                                  .productType ==
+                              'tailoring_package'
+                          ? SizedBox(
+                              width: AppConstants.smallerDistance,
+                            )
+                          : SizedBox(
+                              width: AppConstants.smallDistance,
+                            ),
                       containerComponent(
                           context,
                           Padding(
@@ -1082,7 +1115,7 @@ class _MainViewState extends State<MainView> {
                                       milliseconds:
                                           AppConstants.durationOfBounceable),
                                   onTap: () async {
-                                    await increaseCount(tmpOrder);
+                                    await increaseCount(tmpOrder, context);
                                   },
                                   child: containerComponent(
                                       context,
@@ -1148,9 +1181,11 @@ class _MainViewState extends State<MainView> {
     });
   }
 
-  Future<void> increaseCount(TmpOrderModel tmpOrder) async {
+  Future<void> increaseCount(
+      TmpOrderModel tmpOrder, BuildContext context) async {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
+
     var itemStock = listOfBothProducts
         .where((element) =>
             element.id ==
@@ -1176,7 +1211,7 @@ class _MainViewState extends State<MainView> {
             .itemQuantity
             .toString()) >=
         qty) {
-
+      noCredit(context);
       return;
     }
 
@@ -1203,6 +1238,25 @@ class _MainViewState extends State<MainView> {
   void addToTmp(int index, BuildContext context, bool searching) {
     List<ProductsResponse> listToWork =
         searching ? listOfAllProducts : listOfProducts;
+
+    if (listToWork[index].type == 'tailoring_package') {
+      if (listOfProducts[index].packages.isNotEmpty) {
+        listOfFabrics =
+            listOfProducts[index].packages[0].fabricIds!.split(',').toList();
+      } else {
+        CustomDialog.show(
+            context,
+            AppStrings.noFabrics.tr(),
+            const Icon(Icons.warning_amber_rounded),
+            ColorManager.white,
+            AppConstants.durationOfSnackBar,
+            ColorManager.hold);
+        return;
+      }
+      TailorDialog.show(context, currencyCode, index, listOfProducts,
+          listOfTailoringTypes, listOfFabrics, listOfCustomers, discount);
+      return;
+    }
 
     if (listToWork[index].variations.isNotEmpty) {
       setState(() {
@@ -1265,27 +1319,27 @@ class _MainViewState extends State<MainView> {
         String sellPrice = listToWork[index].sellPrice;
 
         listOfTmpOrder.add(TmpOrderModel(
-          id: listToWork[index].id,
-          itemName: listToWork[index].name,
-          itemQuantity: 1,
-          itemAmount:
-              '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
-          itemPrice:
-              '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
-          customer: customerName,
-          category: listToWork[index].categoryId.toString(),
-          orderDiscount: discount,
-          brand: listToWork[index].brandId.toString(),
-          customerTel: tel,
-          date: today.toString().split(" ")[0],
-          itemOption: listOfVariations.isNotEmpty
-              ? listToWork[index].variations[index].name
-              : '',
-          productId: listToWork[index].id,
-          variationId: listToWork[index].variations.isNotEmpty
-              ? listToWork[index].variations[index].id
-              : 0,
-        ));
+            id: listToWork[index].id,
+            itemName: listToWork[index].name,
+            itemQuantity: 1,
+            itemAmount:
+                '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+            itemPrice:
+                '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+            customer: customerName,
+            category: listToWork[index].categoryId.toString(),
+            orderDiscount: discount,
+            brand: listToWork[index].brandId.toString(),
+            customerTel: tel,
+            date: today.toString().split(" ")[0],
+            itemOption: listOfVariations.isNotEmpty
+                ? listToWork[index].variations[index].name
+                : '',
+            productId: listToWork[index].id,
+            variationId: listToWork[index].variations.isNotEmpty
+                ? listToWork[index].variations[index].id
+                : 0,
+            productType: listToWork[index].type));
       });
     }
   }
@@ -1324,9 +1378,11 @@ class _MainViewState extends State<MainView> {
                     ),
                     categoryFilter!
                         // Category items -------------
-                        ? categoryItems(context, addToTmp, listOfProducts)
+                        ? categoryItems(
+                            context, addToTmp, listOfProducts, businessType)
                         // Brand items -------------
-                        : brandItems(context, addToTmp, listOfProducts)
+                        : brandItems(
+                            context, addToTmp, listOfProducts, businessType)
                   ],
                 ),
               ),

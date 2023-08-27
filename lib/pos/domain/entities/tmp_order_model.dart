@@ -13,8 +13,9 @@ class TmpOrderModel {
   String? itemOption;
   int? productId;
   int? variationId;
+  String? productType;
 
-  TmpOrderModel({this.id,this.itemName,this.itemQuantity,this.itemAmount,this.customer,this.category,this.brand,this.date,this.itemPrice,this.orderDiscount,this.customerTel,this.itemOption,this.productId,this.variationId,});
+  TmpOrderModel({this.id,this.itemName,this.itemQuantity,this.itemAmount,this.customer,this.category,this.brand,this.date,this.itemPrice,this.orderDiscount,this.customerTel,this.itemOption,this.productId,this.variationId,this.productType});
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -32,6 +33,7 @@ class TmpOrderModel {
     data["itemOption"] = itemOption;
     data["productId"] = productId;
     data["variationId"] = variationId;
+    data["productType"] = productType;
     return data;
   }
 
@@ -50,6 +52,7 @@ class TmpOrderModel {
     itemOption = map["itemOption"];
     productId = map["productId"];
     variationId = map["variationId"];
+    productType = map["productType"];
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:poslix_app/pos/domain/response/check_out_model.dart';
 import 'package:poslix_app/pos/domain/response/currency_code_model.dart';
 import 'package:poslix_app/pos/domain/response/customer_model.dart';
+import 'package:poslix_app/pos/domain/response/packages_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
 import 'package:poslix_app/pos/domain/response/register_data_model.dart';
 import 'package:poslix_app/pos/domain/response/variations_model.dart';
@@ -19,6 +20,7 @@ import '../../../../domain/response/categories_model.dart';
 import '../../../../domain/response/close_register_model.dart';
 import '../../../../domain/response/close_register_report_data_model.dart';
 import '../../../../domain/response/stocks_model.dart';
+import '../../../../domain/response/tailoring_types_model.dart';
 import '../../../../shared/core/network/network_info.dart';
 import '../../../../shared/preferences/app_pref.dart';
 import '../../../di/di.dart';
@@ -41,6 +43,8 @@ class MainViewCubit extends Cubit<MainViewState> {
   List<VariationsResponse> listOfVariations = [];
   List<StocksResponse> listOfStocks = [];
 
+  List<TailoringTypesModel> listOfTailoringTypes = [];
+
   List<CustomerResponse> listOfCustomers = [];
 
   int? cashInHand;
@@ -53,10 +57,88 @@ class MainViewCubit extends Cubit<MainViewState> {
   String? password;
   UserRequest? userRequest;
 
+  String currencyCode = '';
+
   Future<void> getUserParameters() async {
     userName = _appPreferences.getUserName(USER_NAME)!;
     password = _appPreferences.getPassword(PASS)!;
     userRequest = UserRequest(email: userName!, password: password!);
+  }
+
+  Future<void> getHomeData(int locationId) async {
+    try {
+      if (await networkInfo.isConnected) {
+        await Future.delayed(const Duration(seconds: 1));
+        emit(LoadingHomeData());
+
+        String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
+
+        bool hasExpired = JwtDecoder.isExpired(token);
+        if (hasExpired) {
+          await getUserParameters();
+          await login(userRequest!);
+
+         // Categories -----
+          var res = await posRepositoryImpl.getCategories(
+              _appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          listOfCategories = res.toList();
+
+          listOfProducts = listOfCategories[0].products;
+          listOfVariations = listOfCategories[0].products.isNotEmpty
+              ? listOfCategories[0].products[0].variations
+              : [];
+          listOfStocks = listOfCategories[0].products.isNotEmpty
+              ? listOfCategories[0].products[0].stocks
+              : [];
+
+          // Customers -----
+          var res2 = await posRepositoryImpl.getCustomers(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          listOfCustomers = res2.toList();
+
+          // Currency ----
+          var res3 = await posRepositoryImpl.getCurrency(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          currencyCode = res3.code;
+
+          // Tailoring types
+          var res4 = await posRepositoryImpl.getTailoringTypes(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          listOfTailoringTypes = res4.toList();
+
+          emit(LoadedHomeData());
+        }
+
+        // Categories -----
+        var res = await posRepositoryImpl.getCategories(
+            token, locationId);
+        listOfCategories = res.toList();
+
+        listOfProducts = listOfCategories[0].products;
+        listOfVariations = listOfCategories[0].products.isNotEmpty
+            ? listOfCategories[0].products[0].variations
+            : [];
+        listOfStocks = listOfCategories[0].products.isNotEmpty
+            ? listOfCategories[0].products[0].stocks
+            : [];
+
+        // Customers -----
+        var res2 = await posRepositoryImpl.getCustomers(token, locationId);
+        listOfCustomers = res2.toList();
+
+        // Currency ----
+        var res3 = await posRepositoryImpl.getCurrency(token, locationId);
+        currencyCode = res3.code;
+
+        // Tailoring types
+        var res4 = await posRepositoryImpl.getTailoringTypes(token, locationId);
+        listOfTailoringTypes = res4.toList();
+
+        emit(LoadedHomeData());
+      } else {
+        emit(MainNoInternetState());
+      }
+    } catch (e) {
+      emit(LoadingErrorHomeData(e.toString()));
+      return Future.error(e);
+    }
   }
 
   // Category ----------------------------------------------------------------
@@ -78,8 +160,12 @@ class MainViewCubit extends Cubit<MainViewState> {
           listOfCategories = res.toList();
 
           listOfProducts = listOfCategories[0].products;
-          listOfVariations = listOfCategories[0].products[0].variations;
-          listOfStocks = listOfCategories[0].products[0].stocks;
+          listOfVariations = listOfCategories[0].products.isNotEmpty
+              ? listOfCategories[0].products[0].variations
+              : [];
+          listOfStocks = listOfCategories[0].products.isNotEmpty
+              ? listOfCategories[0].products[0].stocks
+              : [];
           emit(LoadedCategories());
           return res;
         }
@@ -88,8 +174,12 @@ class MainViewCubit extends Cubit<MainViewState> {
         listOfCategories = res.toList();
 
         listOfProducts = listOfCategories[0].products;
-        listOfVariations = listOfCategories[0].products[0].variations;
-        listOfStocks = listOfCategories[0].products[0].stocks;
+        listOfVariations = listOfCategories[0].products.isNotEmpty
+            ? listOfCategories[0].products[0].variations
+            : [];
+        listOfStocks = listOfCategories[0].products.isNotEmpty
+            ? listOfCategories[0].products[0].stocks
+            : [];
         emit(LoadedCategories());
         return res;
       } else {
@@ -122,8 +212,12 @@ class MainViewCubit extends Cubit<MainViewState> {
           listOfBrands = res.toList();
 
           listOfProducts = listOfBrands[0].products;
-          listOfVariations = listOfBrands[0].products[0].variations;
-          listOfStocks = listOfCategories[0].products[0].stocks;
+          listOfVariations = listOfCategories[0].products.isNotEmpty
+              ? listOfCategories[0].products[0].variations
+              : [];
+          listOfStocks = listOfCategories[0].products.isNotEmpty
+              ? listOfCategories[0].products[0].stocks
+              : [];
           return res;
         }
         res = await posRepositoryImpl.getBrands(token, locationId);
@@ -132,8 +226,12 @@ class MainViewCubit extends Cubit<MainViewState> {
         listOfBrands = res.toList();
 
         listOfProducts = listOfBrands[0].products;
-        listOfVariations = listOfBrands[0].products[0].variations;
-        listOfStocks = listOfCategories[0].products[0].stocks;
+        listOfVariations = listOfCategories[0].products.isNotEmpty
+            ? listOfCategories[0].products[0].variations
+            : [];
+        listOfStocks = listOfCategories[0].products.isNotEmpty
+            ? listOfCategories[0].products[0].stocks
+            : [];
         return res;
       } else {
         emit(MainNoInternetState());
@@ -158,7 +256,7 @@ class MainViewCubit extends Cubit<MainViewState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getCustomers(token, locationId);
+          res = await posRepositoryImpl.getCustomers(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
           emit(LoadedCustomers());
           listOfCustomers = res.toList();
           return res;
@@ -190,7 +288,7 @@ class MainViewCubit extends Cubit<MainViewState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getCustomer(customerId, token);
+          res = await posRepositoryImpl.getCustomer(customerId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
           emit(LoadedCustomer());
           return res;
         }
@@ -217,7 +315,7 @@ class MainViewCubit extends Cubit<MainViewState> {
           await getUserParameters();
           await login(userRequest!);
 
-          await posRepositoryImpl.addCustomer(token, parameters, locationId);
+          await posRepositoryImpl.addCustomer(_appPreferences.getToken(LOGGED_IN_TOKEN)!, parameters, locationId);
           emit(CustomerAddedSucceed());
 
           return;
@@ -243,7 +341,7 @@ class MainViewCubit extends Cubit<MainViewState> {
           await getUserParameters();
           await login(userRequest!);
 
-          await posRepositoryImpl.updateCustomer(customerId, token, parameters);
+          await posRepositoryImpl.updateCustomer(customerId, _appPreferences.getToken(LOGGED_IN_TOKEN)!, parameters);
           emit(CustomerUpdatedSucceed());
 
           return;
@@ -271,7 +369,7 @@ class MainViewCubit extends Cubit<MainViewState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.checkout(parameters, token);
+          res = await posRepositoryImpl.checkout(parameters, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
           emit(CheckOutSucceed(res));
           return res;
         }
@@ -302,7 +400,7 @@ class MainViewCubit extends Cubit<MainViewState> {
           await login(userRequest!);
 
           res = await posRepositoryImpl.closeRegister(
-              parameters, locationId, token);
+              parameters, locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
           emit(CloseRegisterSucceed());
           return res;
         }
@@ -334,7 +432,7 @@ class MainViewCubit extends Cubit<MainViewState> {
           await login(userRequest!);
 
           res = await posRepositoryImpl.openCloseRegister(
-              parameters, locationId, token);
+              parameters, locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
           if (res[0].status == 'open') {
             String handCash_ = res[0].handCash;
             cashInHand =
@@ -378,7 +476,7 @@ class MainViewCubit extends Cubit<MainViewState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getRegisterData(locationId, token);
+          res = await posRepositoryImpl.getRegisterData(locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
 
           totalBank = res.bank;
           totalCheque = res.cheque;
@@ -413,13 +511,15 @@ class MainViewCubit extends Cubit<MainViewState> {
     try {
       var res;
       if (await networkInfo.isConnected) {
+        await Future.delayed(const Duration(seconds: 1));
+        emit(LoadingCurrency());
         String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
         bool hasExpired = JwtDecoder.isExpired(token);
         if (hasExpired) {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getCurrency(token, locationId);
+          res = await posRepositoryImpl.getCurrency(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
           emit(LoadedCurrency(res.code));
           return res;
         }
@@ -448,7 +548,7 @@ class MainViewCubit extends Cubit<MainViewState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getAppearance(token, locationId);
+          res = await posRepositoryImpl.getAppearance(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
           emit(LoadedAppearance(res));
           return res;
         }
@@ -462,6 +562,39 @@ class MainViewCubit extends Cubit<MainViewState> {
       }
     } catch (e) {
       emit(LoadingErrorAppearance(e.toString()));
+      return Future.error(e);
+    }
+  }
+
+  //Tailoring
+  Future<List<TailoringTypesModel>> getTailoringTypes(int locationId) async {
+    try {
+      var res;
+      if (await networkInfo.isConnected) {
+        await Future.delayed(const Duration(seconds: 1));
+        emit(LoadingTailoringTypes());
+        String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
+        bool hasExpired = JwtDecoder.isExpired(token);
+        if (hasExpired) {
+          await getUserParameters();
+          await login(userRequest!);
+
+          res = await posRepositoryImpl.getTailoringTypes(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          emit(LoadedTailoringTypes());
+          listOfTailoringTypes = res.toList();
+          return res;
+        }
+
+        res = await posRepositoryImpl.getTailoringTypes(token, locationId);
+        emit(LoadedTailoringTypes());
+        listOfTailoringTypes = res.toList();
+        return res;
+      } else {
+        emit(MainNoInternetState());
+        return [];
+      }
+    } catch (e) {
+      emit(LoadingErrorTailoringTypes(e.toString()));
       return Future.error(e);
     }
   }

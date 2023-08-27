@@ -5,6 +5,14 @@ abstract class MainViewState{}
 
 class MainViewInitial extends MainViewState{}
 
+class LoadingHomeData extends MainViewState{}
+class LoadedHomeData extends MainViewState{}
+class LoadingErrorHomeData extends MainViewState{
+  String errorText;
+
+  LoadingErrorHomeData(this.errorText);
+}
+
 class LoadingCategories extends MainViewState{}
 class LoadedCategories extends MainViewState{}
 class LoadingErrorCategories extends MainViewState{
@@ -76,11 +84,13 @@ class OpenCloseRegisterError extends MainViewState{
   OpenCloseRegisterError(this.errorText);
 }
 
+class LoadingCurrency extends MainViewState{}
 class LoadedCurrency extends MainViewState{
   String currencyCode;
 
   LoadedCurrency(this.currencyCode);
 }
+
 class LoadingErrorCurrency extends MainViewState{
   String errorText;
 
@@ -103,6 +113,14 @@ class LoadingErrorRegisterData extends MainViewState{
   String errorText;
 
   LoadingErrorRegisterData(this.errorText);
+}
+
+class LoadingTailoringTypes extends MainViewState{}
+class LoadedTailoringTypes  extends MainViewState{}
+class LoadingErrorTailoringTypes  extends MainViewState{
+  String errorText;
+
+  LoadingErrorTailoringTypes (this.errorText);
 }
 
 class MainNoInternetState extends MainViewState{}

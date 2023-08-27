@@ -89,6 +89,7 @@ flutter:
   assets:
     - assets/flags/
     - assets/images/logo.jpeg
+    - assets/images/sewing.png
     - assets/images/icon.jpeg
     - assets/images/loginScreen.jpg
     - assets/images/close.svg

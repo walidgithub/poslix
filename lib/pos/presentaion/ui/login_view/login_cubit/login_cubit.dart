@@ -64,7 +64,7 @@ class LoginCubit extends Cubit<LoginState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getUserInfo(parameters, token);
+          res = await posRepositoryImpl.getUserInfo(parameters, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
           emit(GetUserInfoSucceed());
           return res;
         }
@@ -92,7 +92,7 @@ class LoginCubit extends Cubit<LoginState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.logout(token);
+          res = await posRepositoryImpl.logout(_appPreferences.getToken(LOGGED_IN_TOKEN)!);
           emit(LogoutSucceed());
           return res;
         }

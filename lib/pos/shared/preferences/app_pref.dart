@@ -16,6 +16,8 @@ const String LOGGED_IN_TOKEN = "LOGGED_IN_TOKEN";
 const String USER_NAME = "USER_NAME";
 const String PASS = "PASS";
 
+const String PREFS_KEY_BUSINESS_TYPE = "PREFS_KEY_BUSINESS_TYPE";
+
 const String PREFS_KEY_DECIMAL_PLACES = "PREFS_KEY_DECIMAL_PLACES";
 const String PREFS_KEY_LOCATION_ID = "PREFS_KEY_LOCATION_ID";
 const String PREFS_KEY_TAX_VALUE = "PREFS_KEY_TAX_VALUE";
@@ -106,6 +108,15 @@ class AppPreferences {
   }
 
   String? getToken(String key) {
+    return _sharedPreferences.getString(key);
+  }
+
+  // business type
+  Future<bool> setBusinessType(String key, String businessType) async {
+    return await _sharedPreferences.setString(key, businessType);
+  }
+
+  String? getBusinessType(String key) {
     return _sharedPreferences.getString(key);
   }
 

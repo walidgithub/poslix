@@ -319,6 +319,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
         itemOption: widget.itemOptions.isNotEmpty
             ? widget.selectedListName[widget.itemIndex].variations[index].name
             : '',
+          productType: widget.selectedListName[widget.itemIndex].type
       ));
     });
 

@@ -50,6 +50,7 @@ class AppStrings{
   static const editDiscount  = 'edit discount:';
   static const editShippingValue  = 'edit shipping value:';
   static const checkOut  = 'Check Out';
+  static const noFabrics  = 'No fabrics added to this item';
 
 
   static const manageYourBusiness  = 'Manage Your Business';

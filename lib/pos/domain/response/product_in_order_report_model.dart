@@ -1,3 +1,4 @@
+import 'package:poslix_app/pos/domain/response/packages_model.dart';
 import 'package:poslix_app/pos/domain/response/stocks_model.dart';
 import 'package:poslix_app/pos/domain/response/variations_model.dart';
 
@@ -73,7 +74,7 @@ class ProductsInOrdersResponse {
   late final String status;
   late final String productQty;
   late final int stock;
-  late final List<dynamic> packages;
+  late final List<PackagesResponse> packages;
   late final List<VariationsResponse> variations;
   late final List<StocksResponse> stocks;
 
@@ -111,7 +112,7 @@ class ProductsInOrdersResponse {
     status = json['status'];
     productQty = json['product_qty'];
     stock = json['stock'];
-    packages = List.castFrom<dynamic, dynamic>(json['packages']);
+    packages = List.from(json['packages']).map((e)=>PackagesResponse.fromJson(e)).toList();
     variations = List.from(json['variations']).map((e)=>VariationsResponse.fromJson(e)).toList();
     stocks = List.from(json['stocks']).map((e)=>StocksResponse.fromJson(e)).toList();
   }
@@ -151,7 +152,7 @@ class ProductsInOrdersResponse {
     data['status'] = status;
     data['product_qty'] = productQty;
     data['stock'] = stock;
-    data['packages'] = packages;
+    data['packages'] = packages.map((e)=>e.toJson()).toList();
     data['variations'] = variations.map((e)=>e.toJson()).toList();
     data['stocks'] = stocks.map((e)=>e.toJson()).toList();
     return data;

@@ -13,6 +13,7 @@ class ImageAssets {
   static const String hold = '$imagePath/hold-hand.svg';
   static const String listOrders = '$imagePath/orders-list.svg';
   static const String noItem = '$imagePath/image.png';
+  static const String tailor = '$imagePath/sewing.png';
 
   static const String moneyCheck = '$imagePath/money-check.svg';
   static const String building = '$imagePath/building.svg';

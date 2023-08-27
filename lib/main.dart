@@ -113,7 +113,8 @@ class _MyAppState extends State<MyApp> {
           darkTheme: darkTheme,
           themeMode: _themeManager.themeMode,
           onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: loggedIn ? openedRegister ? Routes.mainRoute : Routes.registerPosRoute : Routes.loginRoute,
+          // initialRoute: loggedIn ? openedRegister ? Routes.mainRoute : Routes.registerPosRoute : Routes.loginRoute,
+          initialRoute: Routes.mainRoute,
         );
       });
   }
