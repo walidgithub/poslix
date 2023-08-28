@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return isApple() ? const CupertinoApp() : MaterialApp(
+        return MaterialApp(
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
@@ -113,8 +113,7 @@ class _MyAppState extends State<MyApp> {
           darkTheme: darkTheme,
           themeMode: _themeManager.themeMode,
           onGenerateRoute: RouteGenerator.getRoute,
-          // initialRoute: loggedIn ? openedRegister ? Routes.mainRoute : Routes.registerPosRoute : Routes.loginRoute,
-          initialRoute: Routes.mainRoute,
+          initialRoute: loggedIn ? openedRegister ? Routes.mainRoute : Routes.registerPosRoute : Routes.loginRoute,
         );
       });
   }

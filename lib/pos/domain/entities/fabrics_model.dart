@@ -2,7 +2,7 @@ class FabricsModel {
   int? id;
   String? itemImage;
   String? itemName;
-  double? itemPrice;
+  String? itemPrice;
   bool? selected;
 
   FabricsModel(

@@ -207,7 +207,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
   void initState() {
     getDecimalPlaces();
 
-    printType = printTypes[1];
+    printType = printTypes[2];
 
     totalNewPaying = 0;
     totalPaying = 0;

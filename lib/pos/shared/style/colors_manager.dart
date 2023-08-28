@@ -9,7 +9,7 @@ class ColorManager{
   static Color grayText = const Color(0xffd3cdcd);
   static Color gray = const Color(0xff868585);
   static Color darkGray = const Color(0xff3f3e3e);
-  static Color badge = const Color(0xffD9D7D7);
+  static Color badge = const Color(0xffb6b2b2);
   static Color backGround = const Color(0xffF3F9F9);
   static Color delete = const Color(0xffEA6C6D);
   static Color hold = const Color(0xffE3D069);

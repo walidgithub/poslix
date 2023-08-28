@@ -438,15 +438,13 @@ class POSRepositoryImpl extends POSRepository {
 
   //Tailoring
   @override
-  Future<List<TailoringTypesModel>> getTailoringTypes(String token, int locationId) async {
-    List<TailoringTypesModel> res = <TailoringTypesModel>[];
+  Future<TailoringTypesModel> getTailoringTypeById(String token, int typeId) async {
+    var res;
     try {
-      return await _dio.get('api/tailoring-package-types/$locationId',
+      return await _dio.get('api/tailoring-package-types/$typeId/show',
           headers: {'Authorization': 'Bearer $token'}).then((response) {
-        res = (response.data['result'] as List).map((e) {
-          return TailoringTypesModel.fromJson(e);
-        }).toList();
-        return res;
+        res = response.data['result'];
+        return TailoringTypesModel.fromJson(res);
       });
     } catch (e) {
       throw e.toString();

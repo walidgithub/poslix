@@ -39,7 +39,6 @@ import '../../../domain/entities/order_model.dart';
 import '../../../domain/entities/tmp_order_model.dart';
 import '../../../domain/response/brands_model.dart';
 import '../../../domain/response/categories_model.dart';
-import '../../../domain/response/packages_model.dart';
 import '../../../domain/response/stocks_model.dart';
 import '../../../domain/response/tailoring_types_model.dart';
 import '../../../domain/response/variations_model.dart';
@@ -88,7 +87,7 @@ class _MainViewState extends State<MainView> {
 
   List listOfFabrics = [];
   List<PricesResponse> listOfPackagePrices = [];
-  List<TailoringTypesModel> listOfTailoringTypes = [];
+  TailoringTypesModel? tailoringType;
 
   List<CustomerResponse> listOfCustomers = [];
 
@@ -430,7 +429,7 @@ class _MainViewState extends State<MainView> {
             updatedAt: ''));
 
     _selectedCustomerName =
-    '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
+        '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
     _selectedCustomerId = listOfCustomers[0].id;
     _selectedCustomerTel = listOfCustomers[0].mobile;
   }
@@ -454,6 +453,7 @@ class _MainViewState extends State<MainView> {
           // get Home Data
           if (state is LoadingHomeData) {
             showLoadingDialog(context);
+            return;
           } else if (state is LoadedHomeData) {
             LoadingDialog.hide(context);
             listOfCategories = MainViewCubit.get(context).listOfCategories;
@@ -463,13 +463,12 @@ class _MainViewState extends State<MainView> {
             loadCustomers();
 
             currencyCode = MainViewCubit.get(context).currencyCode;
-
-            listOfTailoringTypes =
-                MainViewCubit.get(context).listOfTailoringTypes;
+            return;
           } else if (state is LoadingErrorHomeData) {
             LoadingDialog.hide(context);
             listOfProducts = [];
             tryAgainLater(context);
+            return;
           }
 
           // get Categories -----------------------------------------------------------------------------------------------------------------
@@ -902,32 +901,34 @@ class _MainViewState extends State<MainView> {
           AppConstants.durationOfSnackBar,
           ColorManager.hold);
     } else {
-      for (var n in listOfTmpOrder) {
-        var itemStock = listOfBothProducts
-            .where((element) => element.id == n.productId)
-            .first;
+      if (businessType != 'Tailor') {
+        for (var n in listOfTmpOrder) {
+          var itemStock = listOfBothProducts
+              .where((element) => element.id == n.productId)
+              .first;
 
-        int qty = itemStock.stock;
-        int indexOfList = listOfBothProducts
-            .indexWhere((element) => element.id == n.productId);
+          int qty = itemStock.stock;
+          int indexOfList = listOfBothProducts
+              .indexWhere((element) => element.id == n.productId);
 
-        if (listOfBothProducts[indexOfList].variations.isNotEmpty) {
-          int indexOfVariationList = itemStock.variations
-              .indexWhere((element) => element.id == n.variationId);
-          qty = listOfBothProducts[indexOfList]
-              .variations[indexOfVariationList]
-              .stock;
-        }
+          if (listOfBothProducts[indexOfList].variations.isNotEmpty) {
+            int indexOfVariationList = itemStock.variations
+                .indexWhere((element) => element.id == n.variationId);
+            qty = listOfBothProducts[indexOfList]
+                .variations[indexOfVariationList]
+                .stock;
+          }
 
-        if (int.parse(n.itemQuantity.toString()) > qty) {
-          CustomDialog.show(
-              context,
-              AppStrings.noCreditWhenCheck.tr(),
-              const Icon(Icons.warning_amber_rounded),
-              ColorManager.white,
-              AppConstants.durationOfSnackBar,
-              ColorManager.hold);
-          return;
+          if (int.parse(n.itemQuantity.toString()) > qty) {
+            CustomDialog.show(
+                context,
+                AppStrings.noCreditWhenCheck.tr(),
+                const Icon(Icons.warning_amber_rounded),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.hold);
+            return;
+          }
         }
       }
 
@@ -1188,33 +1189,35 @@ class _MainViewState extends State<MainView> {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
 
-    var itemStock = listOfBothProducts
-        .where((element) =>
-            element.id ==
-            listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId)
-        .first;
+    if (businessType != 'Tailor') {
+      var itemStock = listOfBothProducts
+          .where((element) =>
+      element.id ==
+          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId)
+          .first;
 
-    int qty = itemStock.stock;
+      int qty = itemStock.stock;
 
-    int indexOfList = listOfBothProducts.indexWhere((element) =>
+      int indexOfList = listOfBothProducts.indexWhere((element) =>
+      element.id ==
+          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId);
+
+      if (listOfBothProducts[indexOfList].variations.isNotEmpty) {
+        int indexOfVariationList = itemStock.variations.indexWhere((element) =>
         element.id ==
-        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId);
+            listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].variationId);
+        qty = listOfBothProducts[indexOfList]
+            .variations[indexOfVariationList]
+            .stock;
+      }
 
-    if (listOfBothProducts[indexOfList].variations.isNotEmpty) {
-      int indexOfVariationList = itemStock.variations.indexWhere((element) =>
-          element.id ==
-          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].variationId);
-      qty = listOfBothProducts[indexOfList]
-          .variations[indexOfVariationList]
-          .stock;
-    }
-
-    if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-            .itemQuantity
-            .toString()) >=
-        qty) {
-      noCredit(context);
-      return;
+      if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+          .itemQuantity
+          .toString()) >=
+          qty) {
+        noCredit(context);
+        return;
+      }
     }
 
     setState(() {
@@ -1256,8 +1259,27 @@ class _MainViewState extends State<MainView> {
             ColorManager.hold);
         return;
       }
-      TailorDialog.show(context, currencyCode, index, listOfProducts,
-          listOfTailoringTypes, listOfFabrics, listOfPackagePrices, listOfCustomers, discount);
+      LoadingDialog.show(context);
+      MainViewCubit.get(context).getTailoringTypeById(
+          listOfProducts[index].packages[0].tailoringTypeId!).then((value) {
+
+        tailoringType = MainViewCubit.get(context).tailoringType;
+
+        LoadingDialog.hide(context);
+        TailorDialog.show(
+            context,
+            currencyCode,
+            index,
+            listOfProducts,
+            tailoringType!,
+            listOfFabrics,
+            listOfPackagePrices,
+            listOfCustomers,
+            discount,decimalPlaces,
+            _selectedCustomerName!,
+            _selectedCustomerTel!
+        );
+      });
       return;
     }
 

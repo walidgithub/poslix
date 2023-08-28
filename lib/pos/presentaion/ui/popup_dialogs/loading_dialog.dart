@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/shared/style/colors_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 
@@ -34,21 +35,23 @@ class _LoadingDialogState extends State<LoadingDialog> {
       onWillPop: () async => false,
       child: Center(
         child: Container(
-          height: 200,
-          width: 200,
+          height: 100.h,
+          width: 100.w,
           decoration: BoxDecoration(
             color: Colors.transparent,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(AppSize.s14),
-            // boxShadow: const [BoxShadow(color: Colors.black26)]
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                  height: AppSize.s75,
-                  width: AppSize.s75,
-                  child: isApple() ? const CupertinoActivityIndicator() : CircularProgressIndicator(
+                  height: 70.h,
+                  width: 25.w,
+                  child: isApple() ? CupertinoActivityIndicator(
+                    color: ColorManager.primary,
+                    radius: 50.w,
+                  ) : CircularProgressIndicator(
                     color: ColorManager.primary,
                   )),
             ],

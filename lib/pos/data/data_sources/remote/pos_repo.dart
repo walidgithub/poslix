@@ -39,7 +39,7 @@ abstract class POSRepository {
   Future<List<CategoriesResponse>> getCategories(final String token, final int locationId);
   Future<List<BrandsResponse>> getBrands(final String token, final int locationId);
 
-  Future<List<TailoringTypesModel>> getTailoringTypes(final String token, final int locationId);
+  Future<TailoringTypesModel> getTailoringTypeById(final String token, int typeId);
 
   Future<List<CustomerResponse>> getCustomers(final String token, final int locationId);
   Future<CustomerResponse> getCustomer(final int customerId, final String token);

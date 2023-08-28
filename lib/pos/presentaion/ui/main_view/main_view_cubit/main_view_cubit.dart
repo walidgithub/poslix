@@ -3,7 +3,6 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:poslix_app/pos/domain/response/check_out_model.dart';
 import 'package:poslix_app/pos/domain/response/currency_code_model.dart';
 import 'package:poslix_app/pos/domain/response/customer_model.dart';
-import 'package:poslix_app/pos/domain/response/packages_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
 import 'package:poslix_app/pos/domain/response/register_data_model.dart';
 import 'package:poslix_app/pos/domain/response/variations_model.dart';
@@ -43,7 +42,7 @@ class MainViewCubit extends Cubit<MainViewState> {
   List<VariationsResponse> listOfVariations = [];
   List<StocksResponse> listOfStocks = [];
 
-  List<TailoringTypesModel> listOfTailoringTypes = [];
+  TailoringTypesModel? tailoringType;
 
   List<CustomerResponse> listOfCustomers = [];
 
@@ -99,10 +98,6 @@ class MainViewCubit extends Cubit<MainViewState> {
           var res3 = await posRepositoryImpl.getCurrency(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
           currencyCode = res3.code;
 
-          // Tailoring types
-          var res4 = await posRepositoryImpl.getTailoringTypes(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
-          listOfTailoringTypes = res4.toList();
-
           emit(LoadedHomeData());
         }
 
@@ -126,10 +121,6 @@ class MainViewCubit extends Cubit<MainViewState> {
         // Currency ----
         var res3 = await posRepositoryImpl.getCurrency(token, locationId);
         currencyCode = res3.code;
-
-        // Tailoring types
-        var res4 = await posRepositoryImpl.getTailoringTypes(token, locationId);
-        listOfTailoringTypes = res4.toList();
 
         emit(LoadedHomeData());
       } else {
@@ -566,8 +557,8 @@ class MainViewCubit extends Cubit<MainViewState> {
     }
   }
 
-  //Tailoring
-  Future<List<TailoringTypesModel>> getTailoringTypes(int locationId) async {
+  // Tailoring Types Id
+  Future<TailoringTypesModel> getTailoringTypeById(int typeId) async {
     try {
       var res;
       if (await networkInfo.isConnected) {
@@ -579,19 +570,19 @@ class MainViewCubit extends Cubit<MainViewState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getTailoringTypes(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          res = await posRepositoryImpl.getTailoringTypeById(_appPreferences.getToken(LOGGED_IN_TOKEN)!, typeId);
+          tailoringType = res;
           emit(LoadedTailoringTypes());
-          listOfTailoringTypes = res.toList();
           return res;
         }
 
-        res = await posRepositoryImpl.getTailoringTypes(token, locationId);
+        res = await posRepositoryImpl.getTailoringTypeById(token, typeId);
+        tailoringType = res;
         emit(LoadedTailoringTypes());
-        listOfTailoringTypes = res.toList();
         return res;
       } else {
         emit(MainNoInternetState());
-        return [];
+        return res;
       }
     } catch (e) {
       emit(LoadingErrorTailoringTypes(e.toString()));

@@ -141,6 +141,9 @@ class AppStrings{
   static const noDataToDelete  = 'There are not items to delete';
   static const errorTryAgain  = 'There is an error try again later';
   static const noDataToHold  = 'There are not items to hold';
+  static const selectFabricFirst  = 'Select a fabric first';
+  static const sizeNameRequired  = 'Size name field required';
+  static const inputsRequired  = 'Inputs fields required';
   static const noDataToCheckOut  = 'There are not items to check out';
   static const orderDeletedSuccessfully  = 'Order deleted successfully';
   static const no  = 'No';
