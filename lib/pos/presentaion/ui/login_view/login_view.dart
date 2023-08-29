@@ -34,6 +34,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+
   final TextEditingController _loginEmailEditingController =
       TextEditingController();
   final TextEditingController _loginPassEditingController =
@@ -69,6 +70,8 @@ class _LoginViewState extends State<LoginView> {
     super.dispose();
   }
 
+  double? deviceWidth;
+
   bool showPass = false;
 
   @override
@@ -80,6 +83,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    deviceWidth = getDeviceWidth(context);
     return SafeArea(
         child: Scaffold(
       backgroundColor: ColorManager.secondary,
@@ -138,26 +142,26 @@ class _LoginViewState extends State<LoginView> {
         },
         builder: (context, state) {
           return SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: Padding(
-              padding: const EdgeInsets.all(AppPadding.p20),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        leftPart(context),
-                        SizedBox(
-                          width: AppConstants.smallDistance,
-                        ),
-                        rightPart(context),
-                      ],
+                  height: MediaQuery.of(context).size.height,
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppPadding.p20),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              deviceWidth! <= 800 ? Container() : leftPart(context),
+                              deviceWidth! <= 800 ? Container() : SizedBox(
+                                width: AppConstants.smallDistance,
+                              ),
+                              rightPart(context),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          );
+                  ),
+                );
           // --------------------------------------------------------------------------------------------------
         },
       ),

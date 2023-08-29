@@ -26,6 +26,11 @@ void errorToast({
   );
 }
 
+double getDeviceWidth(BuildContext context) {
+  MediaQueryData mediaQuery = MediaQuery.of(context);
+  return mediaQuery.size.width;
+}
+
 bool isApple() {
   return defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.iOS;
 }

@@ -30,7 +30,7 @@ Widget passText(BuildContext context, FocusNode loginPassFN, TextEditingControll
                 toggleEye();
               },
               icon: Icon(
-                showPass ? Icons.visibility : Icons.visibility_off,
+                showPass ? Icons.visibility_off : Icons.visibility,
                 size: AppSize.s25,
                 color: ColorManager.primary,
               ),

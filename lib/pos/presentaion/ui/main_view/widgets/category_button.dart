@@ -4,7 +4,7 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category.dart';
 
 import '../../../../domain/response/categories_model.dart';
 
-Widget categoryButtons(BuildContext context, List<CategoriesResponse> listOfCategories, Function isSelected) {
+Widget categoryButtons(BuildContext context, List<CategoriesResponse> listOfCategories, Function isSelected, double deviceWidth) {
   return Row(
     children: [
       Expanded(
@@ -36,6 +36,7 @@ Widget categoryButtons(BuildContext context, List<CategoriesResponse> listOfCate
                 isSelected: (int itemId) {
                   isSelected(itemId);
                 },
+                deviceWidth: deviceWidth,
               );
             },
           ),

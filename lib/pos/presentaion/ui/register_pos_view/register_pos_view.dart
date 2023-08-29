@@ -77,6 +77,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     super.dispose();
   }
 
+  double? deviceWidth;
+
   Widget language() {
     return FloatingActionButton(
       onPressed: () {
@@ -142,6 +144,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
 
   @override
   Widget build(BuildContext context) {
+    deviceWidth = getDeviceWidth(context);
     return WillPopScope(
       onWillPop: () => isApple() ? onBackButtonPressedInIOS(context) : onBackButtonPressed(context),
       child: SafeArea(
@@ -256,8 +259,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                   children: [
                     Row(
                       children: [
-                        leftPart(context),
-                        SizedBox(
+                        deviceWidth! <= 800 ? Container() : leftPart(context),
+                        deviceWidth! <= 800 ? Container() : SizedBox(
                           width: AppConstants.smallDistance,
                         ),
                         rightPart(context),
@@ -287,7 +290,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                 children: [
                   chooseBusiness(context),
                   chooseLocation(context),
-                  putInitialValue(context,posInitialEditingController),
+                  putInitialValue(context,posInitialEditingController,deviceWidth!),
                   const Divider(
                     thickness: AppSize.s1,
                   ),
@@ -308,8 +311,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: SizedBox(
-        width: 150.w,
-        height: 80.h,
+        width: deviceWidth! <= 800 ? 300.w  : 150.w,
+        height: deviceWidth! <= 800 ? 70.h : 80.h,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -325,7 +328,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                         AppSize.s20.sp,
                         color: ColorManager
                             .primary,
-                        fontWeight: FontWeight
+                        fontWeight: deviceWidth! <= 800 ? FontWeight.w500 : FontWeight
                             .bold))),
             SizedBox(
               height:
@@ -410,8 +413,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: SizedBox(
-        width: 150.w,
-        height: 80.h,
+        width: deviceWidth! <= 800 ? 300.w  : 150.w,
+        height: deviceWidth! <= 800 ? 70.h : 80.h,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -427,7 +430,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                         AppSize.s20.sp,
                         color: ColorManager
                             .primary,
-                        fontWeight: FontWeight
+                        fontWeight: deviceWidth! <= 800 ? FontWeight.w500 : FontWeight
                             .bold))),
             SizedBox(
               height:
@@ -536,8 +539,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                           AppSize.s14
                               .sp),
                     )),
-                height: 30.h,
-                width: 50.w,
+                height: deviceWidth! <= 800 ? 40.w : 30.h,
+                width: deviceWidth! <= 800 ? 150.h : 50.w,
                 color: ColorManager
                     .primary,
                 borderRadius:

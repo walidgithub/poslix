@@ -4,7 +4,7 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand.dart';
 
 import '../../../../domain/response/brands_model.dart';
 
-Widget brandButtons(BuildContext context, List<BrandsResponse> listOfBrands, Function isSelected) {
+Widget brandButtons(BuildContext context, List<BrandsResponse> listOfBrands, Function isSelected, double deviceWidth) {
   return Row(
     children: [
       Expanded(
@@ -33,6 +33,7 @@ Widget brandButtons(BuildContext context, List<BrandsResponse> listOfBrands, Fun
                 isSelected: (int itemId) {
                   isSelected(itemId);
                 },
+                deviceWidth: deviceWidth,
               );
             },
           ),

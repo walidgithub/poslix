@@ -7,12 +7,12 @@ import '../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../shared/constant/strings_manager.dart';
 import '../../../../shared/style/colors_manager.dart';
 
-Widget putInitialValue(BuildContext context,TextEditingController posInitialEditingController) {
+Widget putInitialValue(BuildContext context,TextEditingController posInitialEditingController,double deviceWidth) {
   return Padding(
     padding: const EdgeInsets.all(10),
     child: SizedBox(
-      width: 150.w,
-      height: 125.h,
+      width: deviceWidth <= 800 ? 300.w : 150.w,
+      height: deviceWidth <= 800 ? 70.h : 125.h,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -28,11 +28,11 @@ Widget putInitialValue(BuildContext context,TextEditingController posInitialEdit
                       AppSize.s20.sp,
                       color: ColorManager
                           .primary,
-                      fontWeight: FontWeight
+                      fontWeight: deviceWidth <= 800 ? FontWeight.w500 : FontWeight
                           .bold))),
           SizedBox(
             height:
-            AppConstants.smallDistance,
+            AppConstants.smallWidthBetweenElements,
           ),
           Expanded(
             flex: 1,

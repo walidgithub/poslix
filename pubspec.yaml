@@ -56,12 +56,12 @@ dependencies:
   animated_floating_buttons: ^0.0.2
   screenshot: ^2.1.0
   esc_pos_printer: ^4.1.0
-  image: ^3.0.8
+  image: ^3.3.0
   jwt_decoder: ^2.0.1
   simple_progress_indicators: ^0.2.0
   awesome_dropdown: ^0.0.4
   video_player: ^2.7.0
-  printing: ^5.6.0
+#  printing: ^5.9.3
 
 dev_dependencies:
   flutter_test:

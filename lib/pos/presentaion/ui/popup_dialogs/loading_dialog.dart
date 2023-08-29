@@ -45,15 +45,12 @@ class _LoadingDialogState extends State<LoadingDialog> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                  height: 70.h,
-                  width: 25.w,
-                  child: isApple() ? CupertinoActivityIndicator(
-                    color: ColorManager.primary,
-                    radius: 50.w,
-                  ) : CircularProgressIndicator(
-                    color: ColorManager.primary,
-                  )),
+              isApple() ? CupertinoActivityIndicator(
+                color: ColorManager.primary,
+                radius: 15.w,
+              ) : CircularProgressIndicator(
+                color: ColorManager.primary,
+              ),
             ],
           ),
         ),

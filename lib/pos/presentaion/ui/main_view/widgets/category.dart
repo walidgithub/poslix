@@ -11,7 +11,8 @@ class CategoryButton extends StatefulWidget {
   final String categoryName;
   final bool selected;
   final Function isSelected;
-  const CategoryButton({required this.id, required this.categoryName, required this.selected, required this.isSelected, super.key});
+  final double deviceWidth;
+  const CategoryButton({required this.id, required this.categoryName, required this.selected, required this.isSelected, required this.deviceWidth, super.key});
 
   @override
   State<CategoryButton> createState() => _CategoryButtonState();
@@ -29,7 +30,7 @@ class _CategoryButtonState extends State<CategoryButton> {
           },
           child: Container(
             height: 30.h,
-            width: 50.w,
+            width: widget.deviceWidth <= 800 ? 90.w :50.w,
             decoration: BoxDecoration(
                 color: widget.selected ? ColorManager.black : ColorManager.white,
                 border: Border.all(

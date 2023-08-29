@@ -12,13 +12,13 @@ import '../../../../shared/style/colors_manager.dart';
 import '../../components/container_component.dart';
 
 Widget categoryItems(BuildContext context, Function addToTmp,
-    List<ProductsResponse> listOfProducts, String businessType) {
+    List<ProductsResponse> listOfProducts, String businessType, double deviceWidth) {
   return Expanded(
       child: GridView.count(
-          crossAxisCount: 5,
+          crossAxisCount: deviceWidth <= 800 ? 2 : 5,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 11 / 16,
+          childAspectRatio: deviceWidth <= 800 ? 1 / 1.2 : 11 / 16,
           physics: const ScrollPhysics(),
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
@@ -33,9 +33,9 @@ Widget categoryItems(BuildContext context, Function addToTmp,
                 addToTmp(index, context, false);
               },
               child: containerComponent(context,
-                  itemContainer(index, context, listOfProducts, businessType),
-                  height: 400.h,
-                  width: 200.w,
+                  itemContainer(index, context, listOfProducts, businessType, deviceWidth),
+                  // height: deviceWidth <= 800 ? 200.h : 400.h,
+                  // width: 200.w,
                   color: ColorManager.secondary,
                   borderColor: ColorManager.secondary,
                   borderWidth: 0.0.w,
@@ -45,14 +45,14 @@ Widget categoryItems(BuildContext context, Function addToTmp,
 }
 
 Widget itemContainer(int index, BuildContext context,
-    List<ProductsResponse> listOfProducts, String businessType) {
+    List<ProductsResponse> listOfProducts, String businessType, double deviceWidth) {
   return Stack(children: [
     Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
           width: 200.w,
-          height: 105.h,
+          height: deviceWidth <= 800 ? 125.h : 105.h,
           decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               image: listOfProducts[index].image.toString() == "n"
@@ -64,7 +64,7 @@ Widget itemContainer(int index, BuildContext context,
                       fit: BoxFit.fill)),
         ),
         Container(
-          width: 50.w,
+          width: deviceWidth <= 800 ? 155.w : 50.w,
           height: 40.h,
           decoration: BoxDecoration(
               color: ColorManager.badge,

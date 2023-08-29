@@ -11,7 +11,8 @@ class BrandButton extends StatefulWidget {
   final String brandName;
   final bool selected;
   final Function isSelected;
-  const BrandButton({required this.id, required this.brandName, required this.selected, required this.isSelected, super.key});
+  final double deviceWidth;
+  const BrandButton({required this.id, required this.brandName, required this.selected, required this.isSelected, required this.deviceWidth, super.key});
 
   @override
   State<BrandButton> createState() => _BrandButtonState();
@@ -29,7 +30,7 @@ class _BrandButtonState extends State<BrandButton> {
           },
           child: Container(
             height: 30.h,
-            width: 50.w,
+            width: widget.deviceWidth <= 800 ? 90.w :50.w,
             decoration: BoxDecoration(
                 color: widget.selected ? ColorManager.black : ColorManager.white,
                 border: Border.all(

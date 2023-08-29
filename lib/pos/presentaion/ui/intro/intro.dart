@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../shared/constant/constant_values_manager.dart';
+import '../../../shared/utils/utils.dart';
 import '../../router/app_router.dart';
 
 class IntroView extends StatefulWidget {
@@ -32,6 +34,8 @@ class _IntroViewState extends State<IntroView> {
 
   Timer? _timer;
 
+  double? deviceWidth;
+
   startDelay() {
     _timer = Timer(Duration(milliseconds: AppConstants.introDelay), goNext);
   }
@@ -42,6 +46,7 @@ class _IntroViewState extends State<IntroView> {
 
   @override
   Widget build(BuildContext context) {
+    deviceWidth = getDeviceWidth(context);
     return SafeArea(
         child: Scaffold(
       body: bodyContent(context),
@@ -50,7 +55,10 @@ class _IntroViewState extends State<IntroView> {
 
   Widget bodyContent(BuildContext context) {
     return Center(
-      child: VideoPlayer(_videoPlayerController),
+      child: SizedBox(
+        height: deviceWidth! <= 800 ? 300.h : MediaQuery.of(context).size.height,
+          width: deviceWidth! <= 800 ? 500.h : MediaQuery.of(context).size.width,
+          child: VideoPlayer(_videoPlayerController)),
     );
   }
 

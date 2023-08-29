@@ -55,6 +55,7 @@ import '../login_view/login_cubit/login_cubit.dart';
 import '../login_view/login_cubit/login_state.dart';
 import '../popup_dialogs/custom_dialog.dart';
 import '../popup_dialogs/loading_dialog.dart';
+import '../register_pos_view/widgets/bottom_bar.dart';
 import 'inner_dialogs/close_register_dialog/close_register_dialog.dart';
 import 'inner_dialogs/tailor_dialog/tailor_dialog.dart';
 import 'main_view_cubit/main_view_state.dart';
@@ -94,8 +95,9 @@ class _MainViewState extends State<MainView> {
   String selectedDiscountType = '';
 
   int decimalPlaces = 2;
-  int locationId = 142;
-  String businessType = 'Tailor';
+  int locationId = 140;
+  String businessType = '';
+  // String businessType = 'Tailor';
   int tax = 0;
 
   bool tailor = false;
@@ -251,6 +253,8 @@ class _MainViewState extends State<MainView> {
   final TextEditingController _searchEditingController =
       TextEditingController();
 
+  double? deviceWidth;
+
   Widget language() {
     return FloatingActionButton(
       onPressed: () {
@@ -332,6 +336,7 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
+    deviceWidth = getDeviceWidth(context);
     return WillPopScope(
       onWillPop: () => isApple()
           ? onBackButtonPressedInIOS(context)
@@ -341,7 +346,7 @@ class _MainViewState extends State<MainView> {
           backgroundColor: ColorManager.secondary,
           body: SingleChildScrollView(child: bodyContent(context)),
           floatingActionButton: AnimatedFloatingActionButton(
-              fabButtons: <Widget>[language(), logout(), register(), refresh()],
+              fabButtons: [language(), logout(), register(), refresh()],
               key: floatingKey,
               colorStartAnimation: ColorManager.primary,
               colorEndAnimation: ColorManager.delete,
@@ -569,19 +574,63 @@ class _MainViewState extends State<MainView> {
           }
         },
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(AppPadding.p10),
-            child: Center(
-              child: Row(
-                children: [
-                  leftPart(context),
-                  SizedBox(
-                    width: AppConstants.smallDistance,
+          return Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(AppPadding.p10),
+                child: Center(
+                  child: Row(
+                    children: [
+                      deviceWidth! <= 800 ? Container() : leftPart(context),
+                      deviceWidth! <= 800
+                          ? Container()
+                          : SizedBox(
+                              width: AppConstants.smallDistance,
+                            ),
+                      rightPart(context),
+                    ],
                   ),
-                  rightPart(context),
-                ],
+                ),
               ),
-            ),
+              deviceWidth! <= 800 ? Positioned(bottom: 0, child:
+
+              Bounceable(
+                  duration: Duration(
+                      milliseconds:
+                      AppConstants.durationOfBounceable),
+                  onTap: () async {
+                    await Future.delayed(Duration(
+                        milliseconds: AppConstants
+                            .durationOfBounceable));
+                    print('gggggggggggggg');
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      clipBehavior: Clip.hardEdge,
+                      backgroundColor: Theme.of(context).dialogBackgroundColor,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(22),
+                          topRight: Radius.circular(22),
+                        ),
+                      ),
+                      builder: (BuildContext context) {
+                        return leftPart(context);
+                      },
+                    );
+                  },
+                  child: BottomSheetBar(currencyCode: currencyCode,totalAmount: totalAmount,))) : Container(),
+              deviceWidth! <= 800 ? Positioned(
+                  right: 11.w,
+                  bottom: 11.h,
+                  child: Container(
+                      width: 60.h,
+                      height: 60.w,
+                      decoration: BoxDecoration(
+                        color: ColorManager.white,
+                        shape: BoxShape.circle,
+                      ))) : Container(),
+            ],
           );
         },
       ),
@@ -629,8 +678,8 @@ class _MainViewState extends State<MainView> {
                                   context,
                                   _currentSortColumn,
                                   _isSortAsc,
-                                  createColumns(),
-                                  createRows(context)))),
+                                  createColumns(deviceWidth!),
+                                  createRows(context, deviceWidth!)))),
                     ),
 
                     constantsAndTotal(
@@ -1001,7 +1050,7 @@ class _MainViewState extends State<MainView> {
     }
   }
 
-  List<DataRow> createRows(BuildContext context) {
+  List<DataRow> createRows(BuildContext context, double deviceWidth) {
     return listOfTmpOrder
         .map((tmpOrder) => DataRow(cells: [
               DataCell(Text(
@@ -1009,7 +1058,7 @@ class _MainViewState extends State<MainView> {
                 style: TextStyle(color: ColorManager.edit),
               )),
               DataCell(SizedBox(
-                width: 40.w,
+                width: deviceWidth <= 800 ? 100.w : 40.w,
                 child: Center(
                     child: Text(
                         listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
@@ -1020,7 +1069,7 @@ class _MainViewState extends State<MainView> {
               )),
               DataCell(Center(
                   child: SizedBox(
-                width: 42.w,
+                width: deviceWidth <= 800 ? 100.w : 42.w,
                 child: Center(
                   child: Row(
                     children: [
@@ -1071,7 +1120,7 @@ class _MainViewState extends State<MainView> {
                               width: AppConstants.smallerDistance,
                             )
                           : SizedBox(
-                              width: AppConstants.smallDistance,
+                              width: AppConstants.smallWidthBetweenElements,
                             ),
                       containerComponent(
                           context,
@@ -1099,7 +1148,7 @@ class _MainViewState extends State<MainView> {
                                         size: AppSize.s10.sp,
                                       ),
                                       height: 20.h,
-                                      width: 10.w,
+                                      width: deviceWidth <= 800 ? 20.w : 10.w,
                                       color: ColorManager.secondary,
                                       borderColor: ColorManager.secondary,
                                       borderWidth: 1.w,
@@ -1127,7 +1176,7 @@ class _MainViewState extends State<MainView> {
                                         size: AppSize.s10.sp,
                                       ),
                                       height: 20.h,
-                                      width: 10.w,
+                                      width: deviceWidth <= 800 ? 20.w : 10.w,
                                       color: ColorManager.secondary,
                                       borderColor: ColorManager.secondary,
                                       borderWidth: 1.w,
@@ -1137,7 +1186,7 @@ class _MainViewState extends State<MainView> {
                             ),
                           ),
                           height: 30.h,
-                          width: 30.w,
+                          width: deviceWidth <= 800 ? 70.w : 30.w,
                           color: ColorManager.white,
                           borderColor: ColorManager.badge,
                           borderWidth: 0.5.w,
@@ -1147,7 +1196,7 @@ class _MainViewState extends State<MainView> {
                 ),
               ))),
               DataCell(SizedBox(
-                width: 20.w,
+                width: deviceWidth <= 800 ? 50.w : 20.w,
                 child: Center(
                     child: Text(
                         listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
@@ -1192,19 +1241,19 @@ class _MainViewState extends State<MainView> {
     if (businessType != 'Tailor') {
       var itemStock = listOfBothProducts
           .where((element) =>
-      element.id ==
-          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId)
+              element.id ==
+              listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId)
           .first;
 
       int qty = itemStock.stock;
 
       int indexOfList = listOfBothProducts.indexWhere((element) =>
-      element.id ==
+          element.id ==
           listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId);
 
       if (listOfBothProducts[indexOfList].variations.isNotEmpty) {
         int indexOfVariationList = itemStock.variations.indexWhere((element) =>
-        element.id ==
+            element.id ==
             listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].variationId);
         qty = listOfBothProducts[indexOfList]
             .variations[indexOfVariationList]
@@ -1212,14 +1261,14 @@ class _MainViewState extends State<MainView> {
       }
 
       if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-          .itemQuantity
-          .toString()) >=
+              .itemQuantity
+              .toString()) >=
           qty) {
         noCredit(context);
         return;
       }
     }
-
+    print('yyyyyyyyyyyyyyyyyyy');
     setState(() {
       int? itemCount =
           listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
@@ -1260,9 +1309,10 @@ class _MainViewState extends State<MainView> {
         return;
       }
       LoadingDialog.show(context);
-      MainViewCubit.get(context).getTailoringTypeById(
-          listOfProducts[index].packages[0].tailoringTypeId!).then((value) {
-
+      MainViewCubit.get(context)
+          .getTailoringTypeById(
+              listOfProducts[index].packages[0].tailoringTypeId!)
+          .then((value) {
         tailoringType = MainViewCubit.get(context).tailoringType;
 
         LoadingDialog.hide(context);
@@ -1275,10 +1325,10 @@ class _MainViewState extends State<MainView> {
             listOfFabrics,
             listOfPackagePrices,
             listOfCustomers,
-            discount,decimalPlaces,
+            discount,
+            decimalPlaces,
             _selectedCustomerName!,
-            _selectedCustomerTel!
-        );
+            _selectedCustomerTel!);
       });
       return;
     }
@@ -1395,19 +1445,21 @@ class _MainViewState extends State<MainView> {
                     ),
                     categoryFilter!
                         // Category buttons -------------
-                        ? categoryButtons(context, listOfCategories, isSelected)
+                        ? categoryButtons(
+                            context, listOfCategories, isSelected, deviceWidth!)
                         // Brand buttons -------------
-                        : brandButtons(context, listOfBrands, isSelected),
+                        : brandButtons(
+                            context, listOfBrands, isSelected, deviceWidth!),
                     SizedBox(
                       height: AppConstants.smallDistance,
                     ),
                     categoryFilter!
                         // Category items -------------
-                        ? categoryItems(
-                            context, addToTmp, listOfProducts, businessType)
+                        ? categoryItems(context, addToTmp, listOfProducts,
+                            businessType, deviceWidth!)
                         // Brand items -------------
-                        : brandItems(
-                            context, addToTmp, listOfProducts, businessType)
+                        : brandItems(context, addToTmp, listOfProducts,
+                            businessType, deviceWidth!)
                   ],
                 ),
               ),

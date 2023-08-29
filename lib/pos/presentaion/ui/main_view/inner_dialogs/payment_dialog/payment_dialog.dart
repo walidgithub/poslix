@@ -18,7 +18,7 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_di
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_state.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
-import 'package:printing/printing.dart';
+// import 'package:printing/printing.dart';
 import 'package:screenshot/screenshot.dart';
 import '../../../../../domain/requests/cart_model.dart';
 import '../../../../../domain/requests/check_out_model.dart';
@@ -34,8 +34,8 @@ import '../../main_view_cubit/main_view_cubit.dart';
 import '../tailor_dialog/widgets/main_note.dart';
 import 'widgets/add_payment_row.dart';
 import 'widgets/main_payment _method.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+// import 'package:pdf/pdf.dart';
+// import 'package:pdf/widgets.dart' as pw;
 
 class PaymentDialog extends StatefulWidget {
   double total;
@@ -541,32 +541,32 @@ class _PaymentDialogState extends State<PaymentDialog> {
       //     arguments: GoToThermal(
       //         total: widget.total.toString()));
     } else if (printType == 'A4') {
-      final image = await imageFromAssetBundle(
-        "assets/images/logo.jpeg",
-      );
-      final doc = pw.Document();
-      doc.addPage(pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context context) {
-            return buildPrintableData(image,
-                businessAddress,
-                businessEmail,
-                businessVat,
-                customerNumber,
-                widget.currencyCode
-                ,today,
-                businessName,
-                businessImage,
-                businessTell,
-                orderId,
-                widget.taxAmount,
-                widget.discountAmount,
-                widget.total,
-                totalPaying!,
-                due!);
-          }));
-      await Printing.layoutPdf(
-          onLayout: (PdfPageFormat format) async => doc.save());
+      // final image = await imageFromAssetBundle(
+      //   "assets/images/logo.jpeg",
+      // );
+      // final doc = pw.Document();
+      // doc.addPage(pw.Page(
+      //     pageFormat: PdfPageFormat.a4,
+      //     build: (pw.Context context) {
+      //       return buildPrintableData(image,
+      //           businessAddress,
+      //           businessEmail,
+      //           businessVat,
+      //           customerNumber,
+      //           widget.currencyCode
+      //           ,today,
+      //           businessName,
+      //           businessImage,
+      //           businessTell,
+      //           orderId,
+      //           widget.taxAmount,
+      //           widget.discountAmount,
+      //           widget.total,
+      //           totalPaying!,
+      //           due!);
+      //     }));
+      // await Printing.layoutPdf(
+      //     onLayout: (PdfPageFormat format) async => doc.save());
 
     } else if (printType == 'Wi_Fi_Thermal') {
       screenshotController
