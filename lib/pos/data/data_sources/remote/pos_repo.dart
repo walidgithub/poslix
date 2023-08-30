@@ -18,6 +18,7 @@ import '../../../domain/response/close_register_model.dart';
 import '../../../domain/response/close_register_report_data_model.dart';
 import '../../../domain/response/currency_code_model.dart';
 import '../../../domain/response/customer_model.dart';
+import '../../../domain/response/get_customer_model.dart';
 import '../../../domain/response/logout_response.dart';
 import '../../../domain/response/open_register_response.dart';
 import '../../../domain/response/sales_report_data_model.dart';
@@ -42,7 +43,7 @@ abstract class POSRepository {
   Future<TailoringTypesModel> getTailoringTypeById(final String token, int typeId);
 
   Future<List<CustomerResponse>> getCustomers(final String token, final int locationId);
-  Future<CustomerResponse> getCustomer(final int customerId, final String token);
+  Future<GetCustomerResponse> getCustomer(final int customerId, final String token);
   Future<void> addCustomer(final String token, final CustomerModel parameters, final int locationId);
   Future<void> updateCustomer(final int customerId, final String token, final CustomerModel parameters);
 

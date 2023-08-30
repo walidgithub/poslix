@@ -117,7 +117,7 @@ class _TailorDialogState extends State<TailorDialog> {
 
   final ScrollController _scrollController = ScrollController();
 
-  final List<TextEditingController> _inputsControllers = [];
+  final List<TextEditingController> _sizesControllers = [];
 
   CustomerResponse? _selectedCustomer;
 
@@ -125,7 +125,7 @@ class _TailorDialogState extends State<TailorDialog> {
 
   List<FabricsModel> selectedFabrics = [];
 
-  List inputs = ['length', 'chest'];
+  List sizes = [];
 
   String? _selectedCustomerName;
 
@@ -155,9 +155,11 @@ class _TailorDialogState extends State<TailorDialog> {
 
   @override
   void initState() {
-    for (int i = 0; i < inputs.length; i++) {
-      _inputsControllers.add(TextEditingController());
-      _inputsControllers[i].addListener(goToCalc);
+    sizes = widget.tailoringType.sizes!.toList();
+
+    for (int i = 0; i < sizes.length; i++) {
+      _sizesControllers.add(TextEditingController());
+      _sizesControllers[i].addListener(goToCalc);
     }
 
     for (var nToId in widget.listOfFabrics) {
@@ -184,7 +186,7 @@ class _TailorDialogState extends State<TailorDialog> {
     _notesEditingController.dispose();
     _sizeNameEditingController.dispose();
 
-    for (var controller in _inputsControllers) {
+    for (var controller in _sizesControllers) {
       controller.dispose();
     }
     super.dispose();
@@ -202,26 +204,31 @@ class _TailorDialogState extends State<TailorDialog> {
             AppConstants.durationOfSnackBar,
             ColorManager.hold);
       } else {
-        for (var nOfInputs in selectedFabrics) {
-          for (var controller in _inputsControllers) {
-            if (controller.text != '') {
+        for (var nOfFabric in selectedFabrics) {
+          int sizeIndex = 0;
+          String itemPrice =
+              '${nOfFabric.itemPrice.toString().substring(0, nOfFabric.itemPrice.toString().indexOf('.'))}${nOfFabric.itemPrice.toString().substring(nOfFabric.itemPrice.toString().indexOf('.'), nOfFabric.itemPrice.toString().indexOf('.') + 1 + widget.decimalPlaces!)}';
+          for (var nOfSize in _sizesControllers) {
+            if (nOfSize.text != '') {
               if (double.parse(widget.tailoringType.multipleValue.toString()) >
                   1) {
-                String itemPrice =
-                    '${nOfInputs.itemPrice.toString().substring(0, nOfInputs.itemPrice.toString().indexOf('.'))}${nOfInputs.itemPrice.toString().substring(nOfInputs.itemPrice.toString().indexOf('.'), nOfInputs.itemPrice.toString().indexOf('.') + 1 + widget.decimalPlaces!)}';
-                calcTotal = calcTotal +
-                    (double.parse(controller.text.toString()) *
-                        double.parse(itemPrice) *
-                        double.parse(
-                            widget.tailoringType.multipleValue.toString()));
-              } else {
-                String itemPrice =
-                    '${nOfInputs.itemPrice.toString().substring(0, nOfInputs.itemPrice.toString().indexOf('.'))}${nOfInputs.itemPrice.toString().substring(nOfInputs.itemPrice.toString().indexOf('.'), nOfInputs.itemPrice.toString().indexOf('.') + 1 + widget.decimalPlaces!)}';
-                calcTotal = calcTotal +
-                    (double.parse(controller.text.toString()) *
+                if (sizes[sizeIndex].isPrimary == 1) {
+                  calcTotal = calcTotal +
+                      (double.parse(nOfSize.text.toString()) *
+                          double.parse(itemPrice) *
+                          double.parse(
+                              widget.tailoringType.multipleValue.toString()));
+                } else {
+                  calcTotal = calcTotal +
+                      (double.parse(nOfSize.text.toString()) *
+                          double.parse(itemPrice));
+                }
+              } else {calcTotal = calcTotal +
+                    (double.parse(nOfSize.text.toString()) *
                         double.parse(itemPrice));
               }
             }
+            sizeIndex++;
           }
         }
       }
@@ -362,18 +369,18 @@ class _TailorDialogState extends State<TailorDialog> {
           physics: const ScrollPhysics(),
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
-          children: List.generate(inputs.length, (index) {
+          children: List.generate(sizes.length, (index) {
             return Padding(
               padding: const EdgeInsets.fromLTRB(
                   AppPadding.p0, AppPadding.p5, AppPadding.p5, AppPadding.p5),
               child: TextField(
                   autofocus: false,
                   keyboardType: TextInputType.number,
-                  controller: _inputsControllers[index],
+                  controller: _sizesControllers[index],
                   decoration: InputDecoration(
-                      hintText: inputs[index],
+                      hintText: sizes[index].name,
                       hintStyle: TextStyle(fontSize: AppSize.s12.sp),
-                      labelText: inputs[index],
+                      labelText: sizes[index].name,
                       labelStyle: TextStyle(
                           fontSize: AppSize.s15.sp,
                           color: ColorManager.primary),
@@ -653,7 +660,7 @@ class _TailorDialogState extends State<TailorDialog> {
       return;
     }
 
-    for (var n in _inputsControllers) {
+    for (var n in _sizesControllers) {
       if (n.text == '') {
         CustomDialog.show(
             context,

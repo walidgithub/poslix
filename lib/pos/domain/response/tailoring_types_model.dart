@@ -1,3 +1,5 @@
+import 'package:poslix_app/pos/domain/response/sizes_model.dart';
+
 class TailoringTypesModel {
   int? id;
   int? locationId;
@@ -6,6 +8,7 @@ class TailoringTypesModel {
   int? createdBy;
   String? createdAt;
   String? extras;
+  List<SizesResponse>? sizes;
 
   TailoringTypesModel(
       {this.id,
@@ -14,7 +17,8 @@ class TailoringTypesModel {
         this.multipleValue,
         this.createdBy,
         this.createdAt,
-        this.extras});
+        this.extras,
+        this.sizes});
 
   TailoringTypesModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -24,6 +28,12 @@ class TailoringTypesModel {
     createdBy = json['created_by'];
     createdAt = json['created_at'] ?? '';
     extras = json['extras'];
+    if (json['sizes'] != null) {
+      sizes = <SizesResponse>[];
+      json['sizes'].forEach((v) {
+        sizes!.add(SizesResponse.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -35,6 +45,9 @@ class TailoringTypesModel {
     data['created_by'] = createdBy;
     data['created_at'] = createdAt;
     data['extras'] = extras;
+    if (sizes != null) {
+      data['sizes'] = sizes!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }

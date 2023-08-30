@@ -18,6 +18,7 @@ import '../../../../domain/response/brands_model.dart';
 import '../../../../domain/response/categories_model.dart';
 import '../../../../domain/response/close_register_model.dart';
 import '../../../../domain/response/close_register_report_data_model.dart';
+import '../../../../domain/response/get_customer_model.dart';
 import '../../../../domain/response/stocks_model.dart';
 import '../../../../domain/response/tailoring_types_model.dart';
 import '../../../../shared/core/network/network_info.dart';
@@ -267,7 +268,7 @@ class MainViewCubit extends Cubit<MainViewState> {
     }
   }
 
-  Future<CustomerResponse> getCustomer(int customerId) async {
+  Future<GetCustomerResponse> getCustomer(int customerId) async {
     try {
       var res;
       if (await networkInfo.isConnected) {

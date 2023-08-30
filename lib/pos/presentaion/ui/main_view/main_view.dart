@@ -13,6 +13,7 @@ import 'package:poslix_app/pos/domain/requests/cart_model.dart';
 import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/domain/response/prices_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/hold_dialog/hold_bottom_sheet.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/add_edit_customer_buttons.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand_button.dart';
@@ -27,6 +28,7 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/shipping_d
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/buttons.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category_button.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/category_items.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/orders_report_btn_mobile.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/sales_table/sales_table_columns.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/sales_table/sales_table_head.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/search_text.dart';
@@ -57,6 +59,7 @@ import '../popup_dialogs/custom_dialog.dart';
 import '../popup_dialogs/loading_dialog.dart';
 import '../register_pos_view/widgets/bottom_bar.dart';
 import 'inner_dialogs/close_register_dialog/close_register_dialog.dart';
+import 'inner_dialogs/customer_dialog/customer_mobile_dialog.dart';
 import 'inner_dialogs/tailor_dialog/tailor_dialog.dart';
 import 'main_view_cubit/main_view_state.dart';
 
@@ -70,10 +73,17 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   final AppPreferences _appPreferences = sl<AppPreferences>();
 
+  late PersistentBottomSheetController _controllerLeftPart;
+  late PersistentBottomSheetController _controllerHold;
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final GlobalKey<AnimatedFloatingActionButtonState> floatingKey =
       GlobalKey<AnimatedFloatingActionButtonState>();
 
   DateTime today = DateTime.now();
+
+  bool showFab = true;
 
   List<CategoriesResponse> listOfCategories = [];
   List<BrandsResponse> listOfBrands = [];
@@ -111,6 +121,12 @@ class _MainViewState extends State<MainView> {
   void dispose() {
     _searchEditingController.dispose();
     super.dispose();
+  }
+
+  void showFoatingActionButton(bool value) {
+    setState(() {
+      showFab = value;
+    });
   }
 
   final int _currentSortColumn = 0;
@@ -342,16 +358,26 @@ class _MainViewState extends State<MainView> {
           ? onBackButtonPressedInIOS(context)
           : onBackButtonPressed(context),
       child: SafeArea(
-        child: Scaffold(
-          backgroundColor: ColorManager.secondary,
-          body: SingleChildScrollView(child: bodyContent(context)),
-          floatingActionButton: AnimatedFloatingActionButton(
-              fabButtons: [language(), logout(), register(), refresh()],
-              key: floatingKey,
-              colorStartAnimation: ColorManager.primary,
-              colorEndAnimation: ColorManager.delete,
-              animatedIconData: AnimatedIcons.menu_close //To principal button
-              ),
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: ColorManager.secondary,
+            body: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: bodyContent(context)),
+            floatingActionButton: showFab
+                ? AnimatedFloatingActionButton(
+                    fabButtons: [language(), logout(), register(), refresh()],
+                    key: floatingKey,
+                    colorStartAnimation: ColorManager.primary,
+                    colorEndAnimation: ColorManager.delete,
+                    animatedIconData:
+                        AnimatedIcons.menu_close //To principal button
+                    )
+                : Container(),
+          ),
         ),
       ),
     );
@@ -557,17 +583,33 @@ class _MainViewState extends State<MainView> {
             int index = listOfCustomers.indexWhere((element) =>
                 '${element.firstName} ${element.lastName} | ${element.mobile}' ==
                 '${_selectedCustomer?.firstName} ${_selectedCustomer?.lastName} | ${_selectedCustomer?.mobile}');
-            CustomerDialog.show(context, 'Edit', listOfCustomers[index],
-                _selectedCustomerId!, locationId, (done) {
-              if (done == 'done') {
-                setState(() {
-                  listOfCustomers = [];
-                  CustomerResponse? selectedCustomer2;
-                  _selectedCustomer = selectedCustomer2;
-                  MainViewCubit.get(context).getCustomers(locationId);
-                });
-              }
-            });
+            deviceWidth! <= 600
+                ? CustomerMobileDialog.show(
+                    context,
+                    'Edit',
+                    listOfCustomers[index],
+                    _selectedCustomerId!,
+                    locationId, (done) {
+                    if (done == 'done') {
+                      setState(() {
+                        listOfCustomers = [];
+                        CustomerResponse? selectedCustomer2;
+                        _selectedCustomer = selectedCustomer2;
+                        MainViewCubit.get(context).getCustomers(locationId);
+                      });
+                    }
+                  })
+                : CustomerDialog.show(context, 'Edit', listOfCustomers[index],
+                    _selectedCustomerId!, locationId, (done) {
+                    if (done == 'done') {
+                      setState(() {
+                        listOfCustomers = [];
+                        CustomerResponse? selectedCustomer2;
+                        _selectedCustomer = selectedCustomer2;
+                        MainViewCubit.get(context).getCustomers(locationId);
+                      });
+                    }
+                  });
           } else if (state is LoadingErrorCustomer) {
             LoadingDialog.hide(context);
             tryAgainLater(context);
@@ -581,8 +623,8 @@ class _MainViewState extends State<MainView> {
                 child: Center(
                   child: Row(
                     children: [
-                      deviceWidth! <= 800 ? Container() : leftPart(context),
-                      deviceWidth! <= 800
+                      deviceWidth! <= 600 ? Container() : leftPart(context),
+                      deviceWidth! <= 600
                           ? Container()
                           : SizedBox(
                               width: AppConstants.smallDistance,
@@ -592,44 +634,99 @@ class _MainViewState extends State<MainView> {
                   ),
                 ),
               ),
-              deviceWidth! <= 800 ? Positioned(bottom: 0, child:
+              deviceWidth! <= 600
+                  ? listOfTmpOrder.isNotEmpty
+                      ? Positioned(
+                          bottom: 0,
+                          child: Bounceable(
+                              duration: Duration(
+                                  milliseconds:
+                                      AppConstants.durationOfBounceable),
+                              onTap: () async {
+                                await Future.delayed(Duration(
+                                    milliseconds:
+                                        AppConstants.durationOfBounceable));
+                                showFoatingActionButton(false);
+                                _controllerLeftPart =
+                                    _scaffoldKey.currentState!.showBottomSheet(
+                                  clipBehavior: Clip.hardEdge,
+                                  backgroundColor:
+                                      Theme.of(context).dialogBackgroundColor,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(22),
+                                      topRight: Radius.circular(22),
+                                    ),
+                                  ),
+                                  (context) {
+                                    return Column(
+                                      children: [
+                                        leftPart(context),
+                                      ],
+                                    );
+                                  },
+                                );
 
-              Bounceable(
-                  duration: Duration(
-                      milliseconds:
-                      AppConstants.durationOfBounceable),
-                  onTap: () async {
-                    await Future.delayed(Duration(
-                        milliseconds: AppConstants
-                            .durationOfBounceable));
-                    print('gggggggggggggg');
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      clipBehavior: Clip.hardEdge,
-                      backgroundColor: Theme.of(context).dialogBackgroundColor,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(22),
-                          topRight: Radius.circular(22),
-                        ),
-                      ),
-                      builder: (BuildContext context) {
-                        return leftPart(context);
-                      },
-                    );
-                  },
-                  child: BottomSheetBar(currencyCode: currencyCode,totalAmount: totalAmount,))) : Container(),
-              deviceWidth! <= 800 ? Positioned(
-                  right: 11.w,
-                  bottom: 11.h,
-                  child: Container(
-                      width: 60.h,
-                      height: 60.w,
-                      decoration: BoxDecoration(
-                        color: ColorManager.white,
-                        shape: BoxShape.circle,
-                      ))) : Container(),
+                                _controllerLeftPart.closed.then((value) {
+                                  showFoatingActionButton(true);
+                                });
+                              },
+                              child: BottomSheetBar(
+                                currencyCode: currencyCode,
+                                totalAmount: totalAmount,
+                              )))
+                      : Positioned(
+                          bottom: 15.h,
+                          left: 20.w,
+                          child: Bounceable(
+                              duration: Duration(
+                                  milliseconds:
+                                      AppConstants.durationOfBounceable),
+                              onTap: () async {
+                                await Future.delayed(Duration(
+                                    milliseconds:
+                                        AppConstants.durationOfBounceable));
+                                showFoatingActionButton(false);
+                                _controllerLeftPart =
+                                    _scaffoldKey.currentState!.showBottomSheet(
+                                  clipBehavior: Clip.hardEdge,
+                                  backgroundColor:
+                                      Theme.of(context).dialogBackgroundColor,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(22),
+                                      topRight: Radius.circular(22),
+                                    ),
+                                  ),
+                                  (context) {
+                                    return Column(
+                                      children: [
+                                        // show orders
+                                      ],
+                                    );
+                                  },
+                                );
+
+                                _controllerLeftPart.closed.then((value) {
+                                  showFoatingActionButton(true);
+                                });
+                              },
+                              child: ordersBtnMobile()))
+                  : Container(),
+              deviceWidth! <= 600
+                  ? listOfTmpOrder.isNotEmpty
+                      ? Positioned(
+                          right: 11.w,
+                          bottom: 11.h,
+                          child: Container(
+                              width: 60.h,
+                              height: 60.w,
+                              decoration: BoxDecoration(
+                                color: ColorManager.white,
+                                shape: BoxShape.circle,
+                              )))
+                      : Container()
+                  : Container(),
             ],
           );
         },
@@ -640,72 +737,71 @@ class _MainViewState extends State<MainView> {
   // left part ------------------------------------------------------
   Widget leftPart(BuildContext context) {
     return Expanded(
-      flex: 2,
-      child: Column(
-        children: [
-          containerComponent(
-              context,
-              Padding(
-                padding: const EdgeInsets.all(AppPadding.p10),
-                child: Column(
-                  children: [
-                    // drop down
-                    Row(
-                      children: [
-                        customerDropDown(context),
-                        SizedBox(
-                          width: AppConstants.smallerDistance,
-                        ),
-                        addAndEditCustomer(context, getCustomer, addCustomer)
-                      ],
-                    ),
+        flex: 2,
+        child: Column(
+          children: [
+            containerComponent(
+                context,
+                Padding(
+                  padding: const EdgeInsets.all(AppPadding.p10),
+                  child: Column(
+                    children: [
+                      // drop down
+                      Row(
+                        children: [
+                          customerDropDown(context),
+                          SizedBox(
+                            width: AppConstants.smallerDistance,
+                          ),
+                          addAndEditCustomer(context, getCustomer, addCustomer)
+                        ],
+                      ),
 
-                    SizedBox(
-                      height: AppConstants.smallDistance,
-                    ),
+                      SizedBox(
+                        height: AppConstants.smallDistance,
+                      ),
 
-                    searchText(context, _searchEditingController, addToTmp,
-                        listOfAllProducts, searchList),
+                      searchText(context, _searchEditingController, addToTmp,
+                          listOfAllProducts, searchList),
 
-                    // tmp table of items
-                    Expanded(
-                      flex: 2,
-                      child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: createDataTable(
-                                  context,
-                                  _currentSortColumn,
-                                  _isSortAsc,
-                                  createColumns(deviceWidth!),
-                                  createRows(context, deviceWidth!)))),
-                    ),
+                      // tmp table of items
+                      Expanded(
+                        flex: 2,
+                        child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: createDataTable(
+                                    context,
+                                    _currentSortColumn,
+                                    _isSortAsc,
+                                    createColumns(deviceWidth!),
+                                    createRows(context, deviceWidth!)))),
+                      ),
 
-                    constantsAndTotal(
-                        context,
-                        estimatedTax,
-                        tax,
-                        editShipping,
-                        editDiscount,
-                        shippingCharge,
-                        discount,
-                        currencyCode,
-                        totalAmount,
-                        differenceValue),
+                      constantsAndTotal(
+                          context,
+                          estimatedTax,
+                          tax,
+                          editShipping,
+                          editDiscount,
+                          shippingCharge,
+                          discount,
+                          currencyCode,
+                          totalAmount,
+                          differenceValue),
 
-                    buttons(context, hold, delete, getOrders, checkOut)
-                  ],
+                      buttons(context, hold, delete, getOrders, checkOut)
+                    ],
+                  ),
                 ),
-              ),
-              height: MediaQuery.of(context).size.height - 20.h,
-              color: ColorManager.white,
-              borderColor: ColorManager.white,
-              borderWidth: 1.5.w,
-              borderRadius: AppSize.s5),
-        ],
-      ),
-    );
+                height: MediaQuery.of(context).size.height - 20.h,
+                color: ColorManager.white,
+                borderColor: ColorManager.white,
+                borderWidth: 1.5.w,
+                borderRadius: AppSize.s5),
+          ],
+        ));
   }
 
   Widget customerDropDown(BuildContext context) {
@@ -740,13 +836,16 @@ class _MainViewState extends State<MainView> {
                     ));
               }).toList(),
               onChanged: (selectedCustomer) {
-                setState(() {
-                  _selectedCustomer = selectedCustomer;
-                  _selectedCustomerName =
-                      '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
-                  _selectedCustomerId = selectedCustomer?.id;
-                  _selectedCustomerTel = selectedCustomer?.mobile;
-                });
+                if (deviceWidth! <= 600) {
+                  _controllerLeftPart.setState!(() {});
+                } else {
+                  setState(() {});
+                }
+                _selectedCustomer = selectedCustomer;
+                _selectedCustomerName =
+                    '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
+                _selectedCustomerId = selectedCustomer?.id;
+                _selectedCustomerTel = selectedCustomer?.mobile;
               },
               isExpanded: true,
               hint: Row(
@@ -772,7 +871,7 @@ class _MainViewState extends State<MainView> {
                 AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
             height: 47.h,
             borderColor: ColorManager.primary,
-            borderWidth: 0.5.w,
+            borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w,
             borderRadius: AppSize.s5));
   }
 
@@ -785,13 +884,21 @@ class _MainViewState extends State<MainView> {
   }
 
   void addCustomer(BuildContext context) {
-    CustomerDialog.show(context, 'Add', [], 0, locationId, (done) {
-      if (done == 'done') {
-        setState(() {
-          MainViewCubit.get(context).getCustomers(locationId);
-        });
-      }
-    });
+    deviceWidth! <= 600
+        ? CustomerMobileDialog.show(context, 'Add', [], 0, locationId, (done) {
+            if (done == 'done') {
+              setState(() {
+                MainViewCubit.get(context).getCustomers(locationId);
+              });
+            }
+          })
+        : CustomerDialog.show(context, 'Add', [], 0, locationId, (done) {
+            if (done == 'done') {
+              setState(() {
+                MainViewCubit.get(context).getCustomers(locationId);
+              });
+            }
+          });
   }
 
   void editDiscount(BuildContext context) {
@@ -824,14 +931,50 @@ class _MainViewState extends State<MainView> {
     } else {
       listOfTmpOrder[0].orderDiscount = discount;
 
-      holdOrdersDialog(context, listOfTmpOrder, discount, _selectedCustomerTel!,
-          _selectedCustomerName!, (done) {
-        if (done == 'done') {
-          setState(() {
-            listOfTmpOrder.clear();
-          });
-        }
-      });
+      if (deviceWidth! <= 600) {
+        showFoatingActionButton(false);
+        _controllerHold = _scaffoldKey.currentState!.showBottomSheet(
+          clipBehavior: Clip.hardEdge,
+          backgroundColor: Theme.of(context).dialogBackgroundColor,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(22),
+              topRight: Radius.circular(22),
+            ),
+          ),
+          (context) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              height: 200.h,
+              child: HoldBottomSheet(
+                  customerTel: _selectedCustomerTel!,
+                  customerName: _selectedCustomerName!,
+                  discount: discount,
+                  listOfTmpOrders: listOfTmpOrder,
+                  done: (done) {
+                    if (done == 'done') {
+                      setState(() {
+                        listOfTmpOrder.clear();
+                      });
+                    }
+                  }),
+            );
+          },
+        );
+
+        _controllerHold.closed.then((value) {
+          showFoatingActionButton(true);
+        });
+      } else {
+        holdOrdersDialog(context, listOfTmpOrder, discount,
+            _selectedCustomerTel!, _selectedCustomerName!, (done) {
+          if (done == 'done') {
+            setState(() {
+              listOfTmpOrder.clear();
+            });
+          }
+        });
+      }
       discount = 0;
     }
   }
@@ -1212,25 +1355,30 @@ class _MainViewState extends State<MainView> {
   Future<void> decreaseCount(TmpOrderModel tmpOrder) async {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
-    setState(() {
-      int? itemCount =
-          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
-      itemCount = itemCount! - 1;
-      listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
 
-      double total = roundDouble(
-          (itemCount *
-              double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-                  .itemPrice
-                  .toString())),
-          decimalPlaces);
+    if (deviceWidth! <= 600) {
+      _controllerLeftPart.setState!(() {});
+    } else {
+      setState(() {});
+    }
 
-      listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
-          total.toString();
-      if (itemCount == 0) {
-        listOfTmpOrder.removeAt(listOfTmpOrder.indexOf(tmpOrder));
-      }
-    });
+    int? itemCount =
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
+    itemCount = itemCount! - 1;
+    listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+
+    double total = roundDouble(
+        (itemCount *
+            double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                .itemPrice
+                .toString())),
+        decimalPlaces);
+
+    listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+        total.toString();
+    if (itemCount == 0) {
+      listOfTmpOrder.removeAt(listOfTmpOrder.indexOf(tmpOrder));
+    }
   }
 
   Future<void> increaseCount(
@@ -1268,25 +1416,28 @@ class _MainViewState extends State<MainView> {
         return;
       }
     }
-    print('yyyyyyyyyyyyyyyyyyy');
-    setState(() {
-      int? itemCount =
-          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
+    if (deviceWidth! <= 600) {
+      _controllerLeftPart.setState!(() {});
+    } else {
+      setState(() {});
+    }
 
-      itemCount = itemCount! + 1;
+    int? itemCount =
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
 
-      listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+    itemCount = itemCount! + 1;
 
-      double total = roundDouble(
-          (itemCount *
-              double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-                  .itemPrice
-                  .toString())),
-          decimalPlaces);
+    listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
 
-      listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
-          total.toString();
-    });
+    double total = roundDouble(
+        (itemCount *
+            double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                .itemPrice
+                .toString())),
+        decimalPlaces);
+
+    listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+        total.toString();
   }
 
   void addToTmp(int index, BuildContext context, bool searching) {

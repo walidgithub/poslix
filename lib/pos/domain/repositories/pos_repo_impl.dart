@@ -24,6 +24,7 @@ import '../response/close_register_model.dart';
 import '../response/close_register_report_data_model.dart';
 import '../response/currency_code_model.dart';
 import '../response/customer_model.dart';
+import '../response/get_customer_model.dart';
 import '../response/logout_response.dart';
 import '../response/open_register_response.dart';
 import '../response/register_data_model.dart';
@@ -169,13 +170,15 @@ class POSRepositoryImpl extends POSRepository {
   }
 
   @override
-  Future<CustomerResponse> getCustomer(int customerId, String token) async {
+  Future<GetCustomerResponse> getCustomer(int customerId, String token) async {
     var res;
     try {
       return await _dio.get('api/customers/$customerId/show',
           headers: {'Authorization': 'Bearer $token'}).then((response) {
-        res = response.data['result'];
-        return CustomerResponse.fromJson(res);
+        print('hereeeeeee');
+            print(response.statusCode);
+        res = response.data['result']['profile'];
+        return GetCustomerResponse.fromJson(res);
       });
     } catch (e) {
       throw e.toString();

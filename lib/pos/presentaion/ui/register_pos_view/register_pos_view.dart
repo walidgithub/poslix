@@ -259,8 +259,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                   children: [
                     Row(
                       children: [
-                        deviceWidth! <= 800 ? Container() : leftPart(context),
-                        deviceWidth! <= 800 ? Container() : SizedBox(
+                        deviceWidth! <= 600 ? Container() : leftPart(context),
+                        deviceWidth! <= 600 ? Container() : SizedBox(
                           width: AppConstants.smallDistance,
                         ),
                         rightPart(context),
@@ -311,8 +311,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: SizedBox(
-        width: deviceWidth! <= 800 ? 300.w  : 150.w,
-        height: deviceWidth! <= 800 ? 70.h : 80.h,
+        width: deviceWidth! <= 600 ? 300.w  : 150.w,
+        height: deviceWidth! <= 600 ? 70.h : 80.h,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -328,7 +328,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                         AppSize.s20.sp,
                         color: ColorManager
                             .primary,
-                        fontWeight: deviceWidth! <= 800 ? FontWeight.w500 : FontWeight
+                        fontWeight: deviceWidth! <= 600 ? FontWeight.w500 : FontWeight
                             .bold))),
             SizedBox(
               height:
@@ -402,7 +402,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                     borderRadius: AppSize.s5,
                     borderColor:
                     ColorManager.primary,
-                    borderWidth: 0.6.w)),
+                    borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w)),
           ],
         ),
       ),
@@ -413,8 +413,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: SizedBox(
-        width: deviceWidth! <= 800 ? 300.w  : 150.w,
-        height: deviceWidth! <= 800 ? 70.h : 80.h,
+        width: deviceWidth! <= 600 ? 300.w  : 150.w,
+        height: deviceWidth! <= 600 ? 70.h : 80.h,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -430,7 +430,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                         AppSize.s20.sp,
                         color: ColorManager
                             .primary,
-                        fontWeight: deviceWidth! <= 800 ? FontWeight.w500 : FontWeight
+                        fontWeight: deviceWidth! <= 600 ? FontWeight.w500 : FontWeight
                             .bold))),
             SizedBox(
               height:
@@ -505,7 +505,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                     borderRadius: AppSize.s5,
                     borderColor:
                     ColorManager.primary,
-                    borderWidth: 0.6.w)),
+                    borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w)),
           ],
         ),
       ),
@@ -539,8 +539,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                           AppSize.s14
                               .sp),
                     )),
-                height: deviceWidth! <= 800 ? 40.w : 30.h,
-                width: deviceWidth! <= 800 ? 150.h : 50.w,
+                height: deviceWidth! <= 600 ? 50.w : 30.h,
+                width: deviceWidth! <= 600 ? 170.h : 50.w,
                 color: ColorManager
                     .primary,
                 borderRadius:

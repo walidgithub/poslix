@@ -59,6 +59,7 @@ class _CustomDialogState extends State<CustomDialog> {
 
   bool _isExpanded = false;
 
+  double? deviceWidth;
   @override
   void initState() {
     startAnimation();
@@ -67,6 +68,7 @@ class _CustomDialogState extends State<CustomDialog> {
 
   @override
   Widget build(BuildContext context) {
+    deviceWidth = getDeviceWidth(context);
     return WillPopScope(
       onWillPop: () async => false,
       child: Padding(
@@ -80,7 +82,7 @@ class _CustomDialogState extends State<CustomDialog> {
               right: _isExpanded ? 10.w : 0.w,
               child: Container(
                 height: AppSize.s50,
-                width: 130.w,
+                width: deviceWidth! <= 600 ? 250.w : 130.w,
                 decoration: BoxDecoration(
                     color: widget.messageColor,
                     border: Border.all(

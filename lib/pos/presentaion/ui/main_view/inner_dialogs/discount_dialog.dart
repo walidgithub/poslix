@@ -44,6 +44,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
   TextEditingController numberEditingController = TextEditingController();
 
   var selectedDiscountType;
+  double? deviceWidth;
 
   @override
   void dispose() {
@@ -53,6 +54,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
 
   @override
   Widget build(BuildContext context) {
+    deviceWidth = getDeviceWidth(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: bodyContent(context),
@@ -62,8 +64,8 @@ class _DiscountDialogState extends State<DiscountDialog> {
   Widget bodyContent(BuildContext context) {
     return Center(
       child: SizedBox(
-        width: 200.w,
-        height: 200.h,
+        width: deviceWidth! <= 600 ? 350.w : 200.w,
+        height: deviceWidth! <= 600 ? 180.h : 200.h,
         child: Container(
           decoration: BoxDecoration(
               color: ColorManager.white,
@@ -111,7 +113,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                                 hint: Text(
                                   AppStrings.fixed.tr(),
                                   style: TextStyle(
-                                      fontSize: AppSize.s18.sp,
+                                      fontSize: AppSize.s14.sp,
                                       color: ColorManager.primary),
                                 ),
                                 underline: Container(),
@@ -121,7 +123,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                                     value: value,
                                     child: Text(
                                       value,
-                                      style: TextStyle(fontSize: AppSize.s18.sp),
+                                      style: TextStyle(fontSize: AppSize.s14.sp),
                                     ),
                                   );
                                 }).toList(),
@@ -135,18 +137,18 @@ class _DiscountDialogState extends State<DiscountDialog> {
                                 icon: Icon(
                                   Icons.arrow_drop_down,
                                   color: ColorManager.primary,
-                                  size: AppSize.s20.sp,
+                                  size: AppSize.s14.sp,
                                 ),
                                 style: TextStyle(
                                     color: ColorManager.primary,
-                                    fontSize: AppSize.s20.sp),
+                                    fontSize: AppSize.s18.sp),
                               ),
                               width: 10.w,
                               height: 45.h,
                               padding: const EdgeInsets.fromLTRB(AppPadding.p5, AppPadding.p2, AppPadding.p5, AppPadding.p2),
                               borderRadius: AppSize.s5,
                               borderColor: ColorManager.primary,
-                              borderWidth: 0.6.w
+                              borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w
                           ),
                         ),
                       ),
@@ -170,7 +172,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                     ],
                   ),
                   SizedBox(
-                    height: AppConstants.smallDistance,
+                    height: deviceWidth! <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -198,8 +200,8 @@ class _DiscountDialogState extends State<DiscountDialog> {
                                 child: textS14WhiteComponent(context,
                                   AppStrings.update.tr(),
                                 )),
-                            height: 30.h,
-                            width: 50.w,
+                            height: deviceWidth! <= 600 ? 40.h : 30.h,
+                            width: deviceWidth! <= 600 ? 100.w : 50.w,
                             color: ColorManager.primary,
                             borderRadius: AppSize.s5,
                             borderColor: ColorManager.primary,

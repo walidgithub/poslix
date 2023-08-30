@@ -102,7 +102,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     deviceWidth = getDeviceWidth(context);
-    if (deviceWidth! <= 800) {
+    if (deviceWidth! <= 600) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,

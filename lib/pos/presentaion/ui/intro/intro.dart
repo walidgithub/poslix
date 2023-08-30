@@ -56,8 +56,8 @@ class _IntroViewState extends State<IntroView> {
   Widget bodyContent(BuildContext context) {
     return Center(
       child: SizedBox(
-        height: deviceWidth! <= 800 ? 300.h : MediaQuery.of(context).size.height,
-          width: deviceWidth! <= 800 ? 500.h : MediaQuery.of(context).size.width,
+        height: deviceWidth! <= 600 ? 300.h : MediaQuery.of(context).size.height,
+          width: deviceWidth! <= 600 ? 500.h : MediaQuery.of(context).size.width,
           child: VideoPlayer(_videoPlayerController)),
     );
   }

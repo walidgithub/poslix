@@ -8,9 +8,12 @@ import '../../../shared/constant/constant_values_manager.dart';
 import '../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../shared/constant/strings_manager.dart';
 import '../../../shared/style/colors_manager.dart';
+import '../../../shared/utils/utils.dart';
 import 'container_component.dart';
 
+double? deviceWidth;
 Widget closeButton(BuildContext context) {
+  deviceWidth = getDeviceWidth(context);
   return Bounceable(
     duration: Duration(
         milliseconds: AppConstants
@@ -40,8 +43,8 @@ Widget closeButton(BuildContext context) {
             )
           ],
         ),
-        height: 30.h,
-        width: 50.w,
+        height: deviceWidth! <= 600 ? 40.h : 30.h,
+        width: deviceWidth! <= 600 ? 100.w : 50.w,
         color: ColorManager.white,
         borderColor: ColorManager.primary,
         borderWidth: 0.6.w,

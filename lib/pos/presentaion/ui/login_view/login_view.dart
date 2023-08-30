@@ -150,8 +150,8 @@ class _LoginViewState extends State<LoginView> {
                         children: [
                           Row(
                             children: [
-                              deviceWidth! <= 800 ? Container() : leftPart(context),
-                              deviceWidth! <= 800 ? Container() : SizedBox(
+                              deviceWidth! <= 600 ? Container() : leftPart(context),
+                              deviceWidth! <= 600 ? Container() : SizedBox(
                                 width: AppConstants.smallDistance,
                               ),
                               rightPart(context),
@@ -181,8 +181,8 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 Image.asset(
                   ImageAssets.logo,
-                  width: 60.w,
-                  height: 60.h,
+                  width: deviceWidth! <= 600 ? 150.w : 60.w,
+                  height: deviceWidth! <= 600 ? 150.h : 60.h,
                 ),
                 SizedBox(
                   height: AppConstants.bigHeightBetweenElements,

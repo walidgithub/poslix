@@ -55,8 +55,8 @@ class _ShippingDialogState extends State<ShippingDialog> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: SizedBox(
-          width: 200.w,
-          height: 200.h,
+          width: deviceWidth! <= 600 ? 350.w : 200.w,
+          height: deviceWidth! <= 600 ? 180.h : 200.h,
           child: Container(
             decoration: BoxDecoration(
                 color: ColorManager.white,
@@ -108,7 +108,7 @@ class _ShippingDialogState extends State<ShippingDialog> {
                       ],
                     ),
                     SizedBox(
-                      height: AppConstants.smallDistance,
+                      height: deviceWidth! <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -123,8 +123,8 @@ class _ShippingDialogState extends State<ShippingDialog> {
                             ShippingDialog.hide(context);
                           },
                           child: Container(
-                            height: 30.h,
-                            width: 50.w,
+                            height: deviceWidth! <= 600 ? 40.h : 30.h,
+                            width: deviceWidth! <= 600 ? 100.w : 50.w,
                             decoration: BoxDecoration(
                                 color: ColorManager.primary,
                                 border: Border.all(

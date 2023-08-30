@@ -29,14 +29,16 @@ class LoadingDialog extends StatefulWidget {
 }
 
 class _LoadingDialogState extends State<LoadingDialog> {
+  double? deviceWidth;
   @override
   Widget build(BuildContext context) {
+    deviceWidth = getDeviceWidth(context);
     return WillPopScope(
       onWillPop: () async => false,
       child: Center(
         child: Container(
-          height: 100.h,
-          width: 100.w,
+          height: deviceWidth! <= 600 ? 100.h : 150.h,
+          width: deviceWidth! <= 600 ? 100.w : 150.w,
           decoration: BoxDecoration(
             color: Colors.transparent,
             shape: BoxShape.rectangle,
@@ -47,9 +49,14 @@ class _LoadingDialogState extends State<LoadingDialog> {
             children: [
               isApple() ? CupertinoActivityIndicator(
                 color: ColorManager.primary,
-                radius: 15.w,
-              ) : CircularProgressIndicator(
-                color: ColorManager.primary,
+                radius: deviceWidth! <= 600 ? 10.w : 15.w,
+              ) : SizedBox(
+                height: deviceWidth! <= 600 ? 60.h : 60.h,
+                width: deviceWidth! <= 600 ? 60.w : 25.w,
+                child: CircularProgressIndicator(
+
+                  color: ColorManager.primary,
+                ),
               ),
             ],
           ),

@@ -19,7 +19,7 @@ import '../../../popup_dialogs/custom_dialog.dart';
 import '../../main_view_cubit/main_view_state.dart';
 import 'widgets/custom_text_form_field.dart';
 
-class CustomerDialog extends StatefulWidget {
+class CustomerMobileDialog extends StatefulWidget {
   String editType;
   var customerData;
   int locationId;
@@ -27,21 +27,21 @@ class CustomerDialog extends StatefulWidget {
   Function done;
 
   static void show(BuildContext context, String editType, var customerData,
-          int customerId, int locationId, Function done) =>
-  isApple() ? showCupertinoDialog<void>(context: context,
-      useRootNavigator: false,
-      barrierDismissible: false,
-      builder: (_) => CustomerDialog(
-          editType: editType,
-          customerData: customerData,
-          customerId: customerId,
-          locationId: locationId,
-          done: done)).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
+      int customerId, int locationId, Function done) =>
+      isApple() ? showCupertinoDialog<void>(context: context,
+          useRootNavigator: false,
+          barrierDismissible: false,
+          builder: (_) => CustomerMobileDialog(
+              editType: editType,
+              customerData: customerData,
+              customerId: customerId,
+              locationId: locationId,
+              done: done)).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
       showDialog<void>(
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,
-        builder: (_) => CustomerDialog(
+        builder: (_) => CustomerMobileDialog(
             editType: editType,
             customerData: customerData,
             customerId: customerId,
@@ -51,38 +51,40 @@ class CustomerDialog extends StatefulWidget {
 
   static void hide(BuildContext context) => Navigator.of(context).pop();
 
-  CustomerDialog(
+  CustomerMobileDialog(
       {required this.editType,
-      required this.customerData,
-      required this.customerId,
-      required this.locationId,
-      required this.done,
-      super.key});
+        required this.customerData,
+        required this.customerId,
+        required this.locationId,
+        required this.done,
+        super.key});
 
   @override
-  State<CustomerDialog> createState() => _CustomerDialogState();
+  State<CustomerMobileDialog> createState() => _CustomerDialogState();
 }
 
-class _CustomerDialogState extends State<CustomerDialog> {
+class _CustomerDialogState extends State<CustomerMobileDialog> {
 
   final TextEditingController _firstNameEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _lastNameEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _mobileEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _addressOneEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _addressTwoEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _cityEditingController = TextEditingController();
   final TextEditingController _stateEditingController = TextEditingController();
   final TextEditingController _countryEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _zipCodeEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _shippingAddressEditingController =
-      TextEditingController();
+  TextEditingController();
+
+  double? deviceWidth;
 
   final FocusNode _fNameFN = FocusNode();
   final FocusNode _lNameFN = FocusNode();
@@ -114,6 +116,8 @@ class _CustomerDialogState extends State<CustomerDialog> {
       _zipCodeEditingController.text = widget.customerData.zipCode;
       _shippingAddressEditingController.text =
           widget.customerData.shippingAddress;
+
+      deviceWidth = getDeviceWidth(context);
     }
     super.initState();
   }
@@ -153,7 +157,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
 
             widget.done('done');
 
-            CustomerDialog.hide(context);
+            CustomerMobileDialog.hide(context);
           } else if (state is CustomerUpdatedSucceed) {
             CustomDialog.show(
                 context,
@@ -168,7 +172,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
 
             widget.done('done');
 
-            CustomerDialog.hide(context);
+            CustomerMobileDialog.hide(context);
           } else if (state is CustomerUpdateError) {
             CustomDialog.show(
                 context,
@@ -191,44 +195,53 @@ class _CustomerDialogState extends State<CustomerDialog> {
           return Scaffold(
             backgroundColor: Colors.transparent,
             body: Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  width: moreInfo! ? 300.w : 250.w,
-                  height: moreInfo! ? 420.h : 190.h,
-                  decoration: BoxDecoration(
-                      color: ColorManager.white,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(AppSize.s5),
-                      boxShadow: [BoxShadow(color: ColorManager.badge)]),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Center(
+              child: Container(
+                width: 350.w,
+                height: moreInfo! ? 600.h : 310.h,
+                decoration: BoxDecoration(
+                    color: ColorManager.white,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(AppSize.s5),
+                    boxShadow: [BoxShadow(color: ColorManager.badge)]),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                       child: Form(
                         key: _fbKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child:
+                        Column(
                           children: [
-                            Align(
-                              alignment: AlignmentDirectional.topStart,
-                              child: Text(
-                                widget.editType == 'Add'
-                                    ? AppStrings.addCustomer.tr()
-                                    : AppStrings.editCustomer.tr(),
-                                style: TextStyle(
-                                    color: ColorManager.primary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: AppSize.s18.sp),
-                              ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Align(
+                                  alignment: AlignmentDirectional.topStart,
+                                  child: Text(
+                                    widget.editType == 'Add'
+                                        ? AppStrings.addCustomer.tr()
+                                        : AppStrings.editCustomer.tr(),
+                                    style: TextStyle(
+                                        color: ColorManager.primary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: AppSize.s18.sp),
+                                  ),
+                                ),
+                                requiredFields(context),
+                                SizedBox(
+                                  height: AppConstants.smallWidthBetweenElements,
+                                ),
+                                moreAndLessInfo(),
+                                SizedBox(
+                                  height: AppConstants.smallWidthBetweenElements,
+                                ),
+                                moreInfo! ? optionalFields(context) : Container()
+                              ],
                             ),
                             SizedBox(
-                              height: AppConstants.smallerDistance,
+                              height: AppConstants.smallWidthBetweenElements,
                             ),
-                            requiredFields(context),
-                            SizedBox(
-                              height: AppConstants.smallerDistance,
-                            ),
-                            moreAndLessInfo(),
-                            moreInfo! ? optionalFields(context) : Container(),
                             buttons(context)
                           ],
                         ),
@@ -245,32 +258,29 @@ class _CustomerDialogState extends State<CustomerDialog> {
   }
 
   Widget requiredFields(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-            flex: 1,
-            child: customTextFormField(context, _fNameFN, _firstNameEditingController,
-                AppStrings.first_name.tr(), AppStrings.first_name.tr(), TextInputType.text,
-                nextFN: _lNameFN,
-                validateText: AppStrings.firstNameFieldIsRequired.tr())),
         SizedBox(
-          width: AppConstants.smallDistance,
+          height: AppConstants.smallWidthBetweenElements,
         ),
-        Expanded(
-            flex: 1,
-            child: customTextFormField(context, _lNameFN, _lastNameEditingController,
-                AppStrings.lastName.tr(), AppStrings.lastName.tr(), TextInputType.text,
-                nextFN: _mobileFN,
-                validateText: AppStrings.lastNameFieldIsRequired.tr())),
+        customTextFormField(context, _fNameFN, _firstNameEditingController,
+            AppStrings.first_name.tr(), AppStrings.first_name.tr(), TextInputType.text,
+            nextFN: _lNameFN,
+            validateText: AppStrings.firstNameFieldIsRequired.tr()),
         SizedBox(
-          width: AppConstants.smallDistance,
+          height: AppConstants.smallWidthBetweenElements,
         ),
-        Expanded(
-            flex: 1,
-            child: customTextFormField(context, _mobileFN, _mobileEditingController,
-                AppStrings.mobile.tr(), AppStrings.mobile.tr(), TextInputType.number,
-                nextFN: _addressOneFN,
-                validateText: AppStrings.mobileFieldIsRequired.tr())),
+        customTextFormField(context, _lNameFN, _lastNameEditingController,
+            AppStrings.lastName.tr(), AppStrings.lastName.tr(), TextInputType.text,
+            nextFN: _mobileFN,
+            validateText: AppStrings.lastNameFieldIsRequired.tr()),
+        SizedBox(
+          height: AppConstants.smallWidthBetweenElements,
+        ),
+        customTextFormField(context, _mobileFN, _mobileEditingController,
+            AppStrings.mobile.tr(), AppStrings.mobile.tr(), TextInputType.number,
+            nextFN: _addressOneFN,
+            validateText: AppStrings.mobileFieldIsRequired.tr()),
       ],
     );
   }
@@ -294,12 +304,12 @@ class _CustomerDialogState extends State<CustomerDialog> {
               children: [
                 Center(
                     child: Text(
-                  moreInfo!
-                      ? AppStrings.lessInformation.tr()
-                      : AppStrings.moreInformation.tr(),
-                  style: TextStyle(
-                      color: ColorManager.white, fontSize: AppSize.s14.sp),
-                )),
+                      moreInfo!
+                          ? AppStrings.lessInformation.tr()
+                          : AppStrings.moreInformation.tr(),
+                      style: TextStyle(
+                          color: ColorManager.white, fontSize: AppSize.s14.sp),
+                    )),
                 Icon(
                   moreInfo! ? Icons.arrow_drop_up : Icons.arrow_drop_down,
                   size: AppSize.s20.sp,
@@ -307,8 +317,8 @@ class _CustomerDialogState extends State<CustomerDialog> {
                 )
               ],
             ),
-            height: 30.h,
-            width: 60.w,
+            height: 40.h,
+            width: 150.w,
             padding: const EdgeInsets.all(AppPadding.p5),
             color: ColorManager.primary,
             borderRadius: AppSize.s5,
@@ -321,85 +331,64 @@ class _CustomerDialogState extends State<CustomerDialog> {
   Widget optionalFields(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: AppConstants.smallDistance,
-        ),
-        Row(
+        Column(
           children: [
+            customTextFormField(context,
+                _addressOneFN,
+                _addressOneEditingController,
+                AppStrings.addressLine1.tr(),
+                AppStrings.addressLine1.tr(), TextInputType.text,
+                nextFN: _addressTwoFN),
             SizedBox(
-              height: AppConstants.smallDistance,
+              height: AppConstants.smallWidthBetweenElements,
             ),
-            Expanded(
-                flex: 1,
-                child: customTextFormField(context,
-                    _addressOneFN,
-                    _addressOneEditingController,
-                    AppStrings.addressLine1.tr(),
-                    AppStrings.addressLine1.tr(), TextInputType.text,
-                    nextFN: _addressTwoFN)),
-            SizedBox(
-              width: AppConstants.smallDistance,
-            ),
-            Expanded(
-                flex: 1,
-                child: customTextFormField(context,
-                    _addressTwoFN,
-                    _addressTwoEditingController,
-                    AppStrings.addressLine2.tr(),
-                    AppStrings.addressLine2.tr(), TextInputType.text,
-                    nextFN: _cityFN))
+            customTextFormField(context,
+                _addressTwoFN,
+                _addressTwoEditingController,
+                AppStrings.addressLine2.tr(),
+                AppStrings.addressLine2.tr(), TextInputType.text,
+                nextFN: _cityFN)
           ],
         ),
         SizedBox(
-          height: AppConstants.smallDistance,
+          height: AppConstants.smallWidthBetweenElements,
         ),
-        Row(
+        Column(
           children: [
-            Expanded(
-                flex: 1,
-                child: customTextFormField(context, _cityFN, _cityEditingController,
-                    AppStrings.city.tr(), AppStrings.city.tr(), TextInputType.text,
-                    nextFN: _stateFN)),
+            customTextFormField(context, _cityFN, _cityEditingController,
+                AppStrings.city.tr(), AppStrings.city.tr(), TextInputType.text,
+                nextFN: _stateFN),
             SizedBox(
-              width: AppConstants.smallDistance,
+              height: AppConstants.smallWidthBetweenElements,
             ),
-            Expanded(
-                flex: 1,
-                child: customTextFormField(context, _stateFN, _stateEditingController,
-                    AppStrings.state.tr(), AppStrings.state.tr(), TextInputType.text,
-                    nextFN: _countryFN)),
+            customTextFormField(context, _stateFN, _stateEditingController,
+                AppStrings.state.tr(), AppStrings.state.tr(), TextInputType.text,
+                nextFN: _countryFN),
             SizedBox(
-              width: AppConstants.smallDistance,
+              height: AppConstants.smallWidthBetweenElements,
             ),
-            Expanded(
-                flex: 1,
-                child: customTextFormField(context,
-                    _countryFN,
-                    _countryEditingController,
-                    AppStrings.country.tr(),
-                    AppStrings.country.tr(), TextInputType.text,
-                    nextFN: _zipCodeFN)),
+            customTextFormField(context,
+                _countryFN,
+                _countryEditingController,
+                AppStrings.country.tr(),
+                AppStrings.country.tr(), TextInputType.text,
+                nextFN: _zipCodeFN),
             SizedBox(
-              width: AppConstants.smallDistance,
+              height: AppConstants.smallWidthBetweenElements,
             ),
-            Expanded(
-                flex: 1,
-                child: customTextFormField(context,
-                    _zipCodeFN,
-                    _zipCodeEditingController,
-                    AppStrings.zipCode.tr(),
-                    AppStrings.zipCode.tr(), TextInputType.number,
-                    nextFN: _shippingFN)),
+            customTextFormField(context,
+                _zipCodeFN,
+                _zipCodeEditingController,
+                AppStrings.zipCode.tr(),
+                AppStrings.zipCode.tr(), TextInputType.number,
+                nextFN: _shippingFN),
           ],
         ),
         Divider(
           color: ColorManager.primary,
         ),
         customTextFormField(context, _shippingFN, _shippingAddressEditingController,
-            AppStrings.shippingAddress.tr(), AppStrings.shippingAddress.tr(), TextInputType.text,),
-        SizedBox(
-          height: AppConstants.smallDistance,
-        ),
+          AppStrings.shippingAddress.tr(), AppStrings.shippingAddress.tr(), TextInputType.text,),
       ],
     );
   }
@@ -457,14 +446,14 @@ class _CustomerDialogState extends State<CustomerDialog> {
                 context,
                 Center(
                     child: Text(
-                  widget.editType == 'Add'
-                      ? AppStrings.addCustomer.tr()
-                      : AppStrings.editCustomer.tr(),
-                  style: TextStyle(
-                      color: ColorManager.white, fontSize: AppSize.s14.sp),
-                )),
-                height: 30.h,
-                width: 50.w,
+                      widget.editType == 'Add'
+                          ? AppStrings.addCustomer.tr()
+                          : AppStrings.editCustomer.tr(),
+                      style: TextStyle(
+                          color: ColorManager.white, fontSize: AppSize.s14.sp),
+                    )),
+                height: 40.h,
+                width: 150.w,
                 color: ColorManager.primary,
                 borderRadius: AppSize.s5,
                 borderColor: ColorManager.primary,

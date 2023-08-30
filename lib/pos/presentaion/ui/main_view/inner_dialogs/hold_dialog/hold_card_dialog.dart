@@ -27,7 +27,6 @@ Future holdOrdersDialog(
     BuildContext context, List<TmpOrderModel> listOfTmpOrders, double discount, String customerTel, String customerName, Function done) {
   TextEditingController holdNameEditingController = TextEditingController();
   DateTime today = DateTime.now();
-
   return isApple() ? showCupertinoDialog<void>(context: context, builder: (context) {
     return StatefulBuilder(
       builder: (context, setState) {
