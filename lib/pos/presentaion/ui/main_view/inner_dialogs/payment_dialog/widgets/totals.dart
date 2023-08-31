@@ -9,7 +9,7 @@ import '../../../../../../shared/style/colors_manager.dart';
 import '../../../../components/container_component.dart';
 import '../../../../components/text_component.dart';
 
-Widget totals(BuildContext context, double total,String changedTotal, double changeReturn, double balance, String currencyCode) {
+Widget totals(BuildContext context, double total,String changedTotal, double changeReturn, double balance, String currencyCode, double deviceWidth) {
   return containerComponent(
       context,
       Row(
@@ -75,7 +75,7 @@ Widget totals(BuildContext context, double total,String changedTotal, double cha
         ],
       ),
       height: 75.h,
-      width: 200.w,
+      width: deviceWidth <= 600 ? 375.w : 200.w,
       padding: const EdgeInsets.all(AppPadding.p10),
       color: ColorManager.primary,
       borderColor: ColorManager.primary,

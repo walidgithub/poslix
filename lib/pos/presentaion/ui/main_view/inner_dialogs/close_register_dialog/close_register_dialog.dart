@@ -25,29 +25,31 @@ import 'widgets/money_methods.dart';
 
 class CloseRegisterDialog extends StatefulWidget {
   int locationId;
-  static void show(BuildContext context, int locationId) =>
-     isApple() ? showCupertinoDialog<void>(
-         context: context,
-         useRootNavigator: false,
-         barrierDismissible: false,
-         builder: (_) {
-           return CloseRegisterDialog(
-             locationId: locationId,
-           );
-         }).then((_) => FocusScope.of(context).requestFocus(FocusNode()))
-         : showDialog<void>(
-        context: context,
-        useRootNavigator: false,
-        barrierDismissible: false,
-        builder: (_) => CloseRegisterDialog(
-          locationId: locationId,
-        ),
-      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
+  double deviceWidth;
+  static void show(BuildContext context, int locationId, double deviceWidth) => isApple()
+      ? showCupertinoDialog<void>(
+          context: context,
+          useRootNavigator: false,
+          barrierDismissible: false,
+          builder: (_) {
+            return CloseRegisterDialog(
+              locationId: locationId,
+              deviceWidth: deviceWidth,
+            );
+          }).then((_) => FocusScope.of(context).requestFocus(FocusNode()))
+      : showDialog<void>(
+          context: context,
+          useRootNavigator: false,
+          barrierDismissible: false,
+          builder: (_) => CloseRegisterDialog(
+            locationId: locationId,
+            deviceWidth: deviceWidth,
+          ),
+        ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
   static void hide(BuildContext context) => Navigator.of(context).pop();
 
-  CloseRegisterDialog(
-      {required this.locationId, super.key});
+  CloseRegisterDialog({required this.locationId, required this.deviceWidth, super.key});
 
   @override
   State<CloseRegisterDialog> createState() => _CloseRegisterDialogState();
@@ -86,17 +88,18 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
   }
 
   String calcTotal() {
-    return (cashInHand! + totalCash! + totalCheque! + totalBank! + totalCart!).toString();
+    return (cashInHand! + totalCash! + totalCheque! + totalBank! + totalCart!)
+        .toString();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<MainViewCubit>()
-        ..openCloseRegister(CloseRegisterReportRequest(today: true),
-            widget.locationId)
+        ..openCloseRegister(
+            CloseRegisterReportRequest(today: true), widget.locationId)
         ..getCurrency(widget.locationId)
-      ..getRegisterData(widget.locationId),
+        ..getRegisterData(widget.locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
@@ -105,14 +108,18 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
 
           if (state is CloseRegisterSucceed) {
           } else if (state is CloseRegisterError) {
-            CustomDialog.show(context,AppStrings.errorInCloseRegister.tr(),const Icon(Icons.close),ColorManager.white,AppConstants.durationOfSnackBar,ColorManager.delete);
+            CustomDialog.show(
+                context,
+                AppStrings.errorInCloseRegister.tr(),
+                const Icon(Icons.close),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.delete);
           }
 
           if (state is OpenCloseRegisterSucceed) {
             cashInHand = MainViewCubit.get(context).cashInHand;
-          } else if (state is OpenCloseRegisterError) {
-
-          }
+          } else if (state is OpenCloseRegisterError) {}
 
           if (state is LoadedRegisterData) {
             setState(() {
@@ -121,9 +128,7 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
               totalBank = MainViewCubit.get(context).totalBank;
               totalCart = MainViewCubit.get(context).totalCart;
             });
-          } else if (state is LoadingErrorRegisterData) {
-
-          }
+          } else if (state is LoadingErrorRegisterData) {}
 
           if (state is LoadedCurrency) {
             currencyCode = state.currencyCode;
@@ -135,7 +140,7 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
               body: Center(
                   child: SingleChildScrollView(
                       child: Container(
-                          width: 300.w,
+                          width: widget.deviceWidth <= 600 ? 350.w : 300.w,
                           height: 520.h,
                           decoration: BoxDecoration(
                               color: ColorManager.white,
@@ -163,31 +168,57 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                       height:
                                           AppConstants.heightBetweenElements,
                                     ),
-
-                                    Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      moneyMethods(context, ImageAssets.moneyBillWave, AppStrings.cashInHand.tr(), cashInHand.toString(), currencyCode),
-                                      SizedBox(
-                                        width: AppConstants.smallDistance,
-                                      ),
-                                      moneyMethods(context, ImageAssets.moneyBillTransfer, AppStrings.cartPayment.tr(), totalCart.toString(), currencyCode),
-                                      SizedBox(
-                                        width: AppConstants.smallDistance,
-                                      ),
-                                      moneyMethods(context, ImageAssets.building, AppStrings.bankPayment.tr(), totalBank.toString(), currencyCode),
-                                      SizedBox(
-                                        width: AppConstants.smallDistance,
-                                      ),
-                                      moneyMethods(context, ImageAssets.creditCard, AppStrings.cashPayment.tr(), totalCash.toString(), currencyCode),
-                                      SizedBox(
-                                        width: AppConstants.smallDistance,
-                                      ),
-                                      moneyMethods(context, ImageAssets.moneyCheck, AppStrings.chequePayment.tr(), totalCheque.toString(), currencyCode),
-                                    ]
-                                ),
-
+                                    SingleChildScrollView(
+                                      physics: ScrollPhysics(),
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            moneyMethods(
+                                                context,
+                                                ImageAssets.moneyBillWave,
+                                                AppStrings.cashInHand.tr(),
+                                                cashInHand.toString(),
+                                                currencyCode,widget.deviceWidth),
+                                            SizedBox(
+                                              width: AppConstants.smallDistance,
+                                            ),
+                                            moneyMethods(
+                                                context,
+                                                ImageAssets.moneyBillTransfer,
+                                                AppStrings.cartPayment.tr(),
+                                                totalCart.toString(),
+                                                currencyCode,widget.deviceWidth),
+                                            SizedBox(
+                                              width: AppConstants.smallDistance,
+                                            ),
+                                            moneyMethods(
+                                                context,
+                                                ImageAssets.building,
+                                                AppStrings.bankPayment.tr(),
+                                                totalBank.toString(),
+                                                currencyCode,widget.deviceWidth),
+                                            SizedBox(
+                                              width: AppConstants.smallDistance,
+                                            ),
+                                            moneyMethods(
+                                                context,
+                                                ImageAssets.creditCard,
+                                                AppStrings.cashPayment.tr(),
+                                                totalCash.toString(),
+                                                currencyCode,widget.deviceWidth),
+                                            SizedBox(
+                                              width: AppConstants.smallDistance,
+                                            ),
+                                            moneyMethods(
+                                                context,
+                                                ImageAssets.moneyCheck,
+                                                AppStrings.chequePayment.tr(),
+                                                totalCheque.toString(),
+                                                currencyCode,widget.deviceWidth),
+                                          ]),
+                                    ),
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),
@@ -257,11 +288,9 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
 
   Widget buttons(BuildContext context) {
     return Align(
-      alignment:
-      AlignmentDirectional.bottomStart,
+      alignment: AlignmentDirectional.bottomStart,
       child: Row(
-        mainAxisAlignment:
-        MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           closeButton(context),
           SizedBox(
@@ -272,23 +301,20 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
             onTap: () async {
               await closeRegister(context);
             },
-            child:
-            containerComponent(
+            child: containerComponent(
                 context,
                 Center(
                     child: Text(
-                      AppStrings.closeRegister.tr(),
-                      style: TextStyle(
-                          color: ColorManager.white,
-                          fontSize: AppSize.s14.sp),
-                    )),
-                height: 30.h,
-                width: 50.w,
+                  AppStrings.closeRegister.tr(),
+                  style: TextStyle(
+                      color: ColorManager.white, fontSize: AppSize.s14.sp),
+                )),
+                height: deviceWidth! <= 600 ? 40.h : 30.h,
+                width: deviceWidth! <= 600 ? 150.w : 50.w,
                 color: ColorManager.primary,
                 borderColor: ColorManager.primary,
                 borderWidth: 0.6.w,
-                borderRadius: AppSize.s5
-            ),
+                borderRadius: AppSize.s5),
           )
         ],
       ),
@@ -298,30 +324,16 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
   Future<void> closeRegister(BuildContext context) async {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
-    CloseRegisterRequest
-    closeRegisterRequest =
-    CloseRegisterRequest(
-        note:
-        _notesEditingController
-            .text,
-        handCash: cashInHand!);
+    CloseRegisterRequest closeRegisterRequest = CloseRegisterRequest(
+        note: _notesEditingController.text, handCash: cashInHand!);
     await MainViewCubit.get(context)
-        .closeRegister(
-        closeRegisterRequest,
-        widget.locationId);
+        .closeRegister(closeRegisterRequest, widget.locationId);
 
-    _appPreferences
-        .removeDecimalPlaces(
-        PREFS_KEY_DECIMAL_PLACES);
-    _appPreferences.removeLocationId(
-        PREFS_KEY_LOCATION_ID);
-    _appPreferences.removeTaxValue(
-        PREFS_KEY_TAX_VALUE);
-    _appPreferences
-        .userClosedRegister();
+    _appPreferences.removeDecimalPlaces(PREFS_KEY_DECIMAL_PLACES);
+    _appPreferences.removeLocationId(PREFS_KEY_LOCATION_ID);
+    _appPreferences.removeTaxValue(PREFS_KEY_TAX_VALUE);
+    _appPreferences.userClosedRegister();
 
-    Navigator.of(context)
-        .pushReplacementNamed(
-        Routes.registerPosRoute);
+    Navigator.of(context).pushReplacementNamed(Routes.registerPosRoute);
   }
 }

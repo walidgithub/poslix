@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poslix_app/pos/presentaion/ui/components/close_button.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/a4_printer/printable_data.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/ImagestorByte.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/printer.dart';
@@ -48,6 +49,7 @@ class PaymentDialog extends StatefulWidget {
   String taxType;
   double taxAmount;
   Function done;
+  double deviceWidth;
   static void show(
     BuildContext context,
     String currencyCode,
@@ -60,6 +62,7 @@ class PaymentDialog extends StatefulWidget {
     String taxType,
     double taxAmount,
     Function done,
+      double deviceWidth
   ) =>
       isApple()
           ? showCupertinoDialog<void>(
@@ -77,6 +80,7 @@ class PaymentDialog extends StatefulWidget {
                         taxType: taxType,
                         taxAmount: taxAmount,
                         done: done,
+                    deviceWidth: deviceWidth,
                       ))
               .then((_) => FocusScope.of(context).requestFocus(FocusNode()))
           : showDialog<void>(
@@ -94,6 +98,7 @@ class PaymentDialog extends StatefulWidget {
                 taxType: taxType,
                 taxAmount: taxAmount,
                 done: done,
+                deviceWidth: deviceWidth,
               ),
             ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
@@ -110,6 +115,7 @@ class PaymentDialog extends StatefulWidget {
       required this.taxType,
       required this.taxAmount,
       required this.done,
+      required this.deviceWidth,
       super.key});
 
   @override
@@ -313,7 +319,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.center,
                       child: SizedBox(
-                        width: 200.w,
+                        width: widget.deviceWidth <= 600 ? 375.w : 200.w,
                         height: sizedHeight,
                         child: SingleChildScrollView(
                           physics: const NeverScrollableScrollPhysics(),
@@ -341,11 +347,11 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: AppConstants.smallDistance,
+                                      height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                                     ),
                                     mainNotes(context, _notesEditingController),
                                     SizedBox(
-                                      height: AppConstants.smallDistance,
+                                      height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                                     ),
                                     mainPaymentMethod(
                                         context,
@@ -353,7 +359,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         selectMainPaymentMethod,
                                         _amountEditingController,
                                         _notesInLineEditingController,
-                                        selectedPaymentType),
+                                        selectedPaymentType, widget.deviceWidth),
                                     newPaymentMethods(
                                         context,
                                         deletePaymentMethod,
@@ -364,13 +370,13 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         widget.total,
                                         _paymentNotesControllers,
                                         selectPaymentType,
-                                        selectedNewPaymentType),
+                                        selectedNewPaymentType, widget.deviceWidth),
                                     SizedBox(
-                                      height: AppConstants.smallDistance,
+                                      height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                                     ),
-                                    addNewPaymentRow(context, addPaymentRow),
+                                    addNewPaymentRow(context, addPaymentRow, widget.deviceWidth),
                                     SizedBox(
-                                      height: AppConstants.smallerDistance,
+                                      height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                                     ),
                                     totals(
                                         context,
@@ -378,14 +384,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         changedTotal,
                                         changeReturn!,
                                         balance!,
-                                        widget.currencyCode),
+                                        widget.currencyCode, widget.deviceWidth),
                                     SizedBox(
                                       height: AppConstants.smallerDistance,
                                     ),
                                     const Divider(
                                       thickness: AppSize.s1,
                                     ),
-                                    checkOutButtons(context, checkOut),
+                                    checkOutButtons(context, checkOut, widget.deviceWidth),
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),

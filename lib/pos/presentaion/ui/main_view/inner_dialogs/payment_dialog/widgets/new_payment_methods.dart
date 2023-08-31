@@ -10,7 +10,7 @@ import '../../../../../../shared/style/colors_manager.dart';
 import '../../../../components/container_component.dart';
 import '../../../../components/text_component.dart';
 
-Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, bool newPayment, double innerHeight, List paymentMethods, List<TextEditingController> paymentControllers, double total, List<TextEditingController> paymentNotesControllers, Function selectPaymentType, var selectedNewPaymentType) {
+Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, bool newPayment, double innerHeight, List paymentMethods, List<TextEditingController> paymentControllers, double total, List<TextEditingController> paymentNotesControllers, Function selectPaymentType, var selectedNewPaymentType, double deviceWidth) {
   return newPayment
       ? SingleChildScrollView(
     physics:
@@ -22,7 +22,7 @@ Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, boo
               .smallerDistance,
         ),
         SizedBox(
-          width: 200.w,
+          width: deviceWidth <= 600 ? 375.w : 200.w,
           height: innerHeight,
           child: ListView.builder(
             itemCount:
@@ -134,7 +134,7 @@ Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, boo
                             ColorManager
                                 .primary,
                             borderWidth:
-                            0.5
+                            deviceWidth <= 600 ? 1.5.w : 0.5
                                 .w,
                             borderRadius:
                             AppSize.s5),

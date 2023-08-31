@@ -60,10 +60,10 @@ class CustomerMobileDialog extends StatefulWidget {
         super.key});
 
   @override
-  State<CustomerMobileDialog> createState() => _CustomerDialogState();
+  State<CustomerMobileDialog> createState() => _CustomerMobileDialogState();
 }
 
-class _CustomerDialogState extends State<CustomerMobileDialog> {
+class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
 
   final TextEditingController _firstNameEditingController =
   TextEditingController();
@@ -83,8 +83,6 @@ class _CustomerDialogState extends State<CustomerMobileDialog> {
   TextEditingController();
   final TextEditingController _shippingAddressEditingController =
   TextEditingController();
-
-  double? deviceWidth;
 
   final FocusNode _fNameFN = FocusNode();
   final FocusNode _lNameFN = FocusNode();
@@ -116,8 +114,6 @@ class _CustomerDialogState extends State<CustomerMobileDialog> {
       _zipCodeEditingController.text = widget.customerData.zipCode;
       _shippingAddressEditingController.text =
           widget.customerData.shippingAddress;
-
-      deviceWidth = getDeviceWidth(context);
     }
     super.initState();
   }
@@ -144,20 +140,7 @@ class _CustomerDialogState extends State<CustomerMobileDialog> {
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is CustomerAddedSucceed) {
-            CustomDialog.show(
-                context,
-                AppStrings.customerAddedSuccessfully.tr(),
-                const Icon(Icons.check),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.success);
-
-            await Future.delayed(
-                Duration(milliseconds: AppConstants.durationOfSnackBar));
-
             widget.done('done');
-
-            CustomerMobileDialog.hide(context);
           } else if (state is CustomerUpdatedSucceed) {
             CustomDialog.show(
                 context,

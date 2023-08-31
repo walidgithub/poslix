@@ -9,7 +9,7 @@ import '../../../../../../shared/style/colors_manager.dart';
 import '../../../../components/container_component.dart';
 import '../../../../components/text_component.dart';
 
-Widget mainPaymentMethod(BuildContext context, double total, Function selectMainPaymentMethod, TextEditingController amountEditingController, TextEditingController _notesInLineEditingController, String selectedPaymentType) {
+Widget mainPaymentMethod(BuildContext context, double total, Function selectMainPaymentMethod, TextEditingController amountEditingController, TextEditingController _notesInLineEditingController, String selectedPaymentType, double deviceWidth) {
   return Row(
     children: [
       Expanded(
@@ -84,7 +84,7 @@ Widget mainPaymentMethod(BuildContext context, double total, Function selectMain
             height: 47.h,
             padding: const EdgeInsets.fromLTRB(AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
             borderColor: ColorManager.primary,
-            borderWidth: 0.5.w,
+            borderWidth: deviceWidth <= 600 ? 1.5.w : 0.5.w,
             borderRadius: AppSize.s5),
       ),
       SizedBox(

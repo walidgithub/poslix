@@ -321,7 +321,7 @@ class _MainViewState extends State<MainView> {
   Widget register() {
     return FloatingActionButton(
       onPressed: () {
-        CloseRegisterDialog.show(context, locationId);
+        CloseRegisterDialog.show(context, locationId, deviceWidth!);
       },
       heroTag: AppStrings.registerPos.tr(),
       tooltip: AppStrings.registerPos.tr(),
@@ -567,7 +567,6 @@ class _MainViewState extends State<MainView> {
             showLoadingDialog(context);
           } else if (state is LoadedCustomers) {
             LoadingDialog.hide(context);
-
             listOfCustomers = MainViewCubit.get(context).listOfCustomers;
             loadCustomers();
           } else if (state is LoadingErrorCustomers) {
@@ -747,22 +746,29 @@ class _MainViewState extends State<MainView> {
                   child: Column(
                     children: [
                       // drop down
-                      Row(
-                        children: [
-                          customerDropDown(context),
-                          SizedBox(
-                            width: AppConstants.smallerDistance,
-                          ),
-                          addAndEditCustomer(context, getCustomer, addCustomer)
-                        ],
-                      ),
+                      deviceWidth! <= 600
+                          ? Container()
+                          : Row(
+                              children: [
+                                customerDropDown(context),
+                                SizedBox(
+                                  width: AppConstants.smallerDistance,
+                                ),
+                                addAndEditCustomer(
+                                    context, getCustomer, addCustomer)
+                              ],
+                            ),
 
-                      SizedBox(
-                        height: AppConstants.smallDistance,
-                      ),
+                      deviceWidth! <= 600
+                          ? Container()
+                          : SizedBox(
+                              height: AppConstants.smallDistance,
+                            ),
 
-                      searchText(context, _searchEditingController, addToTmp,
-                          listOfAllProducts, searchList),
+                      deviceWidth! <= 600
+                          ? Container()
+                          : searchText(context, _searchEditingController,
+                              addToTmp, listOfAllProducts, searchList),
 
                       // tmp table of items
                       Expanded(
@@ -836,16 +842,13 @@ class _MainViewState extends State<MainView> {
                     ));
               }).toList(),
               onChanged: (selectedCustomer) {
-                if (deviceWidth! <= 600) {
-                  _controllerLeftPart.setState!(() {});
-                } else {
-                  setState(() {});
-                }
-                _selectedCustomer = selectedCustomer;
-                _selectedCustomerName =
-                    '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
-                _selectedCustomerId = selectedCustomer?.id;
-                _selectedCustomerTel = selectedCustomer?.mobile;
+                setState(() {
+                  _selectedCustomer = selectedCustomer;
+                  _selectedCustomerName =
+                      '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
+                  _selectedCustomerId = selectedCustomer?.id;
+                  _selectedCustomerTel = selectedCustomer?.mobile;
+                });
               },
               isExpanded: true,
               hint: Row(
@@ -885,18 +888,43 @@ class _MainViewState extends State<MainView> {
 
   void addCustomer(BuildContext context) {
     deviceWidth! <= 600
-        ? CustomerMobileDialog.show(context, 'Add', [], 0, locationId, (done) {
+        ? CustomerMobileDialog.show(context, 'Add', [], 0, locationId,
+            (done) async {
             if (done == 'done') {
+              CustomerMobileDialog.hide(context);
               setState(() {
+                listOfCustomers = [];
+                CustomerResponse? selectedCustomer2;
+                _selectedCustomer = selectedCustomer2;
                 MainViewCubit.get(context).getCustomers(locationId);
               });
+
+              CustomDialog.show(
+                  context,
+                  AppStrings.customerAddedSuccessfully.tr(),
+                  const Icon(Icons.check),
+                  ColorManager.white,
+                  AppConstants.durationOfSnackBar,
+                  ColorManager.success);
             }
           })
         : CustomerDialog.show(context, 'Add', [], 0, locationId, (done) {
             if (done == 'done') {
+              CustomerDialog.hide(context);
               setState(() {
+                listOfCustomers = [];
+                CustomerResponse? selectedCustomer2;
+                _selectedCustomer = selectedCustomer2;
                 MainViewCubit.get(context).getCustomers(locationId);
               });
+
+              CustomDialog.show(
+                  context,
+                  AppStrings.customerAddedSuccessfully.tr(),
+                  const Icon(Icons.check),
+                  ColorManager.white,
+                  AppConstants.durationOfSnackBar,
+                  ColorManager.success);
             }
           });
   }
@@ -1181,7 +1209,7 @@ class _MainViewState extends State<MainView> {
             MainViewCubit.get(context).getCategories(locationId);
           });
         }
-      });
+      }, deviceWidth!);
 
       discount = 0;
       estimatedTax = 0;
@@ -1494,7 +1522,13 @@ class _MainViewState extends State<MainView> {
             listToWork,
             _selectedCustomerTel!,
             _selectedCustomerName!,
-            discount);
+            discount,deviceWidth!,(done) {
+          if (done == 'done') {
+            setState(() {
+              getTotalAmount();
+            });
+          }
+        });
       });
     } else {
       ///////////////////////
@@ -1582,6 +1616,32 @@ class _MainViewState extends State<MainView> {
                 padding: const EdgeInsets.all(AppPadding.p10),
                 child: Column(
                   children: [
+                    deviceWidth! <= 600
+                        ? Row(
+                            children: [
+                              customerDropDown(context),
+                              SizedBox(
+                                width: AppConstants.smallerDistance,
+                              ),
+                              addAndEditCustomer(
+                                  context, getCustomer, addCustomer)
+                            ],
+                          )
+                        : Container(),
+                    deviceWidth! <= 600
+                        ? SizedBox(
+                            height: AppConstants.smallDistance,
+                          )
+                        : Container(),
+                    deviceWidth! <= 600
+                        ? searchText(context, _searchEditingController,
+                            addToTmp, listOfAllProducts, searchList)
+                        : Container(),
+                    deviceWidth! <= 600
+                        ? SizedBox(
+                            height: AppConstants.smallWidthBetweenElements,
+                          )
+                        : Container(),
                     Row(
                       children: [
                         category(context),

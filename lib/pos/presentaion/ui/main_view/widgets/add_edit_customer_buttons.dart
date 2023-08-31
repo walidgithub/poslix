@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 
 import '../../../../shared/constant/constant_values_manager.dart';
 import '../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../shared/style/colors_manager.dart';
+import '../../../di/di.dart';
 import '../../components/container_component.dart';
 
-Widget addAndEditCustomer(BuildContext context, Function getCustomer, Function addCustomer) {
+Widget addAndEditCustomer(BuildContext context, Function getCustomer,
+    Function addCustomer) {
   return Expanded(
       flex: 1,
       child: Column(

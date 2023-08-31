@@ -1,14 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poslix_app/pos/presentaion/ui/components/close_button.dart';
 
 import '../../../../domain/response/products_model.dart';
 import '../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../shared/constant/strings_manager.dart';
 import '../../../../shared/style/colors_manager.dart';
+import '../../../../shared/utils/utils.dart';
 import '../../components/container_component.dart';
 
+double? deviceWidth;
 Widget searchText(BuildContext context, TextEditingController searchEditingController, Function addToTmp, List<ProductsResponse> listOfAllProducts, List<String> searchList) {
+  deviceWidth = getDeviceWidth(context);
   return Autocomplete<String>(
     optionsBuilder:
         (TextEditingValue textEditingValue) {
@@ -83,7 +87,7 @@ Widget searchText(BuildContext context, TextEditingController searchEditingContr
               ))
                   .toList(),
             ),
-            width: 120.w,
+            width: deviceWidth !<= 600 ? 320.w : 120.w,
             height: 200.h,
             color: ColorManager.white,
             borderColor: ColorManager.secondary,

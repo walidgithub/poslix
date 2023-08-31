@@ -140,20 +140,9 @@ class _CustomerDialogState extends State<CustomerDialog> {
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is CustomerAddedSucceed) {
-            CustomDialog.show(
-                context,
-                AppStrings.customerAddedSuccessfully.tr(),
-                const Icon(Icons.check),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.success);
-
-            await Future.delayed(
-                Duration(milliseconds: AppConstants.durationOfSnackBar));
 
             widget.done('done');
 
-            CustomerDialog.hide(context);
           } else if (state is CustomerUpdatedSucceed) {
             CustomDialog.show(
                 context,

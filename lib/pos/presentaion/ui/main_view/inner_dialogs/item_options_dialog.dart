@@ -24,6 +24,8 @@ class ItemOptionsDialog extends StatefulWidget {
   String selectedCustomer;
   List itemOptions;
   double? discount;
+  double deviceWidth;
+  Function done;
 
   static void show(
           BuildContext context,
@@ -33,7 +35,10 @@ class ItemOptionsDialog extends StatefulWidget {
           var selectedListName,
           String selectedCustomerTel,
           String selectedCustomer,
-          double discount) =>
+          double discount,
+          double deviceWidth,
+          Function done,
+      ) =>
      isApple() ? showCupertinoDialog<void>(context: context, useRootNavigator: false,
          barrierDismissible: false, builder: (_) => ItemOptionsDialog(
          currencyCode: currencyCode,
@@ -42,7 +47,10 @@ class ItemOptionsDialog extends StatefulWidget {
          selectedCustomerTel: selectedCustomerTel,
          selectedListName: selectedListName,
          selectedCustomer: selectedCustomer,
-         discount: discount)).then((_) => FocusScope.of(context).requestFocus(FocusNode())) : showDialog<void>(
+         discount: discount,
+           deviceWidth: deviceWidth,
+           done: done,
+         )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) : showDialog<void>(
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,
@@ -53,7 +61,10 @@ class ItemOptionsDialog extends StatefulWidget {
             selectedCustomerTel: selectedCustomerTel,
             selectedListName: selectedListName,
             selectedCustomer: selectedCustomer,
-            discount: discount),
+            discount: discount,
+          deviceWidth: deviceWidth,
+          done: done,
+        ),
       ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
   static void hide(BuildContext context) => Navigator.of(context).pop();
@@ -66,6 +77,8 @@ class ItemOptionsDialog extends StatefulWidget {
       required this.selectedCustomerTel,
       required this.selectedCustomer,
       required this.discount,
+      required this.deviceWidth,
+      required this.done,
       super.key});
 
   @override
@@ -97,7 +110,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
             child: SingleChildScrollView(
                 child: Container(
                     height: 350.h,
-                    width: 170.w,
+                    width: widget.deviceWidth <= 600 ? 350.w : 170.w,
                     decoration: BoxDecoration(
                         color: ColorManager.white,
                         shape: BoxShape.rectangle,
@@ -152,10 +165,10 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
         child: Container(
       padding: const EdgeInsets.all(AppPadding.p20),
       child: GridView.count(
-          crossAxisCount: AppSize.s3,
+          crossAxisCount: widget.deviceWidth <= 600 ? 2 : 3,
           crossAxisSpacing: AppSize.s12,
           mainAxisSpacing: AppSize.s12,
-          childAspectRatio: 10 / 12,
+          childAspectRatio: widget.deviceWidth <= 600 ? 1 / 1.25 : 10 / 12,
           physics: const ScrollPhysics(),
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
@@ -184,7 +197,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
                           ],
                         ),
                         SizedBox(
-                          height: AppConstants.smallDistance,
+                          height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallerDistance,
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -203,7 +216,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
                           ],
                         ),
                         SizedBox(
-                          height: AppConstants.smallerDistance,
+                          height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallerDistance,
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -220,7 +233,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
                           ],
                         ),
                         SizedBox(
-                          height: AppConstants.smallerDistance,
+                          height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallerDistance,
                         ),
                         containerComponent(
                             context,
@@ -230,8 +243,8 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
                               size: AppSize.s15.sp,
                               color: ColorManager.white,
                             )),
-                            height: 30.h,
-                            width: 10.w,
+                            height: widget.deviceWidth <= 600 ? 30.h : 30.h,
+                            width: widget.deviceWidth <= 600 ? 30.w : 10.w,
                             padding: const EdgeInsets.all(AppPadding.p08),
                             margin:
                                 const EdgeInsets.only(bottom: AppPadding.p8),
@@ -322,6 +335,8 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
           productType: widget.selectedListName[widget.itemIndex].type
       ));
     });
+
+    widget.done('done');
 
     ItemOptionsDialog.hide(context);
   }

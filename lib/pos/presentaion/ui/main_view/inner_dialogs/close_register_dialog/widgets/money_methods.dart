@@ -7,7 +7,7 @@ import '../../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../../shared/style/colors_manager.dart';
 import '../../../../components/container_component.dart';
 
-Widget moneyMethods(BuildContext context, String image,String address,String value, String currencyCode) {
+Widget moneyMethods(BuildContext context, String image,String address,String value, String currencyCode, double deviceWidth) {
   return
     containerComponent(
         context,
@@ -43,7 +43,7 @@ Widget moneyMethods(BuildContext context, String image,String address,String val
                         .primary))
           ],
         ),
-        width: 50.w,
+        width: deviceWidth <= 600 ? 130.w : 50.w,
         height: 200.h,
         padding: const EdgeInsets.all(
             AppPadding.p10),

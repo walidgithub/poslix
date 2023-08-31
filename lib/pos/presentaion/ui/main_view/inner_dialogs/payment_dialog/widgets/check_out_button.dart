@@ -11,7 +11,7 @@ import '../../../../components/close_button.dart';
 import '../../../../components/container_component.dart';
 import '../../../../components/text_component.dart';
 
-Widget checkOutButtons(BuildContext context, Function checkOut) {
+Widget checkOutButtons(BuildContext context, Function checkOut, double deviceWidth) {
   return Align(
     alignment: AlignmentDirectional.bottomStart,
     child: Row(
@@ -36,8 +36,8 @@ Widget checkOutButtons(BuildContext context, Function checkOut) {
                     context,
                     AppStrings.completeOrder.tr(),
                   )),
-              height: 30.h,
-              width: 50.w,
+              height: deviceWidth <= 600 ? 40.h : 30.h,
+              width: deviceWidth <= 600 ? 150.w : 50.w,
               color: ColorManager.primary,
               borderColor: ColorManager.primary,
               borderWidth: 0.6.w,
