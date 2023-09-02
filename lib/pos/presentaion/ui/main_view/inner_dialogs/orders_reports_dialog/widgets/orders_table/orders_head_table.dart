@@ -7,7 +7,9 @@ Widget createOrdersDataTable(
     bool searching,
     List<DataColumn> createOrdersColumns,
     List<DataRow> createOrdersRows,
-    List<DataRow> createOrdersRowsForSearch) {
+    List<DataRow> createOrdersRowsForSearch,
+    double deviceWidth
+) {
   return Column(
     children: [
       DataTable(

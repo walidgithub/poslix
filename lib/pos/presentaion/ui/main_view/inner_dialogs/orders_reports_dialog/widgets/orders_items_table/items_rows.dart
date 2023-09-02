@@ -5,21 +5,21 @@ import '../../../../../../../domain/response/sales_report_items_model.dart';
 import '../../../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../../../shared/style/colors_manager.dart';
 
-List<DataRow> createOrderItemsRows(int decimalPlaces, List<SalesReportItemsResponse> listOfOrderItems) {
+List<DataRow> createOrderItemsRows(int decimalPlaces, List<SalesReportItemsResponse> listOfOrderItems, double deviceWidth) {
   return listOfOrderItems[0]
       .products
       .map((orderItem) => DataRow(cells: [
     DataCell(Text(orderItem.id.toString(),
         style: TextStyle(color: ColorManager.edit))),
     DataCell(SizedBox(
-      width: 40.w,
+      width: deviceWidth <= 600 ? 150.w : 40.w,
       child: Center(
           child: Text(orderItem.name,
               style: TextStyle(fontSize: AppSize.s14.sp),
               textAlign: TextAlign.center)),
     )),
     DataCell(SizedBox(
-      width: 25.w,
+      width: deviceWidth <= 600 ? 70.w : 25.w,
       child: Center(
           child: Text(
               orderItem.type == 'single'
@@ -29,7 +29,7 @@ List<DataRow> createOrderItemsRows(int decimalPlaces, List<SalesReportItemsRespo
               textAlign: TextAlign.center)),
     )),
     DataCell(SizedBox(
-      width: 25.w,
+      width: deviceWidth <= 600 ? 70.w : 25.w,
       child: Center(
           child: Text(
               '${orderItem.productQty.toString().substring(0, orderItem.productQty.toString().indexOf('.'))}${orderItem.productQty.toString().substring(orderItem.productQty.toString().indexOf('.'), orderItem.productQty.toString().indexOf('.') + 1 + decimalPlaces)}',

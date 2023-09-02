@@ -10,7 +10,7 @@ import '../../../../../../../shared/constant/padding_margin_values_manager.dart'
 import '../../../../../../../shared/constant/strings_manager.dart';
 import '../../../../../../../shared/style/colors_manager.dart';
 
-Widget holdButton(BuildContext context, Function holdAction, bool orderItems, bool orderFilter) {
+Widget holdButton(BuildContext context, Function holdAction, bool orderItems, bool orderFilter, double deviceWidth) {
   return Bounceable(
     duration: Duration(milliseconds: AppConstants.durationOfBounceable),
     onTap: () async {
@@ -20,7 +20,7 @@ Widget holdButton(BuildContext context, Function holdAction, bool orderItems, bo
     },
     child: Container(
       height: 40.h,
-      width: 60.w,
+      width: deviceWidth <= 600 ? 150.w : 60.w,
       padding: const EdgeInsets.fromLTRB(
           AppPadding.p0, AppPadding.p5, AppPadding.p0, AppPadding.p5),
       decoration: BoxDecoration(

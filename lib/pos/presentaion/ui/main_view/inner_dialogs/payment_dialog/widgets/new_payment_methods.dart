@@ -121,8 +121,7 @@ Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, boo
                                   color: ColorManager.primary,
                                   fontSize: AppSize.s14.sp),
                             ),
-                            height: 47
-                                .h,
+                            height: deviceWidth <= 600 ? 44.h : 47.h,
                             padding: const EdgeInsets.fromLTRB(AppPadding
                                 .p15, AppPadding
                                 .p2, AppPadding

@@ -37,6 +37,7 @@ class TailorDialog extends StatefulWidget {
   int? decimalPlaces;
   String selectedCustomer;
   String selectedCustomerTel;
+  double deviceWidth;
 
   static void show(
           BuildContext context,
@@ -50,7 +51,9 @@ class TailorDialog extends StatefulWidget {
           double discount,
           int decimalPlaces,
           String selectedCustomer,
-          String selectedCustomerTel) =>
+          String selectedCustomerTel,
+      double deviceWidth
+      ) =>
       isApple()
           ? showCupertinoDialog<void>(
               context: context,
@@ -68,6 +71,7 @@ class TailorDialog extends StatefulWidget {
                     decimalPlaces: decimalPlaces,
                     selectedCustomer: selectedCustomer,
                     selectedCustomerTel: selectedCustomerTel,
+                deviceWidth: deviceWidth,
                   ))
           : showDialog<void>(
               context: context,
@@ -85,13 +89,13 @@ class TailorDialog extends StatefulWidget {
                 decimalPlaces: decimalPlaces,
                 selectedCustomer: selectedCustomer,
                 selectedCustomerTel: selectedCustomerTel,
+                deviceWidth: deviceWidth,
               ),
             ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
   static void hide(BuildContext context) => Navigator.of(context).pop();
 
-  TailorDialog(
-      {required this.currencyCode,
+  TailorDialog({required this.currencyCode,
       required this.itemIndex,
       required this.selectedListName,
       required this.tailoringType,
@@ -102,6 +106,7 @@ class TailorDialog extends StatefulWidget {
       required this.decimalPlaces,
       required this.selectedCustomer,
       required this.selectedCustomerTel,
+      required this.deviceWidth,
       super.key});
 
   @override
@@ -115,7 +120,8 @@ class _TailorDialogState extends State<TailorDialog> {
   final TextEditingController _sizeNameEditingController =
       TextEditingController();
 
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _inputsScrollController = ScrollController();
+  final ScrollController _wholeScrollController = ScrollController();
 
   final List<TextEditingController> _sizesControllers = [];
 
@@ -239,22 +245,27 @@ class _TailorDialogState extends State<TailorDialog> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                    height: 580.h,
-                    width: dialogWidth,
-                    decoration: BoxDecoration(
-                        color: ColorManager.white,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(AppSize.s5),
-                        boxShadow: [BoxShadow(color: ColorManager.badge)]),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(AppPadding.p20,
-                          AppPadding.p20, AppPadding.p20, AppPadding.p10),
+        body: Center(
+          child: Scrollbar(
+            thumbVisibility: true,
+            controller: _wholeScrollController,
+            child: Container(
+                height: widget.deviceWidth <= 600 ? 500.h : 580.h,
+                width: widget.deviceWidth <= 600 ? 350.w : dialogWidth,
+                decoration: BoxDecoration(
+                    color: ColorManager.white,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(AppSize.s5),
+                    boxShadow: [BoxShadow(color: ColorManager.badge)]),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(AppPadding.p20,
+                      AppPadding.p20, AppPadding.p20, AppPadding.p10),
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                    controller: _wholeScrollController,
+                    child: Container(
+                      height: widget.deviceWidth <= 600 ? 550.h : 580.h,
                       child: Column(
                         children: [
                           Align(
@@ -269,7 +280,7 @@ class _TailorDialogState extends State<TailorDialog> {
                           ),
 
                           SizedBox(
-                            height: AppConstants.smallDistance,
+                            height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                           ),
 
                           // -----------------------------------------------------------
@@ -288,7 +299,7 @@ class _TailorDialogState extends State<TailorDialog> {
                                   tailoringTypesFields(context),
                                 ],
                               ),
-                              height: 120.h,
+                              height: widget.deviceWidth <= 600 ? 110.h : 120.h,
                               color: ColorManager.white,
                               borderColor: ColorManager.white,
                               borderWidth: 0.w,
@@ -332,7 +343,7 @@ class _TailorDialogState extends State<TailorDialog> {
                           mainNotes(context, _notesEditingController),
 
                           SizedBox(
-                            height: AppConstants.smallerDistance,
+                            height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallerDistance,
                           ),
 
                           total(context, calcTotal),
@@ -348,9 +359,9 @@ class _TailorDialogState extends State<TailorDialog> {
                           buttons(context)
                         ],
                       ),
-                    )),
-              ),
-            ],
+                    ),
+                  ),
+                )),
           ),
         ));
   }
@@ -359,13 +370,13 @@ class _TailorDialogState extends State<TailorDialog> {
     return Expanded(
         child: Scrollbar(
       thumbVisibility: true,
-      controller: _scrollController,
+      controller: _inputsScrollController,
       child: GridView.count(
-          controller: _scrollController,
-          crossAxisCount: 3,
+          controller: _inputsScrollController,
+          crossAxisCount: widget.deviceWidth <= 600 ? 2 : 3,
           crossAxisSpacing: 4,
           mainAxisSpacing: 0,
-          childAspectRatio: 6 / 2,
+          childAspectRatio: widget.deviceWidth <= 600 ? 2.5 / 1 : 6 / 2,
           physics: const ScrollPhysics(),
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
@@ -460,9 +471,9 @@ class _TailorDialogState extends State<TailorDialog> {
         ),
         padding: const EdgeInsets.fromLTRB(
             AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
-        height: 47.h,
+        height: widget.deviceWidth <= 600 ? 44.h : 47.h,
         borderColor: ColorManager.primary,
-        borderWidth: 0.5.w,
+        borderWidth: widget.deviceWidth <= 600 ? 1.5.w : 0.5.w,
         borderRadius: AppSize.s5);
   }
 
@@ -475,12 +486,12 @@ class _TailorDialogState extends State<TailorDialog> {
           Column(
             children: [
               SizedBox(
-                height: 90.h,
-                width: 190.w,
+                height: widget.deviceWidth <= 600 ? 150.h : 90.h,
+                width: widget.deviceWidth <= 600 ? 300.w : 190.w,
                 child: ListView.builder(
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
+                  scrollDirection: widget.deviceWidth <= 600 ? Axis.vertical : Axis.horizontal,
                   itemCount: fabricDetails.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
@@ -499,8 +510,8 @@ class _TailorDialogState extends State<TailorDialog> {
                             Column(
                               children: [
                                 Container(
-                                  height: 59.h,
-                                  width: 45.w.ceilToDouble(),
+                                  height: widget.deviceWidth <= 600 ? 70.h : 59.h,
+                                  width: widget.deviceWidth <= 600 ? 170.w : 45.w,
                                   decoration: BoxDecoration(
                                       shape: BoxShape.rectangle,
                                       borderRadius: const BorderRadius.only(
@@ -523,8 +534,8 @@ class _TailorDialogState extends State<TailorDialog> {
                                               fit: BoxFit.cover)),
                                 ),
                                 Container(
-                                  height: 18.h,
-                                  width: 45.w.ceilToDouble(),
+                                  height: widget.deviceWidth <= 600 ? 35.h : 18.h,
+                                  width: widget.deviceWidth <= 600 ? 170.w : 45.w,
                                   decoration: BoxDecoration(
                                       color: ColorManager.badge,
                                       borderRadius: const BorderRadius.only(
@@ -571,7 +582,7 @@ class _TailorDialogState extends State<TailorDialog> {
                                 ),
                               ],
                             ),
-                            height: 50.h,
+                            height: widget.deviceWidth <= 600 ? 110.h : 50.h,
                             color: ColorManager.white,
                             borderColor: fabricDetails[index].selected!
                                 ? ColorManager.primary
@@ -622,8 +633,8 @@ class _TailorDialogState extends State<TailorDialog> {
                       style: TextStyle(
                           color: ColorManager.white, fontSize: AppSize.s14.sp),
                     )),
-                    height: 30.h,
-                    width: 50.w,
+                    height: widget.deviceWidth <= 600 ? 40.h : 30.h,
+                    width: widget.deviceWidth <= 600 ? 120 : 50.w,
                     color: ColorManager.primary,
                     borderColor: ColorManager.primary,
                     borderWidth: 0.6.w,

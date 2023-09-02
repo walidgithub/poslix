@@ -7,7 +7,7 @@ import '../../../../../../../shared/constant/strings_manager.dart';
 import '../../../../../../../shared/style/colors_manager.dart';
 import '../../../../../components/container_component.dart';
 
-Widget searchSection(BuildContext context, Function searchAction, TextEditingController searchEditingController, bool orderFilter, var selectedSearchType) {
+Widget searchSection(BuildContext context, Function searchAction, TextEditingController searchEditingController, bool orderFilter, var selectedSearchType, double deviceWidth) {
   return Expanded(
     flex: 1,
     child: containerComponent(
@@ -48,11 +48,11 @@ Widget searchSection(BuildContext context, Function searchAction, TextEditingCon
           style: TextStyle(
               color: ColorManager.primary, fontSize: AppSize.s14.sp),
         ),
-        height: 47.h,
+        height: deviceWidth <= 600 ? 44.h : 47.h,
         padding: const EdgeInsets.fromLTRB(
             AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
         borderColor: ColorManager.primary,
-        borderWidth: 0.5.w,
+        borderWidth: deviceWidth <= 600 ? 1.5.w : 0.5.w,
         borderRadius: AppSize.s5),
   );
 }

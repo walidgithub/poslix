@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../../../shared/constant/strings_manager.dart';
 
-List<DataColumn> createOrderItemsColumns() {
+List<DataColumn> createOrderItemsColumns(double deviceWidth) {
   return [
     const DataColumn(
       label: Text(
@@ -14,7 +14,7 @@ List<DataColumn> createOrderItemsColumns() {
     ),
     DataColumn(
       label: SizedBox(
-          width: 40.w,
+          width: deviceWidth <= 600 ? 150.w : 40.w,
           child: Center(
               child: Text(
                 AppStrings.name.tr(),
@@ -23,7 +23,7 @@ List<DataColumn> createOrderItemsColumns() {
     ),
     DataColumn(
         label: SizedBox(
-            width: 25.w,
+            width: deviceWidth <= 600 ? 70.w : 25.w,
             child: Center(
                 child: Text(
                   AppStrings.price.tr(),
@@ -31,7 +31,7 @@ List<DataColumn> createOrderItemsColumns() {
                 )))),
     DataColumn(
         label: SizedBox(
-            width: 25.w,
+            width: deviceWidth <= 600 ? 70.w : 25.w,
             child: Center(
                 child: Text(
                   AppStrings.qny.tr(),

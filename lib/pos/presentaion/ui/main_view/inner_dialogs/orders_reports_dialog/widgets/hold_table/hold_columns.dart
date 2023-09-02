@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../../../shared/constant/strings_manager.dart';
 
-List<DataColumn> createHoldOrdersColumns() {
+List<DataColumn> createHoldOrdersColumns(double deviceWidth) {
   return [
     const DataColumn(
       label: Text(
@@ -14,7 +14,7 @@ List<DataColumn> createHoldOrdersColumns() {
     ),
     DataColumn(
       label: SizedBox(
-          width: 40.w,
+          width: deviceWidth <= 600 ? 150.w : 40.w,
           child: Center(
               child: Text(
                 AppStrings.holdName.tr(),
@@ -23,7 +23,7 @@ List<DataColumn> createHoldOrdersColumns() {
     ),
     DataColumn(
         label: SizedBox(
-            width: 40.w,
+            width: deviceWidth <= 600 ? 100.w : 40.w,
             child: Center(
                 child: Text(
                   AppStrings.action.tr(),

@@ -46,14 +46,16 @@ class OrdersDialog extends StatefulWidget {
   Function orderDiscount;
   Function orderTotalAmount;
   int locationId;
+  double deviceWidth;
   static void show(BuildContext context, int locationId, Function customerName,
-      Function orderTotalAmount, Function orderDiscount) =>
+      Function orderTotalAmount, Function orderDiscount, double deviceWidth) =>
       isApple() ? showCupertinoDialog<void>(context: context,useRootNavigator: false,
           barrierDismissible: false, builder: (_) => OrdersDialog(
             locationId: locationId,
             customerName: customerName,
             orderTotalAmount: orderTotalAmount,
             orderDiscount: orderDiscount,
+            deviceWidth: deviceWidth,
           )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) : showDialog<void>(
         context: context,
         useRootNavigator: false,
@@ -63,6 +65,7 @@ class OrdersDialog extends StatefulWidget {
           customerName: customerName,
           orderTotalAmount: orderTotalAmount,
           orderDiscount: orderDiscount,
+          deviceWidth: deviceWidth,
         ),
       ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
@@ -73,6 +76,7 @@ class OrdersDialog extends StatefulWidget {
         required this.customerName,
         required this.orderTotalAmount,
         required this.orderDiscount,
+        required this.deviceWidth,
         super.key});
 
   @override
@@ -231,68 +235,71 @@ class _OrdersDialogState extends State<OrdersDialog> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            height: 427.h,
-            width: 180.w,
-            decoration: BoxDecoration(
-                color: ColorManager.white,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(AppSize.s5),
-                boxShadow: [BoxShadow(color: ColorManager.badge)]),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      holdButton(context, holdAction, orderItems!, orderFilter!),
-                      ordersButton(context),
-                    ],
-                  ),
-                  SizedBox(
-                    height: AppConstants.smallDistance,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      orderItems! ? itemsTotal(context, searching, orderId!, listOfOrderHead, listOfOrderHeadForSearch, totalAmount) : autoComplete(context, _searchEditingController, searchInList),
-                      orderItems!
-                          ? Container()
-                          : SizedBox(
-                        width: AppConstants.smallDistance,
-                      ),
-                      orderItems! ? Container() : searchSection(context, searchAction, _searchEditingController,orderFilter!, selectedSearchType),
-                    ],
-                  ),
-                  tableSection(context),
-                  SizedBox(
-                    height: AppConstants.heightBetweenElements,
-                  ),
-                  const Divider(
-                    thickness: AppSize.s1,
-                  ),
-                  SizedBox(
-                    height: AppConstants.smallerDistance,
-                  ),
-                  Row(
-                    mainAxisAlignment: orderFilter! || orderItems!
-                        ? MainAxisAlignment.spaceEvenly
-                        : MainAxisAlignment.center,
-                    children: [
-                      closeButton(context),
-                      orderFilter!
-                          ? SizedBox(
-                        width: AppConstants.smallDistance,
-                      )
-                          : Container(),
-                      orderFilter! ? pagination(context) : Container(),
-                      orderItems! ? backButton(context, backAction) : Container(),
-                    ],
-                  )
-                ],
+      body: RotatedBox(
+        quarterTurns: widget.deviceWidth <= 600 ? 1 : 0,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Container(
+              height: widget.deviceWidth <= 600 ? 320.h : 427.h,
+              width: widget.deviceWidth <= 600 ? 550.w : 180.w,
+              decoration: BoxDecoration(
+                  color: ColorManager.white,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(AppSize.s5),
+                  boxShadow: [BoxShadow(color: ColorManager.badge)]),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        holdButton(context, holdAction, orderItems!, orderFilter!, widget.deviceWidth),
+                        ordersButton(context),
+                      ],
+                    ),
+                    SizedBox(
+                      height: AppConstants.smallDistance,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        orderItems! ? itemsTotal(context, searching, orderId!, listOfOrderHead, listOfOrderHeadForSearch, totalAmount) : autoComplete(context, _searchEditingController, searchInList),
+                        orderItems!
+                            ? Container()
+                            : SizedBox(
+                          width: AppConstants.smallDistance,
+                        ),
+                        orderItems! ? Container() : searchSection(context, searchAction, _searchEditingController,orderFilter!, selectedSearchType, widget.deviceWidth),
+                      ],
+                    ),
+                    tableSection(context),
+                    SizedBox(
+                      height: AppConstants.heightBetweenElements,
+                    ),
+                    const Divider(
+                      thickness: AppSize.s1,
+                    ),
+                    SizedBox(
+                      height: AppConstants.smallerDistance,
+                    ),
+                    Row(
+                      mainAxisAlignment: orderFilter! || orderItems!
+                          ? MainAxisAlignment.spaceEvenly
+                          : MainAxisAlignment.center,
+                      children: [
+                        closeButton(context),
+                        orderFilter!
+                            ? SizedBox(
+                          width: AppConstants.smallDistance,
+                        )
+                            : Container(),
+                        orderFilter! ? pagination(context) : Container(),
+                        orderItems! ? backButton(context, backAction, widget.deviceWidth) : Container(),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -424,7 +431,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
             },
             child: Container(
               height: 40.h,
-              width: 60.w,
+              width: widget.deviceWidth <= 600 ? 150.w : 60.w,
               padding: const EdgeInsets.fromLTRB(
                   AppPadding.p0, AppPadding.p5, AppPadding.p0, AppPadding.p5),
               decoration: BoxDecoration(
@@ -472,7 +479,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
 
   Widget tableSection(BuildContext context) {
     return SizedBox(
-      height: 232.h,
+      height: widget.deviceWidth <= 600 ? 130.h : 232.h,
       child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: SingleChildScrollView(
@@ -482,7 +489,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                 create: (context) => sl<OrdersCubit>(),
                 child: BlocBuilder<OrdersCubit, OrdersState>(
                   builder: (context, state) {
-                    return createOrderItemsDataTable(_currentSortColumn, _isSortAsc, createOrderItemsColumns(), createOrderItemsRows(decimalPlaces, listOfOrderItems));
+                    return createOrderItemsDataTable(_currentSortColumn, _isSortAsc, createOrderItemsColumns(widget.deviceWidth), createOrderItemsRows(decimalPlaces, listOfOrderItems, widget.deviceWidth));
                   },
                 ),
               )
@@ -538,7 +545,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                     }
                   },
                   builder: (context, state) {
-                    return createOrdersDataTable(_currentSortColumn, _isSortAsc, searching, createOrdersColumns(), _createOrdersRows(), _createOrdersRowsForSearch());
+                    return createOrdersDataTable(_currentSortColumn, _isSortAsc, searching, createOrdersColumns(widget.deviceWidth), _createOrdersRows(), _createOrdersRowsForSearch(), widget.deviceWidth);
                   },
                 ),
               )
@@ -577,7 +584,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                     } else if (state is LoadingErrorHoldCards) {}
                   },
                   builder: (context, state) {
-                    return createHoldOrdersDataTable(_currentSortColumn, _isSortAsc, searching, createHoldOrdersColumns(), _createHoldOrdersRows(), _createHoldOrdersForSearchRows());
+                    return createHoldOrdersDataTable(_currentSortColumn, _isSortAsc, searching, createHoldOrdersColumns(widget.deviceWidth), _createHoldOrdersRows(), _createHoldOrdersForSearchRows(), widget.deviceWidth);
                   },
                 ),
               ))),
@@ -748,7 +755,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                                   fontSize: 20.sp)),
                         ),
                         height: 30.h,
-                        width: 10.w,
+                        width: widget.deviceWidth <= 600 ? 30.w : 10.w,
                         color: currentPage == 1
                             ? ColorManager.primary
                             : ColorManager.white,
@@ -842,6 +849,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                                   child: containerComponent(
                                       context,
                                       margin: const EdgeInsets.only(left: 2),
+                                      width: widget.deviceWidth <= 600 ? 30.w : 10.w,
                                       Center(
                                           child: Text(
                                               middlePages[index].toString(),
@@ -932,7 +940,6 @@ class _OrdersDialogState extends State<OrdersDialog> {
                                       fontSize: 20.sp)),
                             ),
                             height: 30.h,
-                            // width: 20.w,
                             padding: const EdgeInsets.fromLTRB(
                                 AppPadding.p5,
                                 AppPadding.p0,
@@ -1030,7 +1037,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
           listOfOrderHead[listOfOrderHead.indexOf(order)].id.toString(),
           style: TextStyle(color: ColorManager.edit))),
       DataCell(SizedBox(
-        width: 40.w,
+        width: widget.deviceWidth <= 600 ? 120.w : 40.w,
         child: Center(
             child: Text(
                 listOfOrderHead[listOfOrderHead.indexOf(order)]
@@ -1040,7 +1047,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                 textAlign: TextAlign.center)),
       )),
       DataCell(SizedBox(
-        width: 25.w,
+        width: widget.deviceWidth <= 600 ? 70.w : 25.w,
         child: Center(
             child: Text(
                 listOfOrderHead[listOfOrderHead.indexOf(order)]
@@ -1050,7 +1057,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                 textAlign: TextAlign.center)),
       )),
       DataCell(Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           BlocProvider(
             create: (context) => sl<OrdersCubit>(),
@@ -1244,7 +1251,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
               .toString(),
           style: TextStyle(color: ColorManager.edit))),
       DataCell(SizedBox(
-        width: 40.w,
+        width: widget.deviceWidth <= 600 ? 120.w : 40.w,
         child: Center(
             child: Text(
                 listOfOrderHeadForSearch[
@@ -1255,7 +1262,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                 textAlign: TextAlign.center)),
       )),
       DataCell(SizedBox(
-        width: 25.w,
+        width: widget.deviceWidth <= 600 ? 70.w : 25.w,
         child: Center(
             child: Text(
                 listOfOrderHeadForSearch[
@@ -1266,7 +1273,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                 textAlign: TextAlign.center)),
       )),
       DataCell(Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           BlocProvider(
             create: (context) => sl<OrdersCubit>(),
@@ -1459,7 +1466,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
               .toString(),
           style: TextStyle(color: ColorManager.edit))),
       DataCell(SizedBox(
-        width: 40.w,
+        width: widget.deviceWidth <= 600 ? 150.w : 40.w,
         child: Center(
             child: Text(
                 listOfHoldOrderNames[
@@ -1469,120 +1476,116 @@ class _OrdersDialogState extends State<OrdersDialog> {
                 style: TextStyle(fontSize: AppSize.s14.sp),
                 textAlign: TextAlign.center)),
       )),
-      DataCell(Padding(
-        padding: const EdgeInsets.only(left: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BlocProvider(
-                create: (context) => sl<MainViewLocalCubit>(),
-                child: BlocConsumer<MainViewLocalCubit,
-                    MainViewLocalState>(listener: (context, state) {
-                  if (state is LoadingHoldCardsItemsById) {
-                  } else if (state is LoadedHoldCardsItemsById) {
-                    listOfTmpOrder = [];
-
-                    listOfHoldOrderItems =
-                        MainViewLocalCubit.get(context)
-                            .listOfHoldOrderItems;
-
-                    for (var element in listOfHoldOrderItems) {
-                      listOfTmpOrder.add(TmpOrderModel(
-                          id: element.id,
-                          date: element.date,
-                          category: element.category,
-                          brand: element.brand,
-                          customer: element.customer,
-                          itemAmount: element.itemAmount,
-                          itemName: element.itemName,
-                          itemPrice: element.itemPrice,
-                          itemQuantity: element.itemQuantity,
-                          orderDiscount:
-                          double.parse(element.discount.toString()),
-                          itemOption: element.itemOption,
-                          productId: element.productId,
-                          variationId: element.variationId,
-                          productType: element.productType,
-                          customerTel: element.customerTel));
-                    }
-
-                    GlobalValues.setEditOrder = false;
-
-                    if (holdOrder.customer ==
-                        '${AppStrings.firstName} ${AppStrings.secondName}') {
-                      widget.customerName('${holdOrder.customer}');
-                    } else {
-                      widget.customerName(
-                          '${holdOrder.customer} | ${holdOrder.customerTel}');
-                    }
-
-                    widget.orderDiscount(holdOrder.discount!);
-
-                    OrdersDialog.hide(context);
-                  } else if (state is LoadingErrorHoldCardsItemsById) {}
-                }, builder: (context, state) {
-                  return Bounceable(
-                      duration: Duration(
-                          milliseconds:
-                          AppConstants.durationOfBounceable),
-                      onTap: () async {
-                        await Future.delayed(Duration(
-                            milliseconds:
-                            AppConstants.durationOfBounceable));
-                        listOfHoldOrderItems = [];
-
-                        await MainViewLocalCubit.get(context)
-                            .getHoldCardsItems(listOfHoldOrderNames[
-                        listOfHoldOrderNames
-                            .indexOf(holdOrder)]
-                            .id!);
-                      },
-                      child: Icon(
-                        Icons.downloading,
-                        color: ColorManager.edit,
-                        size: AppSize.s20.sp,
-                      ));
-                })),
-            SizedBox(
-              width: AppConstants.smallDistance,
-            ),
-            BlocProvider(
+      DataCell(Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          BlocProvider(
               create: (context) => sl<MainViewLocalCubit>(),
-              child:
-              BlocConsumer<MainViewLocalCubit, MainViewLocalState>(
-                listener: (context, state) {
-                  if (state is DeleteHoldCards) {
-                  } else if (state is DeleteErrorHoldCards) {}
-                },
-                builder: (context, state) {
-                  return Bounceable(
-                      duration: Duration(
+              child: BlocConsumer<MainViewLocalCubit,
+                  MainViewLocalState>(listener: (context, state) {
+                if (state is LoadingHoldCardsItemsById) {
+                } else if (state is LoadedHoldCardsItemsById) {
+                  listOfTmpOrder = [];
+
+                  listOfHoldOrderItems =
+                      MainViewLocalCubit.get(context)
+                          .listOfHoldOrderItems;
+
+                  for (var element in listOfHoldOrderItems) {
+                    listOfTmpOrder.add(TmpOrderModel(
+                        id: element.id,
+                        date: element.date,
+                        category: element.category,
+                        brand: element.brand,
+                        customer: element.customer,
+                        itemAmount: element.itemAmount,
+                        itemName: element.itemName,
+                        itemPrice: element.itemPrice,
+                        itemQuantity: element.itemQuantity,
+                        orderDiscount:
+                        double.parse(element.discount.toString()),
+                        itemOption: element.itemOption,
+                        productId: element.productId,
+                        variationId: element.variationId,
+                        productType: element.productType,
+                        customerTel: element.customerTel));
+                  }
+
+                  GlobalValues.setEditOrder = false;
+
+                  if (holdOrder.customer ==
+                      '${AppStrings.firstName} ${AppStrings.secondName}') {
+                    widget.customerName('${holdOrder.customer}');
+                  } else {
+                    widget.customerName(
+                        '${holdOrder.customer} | ${holdOrder.customerTel}');
+                  }
+
+                  widget.orderDiscount(holdOrder.discount!);
+
+                  OrdersDialog.hide(context);
+                } else if (state is LoadingErrorHoldCardsItemsById) {}
+              }, builder: (context, state) {
+                return Bounceable(
+                    duration: Duration(
+                        milliseconds:
+                        AppConstants.durationOfBounceable),
+                    onTap: () async {
+                      await Future.delayed(Duration(
                           milliseconds:
-                          AppConstants.durationOfBounceable),
-                      onTap: () async {
-                        await Future.delayed(Duration(
-                            milliseconds:
-                            AppConstants.durationOfBounceable));
-                        await MainViewLocalCubit.get(context)
-                            .deleteHoldCard(holdOrder.id!);
-                        setState(() {
-                          listOfHoldOrderNames.removeWhere((element) =>
-                          element.holdText == holdOrder.holdText);
-                          listOfHoldOrderItems.removeWhere((element) =>
-                          element.holdText == holdOrder.holdText);
-                        });
-                      },
-                      child: Icon(
-                        Icons.delete,
-                        color: ColorManager.delete,
-                        size: AppSize.s20.sp,
-                      ));
-                },
-              ),
+                          AppConstants.durationOfBounceable));
+                      listOfHoldOrderItems = [];
+
+                      await MainViewLocalCubit.get(context)
+                          .getHoldCardsItems(listOfHoldOrderNames[
+                      listOfHoldOrderNames
+                          .indexOf(holdOrder)]
+                          .id!);
+                    },
+                    child: Icon(
+                      Icons.downloading,
+                      color: ColorManager.edit,
+                      size: AppSize.s20.sp,
+                    ));
+              })),
+          SizedBox(
+            width: AppConstants.smallDistance,
+          ),
+          BlocProvider(
+            create: (context) => sl<MainViewLocalCubit>(),
+            child:
+            BlocConsumer<MainViewLocalCubit, MainViewLocalState>(
+              listener: (context, state) {
+                if (state is DeleteHoldCards) {
+                } else if (state is DeleteErrorHoldCards) {}
+              },
+              builder: (context, state) {
+                return Bounceable(
+                    duration: Duration(
+                        milliseconds:
+                        AppConstants.durationOfBounceable),
+                    onTap: () async {
+                      await Future.delayed(Duration(
+                          milliseconds:
+                          AppConstants.durationOfBounceable));
+                      await MainViewLocalCubit.get(context)
+                          .deleteHoldCard(holdOrder.id!);
+                      setState(() {
+                        listOfHoldOrderNames.removeWhere((element) =>
+                        element.holdText == holdOrder.holdText);
+                        listOfHoldOrderItems.removeWhere((element) =>
+                        element.holdText == holdOrder.holdText);
+                      });
+                    },
+                    child: Icon(
+                      Icons.delete,
+                      color: ColorManager.delete,
+                      size: AppSize.s20.sp,
+                    ));
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ))
     ]))
         .toList();
@@ -1598,7 +1601,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
               .toString(),
           style: TextStyle(color: ColorManager.edit))),
       DataCell(SizedBox(
-        width: 40.w,
+        width: widget.deviceWidth <= 600 ? 150.w : 40.w,
         child: Center(
             child: Text(
                 listOfHoldOrderNamesForSearch[
@@ -1609,124 +1612,121 @@ class _OrdersDialogState extends State<OrdersDialog> {
                 style: TextStyle(fontSize: AppSize.s14.sp),
                 textAlign: TextAlign.center)),
       )),
-      DataCell(Padding(
-        padding: const EdgeInsets.only(left: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BlocProvider(
-                create: (context) => sl<MainViewLocalCubit>(),
-                child: BlocConsumer<MainViewLocalCubit,
-                    MainViewLocalState>(listener: (context, state) {
-                  if (state is LoadingHoldCardsItemsById) {
-                  } else if (state is LoadedHoldCardsItemsById) {
-                    listOfTmpOrder = [];
+      DataCell(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              BlocProvider(
+                  create: (context) => sl<MainViewLocalCubit>(),
+                  child: BlocConsumer<MainViewLocalCubit,
+                      MainViewLocalState>(listener: (context, state) {
+                    if (state is LoadingHoldCardsItemsById) {
+                    } else if (state is LoadedHoldCardsItemsById) {
+                      listOfTmpOrder = [];
 
-                    listOfHoldOrderItems =
-                        MainViewLocalCubit.get(context)
-                            .listOfHoldOrderItems;
+                      listOfHoldOrderItems =
+                          MainViewLocalCubit.get(context)
+                              .listOfHoldOrderItems;
 
-                    for (var element in listOfHoldOrderItems) {
-                      listOfTmpOrder.add(TmpOrderModel(
-                          id: element.id,
-                          date: element.date,
-                          category: element.category,
-                          brand: element.brand,
-                          customer: element.customer,
-                          itemAmount: element.itemAmount,
-                          itemName: element.itemName,
-                          itemPrice: element.itemPrice,
-                          itemQuantity: element.itemQuantity,
-                          orderDiscount:
-                          double.parse(element.discount.toString()),
-                          itemOption: element.itemOption,
-                          productId: element.productId,
-                          variationId: element.variationId,
-                          productType: element.productType,
-                          customerTel: element.customerTel));
-                    }
+                      for (var element in listOfHoldOrderItems) {
+                        listOfTmpOrder.add(TmpOrderModel(
+                            id: element.id,
+                            date: element.date,
+                            category: element.category,
+                            brand: element.brand,
+                            customer: element.customer,
+                            itemAmount: element.itemAmount,
+                            itemName: element.itemName,
+                            itemPrice: element.itemPrice,
+                            itemQuantity: element.itemQuantity,
+                            orderDiscount:
+                            double.parse(element.discount.toString()),
+                            itemOption: element.itemOption,
+                            productId: element.productId,
+                            variationId: element.variationId,
+                            productType: element.productType,
+                            customerTel: element.customerTel));
+                      }
 
-                    GlobalValues.setEditOrder = false;
+                      GlobalValues.setEditOrder = false;
 
-                    if (holdOrder.customer ==
-                        '${AppStrings.firstName} ${AppStrings.secondName}') {
-                      widget.customerName('${holdOrder.customer}');
-                    } else {
-                      widget.customerName(
-                          '${holdOrder.customer} | ${holdOrder.customerTel}');
-                    }
+                      if (holdOrder.customer ==
+                          '${AppStrings.firstName} ${AppStrings.secondName}') {
+                        widget.customerName('${holdOrder.customer}');
+                      } else {
+                        widget.customerName(
+                            '${holdOrder.customer} | ${holdOrder.customerTel}');
+                      }
 
-                    widget.orderDiscount(holdOrder.discount!);
+                      widget.orderDiscount(holdOrder.discount!);
 
-                    OrdersDialog.hide(context);
-                  } else if (state is LoadingErrorHoldCardsItemsById) {}
-                }, builder: (context, state) {
-                  return Bounceable(
-                      duration: Duration(
-                          milliseconds:
-                          AppConstants.durationOfBounceable),
-                      onTap: () async {
-                        await Future.delayed(Duration(
+                      OrdersDialog.hide(context);
+                    } else if (state is LoadingErrorHoldCardsItemsById) {}
+                  }, builder: (context, state) {
+                    return Bounceable(
+                        duration: Duration(
                             milliseconds:
-                            AppConstants.durationOfBounceable));
-                        listOfHoldOrderItems = [];
+                            AppConstants.durationOfBounceable),
+                        onTap: () async {
+                          await Future.delayed(Duration(
+                              milliseconds:
+                              AppConstants.durationOfBounceable));
+                          listOfHoldOrderItems = [];
 
-                        await MainViewLocalCubit.get(context)
-                            .getHoldCardsItems(
-                            listOfHoldOrderNamesForSearch[
-                            listOfHoldOrderNamesForSearch
-                                .indexOf(holdOrder)]
-                                .id!);
-                      },
-                      child: Icon(
-                        Icons.downloading,
-                        color: ColorManager.edit,
-                        size: AppSize.s20.sp,
-                      ));
-                })),
-            SizedBox(
-              width: AppConstants.smallDistance,
-            ),
-            BlocProvider(
-              create: (context) => sl<MainViewLocalCubit>(),
-              child:
-              BlocConsumer<MainViewLocalCubit, MainViewLocalState>(
-                listener: (context, state) {
-                  if (state is DeleteHoldCards) {
-                  } else if (state is DeleteErrorHoldCards) {}
-                },
-                builder: (context, state) {
-                  return Bounceable(
-                      duration: Duration(
-                          milliseconds:
-                          AppConstants.durationOfBounceable),
-                      onTap: () async {
-                        await Future.delayed(Duration(
-                            milliseconds:
-                            AppConstants.durationOfBounceable));
-                        await MainViewLocalCubit.get(context)
-                            .deleteHoldCard(holdOrder.id!);
-                        setState(() {
-                          listOfHoldOrderNamesForSearch.removeWhere(
-                                  (element) =>
-                              element.holdText ==
-                                  holdOrder.holdText);
-                          listOfHoldOrderItems.removeWhere((element) =>
-                          element.holdText == holdOrder.holdText);
-                        });
-                      },
-                      child: Icon(
-                        Icons.delete,
-                        color: ColorManager.delete,
-                        size: AppSize.s20.sp,
-                      ));
-                },
+                          await MainViewLocalCubit.get(context)
+                              .getHoldCardsItems(
+                              listOfHoldOrderNamesForSearch[
+                              listOfHoldOrderNamesForSearch
+                                  .indexOf(holdOrder)]
+                                  .id!);
+                        },
+                        child: Icon(
+                          Icons.downloading,
+                          color: ColorManager.edit,
+                          size: AppSize.s20.sp,
+                        ));
+                  })),
+              SizedBox(
+                width: AppConstants.smallDistance,
               ),
-            ),
-          ],
-        ),
-      ))
+              BlocProvider(
+                create: (context) => sl<MainViewLocalCubit>(),
+                child:
+                BlocConsumer<MainViewLocalCubit, MainViewLocalState>(
+                  listener: (context, state) {
+                    if (state is DeleteHoldCards) {
+                    } else if (state is DeleteErrorHoldCards) {}
+                  },
+                  builder: (context, state) {
+                    return Bounceable(
+                        duration: Duration(
+                            milliseconds:
+                            AppConstants.durationOfBounceable),
+                        onTap: () async {
+                          await Future.delayed(Duration(
+                              milliseconds:
+                              AppConstants.durationOfBounceable));
+                          await MainViewLocalCubit.get(context)
+                              .deleteHoldCard(holdOrder.id!);
+                          setState(() {
+                            listOfHoldOrderNamesForSearch.removeWhere(
+                                    (element) =>
+                                element.holdText ==
+                                    holdOrder.holdText);
+                            listOfHoldOrderItems.removeWhere((element) =>
+                            element.holdText == holdOrder.holdText);
+                          });
+                        },
+                        child: Icon(
+                          Icons.delete,
+                          color: ColorManager.delete,
+                          size: AppSize.s20.sp,
+                        ));
+                  },
+                ),
+              ),
+            ],
+          ))
     ]))
         .toList();
   }

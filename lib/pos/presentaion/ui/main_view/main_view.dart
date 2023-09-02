@@ -57,7 +57,7 @@ import '../login_view/login_cubit/login_cubit.dart';
 import '../login_view/login_cubit/login_state.dart';
 import '../popup_dialogs/custom_dialog.dart';
 import '../popup_dialogs/loading_dialog.dart';
-import '../register_pos_view/widgets/bottom_bar.dart';
+import 'widgets/bottom_bar.dart';
 import 'inner_dialogs/close_register_dialog/close_register_dialog.dart';
 import 'inner_dialogs/customer_dialog/customer_mobile_dialog.dart';
 import 'inner_dialogs/tailor_dialog/tailor_dialog.dart';
@@ -671,6 +671,7 @@ class _MainViewState extends State<MainView> {
                                 });
                               },
                               child: BottomSheetBar(
+                                itemsCount: listOfTmpOrder.length,
                                 currencyCode: currencyCode,
                                 totalAmount: totalAmount,
                               )))
@@ -1108,7 +1109,7 @@ class _MainViewState extends State<MainView> {
       setState(() {
         discount = double.parse(orderDiscount.toString());
       });
-    });
+    }, deviceWidth!);
   }
 
   void checkOut(BuildContext context) {
@@ -1507,7 +1508,9 @@ class _MainViewState extends State<MainView> {
             discount,
             decimalPlaces,
             _selectedCustomerName!,
-            _selectedCustomerTel!);
+            _selectedCustomerTel!,
+            deviceWidth!
+        );
       });
       return;
     }
@@ -1522,7 +1525,8 @@ class _MainViewState extends State<MainView> {
             listToWork,
             _selectedCustomerTel!,
             _selectedCustomerName!,
-            discount,deviceWidth!,(done) {
+            discount,
+            deviceWidth!, (done) {
           if (done == 'done') {
             setState(() {
               getTotalAmount();

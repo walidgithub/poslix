@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:poslix_app/pos/shared/style/colors_manager.dart';
 
@@ -50,7 +51,7 @@ Future<bool> onBackButtonPressed(BuildContext context) async {
                 child: Text(AppStrings.no.tr())),
             TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(true);
+                  SystemNavigator.pop();
                 },
                 child: Text(AppStrings.yes.tr())),
           ],
@@ -75,7 +76,7 @@ Future<bool> onBackButtonPressedInIOS(BuildContext context) async {
                 child: Text(AppStrings.no.tr())),
             CupertinoDialogAction(
                 onPressed: () {
-                  Navigator.of(context).pop(true);
+                  SystemNavigator.pop();
                 },
                 isDestructiveAction: true,
                 child: Text(AppStrings.yes.tr())),
