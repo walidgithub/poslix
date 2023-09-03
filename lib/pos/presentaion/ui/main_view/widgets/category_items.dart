@@ -15,11 +15,13 @@ Widget categoryItems(BuildContext context, Function addToTmp,
     List<ProductsResponse> listOfProducts, String businessType, double deviceWidth) {
   return Expanded(
       child: GridView.count(
-          crossAxisCount: deviceWidth <= 800 ? 2 : 5,
+          crossAxisCount: deviceWidth <= 600 ? 2 : 5,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: deviceWidth <= 800 ? 1 / 1.2 : 11 / 16,
+          childAspectRatio: deviceWidth <= 600 ? 1 / 1.2 : 11 / 16,
           physics: const ScrollPhysics(),
+          keyboardDismissBehavior:
+          ScrollViewKeyboardDismissBehavior.onDrag,
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           children: List.generate(listOfProducts.length, (index) {
@@ -34,7 +36,7 @@ Widget categoryItems(BuildContext context, Function addToTmp,
               },
               child: containerComponent(context,
                   itemContainer(index, context, listOfProducts, businessType, deviceWidth),
-                  // height: deviceWidth <= 800 ? 200.h : 400.h,
+                  // height: deviceWidth <= 600 ? 200.h : 400.h,
                   // width: 200.w,
                   color: ColorManager.secondary,
                   borderColor: ColorManager.secondary,
@@ -52,7 +54,7 @@ Widget itemContainer(int index, BuildContext context,
       children: [
         Container(
           width: 200.w,
-          height: deviceWidth <= 800 ? 125.h : 105.h,
+          height: deviceWidth <= 600 ? 125.h : 105.h,
           decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               image: listOfProducts[index].image.toString() == "n"
@@ -64,7 +66,7 @@ Widget itemContainer(int index, BuildContext context,
                       fit: BoxFit.fill)),
         ),
         Container(
-          width: deviceWidth <= 800 ? 155.w : 50.w,
+          width: deviceWidth <= 600 ? 155.w : 50.w,
           height: 40.h,
           decoration: BoxDecoration(
               color: ColorManager.badge,

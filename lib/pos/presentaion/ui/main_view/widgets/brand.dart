@@ -30,7 +30,7 @@ class _BrandButtonState extends State<BrandButton> {
           },
           child: Container(
             height: 30.h,
-            width: widget.deviceWidth <= 800 ? 90.w :50.w,
+            width: widget.deviceWidth <= 600 ? 90.w :50.w,
             decoration: BoxDecoration(
                 color: widget.selected ? ColorManager.black : ColorManager.white,
                 border: Border.all(

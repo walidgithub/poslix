@@ -24,7 +24,7 @@ import 'local_main_view_cubit/local_main_view_cubit.dart';
 import 'local_main_view_cubit/local_main_view_state.dart';
 
 Future holdOrdersDialog(
-    BuildContext context, List<TmpOrderModel> listOfTmpOrders, double discount, String customerTel, String customerName, Function done) {
+    BuildContext context, double deviceWidth, List<TmpOrderModel> listOfTmpOrders, double discount, String customerTel, String customerName, Function done) {
   TextEditingController holdNameEditingController = TextEditingController();
   DateTime today = DateTime.now();
   return isApple() ? showCupertinoDialog<void>(context: context, builder: (context) {
@@ -37,7 +37,7 @@ Future holdOrdersDialog(
             padding: const EdgeInsets.all(10),
             child: SizedBox(
               width: 150.w,
-              height: 120.h,
+              height: deviceWidth <= 600 ? 130.h : 145.h,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -49,7 +49,7 @@ Future holdOrdersDialog(
                               color: ColorManager.primary,
                               fontWeight: FontWeight.bold))),
                   SizedBox(
-                    height: AppConstants.smallDistance,
+                    height: deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                   ),
                   Expanded(
                     flex: 1,
@@ -146,8 +146,8 @@ Future holdOrdersDialog(
                                         child: textS14WhiteComponent(context,
                                           AppStrings.save.tr(),
                                         )),
-                                    height: 30.h,
-                                    width: 50.w,
+                                    height: deviceWidth <= 600 ? 40.h : 40.h,
+                                    width: deviceWidth <= 600 ? 100.w : 50.w,
                                     color: ColorManager.primary,
                                     borderRadius: AppSize.s5,
                                     borderColor: ColorManager.primary,
@@ -177,10 +177,9 @@ Future holdOrdersDialog(
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: SizedBox(
-                width: 150.w,
-                height: 120.h,
+                width: deviceWidth <= 600 ? 180.w : 150.w,
+                height: deviceWidth <= 600 ? 130.h : 145.h,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Align(
                         alignment: AlignmentDirectional.topStart,
@@ -190,23 +189,20 @@ Future holdOrdersDialog(
                                 color: ColorManager.primary,
                                 fontWeight: FontWeight.bold))),
                     SizedBox(
-                      height: AppConstants.smallDistance,
+                      height: deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: TextField(
-                          autofocus: true,
-                          keyboardType: TextInputType.text,
-                          controller: holdNameEditingController,
-                          decoration: InputDecoration(
-                              hintText: AppStrings.enterName.tr(),
-                              hintStyle: TextStyle(fontSize: AppSize.s12.sp),
-                              labelText: AppStrings.enterName.tr(),
-                              labelStyle: TextStyle(
-                                  fontSize: AppSize.s15,
-                                  color: ColorManager.primary),
-                              border: InputBorder.none)),
-                    ),
+                    TextField(
+                        autofocus: true,
+                        keyboardType: TextInputType.text,
+                        controller: holdNameEditingController,
+                        decoration: InputDecoration(
+                            hintText: AppStrings.enterName.tr(),
+                            hintStyle: TextStyle(fontSize: AppSize.s12.sp),
+                            labelText: AppStrings.enterName.tr(),
+                            labelStyle: TextStyle(
+                                fontSize: AppSize.s15,
+                                color: ColorManager.primary),
+                            border: InputBorder.none)),
                     const Divider(
                       thickness: AppSize.s1,
                     ),
@@ -289,8 +285,8 @@ Future holdOrdersDialog(
                                         child: textS14WhiteComponent(context,
                                           AppStrings.save.tr(),
                                         )),
-                                    height: 30.h,
-                                    width: 50.w,
+                                    height: deviceWidth! <= 600 ? 40.h : 30.h,
+                                    width: deviceWidth <= 600 ? 100.w : 50.w,
                                     color: ColorManager.primary,
                                     borderRadius: AppSize.s5,
                                     borderColor: ColorManager.primary,

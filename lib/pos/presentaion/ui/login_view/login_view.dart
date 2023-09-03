@@ -84,25 +84,28 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     deviceWidth = getDeviceWidth(context);
-    return SafeArea(
-        child: Scaffold(
-      backgroundColor: ColorManager.secondary,
-      body: bodyContent(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _changeLanguage();
-          });
-        },
-        backgroundColor: ColorManager.primary,
-        child: SvgPicture.asset(
-          ImageAssets.language,
-          width: AppSize.s25,
-          color: ColorManager.white,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: SafeArea(
+          child: Scaffold(
+        backgroundColor: ColorManager.secondary,
+        body: bodyContent(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _changeLanguage();
+            });
+          },
+          backgroundColor: ColorManager.primary,
+          child: SvgPicture.asset(
+            ImageAssets.language,
+            width: AppSize.s25,
+            color: ColorManager.white,
+          ),
         ),
-      ),
-    ));
+      )),
+    );
   }
 
   Widget bodyContent(BuildContext context) {
@@ -141,11 +144,12 @@ class _LoginViewState extends State<LoginView> {
           }
         },
         builder: (context, state) {
-          return SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppPadding.p20),
-                    child: SingleChildScrollView(
+          return SingleChildScrollView(
+            reverse: true,
+            child: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppPadding.p20),
                       child: Column(
                         children: [
                           Row(
@@ -161,7 +165,7 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ),
                   ),
-                );
+          );
           // --------------------------------------------------------------------------------------------------
         },
       ),

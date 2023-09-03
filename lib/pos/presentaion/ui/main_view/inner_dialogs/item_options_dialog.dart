@@ -170,6 +170,8 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
           mainAxisSpacing: AppSize.s12,
           childAspectRatio: widget.deviceWidth <= 600 ? 1 / 1.25 : 10 / 12,
           physics: const ScrollPhysics(),
+          keyboardDismissBehavior:
+          ScrollViewKeyboardDismissBehavior.onDrag,
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           children: List.generate(widget.itemOptions.length, (index) {

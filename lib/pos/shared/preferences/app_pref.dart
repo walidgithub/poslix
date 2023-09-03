@@ -43,11 +43,13 @@ class AppPreferences {
     String currentLang = await getAppLanguage();
 
     if (currentLang == LanguageType.ARABIC.getValue()) {
+      print('arabic');
       // set english
       _sharedPreferences.setString(
           PREFS_KEY_LANG, LanguageType.ENGLISH.getValue());
       isLangChanged = false;
     } else {
+      print('english');
       // set arabic
       _sharedPreferences.setString(
           PREFS_KEY_LANG, LanguageType.ARABIC.getValue());

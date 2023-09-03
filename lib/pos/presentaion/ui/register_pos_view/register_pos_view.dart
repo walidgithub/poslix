@@ -147,18 +147,21 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     deviceWidth = getDeviceWidth(context);
     return WillPopScope(
       onWillPop: () => isApple() ? onBackButtonPressedInIOS(context) : onBackButtonPressed(context),
-      child: SafeArea(
-          child: Scaffold(
-        backgroundColor: ColorManager.secondary,
-        body: bodyContent(),
-        floatingActionButton: AnimatedFloatingActionButton(
-            fabButtons: <Widget>[language(), logout(), refresh()],
-            key: floatingKey,
-            colorStartAnimation: ColorManager.primary,
-            colorEndAnimation: ColorManager.delete,
-            animatedIconData: AnimatedIcons.menu_close //To principal button
-            ),
-      )),
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+            child: Scaffold(
+          backgroundColor: ColorManager.secondary,
+          body: bodyContent(),
+          floatingActionButton: AnimatedFloatingActionButton(
+              fabButtons: <Widget>[language(), logout(), refresh()],
+              key: floatingKey,
+              colorStartAnimation: ColorManager.primary,
+              colorEndAnimation: ColorManager.delete,
+              animatedIconData: AnimatedIcons.menu_close //To principal button
+              ),
+        )),
+      ),
     );
   }
 
@@ -310,101 +313,94 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   Widget chooseBusiness(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: SizedBox(
-        width: deviceWidth! <= 600 ? 300.w  : 150.w,
-        height: deviceWidth! <= 600 ? 70.h : 80.h,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-                alignment:
-                AlignmentDirectional
-                    .topStart,
-                child: Text(
-                    AppStrings.chooseBusiness
-                        .tr(),
-                    style: TextStyle(
-                        fontSize:
-                        AppSize.s20.sp,
-                        color: ColorManager
-                            .primary,
-                        fontWeight: deviceWidth! <= 600 ? FontWeight.w500 : FontWeight
-                            .bold))),
-            SizedBox(
-              height:
-              AppConstants.smallDistance,
-            ),
-            Expanded(
-                flex: 1,
-                child: containerComponent(
-                    context,
-                    DropdownButton(
-                      borderRadius:
-                      BorderRadius
-                          .circular(
-                          AppSize.s5),
-                      itemHeight: 50.h,
-                      underline: Container(),
-                      items: listOfBusinesses
-                          .map((item) {
-                        return DropdownMenuItem(
-                            value: item.name,
-                            child: Text(
-                              item.name,
-                              style: TextStyle(
-                                  fontSize:
-                                  AppSize
-                                      .s15
-                                      .sp),
-                            ));
-                      }).toList(),
-                      onChanged:
-                          (selectedBusiness) {
-                            getBusinessValues(context, listOfBusinesses);
-                      },
-                      value:
-                      _selectedBusiness,
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          Text(
-                            AppStrings
-                                .chooseBusiness
-                                .tr(),
-                            style: TextStyle(
-                                color: ColorManager
-                                    .primary,
-                                fontSize:
-                                AppSize
-                                    .s15
-                                    .sp),
-                          ),
-                          SizedBox(
-                            width: AppConstants
-                                .smallDistance,
-                          )
-                        ],
-                      ),
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: ColorManager
-                            .primary,
-                        size: AppSize.s20.sp,
-                      ),
+      child: Column(
+        children: [
+          Align(
+              alignment:
+              AlignmentDirectional
+                  .topStart,
+              child: Text(
+                  AppStrings.chooseBusiness
+                      .tr(),
+                  style: TextStyle(
+                      fontSize:
+                      AppSize.s20.sp,
+                      color: ColorManager
+                          .primary,
+                      fontWeight: deviceWidth! <= 600 ? FontWeight.w500 : FontWeight
+                          .bold))),
+          SizedBox(
+            height:
+            AppConstants.smallDistance,
+          ),
+          containerComponent(
+              context,
+              DropdownButton(
+                borderRadius:
+                BorderRadius
+                    .circular(
+                    AppSize.s5),
+                itemHeight: 50.h,
+                underline: Container(),
+                items: listOfBusinesses
+                    .map((item) {
+                  return DropdownMenuItem(
+                      value: item.name,
+                      child: Text(
+                        item.name,
+                        style: TextStyle(
+                            fontSize:
+                            AppSize
+                                .s15
+                                .sp),
+                      ));
+                }).toList(),
+                onChanged:
+                    (selectedBusiness) {
+                      getBusinessValues(context, listOfBusinesses);
+                },
+                value:
+                _selectedBusiness,
+                isExpanded: true,
+                hint: Row(
+                  children: [
+                    Text(
+                      AppStrings
+                          .chooseBusiness
+                          .tr(),
                       style: TextStyle(
                           color: ColorManager
                               .primary,
                           fontSize:
-                          AppSize.s20.sp),
+                          AppSize
+                              .s15
+                              .sp),
                     ),
-                    height: 10.h,
-                    padding: const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p2, AppPadding.p5, AppPadding.p2),
-                    borderRadius: AppSize.s5,
-                    borderColor:
-                    ColorManager.primary,
-                    borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w)),
-          ],
-        ),
+                    SizedBox(
+                      width: AppConstants
+                          .smallDistance,
+                    )
+                  ],
+                ),
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorManager
+                      .primary,
+                  size: AppSize.s20.sp,
+                ),
+                style: TextStyle(
+                    color: ColorManager
+                        .primary,
+                    fontSize:
+                    AppSize.s20.sp),
+              ),
+              height: deviceWidth! <= 600 ? 44.h : 47.h,
+              padding: const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p2, AppPadding.p5, AppPadding.p2),
+              borderRadius: AppSize.s5,
+              borderColor:
+              ColorManager.primary,
+              borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w),
+        ],
       ),
     );
   }
@@ -412,102 +408,95 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   Widget chooseLocation(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: SizedBox(
-        width: deviceWidth! <= 600 ? 300.w  : 150.w,
-        height: deviceWidth! <= 600 ? 70.h : 80.h,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-                alignment:
-                AlignmentDirectional
-                    .topStart,
-                child: Text(
-                    AppStrings.chooseLocation
-                        .tr(),
-                    style: TextStyle(
-                        fontSize:
-                        AppSize.s20.sp,
-                        color: ColorManager
-                            .primary,
-                        fontWeight: deviceWidth! <= 600 ? FontWeight.w500 : FontWeight
-                            .bold))),
-            SizedBox(
-              height:
-              AppConstants.smallDistance,
-            ),
-            Expanded(
-                flex: 1,
-                child: containerComponent(
-                    context,
-                    DropdownButton(
-                      borderRadius:
-                      BorderRadius
-                          .circular(
-                          AppSize.s5),
-                      itemHeight: 50.h,
-                      underline: Container(),
-                      items: listOfLocations
-                          .map((item) {
-                        return DropdownMenuItem(
-                            value: item
-                                .locationName,
-                            child: Text(
-                              item.locationName,
-                              style: TextStyle(
-                                  fontSize:
-                                  AppSize
-                                      .s15
-                                      .sp),
-                            ));
-                      }).toList(),
-                      onChanged:
-                          (selectedLocation) {
-                            getLocationValues(context, listOfLocations);
-                      },
-                      value:
-                      _selectedLocation,
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          Text(
-                            AppStrings
-                                .chooseLocation
-                                .tr(),
-                            style: TextStyle(
-                                color: ColorManager
-                                    .primary,
-                                fontSize:
-                                AppSize
-                                    .s15
-                                    .sp),
-                          ),
-                          SizedBox(
-                            width: AppConstants
-                                .smallDistance,
-                          )
-                        ],
-                      ),
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: ColorManager
-                            .primary,
-                        size: AppSize.s20.sp,
-                      ),
+      child: Column(
+        children: [
+          Align(
+              alignment:
+              AlignmentDirectional
+                  .topStart,
+              child: Text(
+                  AppStrings.chooseLocation
+                      .tr(),
+                  style: TextStyle(
+                      fontSize:
+                      AppSize.s20.sp,
+                      color: ColorManager
+                          .primary,
+                      fontWeight: deviceWidth! <= 600 ? FontWeight.w500 : FontWeight
+                          .bold))),
+          SizedBox(
+            height:
+            AppConstants.smallDistance,
+          ),
+          containerComponent(
+              context,
+              DropdownButton(
+                borderRadius:
+                BorderRadius
+                    .circular(
+                    AppSize.s5),
+                itemHeight: 50.h,
+                underline: Container(),
+                items: listOfLocations
+                    .map((item) {
+                  return DropdownMenuItem(
+                      value: item
+                          .locationName,
+                      child: Text(
+                        item.locationName,
+                        style: TextStyle(
+                            fontSize:
+                            AppSize
+                                .s15
+                                .sp),
+                      ));
+                }).toList(),
+                onChanged:
+                    (selectedLocation) {
+                      getLocationValues(context, listOfLocations);
+                },
+                value:
+                _selectedLocation,
+                isExpanded: true,
+                hint: Row(
+                  children: [
+                    Text(
+                      AppStrings
+                          .chooseLocation
+                          .tr(),
                       style: TextStyle(
                           color: ColorManager
                               .primary,
                           fontSize:
-                          AppSize.s20.sp),
+                          AppSize
+                              .s15
+                              .sp),
                     ),
-                    height: 20.h,
-                    padding: const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p2, AppPadding.p5, AppPadding.p2),
-                    borderRadius: AppSize.s5,
-                    borderColor:
-                    ColorManager.primary,
-                    borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w)),
-          ],
-        ),
+                    SizedBox(
+                      width: AppConstants
+                          .smallDistance,
+                    )
+                  ],
+                ),
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorManager
+                      .primary,
+                  size: AppSize.s20.sp,
+                ),
+                style: TextStyle(
+                    color: ColorManager
+                        .primary,
+                    fontSize:
+                    AppSize.s20.sp),
+              ),
+              height: deviceWidth! <= 600 ? 44.h : 47.h,
+              padding: const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p2, AppPadding.p5, AppPadding.p2),
+              borderRadius: AppSize.s5,
+              borderColor:
+              ColorManager.primary,
+              borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w),
+        ],
       ),
     );
   }
@@ -539,7 +528,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                           AppSize.s14
                               .sp),
                     )),
-                height: deviceWidth! <= 600 ? 50.w : 30.h,
+                height: 40.h,
                 width: deviceWidth! <= 600 ? 170.h : 50.w,
                 color: ColorManager
                     .primary,

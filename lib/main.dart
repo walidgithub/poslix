@@ -20,10 +20,7 @@ void main() async {
   await ServiceLocator().init();
   await EasyLocalization.ensureInitialized();
 
-  SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.manual,
-    overlays: []
-  );
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
   runApp(EasyLocalization(
       supportedLocales: const [ARABIC_LOCAL, ENGLISH_LOCAL],
@@ -31,14 +28,17 @@ void main() async {
       child: Phoenix(child: const MyApp())));
 
   ErrorWidget.builder = (FlutterErrorDetails details) => Scaffold(
-    body: SafeArea(
-      child: Scaffold(
-        body: Center(
-          child: Text(AppStrings.someThingWentWrong.tr(),style: TextStyle(color: ColorManager.primary),),
+        body: SafeArea(
+          child: Scaffold(
+            body: Center(
+              child: Text(
+                AppStrings.someThingWentWrong.tr(),
+                style: TextStyle(color: ColorManager.primary),
+              ),
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class MyApp extends StatefulWidget {
@@ -57,18 +57,15 @@ class _MyAppState extends State<MyApp> {
 
   goNext() {
     _appPreferences.isUserLoggedIn().then((isUserLoggedIn) => {
-      if (isUserLoggedIn)
-        {loggedIn = true}
-      else
-        {loggedIn = false}
-    });
+          if (isUserLoggedIn) {loggedIn = true} else {loggedIn = false}
+        });
 
     _appPreferences.isUserOpenedRegister().then((isUserOpenedRegister) => {
-      if (isUserOpenedRegister)
-        {openedRegister = true}
-      else
-        {openedRegister = false}
-    });
+          if (isUserOpenedRegister)
+            {openedRegister = true}
+          else
+            {openedRegister = false}
+        });
   }
 
   @override
@@ -81,7 +78,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void didChangeDependencies() {
     _appPreferences.getLocal().then((local) => {context.setLocale(local)});
-    _appPreferences.isThemeDark().then((value) => {_themeManager.toggleTheme(value)});
+    _appPreferences
+        .isThemeDark()
+        .then((value) => {_themeManager.toggleTheme(value)});
     super.didChangeDependencies();
   }
 
@@ -99,38 +98,60 @@ class _MyAppState extends State<MyApp> {
 
   double? deviceWidth;
 
+  /*
+  OrientationBuilder(builder: (context, orientation) {
+            if (orientation == Orientation.portrait) {
+              if (deviceWidth! < 600) {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                  DeviceOrientation.portraitDown,
+                ]);
+              } else {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.landscapeLeft,
+                  DeviceOrientation.landscapeRight,
+                ]);
+              }
+            } else if (orientation == Orientation.landscape) {
+              if (deviceWidth! < 800) {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                  DeviceOrientation.portraitDown,
+                ]);
+              } else {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.landscapeLeft,
+                  DeviceOrientation.landscapeRight,
+                ]);
+              }
+            }
+   */
+
   @override
   Widget build(BuildContext context) {
     deviceWidth = getDeviceWidth(context);
-    if (deviceWidth! <= 600) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
-    } else {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-    }
-
     return ScreenUtilInit(
-      designSize: const Size(360, 690),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
-        return MaterialApp(
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          title: 'Poslix App',
-          debugShowCheckedModeBanner: false,
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          themeMode: _themeManager.themeMode,
-          onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: loggedIn ? openedRegister ? Routes.mainRoute : Routes.registerPosRoute : Routes.loginRoute,
-        );
-      });
+        designSize: const Size(360, 690),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return MaterialApp(
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            title: 'Poslix App',
+            debugShowCheckedModeBanner: false,
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            themeMode: _themeManager.themeMode,
+            onGenerateRoute: RouteGenerator.getRoute,
+            // initialRoute: loggedIn
+            //     ? openedRegister
+            //         ? Routes.mainRoute
+            //         : Routes.registerPosRoute
+            //     : Routes.loginRoute,
+            initialRoute: Routes.mainRoute,
+          );
+        });
   }
 }

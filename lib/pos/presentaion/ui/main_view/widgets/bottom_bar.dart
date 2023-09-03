@@ -2,6 +2,7 @@ import 'package:badges/badges.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poslix_app/pos/domain/entities/tmp_order_model.dart';
 import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import '../../../../shared/constant/padding_margin_values_manager.dart';
@@ -37,6 +38,7 @@ class _BottomSheetBarState extends State<BottomSheetBar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            listOfTmpOrder.isNotEmpty ?
             badges.Badge(
               badgeContent: textS14WhiteComponent(context, widget.itemsCount.toString()),
               badgeStyle: badges.BadgeStyle(
@@ -48,6 +50,10 @@ class _BottomSheetBarState extends State<BottomSheetBar> {
                 color: ColorManager.white,
                 size: AppSize.s25.sp,
               ),
+            ) : Icon(
+              Icons.add_shopping_cart_sharp,
+              color: ColorManager.white,
+              size: AppSize.s25.sp,
             ),
             SizedBox(
               width: AppConstants.widthBetweenElements,

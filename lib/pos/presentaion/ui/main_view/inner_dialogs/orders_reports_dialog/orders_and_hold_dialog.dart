@@ -27,6 +27,7 @@ import '../../../../../domain/response/sales_report_data_model.dart';
 import '../../../../../domain/response/sales_report_items_model.dart';
 import '../../../../../shared/constant/assets_manager.dart';
 import '../../../../../shared/constant/constant_values_manager.dart';
+import '../../../../../shared/constant/language_manager.dart';
 import '../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../shared/constant/strings_manager.dart';
 import '../../../../../shared/preferences/app_pref.dart';
@@ -100,7 +101,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
   final int _currentSortColumn = 0;
   final bool _isSortAsc = true;
 
-  var selectedSearchType = 'Customer';
+  var selectedSearchType = AppStrings.customer.tr();
 
   bool? orderFilter;
   bool? orderItems;
@@ -254,7 +255,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        holdButton(context, holdAction, orderItems!, orderFilter!, widget.deviceWidth),
+                        holdButton(context, holdAction, orderItems!, orderFilter!, widget.deviceWidth, isRtl()),
                         ordersButton(context),
                       ],
                     ),
@@ -441,7 +442,9 @@ class _OrdersDialogState extends State<OrdersDialog> {
                       ? ColorManager.primary
                       : ColorManager.white,
                   border: Border.all(color: ColorManager.primary, width: 0.5.w),
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: isRtl() ? const BorderRadius.only(
+                      bottomLeft: Radius.circular(AppSize.s5),
+                      topLeft: Radius.circular(AppSize.s5)) : const BorderRadius.only(
                       bottomRight: Radius.circular(AppSize.s5),
                       topRight: Radius.circular(AppSize.s5))),
               child: Row(
@@ -1729,5 +1732,9 @@ class _OrdersDialogState extends State<OrdersDialog> {
           ))
     ]))
         .toList();
+  }
+
+  bool isRtl() {
+    return context.locale == ARABIC_LOCAL;
   }
 }

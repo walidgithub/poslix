@@ -378,6 +378,8 @@ class _TailorDialogState extends State<TailorDialog> {
           mainAxisSpacing: 0,
           childAspectRatio: widget.deviceWidth <= 600 ? 2.5 / 1 : 6 / 2,
           physics: const ScrollPhysics(),
+          keyboardDismissBehavior:
+          ScrollViewKeyboardDismissBehavior.onDrag,
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           children: List.generate(sizes.length, (index) {

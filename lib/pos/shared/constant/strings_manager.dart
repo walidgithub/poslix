@@ -9,7 +9,7 @@ class AppStrings{
   static const quantity  = 'Quantity';
   static const amount  = 'Amount';
   static const percent  = 'Percent';
-  static const numberField  = 'Number';
+  static const numberField  = 'Shipping value';
   static const update  = 'Update';
   static const date  = 'Date';
   static const error  = 'Error';

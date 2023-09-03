@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:poslix_app/pos/presentaion/ui/components/close_button.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/a4_printer/printable_data.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/ImagestorByte.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/printer.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/bill_format.dart';
@@ -199,7 +197,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
   List printTypes = ['Bluetooth', 'A4', 'Wi_Fi_Thermal'];
   String? printType = '';
 
-  double sizedHeight = 340.h;
+  double sizedHeight = 360.h;
   double innerHeight = 50.h;
   int paymentWaysCount = 0;
 
@@ -393,7 +391,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                     ),
                                     checkOutButtons(context, checkOut, widget.deviceWidth),
                                     SizedBox(
-                                      height: AppConstants.smallDistance,
+                                      height: AppConstants.bigHeightBetweenElements,
+                                    ),
+                                    SizedBox(
+                                      height: AppConstants.bigHeightBetweenElements,
                                     ),
                                     billModel(
                                         context,

@@ -11,17 +11,17 @@ List<DataColumn> createColumns(double deviceWidth) {
     ),
     DataColumn(
       label: SizedBox(
-          width: deviceWidth <= 800 ? 100.w : 40.w, child: Center(child: Text(AppStrings.product.tr()))),
+          width: deviceWidth <= 600 ? 100.w : 40.w, child: Center(child: Text(AppStrings.product.tr()))),
     ),
     DataColumn(
         label: SizedBox(
-            width: deviceWidth <= 800 ? 100.w : 42.w,
+            width: deviceWidth <= 600 ? 100.w : 42.w,
             child: Center(
                 child: Text(
                   AppStrings.quantity.tr(),
                 )))),
     DataColumn(
         label: SizedBox(
-            width: deviceWidth <= 800 ? 50.w : 20.w, child: Center(child: Text(AppStrings.amount.tr()))))
+            width: deviceWidth <= 600 ? 50.w : 20.w, child: Center(child: Text(AppStrings.amount.tr()))))
   ];
 }

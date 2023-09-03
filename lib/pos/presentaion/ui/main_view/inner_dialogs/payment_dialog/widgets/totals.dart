@@ -74,7 +74,7 @@ Widget totals(BuildContext context, double total,String changedTotal, double cha
           ),
         ],
       ),
-      height: 75.h,
+      height: 80.h,
       width: deviceWidth <= 600 ? 375.w : 200.w,
       padding: const EdgeInsets.all(AppPadding.p10),
       color: ColorManager.primary,

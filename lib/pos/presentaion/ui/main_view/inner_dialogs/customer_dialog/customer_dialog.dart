@@ -296,7 +296,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
                 )
               ],
             ),
-            height: 30.h,
+            height: 35.h,
             width: 60.w,
             padding: const EdgeInsets.all(AppPadding.p5),
             color: ColorManager.primary,

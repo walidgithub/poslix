@@ -13,7 +13,6 @@ import 'package:poslix_app/pos/domain/requests/cart_model.dart';
 import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/domain/response/prices_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/hold_dialog/hold_bottom_sheet.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/add_edit_customer_buttons.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand_button.dart';
@@ -74,7 +73,6 @@ class _MainViewState extends State<MainView> {
   final AppPreferences _appPreferences = sl<AppPreferences>();
 
   late PersistentBottomSheetController _controllerLeftPart;
-  late PersistentBottomSheetController _controllerHold;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -357,16 +355,13 @@ class _MainViewState extends State<MainView> {
       onWillPop: () => isApple()
           ? onBackButtonPressedInIOS(context)
           : onBackButtonPressed(context),
-      child: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
           child: Scaffold(
             key: _scaffoldKey,
             backgroundColor: ColorManager.secondary,
-            body: SingleChildScrollView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                child: bodyContent(context)),
+            body: bodyContent(context),
             floatingActionButton: showFab
                 ? AnimatedFloatingActionButton(
                     fabButtons: [language(), logout(), register(), refresh()],
@@ -675,56 +670,47 @@ class _MainViewState extends State<MainView> {
                                 currencyCode: currencyCode,
                                 totalAmount: totalAmount,
                               )))
-                      : Positioned(
-                          bottom: 15.h,
-                          left: 20.w,
-                          child: Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                      AppConstants.durationOfBounceable),
-                              onTap: () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                        AppConstants.durationOfBounceable));
-                                showFoatingActionButton(false);
-                                _controllerLeftPart =
-                                    _scaffoldKey.currentState!.showBottomSheet(
-                                  clipBehavior: Clip.hardEdge,
-                                  backgroundColor:
-                                      Theme.of(context).dialogBackgroundColor,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(22),
-                                      topRight: Radius.circular(22),
-                                    ),
-                                  ),
-                                  (context) {
-                                    return Column(
-                                      children: [
-                                        // show orders
-                                      ],
-                                    );
+                      : isRtl()
+                          ? Positioned(
+                              bottom: 15.h,
+                              right: 20.w,
+                              child: Bounceable(
+                                  onTap: () {
+                                    getOrders(context);
                                   },
-                                );
-
-                                _controllerLeftPart.closed.then((value) {
-                                  showFoatingActionButton(true);
-                                });
-                              },
-                              child: ordersBtnMobile()))
+                                  child: ordersBtnMobile()))
+                          : Positioned(
+                              bottom: 15.h,
+                              left: 20.w,
+                              child: Bounceable(
+                                  onTap: () {
+                                    getOrders(context);
+                                  },
+                                  child: ordersBtnMobile()))
                   : Container(),
               deviceWidth! <= 600
                   ? listOfTmpOrder.isNotEmpty
-                      ? Positioned(
-                          right: 11.w,
-                          bottom: 11.h,
-                          child: Container(
-                              width: 60.h,
-                              height: 60.w,
-                              decoration: BoxDecoration(
-                                color: ColorManager.white,
-                                shape: BoxShape.circle,
-                              )))
+                      ? isRtl()
+                          ? Positioned(
+                              left: 11.w,
+                              bottom: 13.h,
+                              child: Container(
+                                  width: 60.h,
+                                  height: 60.w,
+                                  decoration: BoxDecoration(
+                                    color: ColorManager.white,
+                                    shape: BoxShape.circle,
+                                  )))
+                          : Positioned(
+                              right: 11.w,
+                              bottom: 13.h,
+                              child: Container(
+                                  width: 60.h,
+                                  height: 60.w,
+                                  decoration: BoxDecoration(
+                                    color: ColorManager.white,
+                                    shape: BoxShape.circle,
+                                  )))
                       : Container()
                   : Container(),
             ],
@@ -944,7 +930,7 @@ class _MainViewState extends State<MainView> {
     setState(() {
       ShippingDialog.show(context, (shippingValue) {
         getShippingValue(shippingValue);
-      });
+      }, deviceWidth!);
     });
   }
 
@@ -959,51 +945,15 @@ class _MainViewState extends State<MainView> {
           ColorManager.hold);
     } else {
       listOfTmpOrder[0].orderDiscount = discount;
+      holdOrdersDialog(context, deviceWidth!, listOfTmpOrder, discount, _selectedCustomerTel!,
+          _selectedCustomerName!, (done) {
+        if (done == 'done') {
+          setState(() {
+            listOfTmpOrder.clear();
+          });
+        }
+      });
 
-      if (deviceWidth! <= 600) {
-        showFoatingActionButton(false);
-        _controllerHold = _scaffoldKey.currentState!.showBottomSheet(
-          clipBehavior: Clip.hardEdge,
-          backgroundColor: Theme.of(context).dialogBackgroundColor,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(22),
-              topRight: Radius.circular(22),
-            ),
-          ),
-          (context) {
-            return Container(
-              width: MediaQuery.of(context).size.width,
-              height: 200.h,
-              child: HoldBottomSheet(
-                  customerTel: _selectedCustomerTel!,
-                  customerName: _selectedCustomerName!,
-                  discount: discount,
-                  listOfTmpOrders: listOfTmpOrder,
-                  done: (done) {
-                    if (done == 'done') {
-                      setState(() {
-                        listOfTmpOrder.clear();
-                      });
-                    }
-                  }),
-            );
-          },
-        );
-
-        _controllerHold.closed.then((value) {
-          showFoatingActionButton(true);
-        });
-      } else {
-        holdOrdersDialog(context, listOfTmpOrder, discount,
-            _selectedCustomerTel!, _selectedCustomerName!, (done) {
-          if (done == 'done') {
-            setState(() {
-              listOfTmpOrder.clear();
-            });
-          }
-        });
-      }
       discount = 0;
     }
   }
@@ -1106,9 +1056,12 @@ class _MainViewState extends State<MainView> {
     }, (orderTotal) {
       originalTotalValue = orderTotal;
     }, (orderDiscount) {
-      setState(() {
-        discount = double.parse(orderDiscount.toString());
-      });
+      if (deviceWidth! <= 600) {
+        _controllerLeftPart.setState!(() {});
+      } else {
+        setState(() {});
+      }
+      discount = double.parse(orderDiscount.toString());
     }, deviceWidth!);
   }
 
@@ -1230,7 +1183,7 @@ class _MainViewState extends State<MainView> {
                 style: TextStyle(color: ColorManager.edit),
               )),
               DataCell(SizedBox(
-                width: deviceWidth <= 800 ? 100.w : 40.w,
+                width: deviceWidth <= 600 ? 100.w : 40.w,
                 child: Center(
                     child: Text(
                         listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
@@ -1241,7 +1194,7 @@ class _MainViewState extends State<MainView> {
               )),
               DataCell(Center(
                   child: SizedBox(
-                width: deviceWidth <= 800 ? 100.w : 42.w,
+                width: deviceWidth <= 600 ? 100.w : 42.w,
                 child: Center(
                   child: Row(
                     children: [
@@ -1320,7 +1273,7 @@ class _MainViewState extends State<MainView> {
                                         size: AppSize.s10.sp,
                                       ),
                                       height: 20.h,
-                                      width: deviceWidth <= 800 ? 20.w : 10.w,
+                                      width: deviceWidth <= 600 ? 20.w : 10.w,
                                       color: ColorManager.secondary,
                                       borderColor: ColorManager.secondary,
                                       borderWidth: 1.w,
@@ -1348,7 +1301,7 @@ class _MainViewState extends State<MainView> {
                                         size: AppSize.s10.sp,
                                       ),
                                       height: 20.h,
-                                      width: deviceWidth <= 800 ? 20.w : 10.w,
+                                      width: deviceWidth <= 600 ? 20.w : 10.w,
                                       color: ColorManager.secondary,
                                       borderColor: ColorManager.secondary,
                                       borderWidth: 1.w,
@@ -1358,7 +1311,7 @@ class _MainViewState extends State<MainView> {
                             ),
                           ),
                           height: 30.h,
-                          width: deviceWidth <= 800 ? 70.w : 30.w,
+                          width: deviceWidth <= 600 ? 70.w : 30.w,
                           color: ColorManager.white,
                           borderColor: ColorManager.badge,
                           borderWidth: 0.5.w,
@@ -1368,7 +1321,7 @@ class _MainViewState extends State<MainView> {
                 ),
               ))),
               DataCell(SizedBox(
-                width: deviceWidth <= 800 ? 50.w : 20.w,
+                width: deviceWidth <= 600 ? 50.w : 20.w,
                 child: Center(
                     child: Text(
                         listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
@@ -1509,8 +1462,7 @@ class _MainViewState extends State<MainView> {
             decimalPlaces,
             _selectedCustomerName!,
             _selectedCustomerTel!,
-            deviceWidth!
-        );
+            deviceWidth!);
       });
       return;
     }
