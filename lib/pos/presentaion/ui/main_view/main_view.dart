@@ -4,6 +4,7 @@ import 'package:animated_floating_buttons/widgets/animated_floating_action_butto
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -236,8 +237,8 @@ class _MainViewState extends State<MainView> {
 
     listOfTmpOrder = [];
     getDecimalPlaces();
-    // getLocationId();
-    // getBusinessType();
+    getLocationId();
+    getBusinessType();
     getTax();
 
     super.initState();
@@ -610,111 +611,139 @@ class _MainViewState extends State<MainView> {
           }
         },
         builder: (context, state) {
-          return Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(AppPadding.p10),
-                child: Center(
-                  child: Row(
-                    children: [
-                      deviceWidth! <= 600 ? Container() : leftPart(context),
-                      deviceWidth! <= 600
-                          ? Container()
-                          : SizedBox(
-                              width: AppConstants.smallDistance,
-                            ),
-                      rightPart(context),
-                    ],
+          return OrientationBuilder(builder: (context, orientation) {
+            if (orientation == Orientation.portrait) {
+              if (deviceWidth! < 600) {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                  DeviceOrientation.portraitDown,
+                ]);
+              } else {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.landscapeLeft,
+                  DeviceOrientation.landscapeRight,
+                ]);
+              }
+            } else if (orientation == Orientation.landscape) {
+              if (deviceWidth! < 800) {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                  DeviceOrientation.portraitDown,
+                ]);
+              } else {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.landscapeLeft,
+                  DeviceOrientation.landscapeRight,
+                ]);
+              }
+            }
+            return Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(AppPadding.p10),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        deviceWidth! <= 600 ? Container() : leftPart(context),
+                        deviceWidth! <= 600
+                            ? Container()
+                            : SizedBox(
+                          width: AppConstants.smallDistance,
+                        ),
+                        rightPart(context),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              deviceWidth! <= 600
-                  ? listOfTmpOrder.isNotEmpty
-                      ? Positioned(
-                          bottom: 0,
-                          child: Bounceable(
-                              duration: Duration(
-                                  milliseconds:
-                                      AppConstants.durationOfBounceable),
-                              onTap: () async {
-                                await Future.delayed(Duration(
-                                    milliseconds:
-                                        AppConstants.durationOfBounceable));
-                                showFoatingActionButton(false);
-                                _controllerLeftPart =
-                                    _scaffoldKey.currentState!.showBottomSheet(
-                                  clipBehavior: Clip.hardEdge,
-                                  backgroundColor:
-                                      Theme.of(context).dialogBackgroundColor,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(22),
-                                      topRight: Radius.circular(22),
-                                    ),
+                deviceWidth! <= 600
+                    ? listOfTmpOrder.isNotEmpty
+                    ? Positioned(
+                    bottom: 0,
+                    child: Bounceable(
+                        duration: Duration(
+                            milliseconds:
+                            AppConstants.durationOfBounceable),
+                        onTap: () async {
+                          await Future.delayed(Duration(
+                              milliseconds:
+                              AppConstants.durationOfBounceable));
+                          showFoatingActionButton(false);
+                          _controllerLeftPart =
+                              _scaffoldKey.currentState!.showBottomSheet(
+                                clipBehavior: Clip.hardEdge,
+                                backgroundColor:
+                                Theme.of(context).dialogBackgroundColor,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(22),
+                                    topRight: Radius.circular(22),
                                   ),
-                                  (context) {
-                                    return Column(
-                                      children: [
-                                        leftPart(context),
-                                      ],
-                                    );
-                                  },
-                                );
+                                ),
+                                    (context) {
+                                  return Column(
+                                    children: [
+                                      leftPart(context),
+                                    ],
+                                  );
+                                },
+                              );
 
-                                _controllerLeftPart.closed.then((value) {
-                                  showFoatingActionButton(true);
-                                });
-                              },
-                              child: BottomSheetBar(
-                                itemsCount: listOfTmpOrder.length,
-                                currencyCode: currencyCode,
-                                totalAmount: totalAmount,
-                              )))
-                      : isRtl()
-                          ? Positioned(
-                              bottom: 15.h,
-                              right: 20.w,
-                              child: Bounceable(
-                                  onTap: () {
-                                    getOrders(context);
-                                  },
-                                  child: ordersBtnMobile()))
-                          : Positioned(
-                              bottom: 15.h,
-                              left: 20.w,
-                              child: Bounceable(
-                                  onTap: () {
-                                    getOrders(context);
-                                  },
-                                  child: ordersBtnMobile()))
-                  : Container(),
-              deviceWidth! <= 600
-                  ? listOfTmpOrder.isNotEmpty
-                      ? isRtl()
-                          ? Positioned(
-                              left: 11.w,
-                              bottom: 13.h,
-                              child: Container(
-                                  width: 60.h,
-                                  height: 60.w,
-                                  decoration: BoxDecoration(
-                                    color: ColorManager.white,
-                                    shape: BoxShape.circle,
-                                  )))
-                          : Positioned(
-                              right: 11.w,
-                              bottom: 13.h,
-                              child: Container(
-                                  width: 60.h,
-                                  height: 60.w,
-                                  decoration: BoxDecoration(
-                                    color: ColorManager.white,
-                                    shape: BoxShape.circle,
-                                  )))
-                      : Container()
-                  : Container(),
-            ],
-          );
+                          _controllerLeftPart.closed.then((value) {
+                            showFoatingActionButton(true);
+                          });
+                        },
+                        child: BottomSheetBar(
+                          itemsCount: listOfTmpOrder.length,
+                          currencyCode: currencyCode,
+                          totalAmount: totalAmount,
+                        )))
+                    : isRtl()
+                    ? Positioned(
+                    bottom: 15.h,
+                    right: 20.w,
+                    child: Bounceable(
+                        onTap: () {
+                          getOrders(context);
+                        },
+                        child: ordersBtnMobile()))
+                    : Positioned(
+                    bottom: 15.h,
+                    left: 20.w,
+                    child: Bounceable(
+                        onTap: () {
+                          getOrders(context);
+                        },
+                        child: ordersBtnMobile()))
+                    : Container(),
+                deviceWidth! <= 600
+                    ? listOfTmpOrder.isNotEmpty
+                    ? isRtl()
+                    ? Positioned(
+                    left: 11.w,
+                    bottom: 13.h,
+                    child: Container(
+                        width: 60.h,
+                        height: 60.w,
+                        decoration: BoxDecoration(
+                          color: ColorManager.white,
+                          shape: BoxShape.circle,
+                        )))
+                    : Positioned(
+                    right: 11.w,
+                    bottom: 13.h,
+                    child: Container(
+                        width: 60.h,
+                        height: 60.w,
+                        decoration: BoxDecoration(
+                          color: ColorManager.white,
+                          shape: BoxShape.circle,
+                        )))
+                    : Container()
+                    : Container(),
+              ],
+            );
+          });
+
         },
       ),
     );

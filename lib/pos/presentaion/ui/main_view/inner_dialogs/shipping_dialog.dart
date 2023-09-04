@@ -59,7 +59,7 @@ class _ShippingDialogState extends State<ShippingDialog> {
       body: Center(
         child: SizedBox(
           width: widget.deviceWidth <= 600 ? 350.w : 150.w,
-          height: widget.deviceWidth <= 600 ? 180.h : 210.h,
+          height: widget.deviceWidth <= 600 ? 195.h : 215.h,
           child: Container(
             decoration: BoxDecoration(
                 color: ColorManager.white,

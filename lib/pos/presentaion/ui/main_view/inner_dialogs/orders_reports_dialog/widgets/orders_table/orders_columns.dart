@@ -18,6 +18,6 @@ List<DataColumn> createOrdersColumns(double deviceWidth) {
             width: deviceWidth <= 600 ? 70.w : 25.w, child: Center(child: Text(AppStrings.total.tr())))),
     DataColumn(
         label: SizedBox(
-            width: deviceWidth <= 600 ? 80.w : 20.w, child: Center(child: Text(AppStrings.action.tr()))))
+            width: deviceWidth <= 600 ? 55.w : 20.w, child: Center(child: Text(AppStrings.action.tr()))))
   ];
 }

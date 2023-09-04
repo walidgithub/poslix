@@ -218,7 +218,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
                             ),
                             moreAndLessInfo(),
                             moreInfo! ? optionalFields(context) : Container(),
-                            buttons(context)
+                            buttons(context),
                           ],
                         ),
                       ),

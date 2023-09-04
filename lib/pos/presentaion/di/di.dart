@@ -23,11 +23,11 @@ class ServiceLocator {
   Future<void> init() async {
 
     // app prefs instance
-    sl.registerLazySingleton<AppPreferences>(() => AppPreferences(sl()));
-
     final sharedPrefs = await SharedPreferences.getInstance();
 
     sl.registerLazySingleton<SharedPreferences>(() => sharedPrefs);
+
+    sl.registerLazySingleton<AppPreferences>(() => AppPreferences(sl()));
 
     // dbHelper
     sl.registerLazySingleton<DbHelper>(() => DbHelper());

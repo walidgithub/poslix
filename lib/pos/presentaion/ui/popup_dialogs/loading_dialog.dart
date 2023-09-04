@@ -38,7 +38,7 @@ class _LoadingDialogState extends State<LoadingDialog> {
       child: Center(
         child: Container(
           height: deviceWidth! <= 600 ? 100.h : 150.h,
-          width: deviceWidth! <= 600 ? 100.w : 150.w,
+          width: deviceWidth! <= 600 ? 100.w : 140.w,
           decoration: BoxDecoration(
             color: Colors.transparent,
             shape: BoxShape.rectangle,

@@ -12,7 +12,7 @@ Widget createHoldOrdersDataTable(
     children: [
       DataTable(
         horizontalMargin: 10,
-        columnSpacing: deviceWidth <= 600 ? 100 : 130,
+        columnSpacing: deviceWidth <= 600 ? 30 : 130,
         dividerThickness: 2.sp,
         columns: createHoldOrdersColumns,
         rows:

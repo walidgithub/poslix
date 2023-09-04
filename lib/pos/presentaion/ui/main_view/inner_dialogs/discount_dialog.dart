@@ -65,7 +65,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
     return Center(
       child: SizedBox(
         width: deviceWidth! <= 600 ? 350.w : 200.w,
-        height: deviceWidth! <= 600 ? 180.h : 210.h,
+        height: deviceWidth! <= 600 ? 200.h : 215.h,
         child: Container(
           decoration: BoxDecoration(
               color: ColorManager.white,

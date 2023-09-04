@@ -5,12 +5,14 @@ Widget createOrderItemsDataTable(
     int currentSortColumn,
     bool isSortAsc,
     List<DataColumn> createOrderItemsColumns,
-    List<DataRow> createOrderItemsRows) {
+    List<DataRow> createOrderItemsRows,
+    double deviceWidth
+    ) {
   return Column(
     children: [
       DataTable(
         horizontalMargin: 10,
-        columnSpacing: 50,
+        columnSpacing: deviceWidth <= 600 ? 15 : 50,
         dividerThickness: 2.sp,
         columns: createOrderItemsColumns,
         rows: createOrderItemsRows,

@@ -14,7 +14,7 @@ List<DataColumn> createOrderItemsColumns(double deviceWidth) {
     ),
     DataColumn(
       label: SizedBox(
-          width: deviceWidth <= 600 ? 150.w : 40.w,
+          width: deviceWidth <= 600 ? 130.w : 40.w,
           child: Center(
               child: Text(
                 AppStrings.name.tr(),
@@ -23,7 +23,7 @@ List<DataColumn> createOrderItemsColumns(double deviceWidth) {
     ),
     DataColumn(
         label: SizedBox(
-            width: deviceWidth <= 600 ? 70.w : 25.w,
+            width: deviceWidth <= 600 ? 60.w : 25.w,
             child: Center(
                 child: Text(
                   AppStrings.price.tr(),
@@ -31,7 +31,7 @@ List<DataColumn> createOrderItemsColumns(double deviceWidth) {
                 )))),
     DataColumn(
         label: SizedBox(
-            width: deviceWidth <= 600 ? 70.w : 25.w,
+            width: deviceWidth <= 600 ? 55.w : 25.w,
             child: Center(
                 child: Text(
                   AppStrings.qny.tr(),

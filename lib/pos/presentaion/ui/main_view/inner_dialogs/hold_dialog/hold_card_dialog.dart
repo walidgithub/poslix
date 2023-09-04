@@ -36,8 +36,8 @@ Future holdOrdersDialog(
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: SizedBox(
-              width: 150.w,
-              height: deviceWidth <= 600 ? 130.h : 145.h,
+              width: deviceWidth <= 600 ? 180.w : 150.w,
+              height: deviceWidth <= 600 ? 140.h : 145.h,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -148,7 +148,7 @@ Future holdOrdersDialog(
                                         )),
                                     height: deviceWidth <= 600 ? 40.h : 40.h,
                                     width: deviceWidth <= 600 ? 100.w : 50.w,
-                                    color: ColorManager.primary,
+                                    color: listOfTmpOrders.isEmpty ? ColorManager.primary.withOpacity(0.5) : ColorManager.primary,
                                     borderRadius: AppSize.s5,
                                     borderColor: ColorManager.primary,
                                     borderWidth: 0.6.w
@@ -178,7 +178,7 @@ Future holdOrdersDialog(
               padding: const EdgeInsets.all(10),
               child: SizedBox(
                 width: deviceWidth <= 600 ? 180.w : 150.w,
-                height: deviceWidth <= 600 ? 130.h : 145.h,
+                height: deviceWidth <= 600 ? 140.h : 145.h,
                 child: Column(
                   children: [
                     Align(
@@ -285,7 +285,7 @@ Future holdOrdersDialog(
                                         child: textS14WhiteComponent(context,
                                           AppStrings.save.tr(),
                                         )),
-                                    height: deviceWidth! <= 600 ? 40.h : 30.h,
+                                    height: deviceWidth <= 600 ? 40.h : 30.h,
                                     width: deviceWidth <= 600 ? 100.w : 50.w,
                                     color: ColorManager.primary,
                                     borderRadius: AppSize.s5,

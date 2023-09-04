@@ -14,7 +14,7 @@ Widget createOrdersDataTable(
     children: [
       DataTable(
         horizontalMargin: 10,
-        columnSpacing: 60,
+        columnSpacing: deviceWidth <= 600 ? 15 : 60,
         dividerThickness: 2.sp,
         columns: createOrdersColumns,
         rows:

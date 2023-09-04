@@ -126,6 +126,8 @@ class _OrdersDialogState extends State<OrdersDialog> {
 
   int decimalPlaces = 2;
 
+  double mobileDialogHeight = 320.h;
+
   void getDecimalPlaces() async {
     decimalPlaces = _appPreferences.getLocationId(PREFS_KEY_DECIMAL_PLACES)!;
   }
@@ -237,12 +239,12 @@ class _OrdersDialogState extends State<OrdersDialog> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: RotatedBox(
-        quarterTurns: widget.deviceWidth <= 600 ? 1 : 0,
+        quarterTurns: widget.deviceWidth <= 600 ? 0 : 0,
         child: Center(
           child: SingleChildScrollView(
             child: Container(
-              height: widget.deviceWidth <= 600 ? 320.h : 427.h,
-              width: widget.deviceWidth <= 600 ? 550.w : 180.w,
+              height: widget.deviceWidth <= 600 ? mobileDialogHeight : 430.h,
+              width: widget.deviceWidth <= 600 ? 400.w : 180.w,
               decoration: BoxDecoration(
                   color: ColorManager.white,
                   shape: BoxShape.rectangle,
@@ -265,7 +267,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        orderItems! ? itemsTotal(context, searching, orderId!, listOfOrderHead, listOfOrderHeadForSearch, totalAmount) : autoComplete(context, _searchEditingController, searchInList),
+                        orderItems! ? itemsTotal(context, searching, orderId!, listOfOrderHead, listOfOrderHeadForSearch, totalAmount) : autoComplete(context, _searchEditingController, searchInList, widget.deviceWidth),
                         orderItems!
                             ? Container()
                             : SizedBox(
@@ -284,7 +286,16 @@ class _OrdersDialogState extends State<OrdersDialog> {
                     SizedBox(
                       height: AppConstants.smallerDistance,
                     ),
-                    Row(
+                    widget.deviceWidth <= 600 && orderFilter! ? Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        pagination(context),
+                        SizedBox(
+                          height: AppConstants.heightBetweenElements,
+                        ),
+                        closeButton(context),
+                      ],
+                    ) : Row(
                       mainAxisAlignment: orderFilter! || orderItems!
                           ? MainAxisAlignment.spaceEvenly
                           : MainAxisAlignment.center,
@@ -325,6 +336,10 @@ class _OrdersDialogState extends State<OrdersDialog> {
 
         orderFilter = !orderFilter!;
         orderItems = false;
+
+        if (widget.deviceWidth <= 600) {
+          mobileDialogHeight = 320.h;
+        }
         for (var element in listOfHoldOrderNames) {
           if (selectedSearchType == AppStrings.holdName.tr()) {
             searchList.add(element.holdText!);
@@ -424,6 +439,9 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   orderFilter = !orderFilter!;
                   orderItems = false;
 
+                  if (widget.deviceWidth <= 600 && orderFilter == true) {
+                    mobileDialogHeight = 380.h;
+                  }
                   if (selectedSearchType == AppStrings.holdName.tr()) {
                     selectedSearchType = AppStrings.orderId.tr();
                   }
@@ -492,7 +510,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                 create: (context) => sl<OrdersCubit>(),
                 child: BlocBuilder<OrdersCubit, OrdersState>(
                   builder: (context, state) {
-                    return createOrderItemsDataTable(_currentSortColumn, _isSortAsc, createOrderItemsColumns(widget.deviceWidth), createOrderItemsRows(decimalPlaces, listOfOrderItems, widget.deviceWidth));
+                    return createOrderItemsDataTable(_currentSortColumn, _isSortAsc, createOrderItemsColumns(widget.deviceWidth), createOrderItemsRows(decimalPlaces, listOfOrderItems, widget.deviceWidth), widget.deviceWidth);
                   },
                 ),
               )
@@ -1028,6 +1046,9 @@ class _OrdersDialogState extends State<OrdersDialog> {
     setState(() {
       orderItems = false;
       orderFilter = true;
+      if (widget.deviceWidth <= 600) {
+        mobileDialogHeight = 380.h;
+      }
     });
   }
 
@@ -1229,6 +1250,10 @@ class _OrdersDialogState extends State<OrdersDialog> {
 
                       OrdersCubit.get(context).getOrderReportItems(
                           widget.locationId, orderId!);
+
+                      if (widget.deviceWidth <= 600) {
+                        mobileDialogHeight = 320.h;
+                      }
                     },
                     child: Icon(
                       Icons.visibility,

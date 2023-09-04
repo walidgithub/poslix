@@ -6,11 +6,12 @@ import '../../../../../../../shared/constant/padding_margin_values_manager.dart'
 import '../../../../../../../shared/constant/strings_manager.dart';
 import '../../../../../../../shared/style/colors_manager.dart';
 
-Widget autoComplete(BuildContext context, TextEditingController searchEditingController, searchInList) {
+Widget autoComplete(BuildContext context, TextEditingController searchEditingController, searchInList, double deviceWidth) {
   return Expanded(
-      flex: 3,
+      flex: deviceWidth <= 600 ? 2 : 3,
       child: TextField(
           autofocus: false,
+
           keyboardType: TextInputType.text,
           controller: searchEditingController,
           onChanged: searchInList,

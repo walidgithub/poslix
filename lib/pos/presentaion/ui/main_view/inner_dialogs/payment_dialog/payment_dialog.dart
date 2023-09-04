@@ -23,6 +23,7 @@ import '../../../../../domain/requests/cart_model.dart';
 import '../../../../../domain/requests/check_out_model.dart';
 import '../../../../../domain/requests/payment_types_model.dart';
 import '../../../../../shared/constant/constant_values_manager.dart';
+import '../../../../../shared/constant/language_manager.dart';
 import '../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../shared/preferences/app_pref.dart';
 import '../../../../../shared/style/colors_manager.dart';
@@ -135,6 +136,42 @@ class _PaymentDialogState extends State<PaymentDialog> {
   int decimalPlaces = 2;
 
   @override
+  void initState() {
+    getDecimalPlaces();
+    setState(() {
+      isArabic();
+    });
+    sizedHeight = isRtl ? 370.h : 370.h;
+
+    printType = printTypes[2];
+
+    totalNewPaying = 0;
+    totalPaying = 0;
+    changeReturn = 0;
+    balance = 0;
+
+    selectedPaymentType = AppStrings.cash.tr();
+    due = 0.0;
+    _amountEditingController.text = widget.total.toString();
+
+    _amountEditingController.addListener(goToCalc);
+
+    changedTotal = widget.total.toString();
+    super.initState();
+  }
+
+  bool isRtl = false;
+
+  void isArabic() async {
+    String currentLang = await _appPreferences.getAppLanguage();
+    if (currentLang == 'ar') {
+      isRtl = true;
+    } else {
+      isRtl = false;
+    }
+  }
+
+  @override
   void dispose() {
     _notesEditingController.dispose();
     _amountEditingController.dispose();
@@ -197,8 +234,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
   List printTypes = ['Bluetooth', 'A4', 'Wi_Fi_Thermal'];
   String? printType = '';
 
-  double sizedHeight = 360.h;
-  double innerHeight = 50.h;
+  double? sizedHeight;
+  double innerHeight = 60.h;
   int paymentWaysCount = 0;
 
   void getDecimalPlaces() async {
@@ -207,26 +244,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   String changedTotal = '';
 
-  @override
-  void initState() {
-    getDecimalPlaces();
 
-    printType = printTypes[2];
-
-    totalNewPaying = 0;
-    totalPaying = 0;
-    changeReturn = 0;
-    balance = 0;
-
-    selectedPaymentType = AppStrings.cash.tr();
-    due = 0.0;
-    _amountEditingController.text = widget.total.toString();
-
-    _amountEditingController.addListener(goToCalc);
-
-    changedTotal = widget.total.toString();
-    super.initState();
-  }
 
   void goToCalc() {
     setState(() {
@@ -321,6 +339,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                         height: sizedHeight,
                         child: SingleChildScrollView(
                           physics: const NeverScrollableScrollPhysics(),
+                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                           child: Container(
                             decoration: BoxDecoration(
                                 color: ColorManager.white,
@@ -445,14 +464,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
       paymentWaysCount--;
 
       if (paymentMethods.length == 1) {
-        innerHeight = 60.h;
-        sizedHeight = 410.h;
+        innerHeight = isRtl ? 70 : 60.h;
+        sizedHeight = isRtl ? 450 : 430.h;
       } else if (paymentMethods.length > 1) {
-        innerHeight = 125.h;
-        sizedHeight = 470.h;
+        innerHeight = isRtl ? 145 : 125.h;
+        sizedHeight = isRtl ? 525 : 490.h;
       } else if (paymentMethods.isEmpty) {
         newPayment = false;
-        sizedHeight = 340.h;
+        sizedHeight = isRtl ? 380 : 365.h;
       }
     });
   }
@@ -489,14 +508,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
       newPayment = true;
       paymentMethods.add(paymentWaysCount);
       if (paymentMethods.length == 1) {
-        innerHeight = 60.h;
-        sizedHeight = 410.h;
+        innerHeight = isRtl ? 70 : 60.h;
+        sizedHeight = isRtl ? 450 : 430.h;
       } else if (paymentMethods.length > 1) {
-        innerHeight = 125.h;
-        sizedHeight = 470.h;
+        innerHeight = isRtl ? 145 : 125.h;
+        sizedHeight = isRtl ? 525 : 490.h;
       } else if (paymentMethods.isEmpty) {
         newPayment = false;
-        sizedHeight = 340.h;
+        sizedHeight = isRtl ? 380 : 365.h;
       }
       paymentWaysCount++;
     });

@@ -1,8 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:keyboard_visibility_pro/keyboard_visibility_pro.dart';
 import 'package:poslix_app/pos/presentaion/ui/login_view/widgets/email_text_field.dart';
 import 'package:poslix_app/pos/presentaion/ui/login_view/widgets/left_part.dart';
 import 'package:poslix_app/pos/presentaion/ui/login_view/widgets/login_button.dart';
@@ -34,7 +37,6 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-
   final TextEditingController _loginEmailEditingController =
       TextEditingController();
   final TextEditingController _loginPassEditingController =
@@ -53,6 +55,8 @@ class _LoginViewState extends State<LoginView> {
   bool? login;
 
   bool openedRegister = false;
+
+  bool keyPadOn = false;
 
   goNext() {
     _appPreferences.isUserOpenedRegister().then((isUserOpenedRegister) => {
@@ -88,8 +92,15 @@ class _LoginViewState extends State<LoginView> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
           child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: ColorManager.secondary,
-        body: bodyContent(context),
+        body: KeyboardVisibility(
+            onChanged: (bool visible) {
+              setState(() {
+                keyPadOn = visible;
+              });
+            },
+            child: bodyContent(context)),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -144,28 +155,54 @@ class _LoginViewState extends State<LoginView> {
           }
         },
         builder: (context, state) {
-          return SingleChildScrollView(
-            reverse: true,
-            child: SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppPadding.p20),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              deviceWidth! <= 600 ? Container() : leftPart(context),
-                              deviceWidth! <= 600 ? Container() : SizedBox(
-                                width: AppConstants.smallDistance,
-                              ),
-                              rightPart(context),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+          return OrientationBuilder(builder: (context, orientation) {
+            if (orientation == Orientation.portrait) {
+              if (deviceWidth! < 600) {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                  DeviceOrientation.portraitDown,
+                ]);
+              } else {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.landscapeLeft,
+                  DeviceOrientation.landscapeRight,
+                ]);
+              }
+            } else if (orientation == Orientation.landscape) {
+              if (deviceWidth! < 800) {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                  DeviceOrientation.portraitDown,
+                ]);
+              } else {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.landscapeLeft,
+                  DeviceOrientation.landscapeRight,
+                ]);
+              }
+            }
+          return SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Padding(
+              padding: const EdgeInsets.all(AppPadding.p20),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      deviceWidth! <= 600 ? Container() : leftPart(context),
+                      deviceWidth! <= 600
+                          ? Container()
+                          : SizedBox(
+                              width: AppConstants.smallDistance,
+                            ),
+                      rightPart(context),
+                    ],
                   ),
+                ],
+              ),
+            ),
           );
+    });
           // --------------------------------------------------------------------------------------------------
         },
       ),
@@ -178,62 +215,83 @@ class _LoginViewState extends State<LoginView> {
         flex: 1,
         child: containerComponent(
             context,
-            Column(
-              children: [
-                SizedBox(
-                  height: AppConstants.heightBetweenElements,
-                ),
-                Image.asset(
-                  ImageAssets.logo,
-                  width: deviceWidth! <= 600 ? 150.w : 60.w,
-                  height: deviceWidth! <= 600 ? 150.h : 60.h,
-                ),
-                SizedBox(
-                  height: AppConstants.bigHeightBetweenElements,
-                ),
-                Text(
-                  AppStrings.welcomeBack.tr(),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: AppSize.s20.sp,
-                      color: ColorManager.black),
-                ),
-                SizedBox(
-                  height: AppConstants.smallDistance,
-                ),
-                Text(
-                  AppStrings.toStartWorkingFirstLogin.tr(),
-                  style: TextStyle(
-                      fontSize: AppSize.s14.sp, color: ColorManager.black),
-                ),
-                SizedBox(
-                  height: AppConstants.heightBetweenElements,
-                ),
-                login!
-                    ? SizedBox(
-                        height: 120.h,
-                        child: Form(
-                          key: _loginFormKey,
-                          child: Column(
-                            children: [
-                              emailText(context, regexMail, _loginPassFN,
-                                  _loginEmailFN, _loginEmailEditingController),
-                              SizedBox(
-                                height: AppConstants.smallDistance,
-                              ),
-                              passText(context, _loginPassFN, _loginPassEditingController, showPass, toggleEye)
-                            ],
+            SingleChildScrollView(
+              reverse: true,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: AppConstants.heightBetweenElements,
+                  ),
+                  Image.asset(
+                    ImageAssets.logo,
+                    width: deviceWidth! <= 600 ? 150.w : 60.w,
+                    height: deviceWidth! <= 600 ? 150.h : 60.h,
+                  ),
+                  SizedBox(
+                    height: AppConstants.bigHeightBetweenElements,
+                  ),
+                  Text(
+                    AppStrings.welcomeBack.tr(),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppSize.s20.sp,
+                        color: ColorManager.black),
+                  ),
+                  SizedBox(
+                    height: AppConstants.smallDistance,
+                  ),
+                  Text(
+                    AppStrings.toStartWorkingFirstLogin.tr(),
+                    style: TextStyle(
+                        fontSize: AppSize.s14.sp, color: ColorManager.black),
+                  ),
+                  SizedBox(
+                    height: AppConstants.heightBetweenElements,
+                  ),
+                  login!
+                      ? SizedBox(
+                          height: 120.h,
+                          child: Form(
+                            key: _loginFormKey,
+                            child: Column(
+                              children: [
+                                emailText(
+                                    context,
+                                    regexMail,
+                                    _loginPassFN,
+                                    _loginEmailFN,
+                                    _loginEmailEditingController),
+                                SizedBox(
+                                  height: AppConstants.smallDistance,
+                                ),
+                                passText(
+                                    context,
+                                    _loginPassFN,
+                                    _loginPassEditingController,
+                                    showPass,
+                                    toggleEye)
+                              ],
+                            ),
                           ),
-                        ),
-                      )
-                    : Container(),
-                SizedBox(
-                  height: AppConstants.heightBetweenElements,
-                ),
+                        )
+                      : Container(),
 
-                // sign in
-                loginButton(context, loginAction, login!)
-              ],
+                  SizedBox(
+                    height: AppConstants.heightBetweenElements,
+                  ),
+                  // sign in
+                  loginButton(context, loginAction, login!),
+
+                  keyPadOn
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom +
+                                  300))
+                      : SizedBox(
+                          height: AppConstants.loginHeight,
+                        ),
+                ],
+              ),
             ),
             padding: const EdgeInsets.all(AppPadding.p20),
             height: MediaQuery.of(context).size.height - 40.h,
@@ -243,14 +301,15 @@ class _LoginViewState extends State<LoginView> {
             borderWidth: 0));
   }
 
-  void toggleEye(){
+  void toggleEye() {
     setState(() {
       showPass = !showPass;
     });
   }
 
-  Future<void> loginAction(BuildContext context) async  {
-    await Future.delayed(Duration(milliseconds: AppConstants.durationOfBounceable));
+  Future<void> loginAction(BuildContext context) async {
+    await Future.delayed(
+        Duration(milliseconds: AppConstants.durationOfBounceable));
 
     if (_loginFormKey.currentState!.validate()) {
       UserRequest userRequest = UserRequest(
@@ -259,8 +318,7 @@ class _LoginViewState extends State<LoginView> {
 
       await _appPreferences.setUserName(
           USER_NAME, _loginEmailEditingController.text);
-      await _appPreferences.setPassword(
-          PASS, _loginPassEditingController.text);
+      await _appPreferences.setPassword(PASS, _loginPassEditingController.text);
 
       LoginCubit.get(context).login(userRequest);
     }
