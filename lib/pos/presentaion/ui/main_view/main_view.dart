@@ -656,6 +656,14 @@ class _MainViewState extends State<MainView> {
                   ),
                 ),
                 deviceWidth! <= 600
+                    ? Positioned(
+                  bottom: 150,
+                    child: SvgPicture.asset(
+                  ImageAssets.addToTmp,
+                  width: AppSize.s25,
+                  color: ColorManager.success,
+                )) : Container(),
+                deviceWidth! <= 600
                     ? listOfTmpOrder.isNotEmpty
                     ? Positioned(
                     bottom: 0,
@@ -1408,6 +1416,7 @@ class _MainViewState extends State<MainView> {
         }
       });
     }
+    getTotalAmount();
   }
 
   Future<void> increaseCount(
@@ -1486,7 +1495,7 @@ class _MainViewState extends State<MainView> {
       });
     }
 
-
+    getTotalAmount();
   }
 
   void addToTmp(int index, BuildContext context, bool searching) {

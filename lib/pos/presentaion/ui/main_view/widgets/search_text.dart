@@ -11,34 +11,35 @@ import '../../../../shared/utils/utils.dart';
 import '../../components/container_component.dart';
 
 double? deviceWidth;
-Widget searchText(BuildContext context, TextEditingController searchEditingController, Function addToTmp, List<ProductsResponse> listOfAllProducts, List<String> searchList) {
+Widget searchText(
+    BuildContext context,
+    TextEditingController searchEditingController,
+    Function addToTmp,
+    List<ProductsResponse> listOfAllProducts,
+    List<String> searchList) {
   deviceWidth = getDeviceWidth(context);
   return Autocomplete<String>(
-    optionsBuilder:
-        (TextEditingValue textEditingValue) {
+    optionsBuilder: (TextEditingValue textEditingValue) {
       if (textEditingValue.text.isEmpty) {
         return const Iterable<String>.empty();
       } else {
-        return searchList.where((word) => word
-            .toLowerCase()
-            .contains(textEditingValue.text
-            .toLowerCase()));
+        return searchList.where((word) =>
+            word.toLowerCase().contains(textEditingValue.text.toLowerCase()));
       }
     },
     onSelected: (String selection) {
-      int index = listOfAllProducts.indexWhere(
-              (element) =>
-          element.name == selection);
+      int index =
+          listOfAllProducts.indexWhere((element) => element.name == selection);
 
-      addToTmp(index,context,true);
+      addToTmp(index, context, true);
     },
-    fieldViewBuilder: (context,
-        textEditingController,
-        focusNode,
-        onFieldSubmitted) {
-      searchEditingController =
-          textEditingController;
+    fieldViewBuilder:
+        (context, textEditingController, focusNode, onFieldSubmitted) {
+      searchEditingController = textEditingController;
       return TextField(
+          onSubmitted: (value) {
+            FocusScope.of(context).unfocus();
+          },
           autofocus: false,
           keyboardType: TextInputType.text,
           controller: searchEditingController,
@@ -49,51 +50,39 @@ Widget searchText(BuildContext context, TextEditingController searchEditingContr
                 Icons.search,
                 size: AppSize.s25.sp,
               ),
-              hintText: AppStrings
-                  .searchByProduct
-                  .tr(),
-              hintStyle: TextStyle(
-                  fontSize: AppSize.s14,
-                  color: ColorManager.primary),
+              hintText: AppStrings.searchByProduct.tr(),
+              hintStyle:
+                  TextStyle(fontSize: AppSize.s14, color: ColorManager.primary),
               border: InputBorder.none));
     },
-    optionsViewBuilder:
-        (context, onSelected, options) => Align(
+    optionsViewBuilder: (context, onSelected, options) => Align(
       alignment: Alignment.topLeft,
       child: Material(
-        child:
-        containerComponent(
+        child: containerComponent(
             context,
             ListView(
               children: options
                   .map((e) => Padding(
-                padding:
-                const EdgeInsets.only(
-                    top: AppPadding
-                        .p15),
-                child: ListTile(
-                  onTap: () =>
-                      onSelected(e),
-                  title: Column(
-                    crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
-                    children: [
-                      Text(e),
-                      const Divider()
-                    ],
-                  ),
-                ),
-              ))
+                        padding: const EdgeInsets.only(top: AppPadding.p15),
+                        child: ListTile(
+                          onTap: () {
+                            FocusScope.of(context).unfocus();
+                            onSelected(e);
+                          },
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [Text(e), const Divider()],
+                          ),
+                        ),
+                      ))
                   .toList(),
             ),
-            width: deviceWidth !<= 600 ? 320.w : 120.w,
+            width: deviceWidth! <= 600 ? 320.w : 120.w,
             height: 200.h,
             color: ColorManager.white,
             borderColor: ColorManager.secondary,
             borderWidth: 0.5.w,
-            borderRadius: AppSize.s5
-        ),
+            borderRadius: AppSize.s5),
       ),
     ),
   );
