@@ -26,30 +26,32 @@ import 'widgets/money_methods.dart';
 class CloseRegisterDialog extends StatefulWidget {
   int locationId;
   double deviceWidth;
-  static void show(BuildContext context, int locationId, double deviceWidth) => isApple()
-      ? showCupertinoDialog<void>(
-          context: context,
-          useRootNavigator: false,
-          barrierDismissible: false,
-          builder: (_) {
-            return CloseRegisterDialog(
-              locationId: locationId,
-              deviceWidth: deviceWidth,
-            );
-          }).then((_) => FocusScope.of(context).requestFocus(FocusNode()))
-      : showDialog<void>(
-          context: context,
-          useRootNavigator: false,
-          barrierDismissible: false,
-          builder: (_) => CloseRegisterDialog(
-            locationId: locationId,
-            deviceWidth: deviceWidth,
-          ),
-        ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
+  static void show(BuildContext context, int locationId, double deviceWidth) =>
+      isApple()
+          ? showCupertinoDialog<void>(
+              context: context,
+              useRootNavigator: false,
+              barrierDismissible: false,
+              builder: (_) {
+                return CloseRegisterDialog(
+                  locationId: locationId,
+                  deviceWidth: deviceWidth,
+                );
+              }).then((_) => FocusScope.of(context).requestFocus(FocusNode()))
+          : showDialog<void>(
+              context: context,
+              useRootNavigator: false,
+              barrierDismissible: false,
+              builder: (_) => CloseRegisterDialog(
+                locationId: locationId,
+                deviceWidth: deviceWidth,
+              ),
+            ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
   static void hide(BuildContext context) => Navigator.of(context).pop();
 
-  CloseRegisterDialog({required this.locationId, required this.deviceWidth, super.key});
+  CloseRegisterDialog(
+      {required this.locationId, required this.deviceWidth, super.key});
 
   @override
   State<CloseRegisterDialog> createState() => _CloseRegisterDialogState();
@@ -169,7 +171,7 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                           AppConstants.heightBetweenElements,
                                     ),
                                     SingleChildScrollView(
-                                      physics: ScrollPhysics(),
+                                      physics: const ScrollPhysics(),
                                       scrollDirection: Axis.horizontal,
                                       child: Row(
                                           mainAxisAlignment:
@@ -180,7 +182,8 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                                 ImageAssets.moneyBillWave,
                                                 AppStrings.cashInHand.tr(),
                                                 cashInHand.toString(),
-                                                currencyCode,widget.deviceWidth),
+                                                currencyCode,
+                                                widget.deviceWidth),
                                             SizedBox(
                                               width: AppConstants.smallDistance,
                                             ),
@@ -189,7 +192,8 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                                 ImageAssets.moneyBillTransfer,
                                                 AppStrings.cartPayment.tr(),
                                                 totalCart.toString(),
-                                                currencyCode,widget.deviceWidth),
+                                                currencyCode,
+                                                widget.deviceWidth),
                                             SizedBox(
                                               width: AppConstants.smallDistance,
                                             ),
@@ -198,27 +202,75 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                                 ImageAssets.building,
                                                 AppStrings.bankPayment.tr(),
                                                 totalBank.toString(),
-                                                currencyCode,widget.deviceWidth),
-                                            SizedBox(
-                                              width: AppConstants.smallDistance,
-                                            ),
-                                            moneyMethods(
-                                                context,
-                                                ImageAssets.creditCard,
-                                                AppStrings.cashPayment.tr(),
-                                                totalCash.toString(),
-                                                currencyCode,widget.deviceWidth),
-                                            SizedBox(
-                                              width: AppConstants.smallDistance,
-                                            ),
-                                            moneyMethods(
-                                                context,
-                                                ImageAssets.moneyCheck,
-                                                AppStrings.chequePayment.tr(),
-                                                totalCheque.toString(),
-                                                currencyCode,widget.deviceWidth),
+                                                currencyCode,
+                                                widget.deviceWidth),
+                                            deviceWidth! <= 600
+                                                ? Container()
+                                                : Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: AppConstants
+                                                            .smallDistance,
+                                                      ),
+                                                      moneyMethods(
+                                                          context,
+                                                          ImageAssets
+                                                              .creditCard,
+                                                          AppStrings.cashPayment
+                                                              .tr(),
+                                                          totalCash.toString(),
+                                                          currencyCode,
+                                                          widget.deviceWidth),
+                                                      SizedBox(
+                                                        width: AppConstants
+                                                            .smallDistance,
+                                                      ),
+                                                      moneyMethods(
+                                                          context,
+                                                          ImageAssets
+                                                              .moneyCheck,
+                                                          AppStrings
+                                                              .chequePayment
+                                                              .tr(),
+                                                          totalCheque
+                                                              .toString(),
+                                                          currencyCode,
+                                                          widget.deviceWidth),
+                                                    ],
+                                                  )
                                           ]),
                                     ),
+                                    deviceWidth! <= 600
+                                        ? SizedBox(
+                                      height: AppConstants
+                                          .smallDistance,
+                                    ) : Container(),
+
+                                    deviceWidth! <= 600
+                                        ? Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              moneyMethods(
+                                                  context,
+                                                  ImageAssets.creditCard,
+                                                  AppStrings.cashPayment.tr(),
+                                                  totalCash.toString(),
+                                                  currencyCode,
+                                                  widget.deviceWidth),
+                                              SizedBox(
+                                                width:
+                                                    AppConstants.smallDistance,
+                                              ),
+                                              moneyMethods(
+                                                  context,
+                                                  ImageAssets.moneyCheck,
+                                                  AppStrings.chequePayment.tr(),
+                                                  totalCheque.toString(),
+                                                  currencyCode,
+                                                  widget.deviceWidth),
+                                            ],
+                                          )
+                                        : Container(),
                                     SizedBox(
                                       height: AppConstants.smallDistance,
                                     ),

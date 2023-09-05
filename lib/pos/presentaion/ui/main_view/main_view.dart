@@ -1368,27 +1368,45 @@ class _MainViewState extends State<MainView> {
         Duration(milliseconds: AppConstants.durationOfBounceable));
 
     if (deviceWidth! <= 600) {
-      _controllerLeftPart.setState!(() {});
+      _controllerLeftPart.setState!(() {
+        int? itemCount =
+            listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
+        itemCount = itemCount! - 1;
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+
+        double total = roundDouble(
+            (itemCount *
+                double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                    .itemPrice
+                    .toString())),
+            decimalPlaces);
+
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+            total.toString();
+        if (itemCount == 0) {
+          listOfTmpOrder.removeAt(listOfTmpOrder.indexOf(tmpOrder));
+        }
+      });
     } else {
-      setState(() {});
-    }
+      setState(() {
+        int? itemCount =
+            listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
+        itemCount = itemCount! - 1;
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
 
-    int? itemCount =
-        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
-    itemCount = itemCount! - 1;
-    listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+        double total = roundDouble(
+            (itemCount *
+                double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                    .itemPrice
+                    .toString())),
+            decimalPlaces);
 
-    double total = roundDouble(
-        (itemCount *
-            double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-                .itemPrice
-                .toString())),
-        decimalPlaces);
-
-    listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
-        total.toString();
-    if (itemCount == 0) {
-      listOfTmpOrder.removeAt(listOfTmpOrder.indexOf(tmpOrder));
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+            total.toString();
+        if (itemCount == 0) {
+          listOfTmpOrder.removeAt(listOfTmpOrder.indexOf(tmpOrder));
+        }
+      });
     }
   }
 
@@ -1427,28 +1445,48 @@ class _MainViewState extends State<MainView> {
         return;
       }
     }
+
     if (deviceWidth! <= 600) {
-      _controllerLeftPart.setState!(() {});
+      _controllerLeftPart.setState!(() {
+        int? itemCount =
+            listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
+
+        itemCount = itemCount! + 1;
+
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+
+        double total = roundDouble(
+            (itemCount *
+                double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                    .itemPrice
+                    .toString())),
+            decimalPlaces);
+
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+            total.toString();
+      });
     } else {
-      setState(() {});
+      setState(() {
+        int? itemCount =
+            listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
+
+        itemCount = itemCount! + 1;
+
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+
+        double total = roundDouble(
+            (itemCount *
+                double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                    .itemPrice
+                    .toString())),
+            decimalPlaces);
+
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+            total.toString();
+      });
     }
 
-    int? itemCount =
-        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
 
-    itemCount = itemCount! + 1;
-
-    listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
-
-    double total = roundDouble(
-        (itemCount *
-            double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-                .itemPrice
-                .toString())),
-        decimalPlaces);
-
-    listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
-        total.toString();
   }
 
   void addToTmp(int index, BuildContext context, bool searching) {

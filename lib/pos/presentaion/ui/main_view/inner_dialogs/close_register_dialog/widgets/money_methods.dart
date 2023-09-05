@@ -17,7 +17,7 @@ Widget moneyMethods(BuildContext context, String image,String address,String val
           children: [
             SvgPicture.asset(
               image,
-              width: AppSize.s60,
+              width: deviceWidth <= 600 ? AppSize.s40 : AppSize.s60,
               color: ColorManager.darkGray,
             ),
             SizedBox(
@@ -27,7 +27,7 @@ Widget moneyMethods(BuildContext context, String image,String address,String val
             Text(
               address,
               style: TextStyle(
-                  fontSize: AppSize.s14.sp),
+                  fontSize: AppSize.s14.sp),textAlign: TextAlign.center,
             ),
             SizedBox(
               height: AppConstants
@@ -40,12 +40,13 @@ Widget moneyMethods(BuildContext context, String image,String address,String val
                     fontWeight:
                     FontWeight.bold,
                     color: ColorManager
-                        .primary))
+                        .primary),)
           ],
         ),
-        width: deviceWidth <= 600 ? 130.w : 50.w,
-        height: 200.h,
-        padding: const EdgeInsets.all(
+        width: deviceWidth <= 600 ? 105.w : 50.w,
+        height: deviceWidth <= 600 ? 120.h : 200.h,
+        padding: deviceWidth <= 600 ? const EdgeInsets.all(
+            AppPadding.p5) : const EdgeInsets.all(
             AppPadding.p10),
         color: ColorManager.secondary,
         borderColor: ColorManager.secondary,
