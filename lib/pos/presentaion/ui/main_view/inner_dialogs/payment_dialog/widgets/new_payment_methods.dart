@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -10,221 +11,186 @@ import '../../../../../../shared/style/colors_manager.dart';
 import '../../../../components/container_component.dart';
 import '../../../../components/text_component.dart';
 
-Widget newPaymentMethods(BuildContext context, Function deletePaymentMethod, bool newPayment, double innerHeight, List paymentMethods, List<TextEditingController> paymentControllers, double total, List<TextEditingController> paymentNotesControllers, Function selectPaymentType, var selectedNewPaymentType, double deviceWidth) {
+Widget newPaymentMethods(
+    BuildContext context,
+    Function deletePaymentMethod,
+    bool newPayment,
+    double innerHeight,
+    List paymentMethods,
+    List<TextEditingController> paymentControllers,
+    double total,
+    List<TextEditingController> paymentNotesControllers,
+    Function selectPaymentType,
+    var selectedNewPaymentType,
+    double deviceWidth) {
   return newPayment
       ? SingleChildScrollView(
-    physics:
-    const AlwaysScrollableScrollPhysics(),
-    child: Column(
-      children: [
-        SizedBox(
-          height: AppConstants
-              .smallerDistance,
-        ),
-        SizedBox(
-          width: deviceWidth <= 600 ? 375.w : 200.w,
-          height: innerHeight,
-          child: ListView.builder(
-            itemCount:
-            paymentMethods.length,
-            padding:
-            const EdgeInsets.only(
-                top: AppSize.s10),
-            itemBuilder:
-                (BuildContext context,
-                int index) {
-              return Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: TextField(
-                            autofocus:
-                            false,
-                            keyboardType:
-                            TextInputType
-                                .number,
-                            controller:
-                            paymentControllers[
-                            index],
-                            decoration: InputDecoration(
-                                hintText: total
-                                    .toString(),
-                                hintStyle: TextStyle(
-                                    fontSize: AppSize
-                                        .s12.sp),
-                                labelText: AppStrings
-                                    .amount
-                                    .tr(),
-                                labelStyle: TextStyle(
-                                    fontSize: AppSize
-                                        .s15.sp,
-                                    color: ColorManager
-                                        .primary),
-                                border:
-                                InputBorder.none)),
-                      ),
-                      SizedBox(
-                        width: AppConstants
-                            .smallDistance,
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child:
-                        containerComponent(
-                            context,
-                            DropdownButton(
-                              borderRadius:
-                              BorderRadius.circular(AppSize.s5),
-                              itemHeight:
-                              50.h,
-                              hint:
-                              textS14PrimaryComponent(context,
-                                selectedNewPaymentType[index],
-                              ),
-                              underline:
-                              Container(),
-                              items: <
-                                  String>[
-                                AppStrings.cash.tr(),
-                                AppStrings.bank.tr(),
-                                AppStrings.cheque.tr(),
-                                AppStrings.card.tr()
-                              ].map<DropdownMenuItem<String>>((String
-                              value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(fontSize: AppSize.s14.sp),
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              SizedBox(
+                height: AppConstants.smallerDistance,
+              ),
+              SizedBox(
+                width: deviceWidth <= 600 ? 375.w : 200.w,
+                height: innerHeight,
+                child: ListView.builder(
+                  itemCount: paymentMethods.length,
+                  padding: const EdgeInsets.only(top: AppSize.s10),
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: TextField(
+                                  autofocus: false,
+                                  keyboardType: TextInputType.number,
+                                  controller: paymentControllers[index],
+                                  decoration: InputDecoration(
+                                      hintText: total.toString(),
+                                      hintStyle:
+                                          TextStyle(fontSize: AppSize.s12.sp),
+                                      labelText: AppStrings.amount.tr(),
+                                      labelStyle: TextStyle(
+                                          fontSize: AppSize.s15.sp,
+                                          color: ColorManager.primary),
+                                      border: InputBorder.none)),
+                            ),
+                            SizedBox(
+                              width: AppConstants.smallDistance,
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: DropdownButton2(
+                                buttonStyleData: ButtonStyleData(
+                                  height: 44.h,
+                                  width: 250.w,
+                                  padding: const EdgeInsets.only(
+                                      left: AppPadding.p14,
+                                      right: AppPadding.p14),
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(AppSize.s5),
+                                    border: Border.all(
+                                      color: ColorManager.primary,
+                                    ),
+                                    color: ColorManager.white,
                                   ),
-                                );
-                              }).toList(),
-                              onChanged:
-                                  (selectedType) {
-                                selectPaymentType(index, selectedType);
-                              },
-                              value:
-                              selectedNewPaymentType[index],
-                              isExpanded:
-                              true,
-                              icon:
-                              Icon(
-                                Icons.arrow_drop_down,
-                                color:
-                                ColorManager.primary,
-                                size:
-                                AppSize.s20.sp,
+                                  elevation: 2,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 400.h,
+                                  width: 100.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(AppSize.s5),
+                                    color: ColorManager.white,
+                                  ),
+                                  offset: const Offset(0, 0),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness:
+                                    MaterialStateProperty.all<double>(
+                                        6),
+                                    thumbVisibility:
+                                    MaterialStateProperty.all<bool>(
+                                        true),
+                                  ),
+                                ),
+                                hint: textS14PrimaryComponent(
+                                  context,
+                                  selectedNewPaymentType[index],
+                                ),
+                                underline: Container(),
+                                items: <String>[
+                                  AppStrings.cash.tr(),
+                                  AppStrings.bank.tr(),
+                                  AppStrings.cheque.tr(),
+                                  AppStrings.card.tr()
+                                ].map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                              fontSize: AppSize.s14.sp),
+                                        ),
+                                      );
+                                    }).toList(),
+                                onChanged: (selectedType) {
+                                  selectPaymentType(index, selectedType);
+                                },
+                                value: selectedNewPaymentType[index],
+                                isExpanded: true,
+                                style: TextStyle(
+                                    color: ColorManager.primary,
+                                    fontSize: AppSize.s14.sp),
                               ),
-                              style: TextStyle(
-                                  color: ColorManager.primary,
-                                  fontSize: AppSize.s14.sp),
                             ),
-                            height: deviceWidth <= 600 ? 44.h : 47.h,
-                            padding: const EdgeInsets.fromLTRB(AppPadding
-                                .p15, AppPadding
-                                .p2, AppPadding
-                                .p5, AppPadding
-                                .p2),
-                            color: ColorManager
-                                .white,
-                            borderColor:
-                            ColorManager
-                                .primary,
-                            borderWidth:
-                            deviceWidth <= 600 ? 1.5.w : 0.5
-                                .w,
-                            borderRadius:
-                            AppSize.s5),
-                      ),
-                      SizedBox(
-                        width: AppConstants
-                            .smallDistance,
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: TextField(
-                            autofocus:
-                            false,
-                            keyboardType:
-                            TextInputType
-                                .text,
-                            controller:
-                            paymentNotesControllers[
-                            index],
-                            decoration: InputDecoration(
-                                hintText: AppStrings
-                                    .paymentNotes
-                                    .tr(),
-                                hintStyle: TextStyle(
-                                    fontSize: AppSize
-                                        .s12.sp),
-                                labelText: AppStrings
-                                    .paymentNotes
-                                    .tr(),
-                                labelStyle: TextStyle(
-                                    fontSize:
-                                    AppSize.s15.sp,
-                                    color: ColorManager.primary),
-                                border: InputBorder.none)),
-                      ),
-                      SizedBox(
-                        width: AppConstants
-                            .smallDistance,
-                      ),
-                      Column(
-                        mainAxisAlignment:
-                        MainAxisAlignment
-                            .spaceBetween,
-                        children: [
-                          Text(
-                            AppStrings
-                                .action
-                                .tr(),
-                            style: TextStyle(
-                                color: ColorManager
-                                    .primary,
-                                fontSize: AppSize
-                                    .s18
-                                    .sp),
-                          ),
-                          Bounceable(
-                            duration: Duration(
-                                milliseconds:
-                                AppConstants.durationOfBounceable),
-                            onTap:
-                                () async {
-                              await Future.delayed(Duration(
-                                  milliseconds:
-                                  AppConstants.durationOfBounceable));
-                              deletePaymentMethod(index);
-                            },
-                            child: Icon(
-                              Icons
-                                  .delete,
-                              color: ColorManager
-                                  .delete,
-                              size: AppSize
-                                  .s30
-                                  .sp,
+                            SizedBox(
+                              width: AppConstants.smallDistance,
                             ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: AppConstants
-                        .smallDistance,
-                  ),
-                ],
-              );
-            },
+                            Expanded(
+                              flex: 1,
+                              child: TextField(
+                                  autofocus: false,
+                                  keyboardType: TextInputType.text,
+                                  controller: paymentNotesControllers[index],
+                                  decoration: InputDecoration(
+                                      hintText: AppStrings.paymentNotes.tr(),
+                                      hintStyle:
+                                          TextStyle(fontSize: AppSize.s12.sp),
+                                      labelText: AppStrings.paymentNotes.tr(),
+                                      labelStyle: TextStyle(
+                                          fontSize: AppSize.s15.sp,
+                                          color: ColorManager.primary),
+                                      border: InputBorder.none)),
+                            ),
+                            SizedBox(
+                              width: AppConstants.smallDistance,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppStrings.action.tr(),
+                                  style: TextStyle(
+                                      color: ColorManager.primary,
+                                      fontSize: AppSize.s18.sp),
+                                ),
+                                Bounceable(
+                                  duration: Duration(
+                                      milliseconds:
+                                          AppConstants.durationOfBounceable),
+                                  onTap: () async {
+                                    await Future.delayed(Duration(
+                                        milliseconds:
+                                            AppConstants.durationOfBounceable));
+                                    deletePaymentMethod(index);
+                                  },
+                                  child: Icon(
+                                    Icons.delete,
+                                    color: ColorManager.delete,
+                                    size: AppSize.s30.sp,
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: AppConstants.smallDistance,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              )
+            ],
           ),
         )
-      ],
-    ),
-  )
       : const SizedBox.shrink();
 }

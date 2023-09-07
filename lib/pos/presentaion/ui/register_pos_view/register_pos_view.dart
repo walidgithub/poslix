@@ -1,4 +1,5 @@
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -372,52 +373,66 @@ class _RegisterPosViewState extends State<RegisterPosView> {
           SizedBox(
             height: AppConstants.smallDistance,
           ),
-          containerComponent(
-              context,
-              DropdownButton(
+          DropdownButton2(
+
+            buttonStyleData: ButtonStyleData(
+              height: 47.h,
+              width: 280.w,
+              padding: const EdgeInsets.only(left: AppPadding.p14, right: AppPadding.p14),
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppSize.s5),
-                itemHeight: 50.h,
-                underline: Container(),
-                items: listOfBusinesses.map((item) {
-                  return DropdownMenuItem(
-                      value: item.name,
-                      child: Text(
-                        item.name,
-                        style: TextStyle(fontSize: AppSize.s15.sp),
-                      ));
-                }).toList(),
-                onChanged: (selectedBusiness) {
-                  getBusinessValues(context, listOfBusinesses);
-                },
-                value: _selectedBusiness,
-                isExpanded: true,
-                hint: Row(
-                  children: [
-                    Text(
-                      AppStrings.chooseBusiness.tr(),
-                      style: TextStyle(
-                          color: ColorManager.primary,
-                          fontSize: AppSize.s15.sp),
-                    ),
-                    SizedBox(
-                      width: AppConstants.smallDistance,
-                    )
-                  ],
-                ),
-                icon: Icon(
-                  Icons.arrow_drop_down,
+                border: Border.all(
                   color: ColorManager.primary,
-                  size: AppSize.s20.sp,
                 ),
-                style: TextStyle(
-                    color: ColorManager.primary, fontSize: AppSize.s20.sp),
+                color: ColorManager.white,
               ),
-              height: deviceWidth! <= 600 ? 44.h : 47.h,
-              padding: const EdgeInsets.fromLTRB(
-                  AppPadding.p10, AppPadding.p2, AppPadding.p5, AppPadding.p2),
-              borderRadius: AppSize.s5,
-              borderColor: ColorManager.primary,
-              borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w),
+              elevation: 2,
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 400.h,
+              width: 270.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppSize.s5),
+                color: ColorManager.white,
+              ),
+              offset: const Offset(0, 0),
+              scrollbarTheme: ScrollbarThemeData(
+                radius: const Radius.circular(40),
+                thickness: MaterialStateProperty.all<double>(6),
+                thumbVisibility: MaterialStateProperty.all<bool>(true),
+              ),
+            ),
+
+            underline: Container(),
+            items: listOfBusinesses.map((item) {
+              return DropdownMenuItem(
+                  value: item.name,
+                  child: Text(
+                    item.name,
+                    style: TextStyle(fontSize: AppSize.s15.sp),
+                  ));
+            }).toList(),
+            onChanged: (selectedBusiness) {
+              getBusinessValues(context, listOfBusinesses);
+            },
+            value: _selectedBusiness,
+            isExpanded: true,
+            hint: Row(
+              children: [
+                Text(
+                  AppStrings.chooseBusiness.tr(),
+                  style: TextStyle(
+                      color: ColorManager.primary,
+                      fontSize: AppSize.s15.sp),
+                ),
+                SizedBox(
+                  width: AppConstants.smallDistance,
+                )
+              ],
+            ),
+            style: TextStyle(
+                color: ColorManager.primary, fontSize: AppSize.s20.sp),
+          ),
         ],
       ),
     );
@@ -440,52 +455,67 @@ class _RegisterPosViewState extends State<RegisterPosView> {
           SizedBox(
             height: AppConstants.smallDistance,
           ),
-          containerComponent(
-              context,
-              DropdownButton(
-                borderRadius: BorderRadius.circular(AppSize.s5),
-                itemHeight: 50.h,
-                underline: Container(),
-                items: listOfLocations.map((item) {
-                  return DropdownMenuItem(
-                      value: item.locationName,
-                      child: Text(
-                        item.locationName,
-                        style: TextStyle(fontSize: AppSize.s15.sp),
-                      ));
-                }).toList(),
-                onChanged: (selectedLocation) {
-                  getLocationValues(context, listOfLocations);
-                },
-                value: _selectedLocation,
-                isExpanded: true,
-                hint: Row(
-                  children: [
-                    Text(
-                      AppStrings.chooseLocation.tr(),
-                      style: TextStyle(
-                          color: ColorManager.primary,
-                          fontSize: AppSize.s15.sp),
-                    ),
-                    SizedBox(
-                      width: AppConstants.smallDistance,
-                    )
-                  ],
-                ),
-                icon: Icon(
-                  Icons.arrow_drop_down,
+      DropdownButton2(
+
+        buttonStyleData: ButtonStyleData(
+          height: 47.h,
+          width: 280.w,
+          padding: const EdgeInsets.only(left: AppPadding.p14, right: AppPadding.p14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppSize.s5),
+            border: Border.all(
+              color: ColorManager.primary,
+            ),
+            color: ColorManager.white,
+          ),
+          elevation: 2,
+        ),
+        dropdownStyleData: DropdownStyleData(
+          maxHeight: 400.h,
+          width: 270.w,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppSize.s5),
+            color: ColorManager.white,
+          ),
+          offset: const Offset(0, 0),
+          scrollbarTheme: ScrollbarThemeData(
+            radius: const Radius.circular(40),
+            thickness: MaterialStateProperty.all<double>(6),
+            thumbVisibility: MaterialStateProperty.all<bool>(true),
+          ),
+        ),
+
+        underline: Container(),
+        items: listOfLocations.map((item) {
+          return DropdownMenuItem(
+              value: item.locationName,
+              child: Text(
+                item.locationName,
+                style: TextStyle(fontSize: AppSize.s15.sp),
+              ));
+        }).toList(),
+        onChanged: (selectedLocation) {
+          getLocationValues(context, listOfLocations);
+        },
+        value: _selectedLocation,
+        isExpanded: true,
+        hint: Row(
+          children: [
+            Text(
+              AppStrings.chooseLocation.tr(),
+              style: TextStyle(
                   color: ColorManager.primary,
-                  size: AppSize.s20.sp,
-                ),
-                style: TextStyle(
-                    color: ColorManager.primary, fontSize: AppSize.s20.sp),
-              ),
-              height: deviceWidth! <= 600 ? 44.h : 47.h,
-              padding: const EdgeInsets.fromLTRB(
-                  AppPadding.p10, AppPadding.p2, AppPadding.p5, AppPadding.p2),
-              borderRadius: AppSize.s5,
-              borderColor: ColorManager.primary,
-              borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w),
+                  fontSize: AppSize.s15.sp),
+            ),
+            SizedBox(
+              width: AppConstants.smallDistance,
+            )
+          ],
+        ),
+
+        style: TextStyle(
+            color: ColorManager.primary, fontSize: AppSize.s20.sp),
+      ),
         ],
       ),
     );

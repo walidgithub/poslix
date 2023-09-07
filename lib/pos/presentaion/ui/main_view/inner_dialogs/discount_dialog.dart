@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
     return Center(
       child: SizedBox(
         width: deviceWidth! <= 600 ? 350.w : 200.w,
-        height: deviceWidth! <= 600 ? 200.h : 215.h,
+        height: deviceWidth! <= 600 ? 170.h : 185.h,
         child: Container(
           decoration: BoxDecoration(
               color: ColorManager.white,
@@ -86,14 +87,6 @@ class _DiscountDialogState extends State<DiscountDialog> {
                 SizedBox(
                   height: AppConstants.heightBetweenElements,
                 ),
-                Align(
-                    alignment: AlignmentDirectional.topStart,
-                    child: Text(AppStrings.editDiscount.tr(),
-                        style: TextStyle(
-                            fontSize: AppSize.s18.sp, color: ColorManager.primary))),
-                SizedBox(
-                  height: AppConstants.smallDistance,
-                ),
                 Row(
                   children: [
                     Expanded(
@@ -103,9 +96,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                         child:
                         containerComponent(
                             context,
-                            DropdownButton(
-                              borderRadius: BorderRadius.circular(AppSize.s5),
-                              itemHeight: 50.h,
+                            DropdownButton2(
                               hint: Text(
                                 AppStrings.fixed.tr(),
                                 style: TextStyle(
@@ -130,11 +121,6 @@ class _DiscountDialogState extends State<DiscountDialog> {
                               },
                               value: selectedDiscountType,
                               isExpanded: true,
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: ColorManager.primary,
-                                size: AppSize.s14.sp,
-                              ),
                               style: TextStyle(
                                   color: ColorManager.primary,
                                   fontSize: AppSize.s18.sp),

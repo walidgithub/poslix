@@ -1,6 +1,7 @@
 ﻿import 'dart:async';
 
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -831,7 +832,8 @@ class _MainViewState extends State<MainView> {
                             ),
 
                       deviceWidth! <= 600
-                          ? Container()
+                          ? searchText(context, _searchEditingController,
+                          addToTmpInBottomSheet, listOfAllProducts, searchList)
                           : searchText(context, _searchEditingController,
                               addToTmp, listOfAllProducts, searchList),
 
@@ -878,69 +880,84 @@ class _MainViewState extends State<MainView> {
   Widget customerDropDown(BuildContext context) {
     return Expanded(
         flex: 3,
-        child: containerComponent(
-            context,
-            DropdownButton(
-              borderRadius: BorderRadius.circular(AppSize.s5),
-              itemHeight: 50.h,
-              underline: Container(),
-              value: _selectedCustomer,
-              items: listOfCustomers.map((item) {
-                return DropdownMenuItem(
-                    value: item,
-                    child: Row(
+        child: DropdownButton2(
+          underline: Container(),
+          value: _selectedCustomer,
+          items: listOfCustomers.map((item) {
+            return DropdownMenuItem(
+                value: item,
+                child: Row(
+                  children: [
+                    textS14PrimaryComponent(context, item.firstName),
+                    SizedBox(width: AppConstants.smallerDistance),
+                    textS14PrimaryComponent(context, item.lastName),
+                    item.firstName == AppStrings.firstName
+                        ? Container()
+                        : Row(
                       children: [
-                        textS14PrimaryComponent(context, item.firstName),
                         SizedBox(width: AppConstants.smallerDistance),
-                        textS14PrimaryComponent(context, item.lastName),
-                        item.firstName == AppStrings.firstName
-                            ? Container()
-                            : Row(
-                                children: [
-                                  SizedBox(width: AppConstants.smallerDistance),
-                                  textS14PrimaryComponent(context, '|'),
-                                  SizedBox(width: AppConstants.smallerDistance),
-                                  textS14PrimaryComponent(context, item.mobile)
-                                ],
-                              ),
+                        textS14PrimaryComponent(context, '|'),
+                        SizedBox(width: AppConstants.smallerDistance),
+                        textS14PrimaryComponent(context, item.mobile)
                       ],
-                    ));
-              }).toList(),
-              onChanged: (selectedCustomer) {
-                setState(() {
-                  _selectedCustomer = selectedCustomer;
-                  _selectedCustomerName =
-                      '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
-                  _selectedCustomerId = selectedCustomer?.id;
-                  _selectedCustomerTel = selectedCustomer?.mobile;
-                });
-              },
-              isExpanded: true,
-              hint: Row(
-                children: [
-                  textS14PrimaryComponent(
-                    context,
-                    '${AppStrings.firstName} ${AppStrings.secondName}',
-                  ),
-                  SizedBox(
-                    width: AppConstants.smallDistance,
-                  )
-                ],
-              ),
-              icon: Icon(
-                Icons.arrow_drop_down,
-                color: ColorManager.primary,
-                size: AppSize.s20.sp,
-              ),
-              style: TextStyle(
-                  color: ColorManager.primary, fontSize: AppSize.s14.sp),
-            ),
-            padding: const EdgeInsets.fromLTRB(
-                AppPadding.p15, AppPadding.p2, AppPadding.p5, AppPadding.p2),
+                    ),
+                  ],
+                ));
+          }).toList(),
+
+          onChanged: (selectedCustomer) {
+            setState(() {
+              _selectedCustomer = selectedCustomer;
+              _selectedCustomerName =
+              '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
+              _selectedCustomerId = selectedCustomer?.id;
+              _selectedCustomerTel = selectedCustomer?.mobile;
+            });
+          },
+
+          buttonStyleData: ButtonStyleData(
             height: 47.h,
-            borderColor: ColorManager.primary,
-            borderWidth: deviceWidth! <= 600 ? 1.5.w : 0.6.w,
-            borderRadius: AppSize.s5));
+            width: 250.w,
+            padding: const EdgeInsets.only(left: AppPadding.p14, right: AppPadding.p14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSize.s5),
+              border: Border.all(
+                color: ColorManager.primary,
+              ),
+              color: ColorManager.white,
+            ),
+            elevation: 2,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            maxHeight: 400.h,
+            width: 240.w,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSize.s5),
+              color: ColorManager.white,
+            ),
+            offset: const Offset(0, 0),
+            scrollbarTheme: ScrollbarThemeData(
+              radius: const Radius.circular(40),
+              thickness: MaterialStateProperty.all<double>(6),
+              thumbVisibility: MaterialStateProperty.all<bool>(true),
+            ),
+          ),
+
+          isExpanded: true,
+          hint: Row(
+            children: [
+              textS14PrimaryComponent(
+                context,
+                '${AppStrings.firstName} ${AppStrings.secondName}',
+              ),
+              SizedBox(
+                width: AppConstants.smallDistance,
+              )
+            ],
+          ),
+          style: TextStyle(
+              color: ColorManager.primary, fontSize: AppSize.s14.sp),
+        ));
   }
 
   void getCustomer(BuildContext context) {
@@ -1723,6 +1740,144 @@ class _MainViewState extends State<MainView> {
             productType: listToWork[index].type));
 
         if (deviceWidth! <= 600) startAnimation();
+      });
+    }
+  }
+
+  void addToTmpInBottomSheet(int index, BuildContext context, bool searching) {
+    List<ProductsResponse> listToWork =
+    searching ? listOfAllProducts : listOfProducts;
+
+    if (listToWork[index].type == 'tailoring_package') {
+      if (listOfProducts[index].packages.isNotEmpty) {
+        listOfFabrics =
+            listOfProducts[index].packages[0].fabricIds!.split(',').toList();
+        listOfPackagePrices = listOfProducts[index].packages[0].pricesJson!;
+      } else {
+        CustomDialog.show(
+            context,
+            AppStrings.noFabrics.tr(),
+            const Icon(Icons.warning_amber_rounded),
+            ColorManager.white,
+            AppConstants.durationOfSnackBar,
+            ColorManager.hold);
+        return;
+      }
+      LoadingDialog.show(context);
+      MainViewCubit.get(context)
+          .getTailoringTypeById(
+          listOfProducts[index].packages[0].tailoringTypeId!)
+          .then((value) {
+        tailoringType = MainViewCubit.get(context).tailoringType;
+
+        LoadingDialog.hide(context);
+        TailorDialog.show(
+            context,
+            currencyCode,
+            index,
+            listOfProducts,
+            tailoringType!,
+            listOfFabrics,
+            listOfPackagePrices,
+            listOfCustomers,
+            discount,
+            decimalPlaces,
+            _selectedCustomerName!,
+            _selectedCustomerTel!,
+            deviceWidth!);
+      });
+      return;
+    }
+
+    if (listToWork[index].variations.isNotEmpty) {
+     _controllerLeftPart.setState!(() {
+        ItemOptionsDialog.show(
+            context,
+            currencyCode,
+            index,
+            listToWork[index].variations,
+            listToWork,
+            _selectedCustomerTel!,
+            _selectedCustomerName!,
+            discount,
+            deviceWidth!, (done) {
+          if (done == 'done') {
+            _controllerLeftPart.setState!(() {
+              getTotalAmount();
+            });
+          }
+        });
+      });
+    } else {
+      ///////////////////////
+      if (listOfTmpOrder.isNotEmpty) {
+        int listOfTmpOrderIndex = listOfTmpOrder
+            .indexWhere((element) => element.productId == listToWork[index].id);
+
+        if (listOfTmpOrderIndex >= 0) {
+          if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
+              .itemQuantity
+              .toString()) >=
+              listToWork[index].stock) {
+            noCredit(context);
+            return;
+          }
+        }
+      }
+
+      ///////////////////////
+      _controllerLeftPart.setState!(() {
+        for (var entry in listOfTmpOrder) {
+          if (listToWork[index].name == entry.itemName) {
+            int? itemCount = entry.itemQuantity;
+            itemCount = itemCount! + 1;
+            entry.itemQuantity = itemCount;
+            entry.itemAmount =
+                (itemCount * double.parse(entry.itemPrice.toString()))
+                    .toString();
+            return;
+          }
+        }
+
+        String customerName, tel = '';
+        if (_selectedCustomer != null) {
+          customerName =
+          '${_selectedCustomer!.firstName} ${_selectedCustomer!.lastName}';
+          tel = _selectedCustomer!.mobile;
+        } else {
+          customerName = '${AppStrings.firstName} ${AppStrings.secondName}';
+          tel = '';
+        }
+
+        if (listToWork[index].stock == 0) {
+          noCredit(context);
+          return;
+        }
+
+        String sellPrice = listToWork[index].sellPrice;
+
+        listOfTmpOrder.add(TmpOrderModel(
+            id: listToWork[index].id,
+            itemName: listToWork[index].name,
+            itemQuantity: 1,
+            itemAmount:
+            '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+            itemPrice:
+            '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+            customer: customerName,
+            category: listToWork[index].categoryId.toString(),
+            orderDiscount: discount,
+            brand: listToWork[index].brandId.toString(),
+            customerTel: tel,
+            date: today.toString().split(" ")[0],
+            itemOption: listOfVariations.isNotEmpty
+                ? listToWork[index].variations[index].name
+                : '',
+            productId: listToWork[index].id,
+            variationId: listToWork[index].variations.isNotEmpty
+                ? listToWork[index].variations[index].id
+                : 0,
+            productType: listToWork[index].type));
       });
     }
   }

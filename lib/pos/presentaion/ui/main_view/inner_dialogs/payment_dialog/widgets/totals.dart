@@ -17,6 +17,7 @@ Widget totals(BuildContext context, double total,String changedTotal, double cha
         MainAxisAlignment.spaceBetween,
         children: [
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               textS14WhiteComponent(context,
                 AppStrings.totalPayable.tr(),
@@ -31,6 +32,7 @@ Widget totals(BuildContext context, double total,String changedTotal, double cha
             ],
           ),
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               textS14WhiteComponent(context,
                 AppStrings.totalPaying.tr(),
@@ -45,6 +47,7 @@ Widget totals(BuildContext context, double total,String changedTotal, double cha
             ],
           ),
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               textS14WhiteComponent(context,
                 AppStrings.changeReturn.tr(),
@@ -59,6 +62,7 @@ Widget totals(BuildContext context, double total,String changedTotal, double cha
             ],
           ),
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               textS14WhiteComponent(context,
                 AppStrings.balance.tr(),

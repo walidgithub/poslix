@@ -59,7 +59,7 @@ class _ShippingDialogState extends State<ShippingDialog> {
       body: Center(
         child: SizedBox(
           width: widget.deviceWidth <= 600 ? 350.w : 150.w,
-          height: widget.deviceWidth <= 600 ? 195.h : 215.h,
+          height: widget.deviceWidth <= 600 ? 170.h : 185.h,
           child: Container(
             decoration: BoxDecoration(
                 color: ColorManager.white,
@@ -80,14 +80,6 @@ class _ShippingDialogState extends State<ShippingDialog> {
                               fontWeight: FontWeight.bold))),
                   SizedBox(
                     height: AppConstants.heightBetweenElements,
-                  ),
-                  Align(
-                      alignment: AlignmentDirectional.topStart,
-                      child: Text(AppStrings.editShippingValue.tr(),
-                          style: TextStyle(
-                              fontSize: AppSize.s18.sp, color: ColorManager.primary))),
-                  SizedBox(
-                    height: AppConstants.smallDistance,
                   ),
                   Row(
                     children: [
