@@ -3,7 +3,7 @@ const String imagePath = 'assets/images';
 class ImageAssets {
   static const String logo = '$imagePath/logo.jpeg';
   static const String loginScreen = '$imagePath/loginScreen.jpg';
-  static const String addToTmp = '$imagePath/arrow-down.svg';
+  static const String addToTmp = '$imagePath/arrowDown.svg';
 
   static const String close = '$imagePath/close.svg';
   static const String logout = '$imagePath/logout.svg';

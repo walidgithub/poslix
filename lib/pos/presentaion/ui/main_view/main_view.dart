@@ -244,6 +244,28 @@ class _MainViewState extends State<MainView> {
     super.initState();
   }
 
+  bool _addToTmp = false;
+  bool _showArrow = false;
+
+  Timer? _timer;
+
+  Future startAnimation() async {
+    _showArrow = true;
+    await Future.delayed(const Duration(milliseconds: 15));
+    _timer = Timer(Duration(milliseconds: AppConstants.durationOfAdd), hide);
+    setState(() {
+      _addToTmp = true;
+    });
+  }
+
+  void hide() {
+    setState(() {
+      _addToTmp = false;
+      _showArrow = false;
+    });
+    _timer?.cancel();
+  }
+
   void getDecimalPlaces() async {
     decimalPlaces = _appPreferences.getDecimalPlaces(PREFS_KEY_DECIMAL_PLACES)!;
   }
@@ -648,110 +670,129 @@ class _MainViewState extends State<MainView> {
                         deviceWidth! <= 600
                             ? Container()
                             : SizedBox(
-                          width: AppConstants.smallDistance,
-                        ),
+                                width: AppConstants.smallDistance,
+                              ),
                         rightPart(context),
                       ],
                     ),
                   ),
                 ),
                 deviceWidth! <= 600
-                    ? Positioned(
-                  bottom: 150,
-                    child: SvgPicture.asset(
-                  ImageAssets.addToTmp,
-                  width: AppSize.s25,
-                  color: ColorManager.success,
-                )) : Container(),
-                deviceWidth! <= 600
                     ? listOfTmpOrder.isNotEmpty
-                    ? Positioned(
-                    bottom: 0,
-                    child: Bounceable(
-                        duration: Duration(
-                            milliseconds:
-                            AppConstants.durationOfBounceable),
-                        onTap: () async {
-                          await Future.delayed(Duration(
-                              milliseconds:
-                              AppConstants.durationOfBounceable));
-                          showFoatingActionButton(false);
-                          _controllerLeftPart =
-                              _scaffoldKey.currentState!.showBottomSheet(
-                                clipBehavior: Clip.hardEdge,
-                                backgroundColor:
-                                Theme.of(context).dialogBackgroundColor,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(22),
-                                    topRight: Radius.circular(22),
-                                  ),
-                                ),
+                        ? Positioned(
+                            bottom: 0,
+                            child: Bounceable(
+                                duration: Duration(
+                                    milliseconds:
+                                        AppConstants.durationOfBounceable),
+                                onTap: () async {
+                                  await Future.delayed(Duration(
+                                      milliseconds:
+                                          AppConstants.durationOfBounceable));
+                                  showFoatingActionButton(false);
+                                  _controllerLeftPart = _scaffoldKey
+                                      .currentState!
+                                      .showBottomSheet(
+                                    clipBehavior: Clip.hardEdge,
+                                    backgroundColor:
+                                        Theme.of(context).dialogBackgroundColor,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(22),
+                                        topRight: Radius.circular(22),
+                                      ),
+                                    ),
                                     (context) {
-                                  return Column(
-                                    children: [
-                                      leftPart(context),
-                                    ],
+                                      return Column(
+                                        children: [
+                                          leftPart(context),
+                                        ],
+                                      );
+                                    },
                                   );
-                                },
-                              );
 
-                          _controllerLeftPart.closed.then((value) {
-                            showFoatingActionButton(true);
-                          });
-                        },
-                        child: BottomSheetBar(
-                          itemsCount: listOfTmpOrder.length,
-                          currencyCode: currencyCode,
-                          totalAmount: totalAmount,
-                        )))
-                    : isRtl()
-                    ? Positioned(
-                    bottom: 15.h,
-                    right: 20.w,
-                    child: Bounceable(
-                        onTap: () {
-                          getOrders(context);
-                        },
-                        child: ordersBtnMobile()))
-                    : Positioned(
-                    bottom: 15.h,
-                    left: 20.w,
-                    child: Bounceable(
-                        onTap: () {
-                          getOrders(context);
-                        },
-                        child: ordersBtnMobile()))
+                                  _controllerLeftPart.closed.then((value) {
+                                    showFoatingActionButton(true);
+                                  });
+                                },
+                                child: BottomSheetBar(
+                                  itemsCount: listOfTmpOrder.length,
+                                  currencyCode: currencyCode,
+                                  totalAmount: totalAmount,
+                                )))
+                        : isRtl()
+                            ? Positioned(
+                                bottom: 15.h,
+                                right: 20.w,
+                                child: Bounceable(
+                                    onTap: () {
+                                      btnGetOrders(context);
+                                    },
+                                    child: ordersBtnMobile()))
+                            : Positioned(
+                                bottom: 15.h,
+                                left: 20.w,
+                                child: Bounceable(
+                                    onTap: () {
+                                      btnGetOrders(context);
+                                    },
+                                    child: ordersBtnMobile()))
                     : Container(),
                 deviceWidth! <= 600
                     ? listOfTmpOrder.isNotEmpty
+                        ? isRtl()
+                            ? Positioned(
+                                left: 11.w,
+                                bottom: 13.h,
+                                child: Container(
+                                    width: 60.h,
+                                    height: 60.w,
+                                    decoration: BoxDecoration(
+                                      color: ColorManager.white,
+                                      shape: BoxShape.circle,
+                                    )))
+                            : Positioned(
+                                right: 11.w,
+                                bottom: 13.h,
+                                child: Container(
+                                    width: 60.h,
+                                    height: 60.w,
+                                    decoration: BoxDecoration(
+                                      color: ColorManager.white,
+                                      shape: BoxShape.circle,
+                                    )))
+                        : Container()
+                    : Container(),
+                deviceWidth! <= 600 && _showArrow
                     ? isRtl()
-                    ? Positioned(
-                    left: 11.w,
-                    bottom: 13.h,
-                    child: Container(
-                        width: 60.h,
-                        height: 60.w,
-                        decoration: BoxDecoration(
-                          color: ColorManager.white,
-                          shape: BoxShape.circle,
-                        )))
-                    : Positioned(
-                    right: 11.w,
-                    bottom: 13.h,
-                    child: Container(
-                        width: 60.h,
-                        height: 60.w,
-                        decoration: BoxDecoration(
-                          color: ColorManager.white,
-                          shape: BoxShape.circle,
-                        )))
-                    : Container()
+                        ? AnimatedPositioned(
+                            duration: Duration(
+                                milliseconds: AppConstants.durationOfAdd),
+                            curve: Curves.linear,
+                            right: 30.w,
+                            bottom: _addToTmp ? 50.h : 150.h,
+                            child: SvgPicture.asset(
+                              ImageAssets.addToTmp,
+                              width: AppSize.s50,
+                              height: AppSize.s50,
+                              color: ColorManager.primary,
+                            ))
+                        : AnimatedPositioned(
+                            duration: Duration(
+                                milliseconds: AppConstants.durationOfAdd),
+                            curve: Curves.linear,
+                            left: 30.w,
+                            bottom: _addToTmp ? 50.h : 150.h,
+                            child: SvgPicture.asset(
+                              ImageAssets.addToTmp,
+                              width: AppSize.s50,
+                              height: AppSize.s50,
+                              color: ColorManager.primary,
+                            ))
                     : Container(),
               ],
             );
           });
-
         },
       ),
     );
@@ -982,8 +1023,8 @@ class _MainViewState extends State<MainView> {
           ColorManager.hold);
     } else {
       listOfTmpOrder[0].orderDiscount = discount;
-      holdOrdersDialog(context, deviceWidth!, listOfTmpOrder, discount, _selectedCustomerTel!,
-          _selectedCustomerName!, (done) {
+      holdOrdersDialog(context, deviceWidth!, listOfTmpOrder, discount,
+          _selectedCustomerTel!, _selectedCustomerName!, (done) {
         if (done == 'done') {
           setState(() {
             listOfTmpOrder.clear();
@@ -1094,11 +1135,53 @@ class _MainViewState extends State<MainView> {
       originalTotalValue = orderTotal;
     }, (orderDiscount) {
       if (deviceWidth! <= 600) {
-        _controllerLeftPart.setState!(() {});
+        _controllerLeftPart.setState!(() {
+          discount = double.parse(orderDiscount.toString());
+        });
       } else {
-        setState(() {});
+        setState(() {
+          discount = double.parse(orderDiscount.toString());
+        });
       }
-      discount = double.parse(orderDiscount.toString());
+    }, deviceWidth!);
+  }
+
+  void btnGetOrders(BuildContext context) {
+    OrdersDialog.show(context, locationId, (customerName) {
+      if (customerName == '${AppStrings.firstName} ${AppStrings.secondName}') {
+        _selectedCustomer = listOfCustomers
+            .where((element) =>
+                "${element.firstName} ${element.lastName}" == customerName)
+            .first;
+        int indexOfCustomer = listOfCustomers.indexWhere((element) =>
+            "${element.firstName} ${element.lastName}" == customerName);
+
+        _selectedCustomerId = listOfCustomers[indexOfCustomer].id;
+        _selectedCustomerName =
+            '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
+        _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
+      } else {
+        _selectedCustomer = listOfCustomers
+            .where((element) =>
+                "${element.firstName} ${element.lastName} | ${element.mobile}" ==
+                customerName)
+            .first;
+        int indexOfCustomer = listOfCustomers.indexWhere((element) =>
+            "${element.firstName} ${element.lastName} | ${element.mobile}" ==
+            customerName);
+
+        _selectedCustomerId = listOfCustomers[indexOfCustomer].id;
+        _selectedCustomerName =
+            '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
+        _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
+      }
+    }, (orderTotal) {
+      originalTotalValue = orderTotal;
+    }, (orderDiscount) {
+      totalAmount = getTotalAmount();
+      setState(() {
+        discount = double.parse(orderDiscount.toString());
+      });
     }, deviceWidth!);
   }
 
@@ -1380,7 +1463,8 @@ class _MainViewState extends State<MainView> {
         int? itemCount =
             listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
         itemCount = itemCount! - 1;
-        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity =
+            itemCount;
 
         double total = roundDouble(
             (itemCount *
@@ -1400,7 +1484,8 @@ class _MainViewState extends State<MainView> {
         int? itemCount =
             listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
         itemCount = itemCount! - 1;
-        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity =
+            itemCount;
 
         double total = roundDouble(
             (itemCount *
@@ -1462,7 +1547,8 @@ class _MainViewState extends State<MainView> {
 
         itemCount = itemCount! + 1;
 
-        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity =
+            itemCount;
 
         double total = roundDouble(
             (itemCount *
@@ -1481,7 +1567,8 @@ class _MainViewState extends State<MainView> {
 
         itemCount = itemCount! + 1;
 
-        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity = itemCount;
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity =
+            itemCount;
 
         double total = roundDouble(
             (itemCount *
@@ -1589,6 +1676,8 @@ class _MainViewState extends State<MainView> {
             entry.itemAmount =
                 (itemCount * double.parse(entry.itemPrice.toString()))
                     .toString();
+
+            if (deviceWidth! <= 600) startAnimation();
             return;
           }
         }
@@ -1632,6 +1721,8 @@ class _MainViewState extends State<MainView> {
                 ? listToWork[index].variations[index].id
                 : 0,
             productType: listToWork[index].type));
+
+        if (deviceWidth! <= 600) startAnimation();
       });
     }
   }

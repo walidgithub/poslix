@@ -204,7 +204,7 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                                 totalBank.toString(),
                                                 currencyCode,
                                                 widget.deviceWidth),
-                                            deviceWidth! <= 600
+                                            widget.deviceWidth <= 600
                                                 ? Container()
                                                 : Row(
                                                     children: [
@@ -240,13 +240,13 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                                   )
                                           ]),
                                     ),
-                                    deviceWidth! <= 600
+                                    widget.deviceWidth <= 600
                                         ? SizedBox(
                                       height: AppConstants
                                           .smallDistance,
                                     ) : Container(),
 
-                                    deviceWidth! <= 600
+                                    widget.deviceWidth <= 600
                                         ? Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
@@ -361,8 +361,8 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                   style: TextStyle(
                       color: ColorManager.white, fontSize: AppSize.s14.sp),
                 )),
-                height: deviceWidth! <= 600 ? 40.h : 30.h,
-                width: deviceWidth! <= 600 ? 150.w : 50.w,
+                height: widget.deviceWidth <= 600 ? 40.h : 30.h,
+                width: widget.deviceWidth <= 600 ? 150.w : 50.w,
                 color: ColorManager.primary,
                 borderColor: ColorManager.primary,
                 borderWidth: 0.6.w,

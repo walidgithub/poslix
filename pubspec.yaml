@@ -95,6 +95,7 @@ flutter:
     - assets/images/sewing.png
     - assets/images/icon.jpeg
     - assets/images/loginScreen.jpg
+    - assets/images/arrowDown.svg
     - assets/images/close.svg
     - assets/images/language.svg
     - assets/images/logout.svg

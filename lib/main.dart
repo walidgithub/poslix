@@ -6,6 +6,7 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/presentaion/di/di.dart';
 import 'package:poslix_app/pos/presentaion/router/app_router.dart';
+import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 import 'package:poslix_app/pos/shared/constant/language_manager.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/preferences/app_pref.dart';
@@ -31,9 +32,20 @@ void main() async {
         body: SafeArea(
           child: Scaffold(
             body: Center(
-              child: Text(
-                AppStrings.someThingWentWrong.tr(),
-                style: TextStyle(color: ColorManager.primary),
+              child: Column(
+                children: [
+                  Text(
+                    AppStrings.someThingWentWrong.tr(),
+                    style: TextStyle(color: ColorManager.primary),
+                  ),
+                  SizedBox(
+                    height: AppConstants.heightBetweenElements,
+                  ),
+                  Text(
+                    details.exceptionAsString(),
+                    style: TextStyle(color: ColorManager.primary),
+                  ),
+                ],
               ),
             ),
           ),
@@ -97,35 +109,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   double? deviceWidth;
-
-  /*
-  OrientationBuilder(builder: (context, orientation) {
-            if (orientation == Orientation.portrait) {
-              if (deviceWidth! < 600) {
-                SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.portraitUp,
-                  DeviceOrientation.portraitDown,
-                ]);
-              } else {
-                SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.landscapeLeft,
-                  DeviceOrientation.landscapeRight,
-                ]);
-              }
-            } else if (orientation == Orientation.landscape) {
-              if (deviceWidth! < 800) {
-                SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.portraitUp,
-                  DeviceOrientation.portraitDown,
-                ]);
-              } else {
-                SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.landscapeLeft,
-                  DeviceOrientation.landscapeRight,
-                ]);
-              }
-            }
-   */
 
   @override
   Widget build(BuildContext context) {

@@ -686,7 +686,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
           },
           builder: (context, state) {
             return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: widget.deviceWidth <=600 ? MainAxisAlignment.center : MainAxisAlignment.spaceEvenly,
               children: [
                 // decrease current page
                 Bounceable(
