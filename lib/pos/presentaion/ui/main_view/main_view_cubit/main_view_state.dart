@@ -1,5 +1,6 @@
 import '../../../../domain/response/appearance_model.dart';
 import '../../../../domain/response/check_out_model.dart';
+import '../../../../domain/response/location_settings_model.dart';
 
 abstract class MainViewState{}
 
@@ -90,11 +91,21 @@ class LoadedCurrency extends MainViewState{
 
   LoadedCurrency(this.currencyCode);
 }
-
 class LoadingErrorCurrency extends MainViewState{
   String errorText;
 
   LoadingErrorCurrency(this.errorText);
+}
+
+class LoadedPrintingSettings extends MainViewState{
+  LocationSettingsResponse locationSettingsResponse;
+
+  LoadedPrintingSettings(this.locationSettingsResponse);
+}
+class LoadingErrorPrintingSettings extends MainViewState{
+  String errorText;
+
+  LoadingErrorPrintingSettings(this.errorText);
 }
 
 class LoadedAppearance extends MainViewState{

@@ -54,7 +54,7 @@ Widget itemContainer(int index, BuildContext context,
       children: [
         Container(
           width: 200.w,
-          height: deviceWidth <= 600 ? 125.h : 105.h,
+          height: 125.h,
           decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               image: listOfProducts[index].image.toString() == "n"

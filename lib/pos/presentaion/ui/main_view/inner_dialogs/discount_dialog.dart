@@ -126,7 +126,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                                   fontSize: AppSize.s18.sp),
                             ),
                             width: 10.w,
-                            height: 45.h,
+                            height: deviceWidth! <= 600 ? 44.h : 47.h,
                             padding: const EdgeInsets.fromLTRB(AppPadding.p5, AppPadding.p2, AppPadding.p5, AppPadding.p2),
                             borderRadius: AppSize.s5,
                             borderColor: ColorManager.primary,

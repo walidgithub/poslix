@@ -25,6 +25,7 @@ import '../response/close_register_report_data_model.dart';
 import '../response/currency_code_model.dart';
 import '../response/customer_model.dart';
 import '../response/get_customer_model.dart';
+import '../response/location_settings_model.dart';
 import '../response/logout_response.dart';
 import '../response/open_register_response.dart';
 import '../response/register_data_model.dart';
@@ -220,6 +221,21 @@ class POSRepositoryImpl extends POSRepository {
           return BusinessResponse.fromJson(e);
         }).toList();
         return res;
+      });
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  // Location Settings --------------------------------------------------------------------------
+  @override
+  Future<LocationSettingsResponse> getLocationSettings(final String token, final int locationId) async {
+    var res;
+    try {
+      return await _dio.get('api/business/locations/$locationId',
+          headers: {'Authorization': 'Bearer $token'}).then((response) {
+        res = response.data['result'];
+        return LocationSettingsResponse.fromJson(res);
       });
     } catch (e) {
       throw e.toString();

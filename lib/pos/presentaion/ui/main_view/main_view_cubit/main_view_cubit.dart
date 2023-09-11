@@ -19,6 +19,7 @@ import '../../../../domain/response/categories_model.dart';
 import '../../../../domain/response/close_register_model.dart';
 import '../../../../domain/response/close_register_report_data_model.dart';
 import '../../../../domain/response/get_customer_model.dart';
+import '../../../../domain/response/location_settings_model.dart';
 import '../../../../domain/response/stocks_model.dart';
 import '../../../../domain/response/tailoring_types_model.dart';
 import '../../../../shared/core/network/network_info.dart';
@@ -554,6 +555,35 @@ class MainViewCubit extends Cubit<MainViewState> {
       }
     } catch (e) {
       emit(LoadingErrorAppearance(e.toString()));
+      return Future.error(e);
+    }
+  }
+
+  // Printing Settings -----------------------------
+  Future<LocationSettingsResponse> getLocationSettings(int locationId) async {
+    try {
+      var res;
+      if (await networkInfo.isConnected) {
+        String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
+        bool hasExpired = JwtDecoder.isExpired(token);
+        if (hasExpired) {
+          await getUserParameters();
+          await login(userRequest!);
+
+          res = await posRepositoryImpl.getLocationSettings(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          emit(LoadedPrintingSettings(res));
+          return res;
+        }
+
+        res = await posRepositoryImpl.getLocationSettings(token, locationId);
+        emit(LoadedPrintingSettings(res));
+        return res;
+      } else {
+        emit(MainNoInternetState());
+        return res;
+      }
+    } catch (e) {
+      emit(LoadingErrorPrintingSettings(e.toString()));
       return Future.error(e);
     }
   }

@@ -65,7 +65,7 @@ Widget newPaymentMethods(
                               flex: 1,
                               child: DropdownButton2(
                                 buttonStyleData: ButtonStyleData(
-                                  height: 44.h,
+                                  height: deviceWidth <= 600 ? 44.h : 47.h,
                                   width: 250.w,
                                   padding: const EdgeInsets.only(
                                       left: AppPadding.p14,

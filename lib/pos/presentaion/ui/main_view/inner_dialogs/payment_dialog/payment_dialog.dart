@@ -143,8 +143,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
     });
     sizedHeight = isRtl ? 370.h : 370.h;
 
-    printType = printTypes[2];
-
     totalNewPaying = 0;
     totalPaying = 0;
     changeReturn = 0;
@@ -231,8 +229,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   int orderId = 0;
 
-  List printTypes = ['Bluetooth', 'A4', 'Wi_Fi_Thermal'];
-  String? printType = '';
+  String printerIP = '';
+  String printerType = '';
 
   double? sizedHeight;
   double innerHeight = 60.h;
@@ -243,9 +241,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
   }
 
   String changedTotal = '';
-
-
-
   void goToCalc() {
     setState(() {
       totalNewPaying = 0.0;
@@ -286,7 +281,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          sl<MainViewCubit>()..getAppearance(widget.locationId),
+          sl<MainViewCubit>()..getAppearance(widget.locationId)..getLocationSettings(widget.locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
@@ -326,6 +321,11 @@ class _PaymentDialogState extends State<PaymentDialog> {
             businessVat = state.appearanceResponse.vatNumber;
             customerNumber = state.appearanceResponse.customerNumber;
           } else if (state is LoadingErrorAppearance) {}
+
+          if (state is LoadedPrintingSettings) {
+            printerIP = state.locationSettingsResponse.printSetting.ip;
+            printerType = state.locationSettingsResponse.printSetting.printType;
+          } else if (state is LoadingErrorPrintingSettings) {}
         },
         builder: (context, state) {
           return Scaffold(
@@ -561,12 +561,12 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    if (printType == 'Bluetooth') {
+    if (printerType == 'Bluetooth') {
       // Navigator.of(context).pushNamed(
       //     Routes.thermalPrint,
       //     arguments: GoToThermal(
       //         total: widget.total.toString()));
-    } else if (printType == 'A4') {
+    } else if (printerType == 'A4') {
       // final image = await imageFromAssetBundle(
       //   "assets/images/logo.jpeg",
       // );
@@ -594,14 +594,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
       // await Printing.layoutPdf(
       //     onLayout: (PdfPageFormat format) async => doc.save());
 
-    } else if (printType == 'Wi_Fi_Thermal') {
+    } else if (printerType == 'receipt') {
       screenshotController
           .capture(delay: const Duration(milliseconds: 10))
           .then((capturedImage) async {
         theImageThatComesFromThePrinter = capturedImage!;
         setState(() {
           theImageThatComesFromThePrinter = capturedImage;
-          goToPrint(AppConstants.printerIp, theImageThatComesFromThePrinter);
+          goToPrint(printerIP, theImageThatComesFromThePrinter);
         });
       }).catchError((onError) {
         if (kDebugMode) {
