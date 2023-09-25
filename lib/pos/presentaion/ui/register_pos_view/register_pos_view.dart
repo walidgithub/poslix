@@ -374,7 +374,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             height: AppConstants.smallDistance,
           ),
           DropdownButton2(
-
             buttonStyleData: ButtonStyleData(
               height: 47.h,
               width: 280.w,

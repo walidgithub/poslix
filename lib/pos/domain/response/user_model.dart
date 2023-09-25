@@ -1,4 +1,4 @@
-import 'package:poslix_app/pos/domain/response/permissions_model.dart';
+import 'locations_roles_model.dart';
 
 class UserResponse {
   UserResponse({
@@ -14,7 +14,7 @@ class UserResponse {
     this.deletedAt,
     this.createdAt,
     this.updatedAt,
-    required this.permissions,
+    required this.locations,
   });
   late final int id;
   late final String userType;
@@ -28,7 +28,7 @@ class UserResponse {
   String? deletedAt;
   String? createdAt;
   String? updatedAt;
-  late final List<PermissionsResponse> permissions;
+  late final List<LocationsRolesResponse> locations;
 
   UserResponse.fromJson(Map<String, dynamic> json){
     id = json['id'];
@@ -43,7 +43,7 @@ class UserResponse {
     deletedAt = json['deletedAt'] ?? '';
     createdAt = json['createdAt'] ?? '';
     updatedAt = json['updatedAt'] ?? '';
-    permissions = List.from(json['permissions']).map((e)=>PermissionsResponse.fromJson(e)).toList();
+    locations = List.from(json['locations']).map((e)=>LocationsRolesResponse.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -60,7 +60,7 @@ class UserResponse {
     data['deleted_at'] = deletedAt;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
-    data['permissions'] = permissions.map((e)=>e.toJson()).toList();
+    data['locations'] = locations.map((e)=>e.toJson()).toList();
     return data;
   }
 }

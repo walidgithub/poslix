@@ -123,7 +123,7 @@ class _MainViewState extends State<MainView> {
     super.dispose();
   }
 
-  void showFoatingActionButton(bool value) {
+  void showFloatingActionButton(bool value) {
     setState(() {
       showFab = value;
     });
@@ -690,7 +690,7 @@ class _MainViewState extends State<MainView> {
                                   await Future.delayed(Duration(
                                       milliseconds:
                                           AppConstants.durationOfBounceable));
-                                  showFoatingActionButton(false);
+                                  showFloatingActionButton(false);
                                   _controllerLeftPart = _scaffoldKey
                                       .currentState!
                                       .showBottomSheet(
@@ -713,7 +713,7 @@ class _MainViewState extends State<MainView> {
                                   );
 
                                   _controllerLeftPart.closed.then((value) {
-                                    showFoatingActionButton(true);
+                                    showFloatingActionButton(true);
                                   });
                                 },
                                 child: BottomSheetBar(
@@ -1213,6 +1213,9 @@ class _MainViewState extends State<MainView> {
           ColorManager.hold);
     } else {
       if (businessType != 'Tailor') {
+        for (var element in listOfCategories) {
+          listOfBothProducts.addAll(Set.of(element.products));
+        }
         for (var n in listOfTmpOrder) {
           var itemStock = listOfBothProducts
               .where((element) => element.id == n.productId)

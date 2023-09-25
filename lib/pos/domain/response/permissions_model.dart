@@ -1,26 +1,28 @@
-import 'package:poslix_app/pos/domain/response/stuff_model.dart';
-
 class PermissionsResponse {
   PermissionsResponse({
     required this.id,
     required this.name,
-    required this.stuff,
+    required this.url,
+    required this.method,
   });
   late final int id;
   late final String name;
-  late final StuffResponse stuff;
+  late final String url;
+  late final String method;
 
   PermissionsResponse.fromJson(Map<String, dynamic> json){
     id = json['id'];
     name = json['name'];
-    stuff = StuffResponse.fromJson(json['stuff']);
+    url = json['url'];
+    method = json['method'];
   }
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['id'] = id;
-    data['name'] = name;
-    data['stuff'] = stuff.toJson();
-    return data;
+    final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['name'] = name;
+    _data['url'] = url;
+    _data['method'] = method;
+    return _data;
   }
 }
