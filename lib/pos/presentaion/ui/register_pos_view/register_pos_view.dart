@@ -632,10 +632,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     }
   }
 
-  void getLocationValues(BuildContext context, var selectedLocation) {
-
-  }
-
   _changeLanguage() {
     _appPreferences.changeAppLanguage();
     Phoenix.rebirth(context);
