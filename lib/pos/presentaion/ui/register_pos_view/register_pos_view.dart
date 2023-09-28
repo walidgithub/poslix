@@ -193,7 +193,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             LoadingDialog.hide(context);
             listOfBusinesses = RegisterPOSCubit.get(context).listOfBusinesses;
             listOfLocations = RegisterPOSCubit.get(context).listOfLocations;
-
             _selectedBusiness = listOfBusinesses[0].name;
             _selectedLocation = listOfLocations[0].locationName;
             locationId = listOfLocations[0].locationId;
@@ -412,7 +411,58 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                   ));
             }).toList(),
             onChanged: (selectedBusiness) {
-              getBusinessValues(context, listOfBusinesses);
+              _selectedBusiness = selectedBusiness;
+              setState(() {
+                int index = 0;
+                for (var i in listOfBusinesses) {
+                  if (i.name == _selectedBusiness) {
+                    listOfBusinesses
+                        .indexWhere((element) => element.name == _selectedBusiness);
+
+                    listOfLocations = listOfBusinesses[index].locations;
+
+                    _selectedLocation = listOfLocations[0].locationName;
+                    locationId = listOfLocations[0].locationId;
+
+                    decimalPlaces = listOfLocations[0].locationDecimalPlaces;
+
+                    _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
+
+                    _appPreferences.setBusinessType(
+                        PREFS_KEY_BUSINESS_TYPE, businessType!);
+
+                    RegisterPOSCubit.get(context).openCloseRegister(
+                        CloseRegisterReportRequest(today: true), locationId!);
+
+                    RegisterPOSCubit.get(context).getTaxes(locationId!);
+                    break;
+                  }
+                  index++;
+                }
+
+                index = 0;
+                for (var i in listOfLocations) {
+                  if (i.locationName == _selectedLocation) {
+                    index = listOfLocations.indexWhere(
+                        (element) => element.locationName == _selectedLocation);
+
+                    locationId = listOfLocations[index].locationId;
+
+                    decimalPlaces = listOfLocations[index].locationDecimalPlaces;
+
+                    _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
+
+                    _appPreferences.setBusinessType(
+                        PREFS_KEY_BUSINESS_TYPE, businessType!);
+
+                    RegisterPOSCubit.get(context).openCloseRegister(
+                        CloseRegisterReportRequest(today: true), locationId!);
+
+                    RegisterPOSCubit.get(context).getTaxes(locationId!);
+                    break;
+                  }
+                }
+              });
             },
             value: _selectedBusiness,
             isExpanded: true,
@@ -494,7 +544,28 @@ class _RegisterPosViewState extends State<RegisterPosView> {
               ));
         }).toList(),
         onChanged: (selectedLocation) {
-          getLocationValues(context, listOfLocations);
+          setState(() {
+            _selectedLocation = selectedLocation;
+            int index = 0;
+            for (var i in listOfLocations) {
+              if (i.locationName == _selectedLocation) {
+                index = listOfLocations.indexWhere(
+                    (element) => element.locationName == _selectedLocation);
+
+                locationId = listOfLocations[index].locationId;
+
+                decimalPlaces = listOfLocations[index].locationDecimalPlaces;
+
+                _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
+
+                RegisterPOSCubit.get(context).openCloseRegister(
+                    CloseRegisterReportRequest(today: true), locationId!);
+
+                RegisterPOSCubit.get(context).getTaxes(locationId!);
+                break;
+              }
+            }
+          });
         },
         value: _selectedLocation,
         isExpanded: true,
@@ -561,88 +632,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     }
   }
 
-  void getBusinessValues(BuildContext context, var selectedBusiness) {
-    setState(() {
-      _selectedBusiness = selectedBusiness;
-
-      businessType = _selectedBusiness.type;
-
-      int index = 0;
-      for (var i in listOfBusinesses) {
-        if (i.name == _selectedBusiness) {
-          listOfBusinesses
-              .indexWhere((element) => element.name == _selectedBusiness);
-
-          listOfLocations = listOfBusinesses[index].locations;
-
-          _selectedLocation = listOfLocations[0].locationName;
-          locationId = listOfLocations[0].locationId;
-
-          decimalPlaces = listOfLocations[0].locationDecimalPlaces;
-
-          _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
-
-          _appPreferences.setBusinessType(
-              PREFS_KEY_BUSINESS_TYPE, businessType!);
-
-          RegisterPOSCubit.get(context).openCloseRegister(
-              CloseRegisterReportRequest(today: true), locationId!);
-
-          RegisterPOSCubit.get(context).getTaxes(locationId!);
-          break;
-        }
-
-        index++;
-      }
-
-      index = 0;
-      for (var i in listOfLocations) {
-        if (i.locationName == _selectedLocation) {
-          index = listOfLocations.indexWhere(
-              (element) => element.locationName == _selectedLocation);
-
-          locationId = listOfLocations[index].locationId;
-
-          decimalPlaces = listOfLocations[index].locationDecimalPlaces;
-
-          _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
-
-          _appPreferences.setBusinessType(
-              PREFS_KEY_BUSINESS_TYPE, businessType!);
-
-          RegisterPOSCubit.get(context).openCloseRegister(
-              CloseRegisterReportRequest(today: true), locationId!);
-
-          RegisterPOSCubit.get(context).getTaxes(locationId!);
-          break;
-        }
-      }
-    });
-  }
-
   void getLocationValues(BuildContext context, var selectedLocation) {
-    setState(() {
-      _selectedLocation = selectedLocation;
-      int index = 0;
-      for (var i in listOfLocations) {
-        if (i.locationName == _selectedLocation) {
-          index = listOfLocations.indexWhere(
-              (element) => element.locationName == _selectedLocation);
 
-          locationId = listOfLocations[index].locationId;
-
-          decimalPlaces = listOfLocations[index].locationDecimalPlaces;
-
-          _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
-
-          RegisterPOSCubit.get(context).openCloseRegister(
-              CloseRegisterReportRequest(today: true), locationId!);
-
-          RegisterPOSCubit.get(context).getTaxes(locationId!);
-          break;
-        }
-      }
-    });
   }
 
   _changeLanguage() {
