@@ -230,10 +230,12 @@ class _RegisterPosViewState extends State<RegisterPosView> {
           if (state is TaxesLoaded) {
             listOfTaxes = RegisterPOSCubit.get(context).listOfTaxes;
             for (var n in listOfTaxes) {
-              if (n.isPrimary == 1) {
+              if (n.isTaxGroup == 1) {
                 if (n.taxGroup.isNotEmpty) {
-                  tax = n.taxGroup[0].amount;
-                  _appPreferences.setTaxValue(PREFS_KEY_TAX_VALUE, tax!);
+                  if (n.isPrimary == 1) {
+                    tax = n.taxGroup[0].amount;
+                    _appPreferences.setTaxValue(PREFS_KEY_TAX_VALUE, tax!);
+                  }
                 } else {
                   tax = 0;
                   _appPreferences.setTaxValue(PREFS_KEY_TAX_VALUE, tax!);

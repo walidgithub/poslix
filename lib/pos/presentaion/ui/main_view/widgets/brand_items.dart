@@ -15,7 +15,7 @@ Widget brandItems(BuildContext context, Function addToTmp,
     List<ProductsResponse> listOfProducts, String businessType, double deviceWidth) {
   return Expanded(
       child: GridView.count(
-          crossAxisCount: 5,
+          crossAxisCount: deviceWidth <= 600 ? 2 : 5,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
           childAspectRatio: deviceWidth <= 600 ? 1 / 1.2 : 11 / 16,
@@ -36,8 +36,6 @@ Widget brandItems(BuildContext context, Function addToTmp,
               },
               child: containerComponent(context,
                   itemContainer(index, context, listOfProducts, businessType, deviceWidth),
-                  // height: 400.h,
-                  // width: 200.w,
                   color: ColorManager.secondary,
                   borderColor: ColorManager.secondary,
                   borderWidth: 0.0.w,

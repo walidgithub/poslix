@@ -186,8 +186,8 @@ class _MainViewState extends State<MainView> {
         listOfProducts = listOfCategories[currentId].products;
         if (listOfCategories[currentId].products.isNotEmpty) {
           listOfVariations =
-              listOfCategories[currentId].products[currentId].variations;
-          listOfStocks = listOfCategories[currentId].products[currentId].stocks;
+              listOfCategories[currentId].products[0].variations;
+          listOfStocks = listOfCategories[currentId].products[0].stocks;
         } else {
           listOfVariations = [];
           listOfStocks = [];
@@ -204,8 +204,8 @@ class _MainViewState extends State<MainView> {
         listOfProducts = listOfBrands[currentId].products;
         if (listOfBrands[currentId].products.isNotEmpty) {
           listOfVariations =
-              listOfBrands[currentId].products[currentId].variations;
-          listOfStocks = listOfBrands[currentId].products[currentId].stocks;
+              listOfBrands[currentId].products[0].variations;
+          listOfStocks = listOfBrands[currentId].products[0].stocks;
         } else {
           listOfVariations = [];
           listOfStocks = [];
