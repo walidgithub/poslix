@@ -27,7 +27,33 @@ Widget buttons(BuildContext context, Function hold, Function delete, Function ge
                 await Future.delayed(Duration(
                     milliseconds: AppConstants
                         .durationOfBounceable));
-                delete(context);
+                await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Row(
+                          children: [
+                          Text(AppStrings.warning.tr()),
+                          SizedBox(
+                            width: AppConstants.smallDistance,
+                          ),
+                          Icon(Icons.warning_amber_rounded,color: ColorManager.hold,)
+                        ],),
+                        content: Text(AppStrings.assertDelete.tr()),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                              child: Text(AppStrings.no.tr())),
+                          TextButton(
+                              onPressed: () {
+                                delete(context);
+                              },
+                              child: Text(AppStrings.yes.tr())),
+                        ],
+                      );
+                    });
               },
               child:
               containerComponent(

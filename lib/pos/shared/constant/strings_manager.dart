@@ -150,6 +150,7 @@ class AppStrings{
   static const yes  = 'Yes';
   static const warning  = 'Warning';
   static const closeApp  = 'Do you want to close the app?';
+  static const assertDelete  = 'Are you sure to delete?';
   static const addPaymentRow  = 'Add Payment Row';
   static const totalPayable  = 'Total payable';
   static const totalPaying  = 'Total paying';
