@@ -1064,9 +1064,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
         width: widget.deviceWidth <= 600 ? 120.w : 40.w,
         child: Center(
             child: Text(
-                listOfOrderHead[listOfOrderHead.indexOf(order)]
-                    .contactName
-                    .toString(),
+                listOfOrderHead[listOfOrderHead.indexOf(order)].contactName.trim() == '' ? '${AppStrings.firstName} ${AppStrings.secondName}' : listOfOrderHead[listOfOrderHead.indexOf(order)].contactName.toString(),
                 style: TextStyle(fontSize: AppSize.s14.sp),
                 textAlign: TextAlign.center)),
       )),
@@ -1247,10 +1245,8 @@ class _OrdersDialogState extends State<OrdersDialog> {
                       orderId = listOfOrderHead[
                       listOfOrderHead.indexOf(order)]
                           .id;
-
                       OrdersCubit.get(context).getOrderReportItems(
                           widget.locationId, orderId!);
-
                       if (widget.deviceWidth <= 600) {
                         mobileDialogHeight = 320.h;
                       }
@@ -1283,6 +1279,8 @@ class _OrdersDialogState extends State<OrdersDialog> {
         child: Center(
             child: Text(
                 listOfOrderHeadForSearch[
+                listOfOrderHeadForSearch.indexOf(order)]
+                    .contactName.trim() == '' ? '${AppStrings.firstName} ${AppStrings.secondName}' : listOfOrderHeadForSearch[
                 listOfOrderHeadForSearch.indexOf(order)]
                     .contactName
                     .toString(),
@@ -1442,6 +1440,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
 
                 if (state is OrderReportItemsSucceed) {
                   LoadingDialog.hide(context);
+
                   setState(() {
                     listOfOrderItems =
                         OrdersCubit.get(context).listOfOrderItems;

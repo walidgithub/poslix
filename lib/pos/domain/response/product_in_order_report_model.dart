@@ -87,14 +87,14 @@ class ProductsInOrdersResponse {
     isTailoring = json['is_tailoring'];
     isService = json['is_service'];
     isFabric = json['is_fabric'];
-    subproductname = json['subproductname'];
+    subproductname = json['subproductname'] ?? '';
     unitId = json['unit_id'];
     brandId = json['brand_id'];
     categoryId = json['category_id'];
     subCategoryId = json['subCategoryId'] ?? 0;
     tax = json['tax'] ?? 0.0;
     neverTax = json['never_tax'];
-    alertQuantity = json['alert_quantity'];
+    alertQuantity = json['alert_quantity'] ?? '';
     sku = json['sku'];
     barcodeType = json['barcode_type'];
     image = json['image'];

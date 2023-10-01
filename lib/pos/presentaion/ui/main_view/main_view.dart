@@ -1250,7 +1250,10 @@ class _MainViewState extends State<MainView> {
 
       listOfOrders.clear();
 
+
       for (var element in listOfTmpOrder) {
+        print('testtttt');
+        print(element.customer);
         listOfOrders.add(OrderModel(
             id: element.id,
             date: element.date,
