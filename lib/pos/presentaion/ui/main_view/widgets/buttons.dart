@@ -48,7 +48,10 @@ Widget buttons(BuildContext context, Function hold, Function delete, Function ge
                               child: Text(AppStrings.no.tr())),
                           TextButton(
                               onPressed: () {
+                                print('1111');
                                 delete(context);
+                                Navigator.of(context).pop(true);
+                                print('2222');
                               },
                               child: Text(AppStrings.yes.tr())),
                         ],

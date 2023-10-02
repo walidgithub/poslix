@@ -28,6 +28,7 @@ import '../response/get_customer_model.dart';
 import '../response/location_settings_model.dart';
 import '../response/logout_response.dart';
 import '../response/open_register_response.dart';
+import '../response/payment_methods_model.dart';
 import '../response/register_data_model.dart';
 import '../response/sales_report_data_model.dart';
 import '../response/sales_report_items_model.dart';
@@ -290,6 +291,20 @@ class POSRepositoryImpl extends POSRepository {
           .then((response) {
         res = response.data['result'];
         return CheckOutResponse.fromJson(res);
+      });
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  @override
+  Future<PaymentMethodsModel> getPaymentMethods(String token, int locationId) async {
+    var res;
+    try {
+      return await _dio.get('api/payments/$locationId',
+          headers: {'Authorization': 'Bearer $token'}).then((response) {
+        res = response.data['result'];
+        return PaymentMethodsModel.fromJson(res);
       });
     } catch (e) {
       throw e.toString();

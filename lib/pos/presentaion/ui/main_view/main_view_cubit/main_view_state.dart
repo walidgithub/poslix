@@ -46,6 +46,14 @@ class LoadingErrorCustomer extends MainViewState{
   LoadingErrorCustomer(this.errorText);
 }
 
+class LoadingPaymentMethods extends MainViewState{}
+class LoadedPaymentMethods extends MainViewState{}
+class LoadingPaymentMethodsError extends MainViewState{
+  String errorText;
+
+  LoadingPaymentMethodsError(this.errorText);
+}
+
 class CustomerAddedSucceed extends MainViewState{}
 class CustomerAddError extends MainViewState{
   String errorText;
