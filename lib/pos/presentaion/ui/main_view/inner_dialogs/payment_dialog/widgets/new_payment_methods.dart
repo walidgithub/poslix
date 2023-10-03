@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../../domain/response/payment_method_model.dart';
 import '../../../../../../shared/constant/constant_values_manager.dart';
 import '../../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../../shared/constant/strings_manager.dart';
@@ -16,13 +17,13 @@ Widget newPaymentMethods(
     Function deletePaymentMethod,
     bool newPayment,
     double innerHeight,
-    List paymentMethods,
+    List paymentRows,
     List<TextEditingController> paymentControllers,
     double total,
     List<TextEditingController> paymentNotesControllers,
     Function selectPaymentType,
     var selectedNewPaymentType,
-    double deviceWidth) {
+    double deviceWidth, List<String> paymentMethods) {
   return newPayment
       ? SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -99,24 +100,19 @@ Widget newPaymentMethods(
                                         true),
                                   ),
                                 ),
-                                hint: textS14PrimaryComponent(
-                                  context,
-                                  selectedNewPaymentType[index],
+                                hint: textS14PrimaryComponent(context,
+                                  paymentMethods[0],
                                 ),
                                 underline: Container(),
-                                items: <String>[
-                                  AppStrings.cash.tr(),
-                                  AppStrings.bank.tr(),
-                                  AppStrings.cheque.tr(),
-                                  AppStrings.card.tr()
-                                ].map<DropdownMenuItem<String>>(
+                                items: paymentMethods.map<DropdownMenuItem<String>>(
                                         (String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(
                                           value,
                                           style: TextStyle(
-                                              fontSize: AppSize.s14.sp),
+                                              fontSize:
+                                              AppSize.s14.sp),
                                         ),
                                       );
                                     }).toList(),

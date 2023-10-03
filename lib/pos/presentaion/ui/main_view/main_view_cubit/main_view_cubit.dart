@@ -20,7 +20,9 @@ import '../../../../domain/response/close_register_model.dart';
 import '../../../../domain/response/close_register_report_data_model.dart';
 import '../../../../domain/response/get_customer_model.dart';
 import '../../../../domain/response/location_settings_model.dart';
+import '../../../../domain/response/payment_method_model.dart';
 import '../../../../domain/response/payment_methods_model.dart';
+import '../../../../domain/response/printing_settings_model.dart';
 import '../../../../domain/response/stocks_model.dart';
 import '../../../../domain/response/tailoring_types_model.dart';
 import '../../../../shared/core/network/network_info.dart';
@@ -44,6 +46,8 @@ class MainViewCubit extends Cubit<MainViewState> {
   List<ProductsResponse> listOfProducts = [];
   List<VariationsResponse> listOfVariations = [];
   List<StocksResponse> listOfStocks = [];
+
+  List<PaymentMethodModel> listOfPaymentMethods = [];
 
   TailoringTypesModel? tailoringType;
 
@@ -381,7 +385,7 @@ class MainViewCubit extends Cubit<MainViewState> {
     }
   }
 
-  Future<PaymentMethodsModel> getPaymentMethods(int locationId) async {
+  Future<List<PaymentMethodModel>> getPaymentMethods(int locationId) async {
     try {
       var res;
       if (await networkInfo.isConnected) {
@@ -394,11 +398,12 @@ class MainViewCubit extends Cubit<MainViewState> {
           await login(userRequest!);
 
           res = await posRepositoryImpl.getPaymentMethods(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          listOfPaymentMethods = res;
           emit(LoadedPaymentMethods());
           return res;
         }
-
         res = await posRepositoryImpl.getPaymentMethods(token, locationId);
+        listOfPaymentMethods = res;
         emit(LoadedPaymentMethods());
         return res;
       } else {
@@ -591,7 +596,7 @@ class MainViewCubit extends Cubit<MainViewState> {
   }
 
   // Printing Settings -----------------------------
-  Future<LocationSettingsResponse> getLocationSettings(int locationId) async {
+  Future<List<PrintSettingResponse>> getLocationSettings(int locationId) async {
     try {
       var res;
       if (await networkInfo.isConnected) {

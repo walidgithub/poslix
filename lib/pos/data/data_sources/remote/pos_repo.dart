@@ -22,7 +22,9 @@ import '../../../domain/response/get_customer_model.dart';
 import '../../../domain/response/location_settings_model.dart';
 import '../../../domain/response/logout_response.dart';
 import '../../../domain/response/open_register_response.dart';
+import '../../../domain/response/payment_method_model.dart';
 import '../../../domain/response/payment_methods_model.dart';
+import '../../../domain/response/printing_settings_model.dart';
 import '../../../domain/response/sales_report_data_model.dart';
 import '../../../domain/response/tailoring_types_model.dart';
 import '../../../domain/response/taxes_model.dart';
@@ -37,7 +39,7 @@ abstract class POSRepository {
   Future<LogoutResponse> logout(final String token);
 
   Future<List<BusinessResponse>> getBusinesses(final String token);
-  Future<LocationSettingsResponse> getLocationSettings(final String token, final int locationId);
+  Future<List<PrintSettingResponse>> getLocationSettings(final String token, final int locationId);
   Future<List<TaxesResponse>> getTaxes(final String token, final int locationId);
 
   Future<List<CategoriesResponse>> getCategories(final String token, final int locationId);
@@ -52,7 +54,7 @@ abstract class POSRepository {
 
   Future<CheckOutResponse> checkout(final CheckOutRequest parameters, String token);
   Future<CheckOutResponse> saveOrder(final SaveOrder parameters, String token, int orderId);
-  Future<PaymentMethodsModel> getPaymentMethods(final String token, final int locationId);
+  Future<List<PaymentMethodModel>> getPaymentMethods(final String token, final int locationId);
 
   Future<CloseRegisterResponse> closeRegister(final CloseRegisterRequest parameters, int locationId, String token);
   Future<RegisterDataResponse> getRegisterData(int locationId, String token);

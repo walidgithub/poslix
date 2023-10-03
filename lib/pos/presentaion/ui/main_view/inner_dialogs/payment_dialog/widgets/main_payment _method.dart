@@ -7,10 +7,9 @@ import '../../../../../../shared/constant/constant_values_manager.dart';
 import '../../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../../shared/constant/strings_manager.dart';
 import '../../../../../../shared/style/colors_manager.dart';
-import '../../../../components/container_component.dart';
 import '../../../../components/text_component.dart';
 
-Widget mainPaymentMethod(BuildContext context, double total, Function selectMainPaymentMethod, TextEditingController amountEditingController, TextEditingController _notesInLineEditingController, String selectedPaymentType, double deviceWidth) {
+Widget mainPaymentMethod(BuildContext context, double total, Function selectMainPaymentMethod, TextEditingController amountEditingController, TextEditingController _notesInLineEditingController, String selectedPaymentType, double deviceWidth, List<String> paymentMethods) {
   return Row(
     children: [
       Expanded(
@@ -68,18 +67,12 @@ Widget mainPaymentMethod(BuildContext context, double total, Function selectMain
             ),
           ),
           hint: textS14PrimaryComponent(context,
-            AppStrings.cash.tr(),
+            paymentMethods[0],
           ),
           underline: Container(),
-          items: <String>[
-            AppStrings.cash.tr(),
-            AppStrings.bank.tr(),
-            AppStrings.cheque.tr(),
-            AppStrings.card.tr()
-          ].map<DropdownMenuItem<String>>(
+          items: paymentMethods.map<DropdownMenuItem<String>>(
                   (String value) {
-                return DropdownMenuItem<
-                    String>(
+                return DropdownMenuItem<String>(
                   value: value,
                   child: Text(
                     value,

@@ -1,6 +1,7 @@
 import '../../../../domain/response/appearance_model.dart';
 import '../../../../domain/response/check_out_model.dart';
 import '../../../../domain/response/location_settings_model.dart';
+import '../../../../domain/response/printing_settings_model.dart';
 
 abstract class MainViewState{}
 
@@ -106,9 +107,9 @@ class LoadingErrorCurrency extends MainViewState{
 }
 
 class LoadedPrintingSettings extends MainViewState{
-  LocationSettingsResponse locationSettingsResponse;
+  List<PrintSettingResponse> printSettingResponse;
 
-  LoadedPrintingSettings(this.locationSettingsResponse);
+  LoadedPrintingSettings(this.printSettingResponse);
 }
 class LoadingErrorPrintingSettings extends MainViewState{
   String errorText;

@@ -42,6 +42,7 @@ import '../../../domain/entities/order_model.dart';
 import '../../../domain/entities/tmp_order_model.dart';
 import '../../../domain/response/brands_model.dart';
 import '../../../domain/response/categories_model.dart';
+import '../../../domain/response/payment_method_model.dart';
 import '../../../domain/response/stocks_model.dart';
 import '../../../domain/response/tailoring_types_model.dart';
 import '../../../domain/response/variations_model.dart';
@@ -87,6 +88,8 @@ class _MainViewState extends State<MainView> {
 
   List<CategoriesResponse> listOfCategories = [];
   List<BrandsResponse> listOfBrands = [];
+
+  List<PaymentMethodModel> listOfPaymentMethods = [];
 
   List<ProductsResponse> listOfAllProducts = [];
   List<ProductsResponse> listOfBothProducts = [];
@@ -494,7 +497,7 @@ class _MainViewState extends State<MainView> {
         : differenceValue = 0;
 
     return BlocProvider(
-      create: (context) => sl<MainViewCubit>()..getHomeData(locationId),
+      create: (context) => sl<MainViewCubit>()..getHomeData(locationId)..getPaymentMethods(locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
@@ -631,6 +634,9 @@ class _MainViewState extends State<MainView> {
           } else if (state is LoadingErrorCustomer) {
             LoadingDialog.hide(context);
             tryAgainLater(context);
+          }
+          if (state is LoadedPaymentMethods) {
+            listOfPaymentMethods = MainViewCubit.get(context).listOfPaymentMethods;
           }
         },
         builder: (context, state) {
@@ -1252,8 +1258,6 @@ class _MainViewState extends State<MainView> {
 
 
       for (var element in listOfTmpOrder) {
-        print('testtttt');
-        print(element.customer);
         listOfOrders.add(OrderModel(
             id: element.id,
             date: element.date,
@@ -1288,6 +1292,7 @@ class _MainViewState extends State<MainView> {
 
       PaymentDialog.show(
           context,
+          listOfPaymentMethods,
           currencyCode,
           totalAmount,
           cartRequest,

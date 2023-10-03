@@ -28,7 +28,9 @@ import '../response/get_customer_model.dart';
 import '../response/location_settings_model.dart';
 import '../response/logout_response.dart';
 import '../response/open_register_response.dart';
+import '../response/payment_method_model.dart';
 import '../response/payment_methods_model.dart';
+import '../response/printing_settings_model.dart';
 import '../response/register_data_model.dart';
 import '../response/sales_report_data_model.dart';
 import '../response/sales_report_items_model.dart';
@@ -177,8 +179,6 @@ class POSRepositoryImpl extends POSRepository {
     try {
       return await _dio.get('api/customers/$customerId/show',
           headers: {'Authorization': 'Bearer $token'}).then((response) {
-        print('hereeeeeee');
-            print(response.statusCode);
         res = response.data['result']['profile'];
         return GetCustomerResponse.fromJson(res);
       });
@@ -230,13 +230,15 @@ class POSRepositoryImpl extends POSRepository {
 
   // Location Settings --------------------------------------------------------------------------
   @override
-  Future<LocationSettingsResponse> getLocationSettings(final String token, final int locationId) async {
-    var res;
+  Future<List<PrintSettingResponse>> getLocationSettings(final String token, final int locationId) async {
+    List<PrintSettingResponse> res = <PrintSettingResponse>[];
     try {
       return await _dio.get('api/business/locations/$locationId',
           headers: {'Authorization': 'Bearer $token'}).then((response) {
-        res = response.data['result'];
-        return LocationSettingsResponse.fromJson(res);
+        res = (response.data['result']['print_setting'] as List).map((e) {
+          return PrintSettingResponse.fromJson(e);
+        }).toList();
+        return res;
       });
     } catch (e) {
       throw e.toString();
@@ -298,13 +300,15 @@ class POSRepositoryImpl extends POSRepository {
   }
 
   @override
-  Future<PaymentMethodsModel> getPaymentMethods(String token, int locationId) async {
-    var res;
+  Future<List<PaymentMethodModel>> getPaymentMethods(String token, int locationId) async {
+    List<PaymentMethodModel> res = <PaymentMethodModel>[];
     try {
       return await _dio.get('api/payments/$locationId',
           headers: {'Authorization': 'Bearer $token'}).then((response) {
-        res = response.data['result'];
-        return PaymentMethodsModel.fromJson(res);
+        res = (response.data['result']['payments'] as List).map((e) {
+          return PaymentMethodModel.fromJson(e);
+        }).toList();
+        return res;
       });
     } catch (e) {
       throw e.toString();

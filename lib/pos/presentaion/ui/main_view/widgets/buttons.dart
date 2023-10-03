@@ -14,7 +14,6 @@ import '../../components/text_component.dart';
 Widget buttons(BuildContext context, Function hold, Function delete, Function getOrders, Function checkOut) {
   return Column(
     children: [
-      // delete and hold and orders
       Row(
         children: [
           Expanded(
@@ -29,7 +28,7 @@ Widget buttons(BuildContext context, Function hold, Function delete, Function ge
                         .durationOfBounceable));
                 await showDialog(
                     context: context,
-                    builder: (BuildContext context) {
+                    builder: (BuildContext alertContext) {
                       return AlertDialog(
                         title: Row(
                           children: [
@@ -43,15 +42,13 @@ Widget buttons(BuildContext context, Function hold, Function delete, Function ge
                         actions: [
                           TextButton(
                               onPressed: () {
-                                Navigator.of(context).pop(false);
+                                Navigator.of(alertContext).pop(false);
                               },
                               child: Text(AppStrings.no.tr())),
                           TextButton(
                               onPressed: () {
-                                print('1111');
+                                Navigator.of(alertContext).pop();
                                 delete(context);
-                                Navigator.of(context).pop(true);
-                                print('2222');
                               },
                               child: Text(AppStrings.yes.tr())),
                         ],

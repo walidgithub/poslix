@@ -204,6 +204,9 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             _appPreferences.setDecimalPlaces(
                 PREFS_KEY_DECIMAL_PLACES, decimalPlaces!);
 
+            _appPreferences.setBusinessType(
+                PREFS_KEY_BUSINESS_TYPE, businessType!);
+
             RegisterPOSCubit.get(context).openCloseRegister(
                 CloseRegisterReportRequest(today: true), locationId!);
 

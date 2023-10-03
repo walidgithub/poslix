@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poslix_app/pos/domain/response/payment_methods_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/ImagestorByte.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/printer.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/bill_format.dart';
@@ -22,6 +24,7 @@ import 'package:screenshot/screenshot.dart';
 import '../../../../../domain/requests/cart_model.dart';
 import '../../../../../domain/requests/check_out_model.dart';
 import '../../../../../domain/requests/payment_types_model.dart';
+import '../../../../../domain/response/payment_method_model.dart';
 import '../../../../../shared/constant/constant_values_manager.dart';
 import '../../../../../shared/constant/language_manager.dart';
 import '../../../../../shared/constant/padding_margin_values_manager.dart';
@@ -29,6 +32,8 @@ import '../../../../../shared/preferences/app_pref.dart';
 import '../../../../../shared/style/colors_manager.dart';
 import '../../../../di/di.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
+import '../../../components/close_button.dart';
+import '../../../components/text_component.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
 import '../../main_view_cubit/main_view_cubit.dart';
 import '../tailor_dialog/widgets/main_note.dart';
@@ -40,6 +45,7 @@ import 'widgets/main_payment _method.dart';
 class PaymentDialog extends StatefulWidget {
   double total;
   List<CartRequest> cartRequest;
+  List<PaymentMethodModel> listOfPaymentMethods;
   int locationId;
   int customerId;
   String discountType;
@@ -51,6 +57,7 @@ class PaymentDialog extends StatefulWidget {
   double deviceWidth;
   static void show(
     BuildContext context,
+    List<PaymentMethodModel> listOfPaymentMethods,
     String currencyCode,
     double total,
     List<CartRequest> cartRequest,
@@ -69,6 +76,7 @@ class PaymentDialog extends StatefulWidget {
                   useRootNavigator: false,
                   barrierDismissible: false,
                   builder: (_) => PaymentDialog(
+                    listOfPaymentMethods: listOfPaymentMethods,
                         currencyCode: currencyCode,
                         total: total,
                         cartRequest: cartRequest,
@@ -87,6 +95,7 @@ class PaymentDialog extends StatefulWidget {
               useRootNavigator: false,
               barrierDismissible: false,
               builder: (_) => PaymentDialog(
+                listOfPaymentMethods: listOfPaymentMethods,
                 currencyCode: currencyCode,
                 total: total,
                 cartRequest: cartRequest,
@@ -104,7 +113,9 @@ class PaymentDialog extends StatefulWidget {
   static void hide(BuildContext context) => Navigator.of(context).pop();
 
   PaymentDialog(
-      {required this.currencyCode,
+      {
+        required this.listOfPaymentMethods,
+        required this.currencyCode,
       required this.total,
       required this.cartRequest,
       required this.locationId,
@@ -137,6 +148,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   @override
   void initState() {
+    for(var n in widget.listOfPaymentMethods) {
+      paymentMethods.add(n.name);
+    }
+    selectedNewPaymentType.add(paymentMethods[0]);
     getDecimalPlaces();
     setState(() {
       isArabic();
@@ -148,7 +163,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
     changeReturn = 0;
     balance = 0;
 
-    selectedPaymentType = AppStrings.cash.tr();
+    selectedPaymentType = paymentMethods[0];
     due = 0.0;
     _amountEditingController.text = widget.total.toString();
 
@@ -185,9 +200,11 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   var selectedPaymentType;
 
-  List selectedNewPaymentType = [AppStrings.cash.tr()];
+  List selectedNewPaymentType = [];
 
   List<PaymentTypesRequest> paymentRequest = [];
+
+  List<String> paymentMethods = [];
 
   bool newPayment = false;
 
@@ -201,7 +218,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
   String businessVat = '';
   String customerNumber = '';
 
-  List paymentMethods = [];
+  List paymentRows = [];
 
   ScreenshotController screenshotController = ScreenshotController();
 
@@ -323,8 +340,15 @@ class _PaymentDialogState extends State<PaymentDialog> {
           } else if (state is LoadingErrorAppearance) {}
 
           if (state is LoadedPrintingSettings) {
-            printerIP = state.locationSettingsResponse.printSetting.ip;
-            printerType = state.locationSettingsResponse.printSetting.printType;
+            for (var n in state.printSettingResponse) {
+              if (n.status == 1) {
+                printerIP = n.ip;
+                printerType = n.printType;
+              } else {
+                printerIP = AppConstants.printerIp;
+                printerType = 'receipt';
+              }
+            }
           } else if (state is LoadingErrorPrintingSettings) {}
         },
         builder: (context, state) {
@@ -376,18 +400,18 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         selectMainPaymentMethod,
                                         _amountEditingController,
                                         _notesInLineEditingController,
-                                        selectedPaymentType, widget.deviceWidth),
+                                        selectedPaymentType, widget.deviceWidth, paymentMethods),
                                     newPaymentMethods(
                                         context,
                                         deletePaymentMethod,
                                         newPayment,
                                         innerHeight,
-                                        paymentMethods,
+                                        paymentRows,
                                         _paymentControllers,
                                         widget.total,
                                         _paymentNotesControllers,
                                         selectPaymentType,
-                                        selectedNewPaymentType, widget.deviceWidth),
+                                        selectedNewPaymentType, widget.deviceWidth, paymentMethods),
                                     SizedBox(
                                       height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                                     ),
@@ -457,19 +481,19 @@ class _PaymentDialogState extends State<PaymentDialog> {
     setState(() {
       _paymentControllers.removeAt(index);
       _paymentNotesControllers.removeAt(index);
-      paymentMethods.removeAt(index);
+      paymentRows.removeAt(index);
 
       selectedNewPaymentType.removeAt(index);
 
       paymentWaysCount--;
 
-      if (paymentMethods.length == 1) {
+      if (paymentRows.length == 1) {
         innerHeight = isRtl ? 70 : 60.h;
         sizedHeight = isRtl ? 450 : 430.h;
-      } else if (paymentMethods.length > 1) {
+      } else if (paymentRows.length > 1) {
         innerHeight = isRtl ? 145 : 125.h;
         sizedHeight = isRtl ? 525 : 490.h;
-      } else if (paymentMethods.isEmpty) {
+      } else if (paymentRows.isEmpty) {
         newPayment = false;
         sizedHeight = isRtl ? 380 : 365.h;
       }
@@ -483,7 +507,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
       _paymentControllers[paymentWaysCount].addListener(goToCalc);
 
-      selectedNewPaymentType.add(AppStrings.cash.tr());
+      selectedNewPaymentType.add(paymentMethods[0]);
 
       totalNewPaying = 0.0;
       for (var controller in _paymentControllers) {
@@ -506,14 +530,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
       }
 
       newPayment = true;
-      paymentMethods.add(paymentWaysCount);
-      if (paymentMethods.length == 1) {
+      paymentRows.add(paymentWaysCount);
+      if (paymentRows.length == 1) {
         innerHeight = isRtl ? 70 : 60.h;
         sizedHeight = isRtl ? 450 : 430.h;
-      } else if (paymentMethods.length > 1) {
+      } else if (paymentRows.length > 1) {
         innerHeight = isRtl ? 145 : 125.h;
         sizedHeight = isRtl ? 525 : 490.h;
-      } else if (paymentMethods.isEmpty) {
+      } else if (paymentRows.isEmpty) {
         newPayment = false;
         sizedHeight = isRtl ? 380 : 365.h;
       }
@@ -523,7 +547,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   Future<void> checkOut(BuildContext context) async {
     paymentRequest.add(PaymentTypesRequest(
-        paymentId: '1',
+        paymentId: widget.listOfPaymentMethods.firstWhere((element) => element.name == selectedPaymentType).toString(),
         amount: roundDouble(
             double.parse(_amountEditingController.text), decimalPlaces),
         note: _notesEditingController.text));
@@ -612,3 +636,4 @@ class _PaymentDialogState extends State<PaymentDialog> {
     PaymentDialog.hide(context);
   }
 }
+
