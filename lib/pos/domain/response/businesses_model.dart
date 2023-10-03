@@ -21,7 +21,7 @@ class BusinessesResponse {
     type = json['type'];
     typeId = json['type_id'];
     name = json['name'];
-    email = null;
+    email = json['email'] ?? '';
     locations = List.from(json['locations']).map((e)=>LocationsResponse.fromJson(e)).toList();
   }
 

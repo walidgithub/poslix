@@ -4,7 +4,7 @@ class PaymentTypesRequest {
     required this.amount,
     required this.note,
   });
-  late final String paymentId;
+  late final int paymentId;
   late final double amount;
   late final String note;
 

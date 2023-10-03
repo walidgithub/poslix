@@ -21,7 +21,7 @@ class PaymentResponse {
     transactionId = json['transaction_id'] ?? 0;
     paymentType = json['payment_type'] ?? '';
     amount = json['amount'] ?? '';
-    createdBy = json['created_by'] ?? 0;
+    createdBy = json['created_by'];
     createdAt = json['createdAt'] ?? '';
     notes = json['notes'] ?? '';
   }

@@ -1,6 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:poslix_app/pos/domain/response/payment_methods_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/ImagestorByte.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/printer.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_dialog/printing/wi_fi_thermal_printer/bill_format.dart';
@@ -19,21 +16,17 @@ import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/payment_di
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_state.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
-// import 'package:printing/printing.dart';
 import 'package:screenshot/screenshot.dart';
 import '../../../../../domain/requests/cart_model.dart';
 import '../../../../../domain/requests/check_out_model.dart';
 import '../../../../../domain/requests/payment_types_model.dart';
 import '../../../../../domain/response/payment_method_model.dart';
 import '../../../../../shared/constant/constant_values_manager.dart';
-import '../../../../../shared/constant/language_manager.dart';
 import '../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../shared/preferences/app_pref.dart';
 import '../../../../../shared/style/colors_manager.dart';
 import '../../../../di/di.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
-import '../../../components/close_button.dart';
-import '../../../components/text_component.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
 import '../../main_view_cubit/main_view_cubit.dart';
 import '../tailor_dialog/widgets/main_note.dart';
@@ -198,7 +191,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
     super.dispose();
   }
 
-  var selectedPaymentType;
+  String? selectedPaymentType;
 
   List selectedNewPaymentType = [];
 
@@ -312,7 +305,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
           if (state is CheckOutSucceed) {
             print('doneeeeeeee');
-            orderId = state.checkOutRes.id;
+            orderId = state.checkOutRes.data.id;
             widget.done('done');
           } else if (state is CheckOutError) {
             print('erroooorrrrrrrrrrrrrrrrrr');
@@ -400,7 +393,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         selectMainPaymentMethod,
                                         _amountEditingController,
                                         _notesInLineEditingController,
-                                        selectedPaymentType, widget.deviceWidth, paymentMethods),
+                                        selectedPaymentType!, widget.deviceWidth, paymentMethods),
                                     newPaymentMethods(
                                         context,
                                         deletePaymentMethod,
@@ -547,18 +540,21 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   Future<void> checkOut(BuildContext context) async {
     paymentRequest.add(PaymentTypesRequest(
-        paymentId: widget.listOfPaymentMethods.firstWhere((element) => element.name == selectedPaymentType).toString(),
+        paymentId: widget.listOfPaymentMethods.where((element) => element.name == selectedPaymentType!).first.id,
         amount: roundDouble(
             double.parse(_amountEditingController.text), decimalPlaces),
         note: _notesEditingController.text));
 
-    for (int n = 0; n < selectedNewPaymentType.length - 1; n++) {
-      paymentRequest.add(PaymentTypesRequest(
-          paymentId: selectedNewPaymentType[n],
-          amount: roundDouble(
-              double.parse(_paymentControllers[n].text), decimalPlaces),
-          note: _paymentNotesControllers[n].text));
-    }
+    print('test other rows');
+    print(selectedNewPaymentType.length);
+    // for (int n = 1; n < selectedNewPaymentType.length; n++) {
+    //   print(selectedNewPaymentType[n]);
+    //   paymentRequest.add(PaymentTypesRequest(
+    //       paymentId: selectedNewPaymentType[n],
+    //       amount: roundDouble(
+    //           double.parse(_paymentControllers[n].text), decimalPlaces),
+    //       note: _paymentNotesControllers[n].text));
+    // }
 
     CheckOutRequest checkOutRequest = CheckOutRequest(
         locationId: widget.locationId,
