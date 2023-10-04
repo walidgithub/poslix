@@ -24,9 +24,9 @@ class CheckOutSalesDataResponse {
   late final String contactMobile;
   late final double total;
   late final double subTotal;
-  late final int payed;
-  late final double due;
-  int? discount;
+  late final double payed;
+  late final int due;
+  String? discount;
   late final String tax;
   late final String date;
   late final String transactionStatus;
@@ -44,7 +44,7 @@ class CheckOutSalesDataResponse {
     subTotal = json['sub_total'];
     payed = json['payed'];
     due = json['due'];
-    discount = json['discount'] ?? 0;
+    discount = json['discount'] ?? '0.0';
     tax = json['tax'];
     date = json['date'];
     transactionStatus = json['transaction_status'];

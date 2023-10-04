@@ -94,7 +94,8 @@ class OrdersCubit extends Cubit<OrdersState> {
         await posRepositoryImpl.getOrderReport(token, locationId);
         emit(AllOrderReportSucceed());
         listOfAllOrderHead = res;
-
+print('rrrrrrrrrrrrrrrrrr');
+print(listOfAllOrderHead);
         return res;
       } else {
         emit(OrdersNoInternetState());

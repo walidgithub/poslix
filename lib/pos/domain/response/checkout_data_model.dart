@@ -48,9 +48,9 @@ class CheckOutDataResponse {
   String? invoiceNo;
   String? refNo;
   late final String taxAmount;
-  late final String discountType;
+  String? discountType;
   String? discountAmount;
-  late final String notes;
+  String? notes;
   late final String totalPrice;
   String? document;
   late final String exchangeRate;
@@ -65,9 +65,9 @@ class CheckOutDataResponse {
 
   CheckOutDataResponse.fromJson(Map<String, dynamic> json){
     id = json['id'];
-    relatedTransactionId = json['related_transaction_id'];
+    relatedTransactionId = json['related_transaction_id'] ?? 0;
     locationId = json['location_id'];
-    transferredLocationId = json['transferredLocationId'] ?? 0;
+    transferredLocationId = json['transferredLocationId'] ?? '';
     type = json['type'];
     subType = json['subType'] ?? '';
     status = json['status'];
@@ -79,9 +79,9 @@ class CheckOutDataResponse {
     invoiceNo = json['invoiceNo'] ?? '';
     refNo = json['refNo'] ?? '';
     taxAmount = json['tax_amount'];
-    discountType = json['discount_type'];
+    discountType = json['discount_type'] ?? '';
     discountAmount = json['discountAmount'] ?? '';
-    notes = json['notes'];
+    notes = json['notes'] ?? '';
     totalPrice = json['total_price'];
     document = json['document'] ?? '';
     exchangeRate = json['exchange_rate'];

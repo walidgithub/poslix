@@ -9,7 +9,7 @@ class PaymentResponse {
     required this.notes,
   });
   late final int id;
-  late final int transactionId;
+  int? transactionId;
   late final String paymentType;
   late final String amount;
   late final int createdBy;

@@ -566,10 +566,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
         taxType: widget.taxType,
         taxAmount: widget.taxAmount,
         payment: paymentRequest);
-
+    print('startttttttt');
     await MainViewCubit.get(context).checkout(checkOutRequest);
     setState(() {});
-
+    print('passssss');
     for (var n in _paymentControllers) {
       totalPaying = roundDouble(double.parse(n.text), decimalPlaces);
     }

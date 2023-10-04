@@ -1219,8 +1219,14 @@ class _MainViewState extends State<MainView> {
           ColorManager.hold);
     } else {
       if (businessType != 'Tailor') {
-        for (var element in listOfCategories) {
-          listOfBothProducts.addAll(Set.of(element.products));
+        if (categoryFilter!) {
+          for (var element in listOfCategories) {
+            listOfBothProducts.addAll(Set.of(element.products));
+          }
+        } else {
+          for (var element in listOfBrands) {
+            listOfBothProducts.addAll(Set.of(element.products));
+          }
         }
         for (var n in listOfTmpOrder) {
           var itemStock = listOfBothProducts
@@ -1303,16 +1309,16 @@ class _MainViewState extends State<MainView> {
           'fixed',
           estimatedTax, (done) {
         if (done == 'done') {
+          // MainViewCubit.get(context).getCategories(locationId);
           setState(() {
             categoryFilter = true;
+            listOfTmpOrder = [];
             listOfBothProducts = [];
             listOfAllProducts = [];
             searchList = [];
-            MainViewCubit.get(context).getCategories(locationId);
           });
         }
       }, deviceWidth!);
-
       discount = 0;
       estimatedTax = 0;
       shippingCharge = 0;
@@ -1537,7 +1543,17 @@ class _MainViewState extends State<MainView> {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
 
+
     if (businessType != 'Tailor') {
+      if (categoryFilter!) {
+        for (var element in listOfCategories) {
+          listOfBothProducts.addAll(Set.of(element.products));
+        }
+      } else {
+        for (var element in listOfBrands) {
+          listOfBothProducts.addAll(Set.of(element.products));
+        }
+      }
       var itemStock = listOfBothProducts
           .where((element) =>
               element.id ==
@@ -1569,6 +1585,7 @@ class _MainViewState extends State<MainView> {
     }
 
     if (deviceWidth! <= 600) {
+      print('1111');
       _controllerLeftPart.setState!(() {
         int? itemCount =
             listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
@@ -1589,6 +1606,7 @@ class _MainViewState extends State<MainView> {
             total.toString();
       });
     } else {
+      print('2222');
       setState(() {
         int? itemCount =
             listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;

@@ -1106,7 +1106,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   var getOrdersItems = listOfOrderItems
                       .where((element) => element.orderId == order.id);
 
-                  widget.orderDiscount(order.discount);
+                  // widget.orderDiscount(order.discount);
 
                   widget.orderTotalAmount(
                       double.parse(order.subTotal.toString()));
@@ -1144,7 +1144,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                         itemQuantity: int.parse(productQty.substring(
                             0, productQty.indexOf('.'))),
                         orderDiscount:
-                        double.parse(order.discount.toString()),
+                        0.0,
                         itemOption: element.variations.isNotEmpty
                             ? element
                             .variations[
@@ -1326,7 +1326,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   var getOrdersItems = listOfOrderItems
                       .where((element) => element.orderId == order.id);
 
-                  widget.orderDiscount(order.discount);
+                  // widget.orderDiscount(order.discount);
 
                   widget.orderTotalAmount(
                       double.parse(order.subTotal.toString()));
@@ -1361,7 +1361,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                         itemQuantity: int.parse(productQty.substring(
                             0, productQty.indexOf('.'))),
                         orderDiscount:
-                        double.parse(order.discount.toString()),
+                        0.0,
                         itemOption: element.variations.isNotEmpty
                             ? element
                             .variations[

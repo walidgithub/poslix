@@ -21,11 +21,11 @@ class SalesPaymentResponse {
   late final List<CheckOutSalesDataResponse> data;
 
   SalesPaymentResponse.fromJson(Map<String, dynamic> json){
-    subTotal = json['sub_total'];
-    payed = json['payed'];
-    due = json['due'];
-    tax = json['tax'];
-    total = json['total'];
+    subTotal = (json['sub_total'] as num).toDouble();
+    payed = (json['payed'] as num).toInt();
+    due = (json['due'] as num).toDouble();
+    tax = (json['tax'] as num).toInt();
+    total = (json['total'] as num).toDouble();
     currency = CurrencyResponse.fromJson(json['currency']);
     data = List.from(json['data']).map((e)=>CheckOutSalesDataResponse.fromJson(e)).toList();
   }
