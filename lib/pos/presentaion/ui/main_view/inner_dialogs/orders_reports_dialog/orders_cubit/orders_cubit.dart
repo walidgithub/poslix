@@ -72,6 +72,7 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future<List<SalesReportDataModel>> getOrderReport(int locationId) async {
+    print('33333');
     try {
       await Future.delayed(const Duration(milliseconds: 500));
       emit(LoadingAllOrderReport());

@@ -5,13 +5,13 @@ class SalesReportDataModel {
     required this.userName,
     required this.contactName,
     required this.contactMobile,
-    required this.total,
+    // required this.total,
     required this.subTotal,
-    required this.payed,
-    required this.due,
-    required this.discount,
+    // required this.payed,
+    // required this.due,
+    // required this.discount,
     // required this.tax,
-    required this.date,
+    // required this.date,
     required this.transactionStatus,
     required this.paymentStatus,
     required this.paymentMethod,
@@ -22,11 +22,11 @@ class SalesReportDataModel {
   late final String userName;
   late final String contactName;
   late final String contactMobile;
-  late final double total;
+  // late final double total;
   late final double subTotal;
-  late final double payed;
-  late final int due;
-  late final String discount;
+  // late final double payed;
+  // late final int due;
+  // late final String discount;
   // int? tax;
   late final String date;
   late final String transactionStatus;
@@ -40,11 +40,11 @@ class SalesReportDataModel {
     userName = json['user_name'];
     contactName = json['contact_name'];
     contactMobile = json['contact_mobile'];
-    total = json['total'];
+    // total = json['total'];
     subTotal = json['sub_total'];
-    payed = json['payed'];
-    due = json['due'];
-    discount = json['discount'];
+    // payed = json['payed'];
+    // due = json['due'];
+    // discount = json['discount'];
     // tax = json['tax'];
     date = json['date'];
     transactionStatus = json['transaction_status'];
@@ -60,11 +60,11 @@ class SalesReportDataModel {
     _data['user_name'] = userName;
     _data['contact_name'] = contactName;
     _data['contact_mobile'] = contactMobile;
-    _data['total'] = total;
+    // _data['total'] = total;
     _data['sub_total'] = subTotal;
-    _data['payed'] = payed;
-    _data['due'] = due;
-    _data['discount'] = discount;
+    // _data['payed'] = payed;
+    // _data['due'] = due;
+    // _data['discount'] = discount;
     // _data['tax'] = tax;
     _data['date'] = date;
     _data['transaction_status'] = transactionStatus;
