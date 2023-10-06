@@ -5,13 +5,13 @@ class SalesReportDataModel {
     required this.userName,
     required this.contactName,
     required this.contactMobile,
-    // required this.total,
+    required this.total,
     required this.subTotal,
-    // required this.payed,
-    // required this.due,
-    // required this.discount,
-    // required this.tax,
-    // required this.date,
+    required this.payed,
+    required this.due,
+    required this.discount,
+    required this.tax,
+    required this.date,
     required this.transactionStatus,
     required this.paymentStatus,
     required this.paymentMethod,
@@ -22,12 +22,12 @@ class SalesReportDataModel {
   late final String userName;
   late final String contactName;
   late final String contactMobile;
-  // late final double total;
+  late final double total;
   late final double subTotal;
-  // late final double payed;
-  // late final int due;
-  // late final String discount;
-  // int? tax;
+  late final double payed;
+  late final int due;
+  late final String discount;
+  double? tax;
   late final String date;
   late final String transactionStatus;
   late final String paymentStatus;
@@ -40,12 +40,12 @@ class SalesReportDataModel {
     userName = json['user_name'];
     contactName = json['contact_name'];
     contactMobile = json['contact_mobile'];
-    // total = json['total'];
-    subTotal = json['sub_total'];
-    // payed = json['payed'];
-    // due = json['due'];
-    // discount = json['discount'];
-    // tax = json['tax'];
+    total = (json['total'] as num).toDouble();
+    subTotal = (json['sub_total'] as num).toDouble();
+    payed = (json['payed'] as num).toDouble();
+    due = (json['due'] as num).toInt();
+    discount = json['discount'] ?? '';
+    tax = (json['tax'] as num).toDouble() ?? 0.0;
     date = json['date'];
     transactionStatus = json['transaction_status'];
     paymentStatus = json['payment_status'];
@@ -60,11 +60,11 @@ class SalesReportDataModel {
     _data['user_name'] = userName;
     _data['contact_name'] = contactName;
     _data['contact_mobile'] = contactMobile;
-    // _data['total'] = total;
+    _data['total'] = total;
     _data['sub_total'] = subTotal;
-    // _data['payed'] = payed;
-    // _data['due'] = due;
-    // _data['discount'] = discount;
+    _data['payed'] = payed;
+    _data['due'] = due;
+    _data['discount'] = discount;
     // _data['tax'] = tax;
     _data['date'] = date;
     _data['transaction_status'] = transactionStatus;

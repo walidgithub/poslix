@@ -36,7 +36,7 @@ Widget newPaymentMethods(
                 width: deviceWidth <= 600 ? 375.w : 200.w,
                 height: innerHeight,
                 child: ListView.builder(
-                  itemCount: paymentMethods.length,
+                  itemCount: paymentRows.length,
                   padding: const EdgeInsets.only(top: AppSize.s10),
                   itemBuilder: (BuildContext context, int index) {
                     return Column(

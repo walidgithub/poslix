@@ -373,8 +373,6 @@ class MainViewCubit extends Cubit<MainViewState> {
         }
 
         res = await posRepositoryImpl.checkout(parameters, token);
-        print('222222222222222222');
-        print(res);
         emit(CheckOutSucceed(res));
         return res;
       } else {

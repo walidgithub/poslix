@@ -72,7 +72,6 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future<List<SalesReportDataModel>> getOrderReport(int locationId) async {
-    print('33333');
     try {
       await Future.delayed(const Duration(milliseconds: 500));
       emit(LoadingAllOrderReport());
@@ -95,8 +94,6 @@ class OrdersCubit extends Cubit<OrdersState> {
         await posRepositoryImpl.getOrderReport(token, locationId);
         emit(AllOrderReportSucceed());
         listOfAllOrderHead = res;
-print('rrrrrrrrrrrrrrrrrr');
-print(listOfAllOrderHead);
         return res;
       } else {
         emit(OrdersNoInternetState());

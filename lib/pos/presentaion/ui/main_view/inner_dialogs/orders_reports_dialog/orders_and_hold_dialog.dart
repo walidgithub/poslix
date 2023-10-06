@@ -1106,7 +1106,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   var getOrdersItems = listOfOrderItems
                       .where((element) => element.orderId == order.id);
 
-                  // widget.orderDiscount(order.discount);
+                  widget.orderDiscount(order.discount);
 
                   widget.orderTotalAmount(
                       double.parse(order.subTotal.toString()));
@@ -1161,6 +1161,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                         customerTel: getOrdersItems.first.contactMobile));
                   }
                   GlobalValues.setEditOrder = true;
+                  GlobalValues.setRelatedInvoiceId = getOrdersItems.first.orderId;
 
                   if (order.contactName ==
                       '${AppStrings.firstName} ${AppStrings.secondName}') {
@@ -1290,11 +1291,13 @@ class _OrdersDialogState extends State<OrdersDialog> {
       DataCell(SizedBox(
         width: widget.deviceWidth <= 600 ? 70.w : 25.w,
         child: Center(
-            child: Text(
+            child:
+            Text(
                 listOfOrderHeadForSearch[
                 listOfOrderHeadForSearch.indexOf(order)]
                     .subTotal
                     .toString(),
+
                 style: TextStyle(fontSize: AppSize.s14.sp),
                 textAlign: TextAlign.center)),
       )),
@@ -1326,7 +1329,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   var getOrdersItems = listOfOrderItems
                       .where((element) => element.orderId == order.id);
 
-                  // widget.orderDiscount(order.discount);
+                  widget.orderDiscount(order.discount);
 
                   widget.orderTotalAmount(
                       double.parse(order.subTotal.toString()));
@@ -1379,6 +1382,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                         customerTel: getOrdersItems.first.contactMobile));
                   }
                   GlobalValues.setEditOrder = true;
+                  GlobalValues.setRelatedInvoiceId = getOrdersItems.first.orderId;
 
                   if (order.contactName ==
                       '${AppStrings.firstName} ${AppStrings.secondName}') {

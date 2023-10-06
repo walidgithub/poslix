@@ -9,6 +9,7 @@ class CheckOutRequest {
     required this.discountType,
     required this.discountAmount,
     required this.notes,
+    required this.relatedInvoiceId,
     required this.cart,
     required this.taxType,
     required this.taxAmount,
@@ -19,6 +20,7 @@ class CheckOutRequest {
   late final String discountType;
   late final String discountAmount;
   late final String notes;
+  late final int relatedInvoiceId;
   late final List<CartRequest> cart;
   late final String taxType;
   late final double taxAmount;
@@ -30,6 +32,7 @@ class CheckOutRequest {
     discountType = json['discount_type'];
     discountAmount = json['discount_amount'];
     notes = json['notes'];
+    relatedInvoiceId = json['related_invoice_id'];
     cart = List.from(json['cart']).map((e)=>CartRequest.fromJson(e)).toList();
     taxType = json['tax_type'];
     taxAmount = json['tax_amount'];
@@ -43,6 +46,7 @@ class CheckOutRequest {
     data['discount_type'] = discountType;
     data['discount_amount'] = discountAmount;
     data['notes'] = notes;
+    data['related_invoice_id'] = relatedInvoiceId;
     data['cart'] = cart.map((e)=>e.toJson()).toList();
     data['tax_type'] = taxType;
     data['tax_amount'] = taxAmount;

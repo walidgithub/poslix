@@ -25,7 +25,7 @@ class CheckOutSalesDataResponse {
   late final double total;
   late final double subTotal;
   late final double payed;
-  late final int due;
+  late final double due;
   String? discount;
   late final String tax;
   late final String date;
@@ -40,12 +40,12 @@ class CheckOutSalesDataResponse {
     userName = json['user_name'];
     contactName = json['contact_name'];
     contactMobile = json['contact_mobile'];
-    total = json['total'];
-    subTotal = json['sub_total'];
-    payed = json['payed'];
-    due = json['due'];
+    total = (json['total'] as num).toDouble();
+    subTotal = (json['sub_total'] as num).toDouble();
+    payed = (json['payed'] as num).toDouble();
+    due = (json['due'] as num).toDouble();
     discount = json['discount'] ?? '0.0';
-    tax = json['tax'];
+    tax = json['tax'] ?? '0';
     date = json['date'];
     transactionStatus = json['transaction_status'];
     paymentStatus = json['payment_status'];

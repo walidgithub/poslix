@@ -86,6 +86,9 @@ class _MainViewState extends State<MainView> {
 
   bool showFab = true;
 
+  String printerIP = '';
+  String printerType = '';
+
   List<CategoriesResponse> listOfCategories = [];
   List<BrandsResponse> listOfBrands = [];
 
@@ -497,7 +500,7 @@ class _MainViewState extends State<MainView> {
         : differenceValue = 0;
 
     return BlocProvider(
-      create: (context) => sl<MainViewCubit>()..getHomeData(locationId)..getPaymentMethods(locationId),
+      create: (context) => sl<MainViewCubit>()..getHomeData(locationId)..getPaymentMethods(locationId)..getLocationSettings(locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
@@ -638,6 +641,20 @@ class _MainViewState extends State<MainView> {
           if (state is LoadedPaymentMethods) {
             listOfPaymentMethods = MainViewCubit.get(context).listOfPaymentMethods;
           }
+          // printing settings
+          if (state is LoadedPrintingSettings) {
+            for (var n in state.printSettingResponse) {
+              if (n.status == 1) {
+                printerIP = n.ip;
+                printerType = n.printType;
+                return;
+              } else {
+                printerIP = AppConstants.printerIp;
+                printerType = 'receipt';
+              }
+            }
+
+          } else if (state is LoadingErrorPrintingSettings) {}
         },
         builder: (context, state) {
           return OrientationBuilder(builder: (context, orientation) {
@@ -1318,7 +1335,7 @@ class _MainViewState extends State<MainView> {
             searchList = [];
           });
         }
-      }, deviceWidth!);
+      }, deviceWidth!, GlobalValues.getEditOrder ? GlobalValues.getRelatedInvoiceId : 0,printerIP,printerType);
       discount = 0;
       estimatedTax = 0;
       shippingCharge = 0;
@@ -1585,7 +1602,6 @@ class _MainViewState extends State<MainView> {
     }
 
     if (deviceWidth! <= 600) {
-      print('1111');
       _controllerLeftPart.setState!(() {
         int? itemCount =
             listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
@@ -1606,7 +1622,6 @@ class _MainViewState extends State<MainView> {
             total.toString();
       });
     } else {
-      print('2222');
       setState(() {
         int? itemCount =
             listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;

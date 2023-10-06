@@ -48,28 +48,34 @@ class PaymentDialog extends StatefulWidget {
   double taxAmount;
   Function done;
   double deviceWidth;
+  int relatedInvoiceId;
+  String printerIP;
+  String printerType;
   static void show(
-    BuildContext context,
-    List<PaymentMethodModel> listOfPaymentMethods,
-    String currencyCode,
-    double total,
-    List<CartRequest> cartRequest,
-    int locationId,
-    int customerId,
-    String discountType,
-    double discountAmount,
-    String taxType,
-    double taxAmount,
-    Function done,
-      double deviceWidth
-  ) =>
+          BuildContext context,
+          List<PaymentMethodModel> listOfPaymentMethods,
+          String currencyCode,
+          double total,
+          List<CartRequest> cartRequest,
+          int locationId,
+          int customerId,
+          String discountType,
+          double discountAmount,
+          String taxType,
+          double taxAmount,
+          Function done,
+          double deviceWidth,
+      int relatedInvoiceId,
+  String printerIP,
+  String printerType
+      ) =>
       isApple()
           ? showCupertinoDialog<void>(
                   context: context,
                   useRootNavigator: false,
                   barrierDismissible: false,
                   builder: (_) => PaymentDialog(
-                    listOfPaymentMethods: listOfPaymentMethods,
+                        listOfPaymentMethods: listOfPaymentMethods,
                         currencyCode: currencyCode,
                         total: total,
                         cartRequest: cartRequest,
@@ -80,7 +86,7 @@ class PaymentDialog extends StatefulWidget {
                         taxType: taxType,
                         taxAmount: taxAmount,
                         done: done,
-                    deviceWidth: deviceWidth,
+                        deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,printerIP:printerIP,printerType:printerType
                       ))
               .then((_) => FocusScope.of(context).requestFocus(FocusNode()))
           : showDialog<void>(
@@ -99,7 +105,7 @@ class PaymentDialog extends StatefulWidget {
                 taxType: taxType,
                 taxAmount: taxAmount,
                 done: done,
-                deviceWidth: deviceWidth,
+                deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,printerIP:printerIP,printerType:printerType
               ),
             ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
@@ -107,8 +113,8 @@ class PaymentDialog extends StatefulWidget {
 
   PaymentDialog(
       {
-        required this.listOfPaymentMethods,
-        required this.currencyCode,
+      required this.listOfPaymentMethods,
+      required this.currencyCode,
       required this.total,
       required this.cartRequest,
       required this.locationId,
@@ -119,6 +125,9 @@ class PaymentDialog extends StatefulWidget {
       required this.taxAmount,
       required this.done,
       required this.deviceWidth,
+        required this.relatedInvoiceId,
+        required this.printerIP,
+        required this.printerType,
       super.key});
 
   @override
@@ -141,7 +150,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   @override
   void initState() {
-    for(var n in widget.listOfPaymentMethods) {
+    for (var n in widget.listOfPaymentMethods) {
       paymentMethods.add(n.name);
     }
     selectedNewPaymentType.add(paymentMethods[0]);
@@ -239,9 +248,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   int orderId = 0;
 
-  String printerIP = '';
-  String printerType = '';
-
   double? sizedHeight;
   double innerHeight = 60.h;
   int paymentWaysCount = 0;
@@ -290,8 +296,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          sl<MainViewCubit>()..getAppearance(widget.locationId)..getLocationSettings(widget.locationId),
+      create: (context) => sl<MainViewCubit>()
+        ..getAppearance(widget.locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
@@ -331,18 +337,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
             businessVat = state.appearanceResponse.vatNumber;
             customerNumber = state.appearanceResponse.customerNumber;
           } else if (state is LoadingErrorAppearance) {}
-
-          if (state is LoadedPrintingSettings) {
-            for (var n in state.printSettingResponse) {
-              if (n.status == 1) {
-                printerIP = n.ip;
-                printerType = n.printType;
-              } else {
-                printerIP = AppConstants.printerIp;
-                printerType = 'receipt';
-              }
-            }
-          } else if (state is LoadingErrorPrintingSettings) {}
         },
         builder: (context, state) {
           return Scaffold(
@@ -356,7 +350,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
                         height: sizedHeight,
                         child: SingleChildScrollView(
                           physics: const NeverScrollableScrollPhysics(),
-                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
                           child: Container(
                             decoration: BoxDecoration(
                                 color: ColorManager.white,
@@ -381,11 +376,17 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
+                                      height: widget.deviceWidth <= 600
+                                          ? AppConstants
+                                              .smallWidthBetweenElements
+                                          : AppConstants.smallDistance,
                                     ),
                                     mainNotes(context, _notesEditingController),
                                     SizedBox(
-                                      height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
+                                      height: widget.deviceWidth <= 600
+                                          ? AppConstants
+                                              .smallWidthBetweenElements
+                                          : AppConstants.smallDistance,
                                     ),
                                     mainPaymentMethod(
                                         context,
@@ -393,7 +394,9 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         selectMainPaymentMethod,
                                         _amountEditingController,
                                         _notesInLineEditingController,
-                                        selectedPaymentType!, widget.deviceWidth, paymentMethods),
+                                        selectedPaymentType!,
+                                        widget.deviceWidth,
+                                        paymentMethods),
                                     newPaymentMethods(
                                         context,
                                         deletePaymentMethod,
@@ -404,13 +407,22 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         widget.total,
                                         _paymentNotesControllers,
                                         selectPaymentType,
-                                        selectedNewPaymentType, widget.deviceWidth, paymentMethods),
+                                        selectedNewPaymentType,
+                                        widget.deviceWidth,
+                                        paymentMethods),
                                     SizedBox(
-                                      height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
+                                      height: widget.deviceWidth <= 600
+                                          ? AppConstants
+                                              .smallWidthBetweenElements
+                                          : AppConstants.smallDistance,
                                     ),
-                                    addNewPaymentRow(context, addPaymentRow, widget.deviceWidth),
+                                    addNewPaymentRow(context, addPaymentRow,
+                                        widget.deviceWidth),
                                     SizedBox(
-                                      height: widget.deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
+                                      height: widget.deviceWidth <= 600
+                                          ? AppConstants
+                                              .smallWidthBetweenElements
+                                          : AppConstants.smallDistance,
                                     ),
                                     totals(
                                         context,
@@ -418,19 +430,23 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         changedTotal,
                                         changeReturn!,
                                         balance!,
-                                        widget.currencyCode, widget.deviceWidth),
+                                        widget.currencyCode,
+                                        widget.deviceWidth),
                                     SizedBox(
                                       height: AppConstants.smallerDistance,
                                     ),
                                     const Divider(
                                       thickness: AppSize.s1,
                                     ),
-                                    checkOutButtons(context, checkOut, widget.deviceWidth),
+                                    checkOutButtons(
+                                        context, checkOut, widget.deviceWidth),
                                     SizedBox(
-                                      height: AppConstants.bigHeightBetweenElements,
+                                      height:
+                                          AppConstants.bigHeightBetweenElements,
                                     ),
                                     SizedBox(
-                                      height: AppConstants.bigHeightBetweenElements,
+                                      height:
+                                          AppConstants.bigHeightBetweenElements,
                                     ),
                                     billModel(
                                         context,
@@ -444,7 +460,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         widget.discountAmount,
                                         widget.total,
                                         totalPaying!,
-                                        due!),
+                                        due!,
+                                        widget.deviceWidth,
+                                        decimalPlaces
+                                    ),
                                     SizedBox(
                                       height: 25.h,
                                     ),
@@ -490,6 +509,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
         newPayment = false;
         sizedHeight = isRtl ? 380 : 365.h;
       }
+      goToCalc();
     });
   }
 
@@ -540,53 +560,64 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   Future<void> checkOut(BuildContext context) async {
     paymentRequest.add(PaymentTypesRequest(
-        paymentId: widget.listOfPaymentMethods.where((element) => element.name == selectedPaymentType!).first.id,
+        paymentId: widget.listOfPaymentMethods
+            .where((element) => element.name == selectedPaymentType!)
+            .first
+            .id,
         amount: roundDouble(
             double.parse(_amountEditingController.text), decimalPlaces),
         note: _notesEditingController.text));
 
-    print('test other rows');
-    print(selectedNewPaymentType.length);
-    // for (int n = 1; n < selectedNewPaymentType.length; n++) {
-    //   print(selectedNewPaymentType[n]);
-    //   paymentRequest.add(PaymentTypesRequest(
-    //       paymentId: selectedNewPaymentType[n],
-    //       amount: roundDouble(
-    //           double.parse(_paymentControllers[n].text), decimalPlaces),
-    //       note: _paymentNotesControllers[n].text));
-    // }
-
-    CheckOutRequest checkOutRequest = CheckOutRequest(
-        locationId: widget.locationId,
-        customerId: widget.customerId,
-        discountType: widget.discountType,
-        discountAmount: widget.discountAmount.toString(),
-        notes: _notesInLineEditingController.text,
-        cart: widget.cartRequest,
-        taxType: widget.taxType,
-        taxAmount: widget.taxAmount,
-        payment: paymentRequest);
-    print('startttttttt');
-    await MainViewCubit.get(context).checkout(checkOutRequest);
-    setState(() {});
-    print('passssss');
-    for (var n in _paymentControllers) {
-      totalPaying = roundDouble(double.parse(n.text), decimalPlaces);
+    for (int n = 0; n < selectedNewPaymentType.length - 1; n++) {
+      paymentRequest.add(PaymentTypesRequest(
+          paymentId: widget.listOfPaymentMethods
+              .where((element) => element.name == selectedNewPaymentType[n])
+              .first
+              .id,
+          amount: roundDouble(
+              double.parse(_paymentControllers[n].text), decimalPlaces),
+          note: _paymentNotesControllers[n].text));
     }
+    CheckOutRequest checkOutRequest;
+    if (widget.relatedInvoiceId == 0) {
+      checkOutRequest = CheckOutRequest(
+          locationId: widget.locationId,
+          customerId: widget.customerId,
+          discountType: widget.discountType,
+          discountAmount: widget.discountAmount.toString(),
+          notes: _notesInLineEditingController.text,
+          relatedInvoiceId: 1,
+          cart: widget.cartRequest,
+          taxType: widget.taxType,
+          taxAmount: widget.taxAmount,
+          payment: paymentRequest);
+    } else {
+      checkOutRequest = CheckOutRequest(
+          locationId: widget.locationId,
+          customerId: widget.customerId,
+          discountType: widget.discountType,
+          discountAmount: widget.discountAmount.toString(),
+          notes: _notesInLineEditingController.text,
+          relatedInvoiceId: widget.relatedInvoiceId,
+          cart: widget.cartRequest,
+          taxType: widget.taxType,
+          taxAmount: widget.taxAmount,
+          payment: paymentRequest
+      );
+    }
+    await MainViewCubit.get(context).checkout(checkOutRequest);
 
-    totalPaying = totalPaying! +
-        roundDouble(double.parse(_amountEditingController.text), decimalPlaces);
-
-    due = widget.total - totalPaying!;
+    goToCalc();
+    due = balance;
 
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    if (printerType == 'Bluetooth') {
+    if (widget.printerType == 'Bluetooth') {
       // Navigator.of(context).pushNamed(
       //     Routes.thermalPrint,
       //     arguments: GoToThermal(
       //         total: widget.total.toString()));
-    } else if (printerType == 'A4') {
+    } else if (widget.printerType == 'A4') {
       // final image = await imageFromAssetBundle(
       //   "assets/images/logo.jpeg",
       // );
@@ -613,15 +644,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
       //     }));
       // await Printing.layoutPdf(
       //     onLayout: (PdfPageFormat format) async => doc.save());
-
-    } else if (printerType == 'receipt') {
+    } else if (widget.printerType == 'receipt') {
       screenshotController
           .capture(delay: const Duration(milliseconds: 10))
           .then((capturedImage) async {
         theImageThatComesFromThePrinter = capturedImage!;
         setState(() {
           theImageThatComesFromThePrinter = capturedImage;
-          goToPrint(printerIP, theImageThatComesFromThePrinter);
+          goToPrint(widget.printerIP, theImageThatComesFromThePrinter);
         });
       }).catchError((onError) {
         if (kDebugMode) {
@@ -629,7 +659,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
         }
       });
     }
+
+    await Future.delayed(const Duration(milliseconds: 2000));
     PaymentDialog.hide(context);
   }
 }
-

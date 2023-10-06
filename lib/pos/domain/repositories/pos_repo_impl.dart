@@ -274,8 +274,6 @@ class POSRepositoryImpl extends POSRepository {
               body: parameters.toJson())
           .then((response) {
         res = response.data['result'];
-        print(res);
-        print('resssssssssssss');
         return CheckOutResponse.fromJson(res);
       });
     } catch (e) {
@@ -348,8 +346,6 @@ class POSRepositoryImpl extends POSRepository {
         res = (response.data['result']['data'] as List).map((e) {
           return SalesReportDataModel.fromJson(e);
         }).toList();
-        print('ttttttttt');
-        print(res);
         return res;
       });
     } catch (e) {
