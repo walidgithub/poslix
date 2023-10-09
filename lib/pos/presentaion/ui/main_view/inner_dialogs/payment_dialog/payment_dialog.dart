@@ -51,6 +51,7 @@ class PaymentDialog extends StatefulWidget {
   int relatedInvoiceId;
   String printerIP;
   String printerType;
+  bool isMultiLang;
   static void show(
           BuildContext context,
           List<PaymentMethodModel> listOfPaymentMethods,
@@ -67,7 +68,8 @@ class PaymentDialog extends StatefulWidget {
           double deviceWidth,
       int relatedInvoiceId,
   String printerIP,
-  String printerType
+  String printerType,
+      bool isMultiLang
       ) =>
       isApple()
           ? showCupertinoDialog<void>(
@@ -86,7 +88,7 @@ class PaymentDialog extends StatefulWidget {
                         taxType: taxType,
                         taxAmount: taxAmount,
                         done: done,
-                        deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,printerIP:printerIP,printerType:printerType
+                        deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,printerIP:printerIP,printerType:printerType,isMultiLang:isMultiLang
                       ))
               .then((_) => FocusScope.of(context).requestFocus(FocusNode()))
           : showDialog<void>(
@@ -105,7 +107,7 @@ class PaymentDialog extends StatefulWidget {
                 taxType: taxType,
                 taxAmount: taxAmount,
                 done: done,
-                deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,printerIP:printerIP,printerType:printerType
+                deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,printerIP:printerIP,printerType:printerType,isMultiLang:isMultiLang
               ),
             ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
@@ -127,7 +129,7 @@ class PaymentDialog extends StatefulWidget {
       required this.deviceWidth,
         required this.relatedInvoiceId,
         required this.printerIP,
-        required this.printerType,
+        required this.printerType,required this.isMultiLang,
       super.key});
 
   @override
@@ -349,7 +351,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                         width: widget.deviceWidth <= 600 ? 375.w : 200.w,
                         height: sizedHeight,
                         child: SingleChildScrollView(
-                          physics: const NeverScrollableScrollPhysics(),
+                          // physics: const NeverScrollableScrollPhysics(),
                           keyboardDismissBehavior:
                               ScrollViewKeyboardDismissBehavior.onDrag,
                           child: Container(
@@ -462,7 +464,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         totalPaying!,
                                         due!,
                                         widget.deviceWidth,
-                                        decimalPlaces
+                                        decimalPlaces,false
                                     ),
                                     SizedBox(
                                       height: 25.h,
@@ -661,6 +663,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
     }
 
     await Future.delayed(const Duration(milliseconds: 2000));
-    PaymentDialog.hide(context);
+    // PaymentDialog.hide(context);
   }
 }

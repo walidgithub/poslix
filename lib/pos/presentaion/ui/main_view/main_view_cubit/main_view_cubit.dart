@@ -596,7 +596,35 @@ class MainViewCubit extends Cubit<MainViewState> {
   }
 
   // Printing Settings -----------------------------
-  Future<List<PrintSettingResponse>> getLocationSettings(int locationId) async {
+  Future<List<PrintSettingResponse>> getPrintingSettings(int locationId) async {
+    try {
+      var res;
+      if (await networkInfo.isConnected) {
+        String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
+        bool hasExpired = JwtDecoder.isExpired(token);
+        if (hasExpired) {
+          await getUserParameters();
+          await login(userRequest!);
+
+          res = await posRepositoryImpl.getPrintingSettings(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          emit(LoadedPrintingSettings(res));
+          return res;
+        }
+
+        res = await posRepositoryImpl.getPrintingSettings(token, locationId);
+        emit(LoadedPrintingSettings(res));
+        return res;
+      } else {
+        emit(MainNoInternetState());
+        return res;
+      }
+    } catch (e) {
+      emit(LoadingErrorPrintingSettings(e.toString()));
+      return Future.error(e);
+    }
+  }
+
+  Future<LocationSettingsResponse> getLocationSettings(int locationId) async {
     try {
       var res;
       if (await networkInfo.isConnected) {
@@ -607,19 +635,19 @@ class MainViewCubit extends Cubit<MainViewState> {
           await login(userRequest!);
 
           res = await posRepositoryImpl.getLocationSettings(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
-          emit(LoadedPrintingSettings(res));
+          emit(LoadedLocationSettings(res));
           return res;
         }
 
         res = await posRepositoryImpl.getLocationSettings(token, locationId);
-        emit(LoadedPrintingSettings(res));
+        emit(LoadedLocationSettings(res));
         return res;
       } else {
         emit(MainNoInternetState());
         return res;
       }
     } catch (e) {
-      emit(LoadingErrorPrintingSettings(e.toString()));
+      emit(LoadingErrorLocationSettings(e.toString()));
       return Future.error(e);
     }
   }

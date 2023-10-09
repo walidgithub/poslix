@@ -117,6 +117,17 @@ class LoadingErrorPrintingSettings extends MainViewState{
   LoadingErrorPrintingSettings(this.errorText);
 }
 
+class LoadedLocationSettings extends MainViewState{
+  List<LocationSettingsResponse> locationSettingResponse;
+
+  LoadedLocationSettings(this.locationSettingResponse);
+}
+class LoadingErrorLocationSettings extends MainViewState{
+  String errorText;
+
+  LoadingErrorLocationSettings(this.errorText);
+}
+
 class LoadedAppearance extends MainViewState{
   AppearanceResponse appearanceResponse;
 

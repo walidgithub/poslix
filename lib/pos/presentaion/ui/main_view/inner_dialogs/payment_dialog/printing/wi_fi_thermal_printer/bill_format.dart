@@ -25,7 +25,7 @@ Widget billModel(
     double totalPaying,
     double due,
     double deviceWidth,
-    int decimalPlaces) {
+    int decimalPlaces,bool isMultiLang) {
   return Screenshot(
     controller: screenshotController,
     child: SizedBox(
@@ -73,7 +73,7 @@ Widget billModel(
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(AppStrings.customer,
+                      Text(isMultiLang ? '${AppStrings.customer} الزبون' : AppStrings.customer,
                           style: TextStyle(
                               fontSize: deviceWidth <= 600
                                   ? AppSize.s10.sp
@@ -91,7 +91,7 @@ Widget billModel(
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(AppStrings.orderNo,
+                      Text(isMultiLang ? '${AppStrings.orderNo} المرجع' : AppStrings.orderNo,
                           style: TextStyle(
                               fontSize: deviceWidth <= 600
                                   ? AppSize.s10.sp
@@ -109,7 +109,7 @@ Widget billModel(
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(AppStrings.date,
+                      Text(isMultiLang ? '${AppStrings.date} التاريخ' : AppStrings.date,
                           style: TextStyle(
                               fontSize: deviceWidth <= 600
                                   ? AppSize.s10.sp
@@ -130,9 +130,9 @@ Widget billModel(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Center(
-                    child: Text("Qty",
+                    child: Text(isMultiLang ? 'Qty الكمية' : "Qty",
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -143,7 +143,7 @@ Widget billModel(
                 Expanded(
                   flex: 6,
                   child: Center(
-                    child: Text("Item",
+                    child: Text(isMultiLang ? 'Item بند الموارد' : "Item",
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -152,10 +152,10 @@ Widget billModel(
                   ),
                 ),
                 Expanded(
-                  flex: 2,
+                  flex: 4,
                   child: Center(
                     child: Text(
-                      "Total",
+                      isMultiLang ? 'Total الاجمالى' : "Total",
                       style: TextStyle(
                           fontSize: deviceWidth <= 600
                               ? AppSize.s10.sp
@@ -185,7 +185,7 @@ Widget billModel(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          flex: 2,
+                          flex: 3,
                           child: Center(
                             child: Text(
                                 listOfOrders[index].itemQuantity.toString(),
@@ -208,7 +208,7 @@ Widget billModel(
                           ),
                         ),
                         Expanded(
-                          flex: 2,
+                          flex: 4,
                           child: Center(
                             child: Text(
                               roundDouble(double.parse(listOfOrders[index].itemAmount.toString()), decimalPlaces).toString(),
@@ -242,16 +242,16 @@ Widget billModel(
               children: [
                 Padding(
                   padding: deviceWidth <= 600
-                      ? const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p0,
-                          AppPadding.p20, AppPadding.p0)
-                      : const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p5,
-                          AppPadding.p20, AppPadding.p5),
+                      ? const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p0,
+                          AppPadding.p10, AppPadding.p0)
+                      : const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p5,
+                          AppPadding.p10, AppPadding.p5),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        AppStrings.tax.tr(),
+                        isMultiLang ? '${AppStrings.tax} الضرائب' : AppStrings.tax,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -275,16 +275,16 @@ Widget billModel(
                 ),
                 Padding(
                   padding: deviceWidth <= 600
-                      ? const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p0,
-                          AppPadding.p20, AppPadding.p0)
-                      : const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p5,
-                          AppPadding.p20, AppPadding.p5),
+                      ? const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p0,
+                          AppPadding.p10, AppPadding.p0)
+                      : const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p5,
+                          AppPadding.p10, AppPadding.p5),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        AppStrings.discount3.tr(),
+                        isMultiLang ? '${AppStrings.discount3} الخصم' : AppStrings.discount3,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -308,16 +308,16 @@ Widget billModel(
                 ),
                 Padding(
                   padding: deviceWidth <= 600
-                      ? const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p0,
-                          AppPadding.p20, AppPadding.p0)
-                      : const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p5,
-                          AppPadding.p20, AppPadding.p5),
+                      ? const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p0,
+                          AppPadding.p10, AppPadding.p0)
+                      : const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p5,
+                          AppPadding.p10, AppPadding.p5),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        AppStrings.total2.tr(),
+                        isMultiLang ? '${AppStrings.total2} الاجمالى' : AppStrings.total2,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -341,16 +341,16 @@ Widget billModel(
                 ),
                 Padding(
                   padding: deviceWidth <= 600
-                      ? const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p0,
-                          AppPadding.p20, AppPadding.p0)
-                      : const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p5,
-                          AppPadding.p20, AppPadding.p5),
+                      ? const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p0,
+                          AppPadding.p10, AppPadding.p0)
+                      : const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p5,
+                          AppPadding.p10, AppPadding.p5),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        AppStrings.amountPaid.tr(),
+                        isMultiLang ? '${AppStrings.amountPaid} اجمالى المدفوع' : AppStrings.amountPaid,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -374,16 +374,16 @@ Widget billModel(
                 ),
                 Padding(
                   padding: deviceWidth <= 600
-                      ? const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p0,
-                          AppPadding.p20, AppPadding.p0)
-                      : const EdgeInsets.fromLTRB(AppPadding.p20, AppPadding.p5,
-                          AppPadding.p20, AppPadding.p5),
+                      ? const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p0,
+                          AppPadding.p10, AppPadding.p0)
+                      : const EdgeInsets.fromLTRB(AppPadding.p10, AppPadding.p5,
+                          AppPadding.p10, AppPadding.p5),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        AppStrings.totalDue.tr(),
+                        isMultiLang ? '${AppStrings.totalDue} المتبقى' : AppStrings.totalDue,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -410,7 +410,11 @@ Widget billModel(
             Text(AppStrings.termsAndConditions.tr(),
                 style: TextStyle(
                     fontSize:
-                        deviceWidth <= 600 ? AppSize.s10.sp : AppSize.s20.sp))
+                        deviceWidth <= 600 ? AppSize.s10.sp : AppSize.s20.sp)),
+            Text(isMultiLang ? '!شكرًا لك' : 'Thank you',
+                style: TextStyle(
+                    fontSize:
+                    deviceWidth <= 600 ? AppSize.s10.sp : AppSize.s20.sp))
           ],
         )),
   );

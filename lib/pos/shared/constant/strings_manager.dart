@@ -79,7 +79,7 @@ class AppStrings{
   static const qny  = 'Qny';
   static const phone  = 'Phone';
   static const hold  = 'Hold';
-  static const orderNo  = 'Order No.';
+  static const orderNo  = 'Order No';
   static const remaining  = 'Remaining';
   static const action  = 'Action';
   static const searchBy  = 'Search By';

@@ -39,7 +39,8 @@ abstract class POSRepository {
   Future<LogoutResponse> logout(final String token);
 
   Future<List<BusinessResponse>> getBusinesses(final String token);
-  Future<List<PrintSettingResponse>> getLocationSettings(final String token, final int locationId);
+  Future<List<PrintSettingResponse>> getPrintingSettings(final String token, final int locationId);
+  Future<LocationSettingsResponse> getLocationSettings(String token, int locationId);
   Future<List<TaxesResponse>> getTaxes(final String token, final int locationId);
 
   Future<List<CategoriesResponse>> getCategories(final String token, final int locationId);

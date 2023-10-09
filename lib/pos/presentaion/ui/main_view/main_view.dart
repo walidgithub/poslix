@@ -86,6 +86,8 @@ class _MainViewState extends State<MainView> {
 
   bool showFab = true;
 
+  bool isMultiLang = false;
+
   String printerIP = '';
   String printerType = '';
 
@@ -500,7 +502,7 @@ class _MainViewState extends State<MainView> {
         : differenceValue = 0;
 
     return BlocProvider(
-      create: (context) => sl<MainViewCubit>()..getHomeData(locationId)..getPaymentMethods(locationId)..getLocationSettings(locationId),
+      create: (context) => sl<MainViewCubit>()..getHomeData(locationId)..getPaymentMethods(locationId)..getPrintingSettings(locationId)..getLocationSettings(locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
@@ -655,6 +657,10 @@ class _MainViewState extends State<MainView> {
             }
 
           } else if (state is LoadingErrorPrintingSettings) {}
+          // location settings
+          if (state is LoadedLocationSettings) {
+            isMultiLang = state.locationSettingResponse[0].isMultiLanguage == 1 ? true : false;
+          } else if (state is LoadingErrorLocationSettings) {}
         },
         builder: (context, state) {
           return OrientationBuilder(builder: (context, orientation) {
@@ -1335,7 +1341,7 @@ class _MainViewState extends State<MainView> {
             searchList = [];
           });
         }
-      }, deviceWidth!, GlobalValues.getEditOrder ? GlobalValues.getRelatedInvoiceId : 0,printerIP,printerType);
+      }, deviceWidth!, GlobalValues.getEditOrder ? GlobalValues.getRelatedInvoiceId : 0,printerIP,printerType,isMultiLang);
       discount = 0;
       estimatedTax = 0;
       shippingCharge = 0;

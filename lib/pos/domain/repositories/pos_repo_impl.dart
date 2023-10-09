@@ -230,7 +230,7 @@ class POSRepositoryImpl extends POSRepository {
 
   // Location Settings --------------------------------------------------------------------------
   @override
-  Future<List<PrintSettingResponse>> getLocationSettings(final String token, final int locationId) async {
+  Future<List<PrintSettingResponse>> getPrintingSettings(final String token, final int locationId) async {
     List<PrintSettingResponse> res = <PrintSettingResponse>[];
     try {
       return await _dio.get('api/business/locations/$locationId',
@@ -239,6 +239,20 @@ class POSRepositoryImpl extends POSRepository {
           return PrintSettingResponse.fromJson(e);
         }).toList();
         return res;
+      });
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  @override
+  Future<LocationSettingsResponse> getLocationSettings(String token, int locationId) async {
+    var res;
+    try {
+      return await _dio.get('api/business/locations/$locationId',
+          headers: {'Authorization': 'Bearer $token'}).then((response) {
+        res = response.data['result'];
+        return LocationSettingsResponse.fromJson(res);
       });
     } catch (e) {
       throw e.toString();
