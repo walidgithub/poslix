@@ -113,36 +113,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
         listener: (context, state) async {
           if (state is LogoutSucceed) {
           } else if (state is LogoutFailed) {}
-          if (state is GetUserInfoSucceed) {
-            userResponse = RegisterPOSCubit.get(context).userResponse;
-            print('111111111');
-            for (var nOfUserInfo in userResponse) {
-              print(nOfUserInfo.id);
-              print('testttt');
-              if (nOfUserInfo.locations[0].id == locationId) {
-                for (var nOfPermissions in nOfUserInfo.locations[0].permissions) {
-                  if (nOfPermissions.name == 'pos/checkout') {
-                    if (listOfBusinesses.isNotEmpty && listOfLocations.isNotEmpty) {
-                      OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
-                          handCash: double.parse(posInitialEditingController.text));
-                      await RegisterPOSCubit.get(context)
-                          .openRegister(openRegisterRequest, locationId!);
-
-                      Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
-                    }
-                  } else {
-                    CustomDialog.show(
-                        context,
-                        AppStrings.youHaveNoPermission.tr(),
-                        const Icon(Icons.close),
-                        ColorManager.white,
-                        AppConstants.durationOfSnackBar,
-                        ColorManager.delete);
-                  }
-                }
-              }
-            }
-          }
         },
         builder: (context, state) {
           return FloatingActionButton(
@@ -294,6 +264,51 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                 ColorManager.white,
                 AppConstants.durationOfSnackBar,
                 ColorManager.delete);
+          }
+
+          if (state is GetUserInfoSucceed) {
+            userResponse = RegisterPOSCubit.get(context).userResponse;
+            print(userResponse);
+            print('liisttttttt');
+            for (var nOfUserInfo in userResponse) {
+              print('testttt');
+              print(nOfUserInfo.locations[0].id);
+              if (nOfUserInfo.locations[0].id == locationId) {
+                print('11111111');
+                print(nOfUserInfo.locations[0].id);
+                for (var nOfPermissions in nOfUserInfo.locations[0].permissions) {
+                  print('222222222');
+                  if (nOfPermissions.name == 'pos/checkout') {
+                    print('33333333333');
+                    print(nOfPermissions.name);
+                    if (listOfBusinesses.isNotEmpty && listOfLocations.isNotEmpty) {
+                      OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
+                          handCash: double.parse(posInitialEditingController.text));
+                      await RegisterPOSCubit.get(context)
+                          .openRegister(openRegisterRequest, locationId!);
+
+                      Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
+                    }
+                    return;
+                  }
+                }
+                CustomDialog.show(
+                    context,
+                    AppStrings.youHaveNoPermission.tr(),
+                    const Icon(Icons.close),
+                    ColorManager.white,
+                    AppConstants.durationOfSnackBar,
+                    ColorManager.delete);
+              } else {
+                CustomDialog.show(
+                    context,
+                    AppStrings.youHaveNoPermission.tr(),
+                    const Icon(Icons.close),
+                    ColorManager.white,
+                    AppConstants.durationOfSnackBar,
+                    ColorManager.delete);
+              }
+            }
           }
         },
         builder: (context, state) {

@@ -10,13 +10,13 @@ class LocationsRolesResponse {
   });
   late final int id;
   late final String name;
-  late final RolesResponse roles;
+  late final List<RolesResponse> roles;
   late final List<PermissionsResponse> permissions;
 
   LocationsRolesResponse.fromJson(Map<String, dynamic> json){
     id = json['id'];
     name = json['name'];
-    roles = RolesResponse.fromJson(json['roles']);
+    roles = List.from(json['roles']).map((e)=>RolesResponse.fromJson(e)).toList();
     permissions = List.from(json['permissions']).map((e)=>PermissionsResponse.fromJson(e)).toList();
   }
 
@@ -24,7 +24,7 @@ class LocationsRolesResponse {
     final _data = <String, dynamic>{};
     _data['id'] = id;
     _data['name'] = name;
-    _data['roles'] = roles.toJson();
+    _data['roles'] = roles.map((e)=>e.toJson()).toList();
     _data['permissions'] = permissions.map((e)=>e.toJson()).toList();
     return _data;
   }

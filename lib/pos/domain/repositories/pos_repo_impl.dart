@@ -43,7 +43,7 @@ class POSRepositoryImpl extends POSRepository {
   Future<List<UserResponse>> getUserInfo(UserRequest parameters, String token, int locationId) async {
     List<UserResponse> res = <UserResponse>[];
     try {
-      return await _dio.get('api/categories/$locationId',
+      return await _dio.get('api/users?location_id=$locationId',
           headers: {'Authorization': 'Bearer $token'}).then((response) {
         res = (response.data['result'] as List).map((e) {
           return UserResponse.fromJson(e);
