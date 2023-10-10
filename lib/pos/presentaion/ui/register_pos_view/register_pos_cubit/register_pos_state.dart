@@ -38,5 +38,12 @@ class GetPermissionsFailed extends RegisterPOSState {
   GetPermissionsFailed(this.errorText);
 }
 
+class GetUserInfoSucceed extends RegisterPOSState {}
+class GetUserInfoFailed extends RegisterPOSState {
+  String errorText;
+
+  GetUserInfoFailed(this.errorText);
+}
+
 class RegisterNoInternetState extends RegisterPOSState{}
 

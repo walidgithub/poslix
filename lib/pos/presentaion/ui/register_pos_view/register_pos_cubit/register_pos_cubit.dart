@@ -11,13 +11,10 @@ import '../../../../domain/requests/user_model.dart';
 import '../../../../domain/response/authorization_model.dart';
 import '../../../../domain/response/business_model.dart';
 import '../../../../domain/response/close_register_report_data_model.dart';
-import '../../../../domain/response/close_register_report_model.dart';
-import '../../../../domain/response/currency_code_model.dart';
 import '../../../../domain/response/open_register_response.dart';
 import '../../../../domain/response/user_model.dart';
 import '../../../../shared/core/network/network_info.dart';
 import '../../../../shared/preferences/app_pref.dart';
-import '../../../../shared/utils/global_values.dart';
 import '../../../di/di.dart';
 
 class RegisterPOSCubit extends Cubit<RegisterPOSState> {
@@ -39,6 +36,7 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
   String? userName;
   String? password;
   UserRequest? userRequest;
+  List<UserResponse> userResponse = [];
 
   Future<void> getUserParameters() async {
     userName = _appPreferences.getUserName(USER_NAME)!;
@@ -193,7 +191,7 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
     }
   }
 
-  Future<List<UserResponse>> getPermissions(int locationId) async {
+  Future<List<UserResponse>> getUserInfo(UserRequest parameters, int locationId) async {
     try {
       var res;
       if (await networkInfo.isConnected) {
@@ -203,20 +201,22 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
           await getUserParameters();
           await login(userRequest!);
 
-          res = await posRepositoryImpl.getPermissions(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
-          emit(GetPermissionsSucceed());
+          res = await posRepositoryImpl.getUserInfo(parameters, LOGGED_IN_TOKEN, locationId);
+          userResponse = res;
+          emit(GetUserInfoSucceed());
           return res;
         }
 
-        res = await posRepositoryImpl.getPermissions(token, locationId);
-        emit(GetPermissionsSucceed());
+        res = await posRepositoryImpl.getUserInfo(parameters, token, locationId);
+        userResponse = res;
+        emit(GetUserInfoSucceed());
         return res;
       } else {
         emit(RegisterNoInternetState());
         return res;
       }
     } catch (e) {
-      emit(GetPermissionsFailed(e.toString()));
+      emit(GetUserInfoFailed(e.toString()));
       return Future.error(e);
     }
   }

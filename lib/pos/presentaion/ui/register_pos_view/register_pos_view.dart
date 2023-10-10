@@ -19,8 +19,10 @@ import 'package:poslix_app/pos/presentaion/ui/register_pos_view/widgets/initial_
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/preferences/app_pref.dart';
 import '../../../domain/requests/close_register_report_model.dart';
+import '../../../domain/requests/user_model.dart';
 import '../../../domain/response/business_model.dart';
 import '../../../domain/response/locations_model.dart';
+import '../../../domain/response/user_model.dart';
 import '../../../shared/constant/assets_manager.dart';
 import '../../../shared/constant/constant_values_manager.dart';
 import '../../../shared/constant/language_manager.dart';
@@ -65,6 +67,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
 
   bool keyPadOn = false;
 
+  List<UserResponse> userResponse = [];
+
   @override
   void initState() {
     cashInHand = 0;
@@ -106,9 +110,39 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     return BlocProvider(
       create: (context) => sl<LoginCubit>(),
       child: BlocConsumer<LoginCubit, LoginState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is LogoutSucceed) {
           } else if (state is LogoutFailed) {}
+          if (state is GetUserInfoSucceed) {
+            userResponse = RegisterPOSCubit.get(context).userResponse;
+            print('111111111');
+            for (var nOfUserInfo in userResponse) {
+              print(nOfUserInfo.id);
+              print('testttt');
+              if (nOfUserInfo.locations[0].id == locationId) {
+                for (var nOfPermissions in nOfUserInfo.locations[0].permissions) {
+                  if (nOfPermissions.name == 'pos/checkout') {
+                    if (listOfBusinesses.isNotEmpty && listOfLocations.isNotEmpty) {
+                      OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
+                          handCash: double.parse(posInitialEditingController.text));
+                      await RegisterPOSCubit.get(context)
+                          .openRegister(openRegisterRequest, locationId!);
+
+                      Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
+                    }
+                  } else {
+                    CustomDialog.show(
+                        context,
+                        AppStrings.youHaveNoPermission.tr(),
+                        const Icon(Icons.close),
+                        ColorManager.white,
+                        AppConstants.durationOfSnackBar,
+                        ColorManager.delete);
+                  }
+                }
+              }
+            }
+          }
         },
         builder: (context, state) {
           return FloatingActionButton(
@@ -627,14 +661,11 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
 
-    if (listOfBusinesses.isNotEmpty && listOfLocations.isNotEmpty) {
-      OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
-          handCash: double.parse(posInitialEditingController.text));
-      await RegisterPOSCubit.get(context)
-          .openRegister(openRegisterRequest, locationId!);
+    UserRequest userRequest = UserRequest(
+        email: _appPreferences.getUserName(USER_NAME)!,
+        password: _appPreferences.getPassword(PASS)!);
 
-      Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
-    }
+    await RegisterPOSCubit.get(context).getUserInfo(userRequest, locationId!);
   }
 
   _changeLanguage() {

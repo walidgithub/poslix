@@ -40,16 +40,15 @@ class POSRepositoryImpl extends POSRepository {
   POSRepositoryImpl(this._dio);
 
   @override
-  Future<UserResponse> getUserInfo(UserRequest parameters, String token) async {
-    var res;
+  Future<List<UserResponse>> getUserInfo(UserRequest parameters, String token, int locationId) async {
+    List<UserResponse> res = <UserResponse>[];
     try {
-      return await _dio
-          .post('${AppConstants.baseUrl}api/users',
-          headers: {'Authorization': 'Bearer $token'},
-          body: parameters.toJson())
-          .then((response) {
-        res = response.data['result']['user'];
-        return UserResponse.fromJson(res);
+      return await _dio.get('api/categories/$locationId',
+          headers: {'Authorization': 'Bearer $token'}).then((response) {
+        res = (response.data['result'] as List).map((e) {
+          return UserResponse.fromJson(e);
+        }).toList();
+        return res;
       });
     } catch (e) {
       throw e.toString();
@@ -83,22 +82,6 @@ class POSRepositoryImpl extends POSRepository {
           .then((response) {
         res = response.data['result']['authorisation'];
         return AuthorizationResponse.fromJson(res);
-      });
-    } catch (e) {
-      throw e.toString();
-    }
-  }
-
-  @override
-  Future<List<UserResponse>> getPermissions(String token, int locationId) async {
-    List<UserResponse> res = <UserResponse>[];
-    try {
-      return await _dio.get('api/users?location_id=$locationId',
-          headers: {'Authorization': 'Bearer $token'}).then((response) {
-        res = (response.data['result'] as List).map((e) {
-          return UserResponse.fromJson(e);
-        }).toList();
-        return res;
       });
     } catch (e) {
       throw e.toString();

@@ -28,13 +28,6 @@ class LogoutFailed extends LoginState {
   LogoutFailed(this.errorText);
 }
 
-class GetUserInfoSucceed extends LoginState {}
-class GetUserInfoFailed extends LoginState {
-  String errorText;
-
-  GetUserInfoFailed(this.errorText);
-}
-
 class LoginNoInternetState extends LoginState{}
 
 

@@ -54,34 +54,6 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  Future<UserResponse> getUserInfo(UserRequest parameters) async {
-    try {
-      var res;
-      if (await networkInfo.isConnected) {
-        String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
-        bool hasExpired = JwtDecoder.isExpired(token);
-        if (hasExpired) {
-          await getUserParameters();
-          await login(userRequest!);
-
-          res = await posRepositoryImpl.getUserInfo(parameters, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
-          emit(GetUserInfoSucceed());
-          return res;
-        }
-
-        res = await posRepositoryImpl.getUserInfo(parameters, token);
-        emit(GetUserInfoSucceed());
-        return res;
-      } else {
-        emit(LoginNoInternetState());
-        return res;
-      }
-    } catch (e) {
-      emit(GetUserInfoFailed(e.toString()));
-      return Future.error(e);
-    }
-  }
-
   Future<LogoutResponse> logout() async {
     try {
       var res;

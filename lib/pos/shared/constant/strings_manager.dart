@@ -22,6 +22,7 @@ class AppStrings{
   static const someThingWentWrong  = 'Something went wrong';
 
   static const wrongEmailOrPassword  = 'Wrong email or password';
+  static const youHaveNoPermission  = 'You have no permission';
 
   static const category  = 'Category';
   static const brand  = 'Brand';

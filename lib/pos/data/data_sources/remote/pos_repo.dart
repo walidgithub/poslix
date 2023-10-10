@@ -32,9 +32,8 @@ import '../../../domain/response/user_model.dart';
 
 abstract class POSRepository {
   Future<AuthorizationResponse> login(final UserRequest parameters);
-  Future<UserResponse> getUserInfo(final UserRequest parameters, String token);
+  Future<List<UserResponse>> getUserInfo(final UserRequest parameters, final String token, final int locationId);
   Future<AuthorizationResponse> refreshToken(final String token);
-  Future<List<UserResponse>> getPermissions(String token, int locationId);
 
   Future<LogoutResponse> logout(final String token);
 
