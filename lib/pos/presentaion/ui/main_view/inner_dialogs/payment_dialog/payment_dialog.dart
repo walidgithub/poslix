@@ -20,6 +20,7 @@ import 'package:screenshot/screenshot.dart';
 import '../../../../../domain/requests/cart_model.dart';
 import '../../../../../domain/requests/check_out_model.dart';
 import '../../../../../domain/requests/payment_types_model.dart';
+import '../../../../../domain/response/appearance_model.dart';
 import '../../../../../domain/response/payment_method_model.dart';
 import '../../../../../shared/constant/constant_values_manager.dart';
 import '../../../../../shared/constant/padding_margin_values_manager.dart';
@@ -28,6 +29,7 @@ import '../../../../../shared/style/colors_manager.dart';
 import '../../../../di/di.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
+import '../../../popup_dialogs/loading_dialog.dart';
 import '../../main_view_cubit/main_view_cubit.dart';
 import '../tailor_dialog/widgets/main_note.dart';
 import 'widgets/add_payment_row.dart';
@@ -214,13 +216,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   DateTime today = DateTime.now();
 
-  String businessImage = '';
-  String businessName = '';
-  String businessTell = '';
-  String businessAddress = '';
-  String businessEmail = '';
-  String businessVat = '';
-  String customerNumber = '';
+  AppearanceResponse? appearanceResponse;
 
   List paymentRows = [];
 
@@ -241,6 +237,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
     }
   }
 
+  bool loading = false;
   double? totalPaying;
   double? changeReturn;
   double? balance;
@@ -330,14 +327,11 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
             PaymentDialog.hide(context);
           }
-          if (state is LoadedAppearance) {
-            businessImage = state.appearanceResponse.logo;
-            businessName = state.appearanceResponse.name;
-            businessTell = state.appearanceResponse.tell;
-            businessEmail = state.appearanceResponse.email;
-            businessAddress = state.appearanceResponse.address;
-            businessVat = state.appearanceResponse.vatNumber;
-            customerNumber = state.appearanceResponse.customerNumber;
+          if (state is LoadingAppearance) {
+            loading = false;
+          } else if (state is LoadedAppearance) {
+            loading = true;
+            appearanceResponse = state.appearanceResponse;
           } else if (state is LoadingErrorAppearance) {}
         },
         builder: (context, state) {
@@ -351,7 +345,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                         width: widget.deviceWidth <= 600 ? 375.w : 200.w,
                         height: sizedHeight,
                         child: SingleChildScrollView(
-                          // physics: const NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           keyboardDismissBehavior:
                               ScrollViewKeyboardDismissBehavior.onDrag,
                           child: Container(
@@ -450,13 +444,11 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                       height:
                                           AppConstants.bigHeightBetweenElements,
                                     ),
-                                    billModel(
+                                    loading ? billModel(
                                         context,
                                         screenshotController,
                                         today,
-                                        businessName,
-                                        businessImage,
-                                        businessTell,
+                                        appearanceResponse!,
                                         orderId,
                                         widget.taxAmount,
                                         widget.discountAmount,
@@ -464,8 +456,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                         totalPaying!,
                                         due!,
                                         widget.deviceWidth,
-                                        decimalPlaces,false
-                                    ),
+                                        decimalPlaces,widget.isMultiLang
+                                    ) : Container(),
                                     SizedBox(
                                       height: 25.h,
                                     ),
@@ -663,6 +655,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
     }
 
     await Future.delayed(const Duration(milliseconds: 2000));
-    // PaymentDialog.hide(context);
+    PaymentDialog.hide(context);
   }
 }

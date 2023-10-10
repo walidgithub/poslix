@@ -128,6 +128,7 @@ class LoadingErrorLocationSettings extends MainViewState{
   LoadingErrorLocationSettings(this.errorText);
 }
 
+class LoadingAppearance extends MainViewState{}
 class LoadedAppearance extends MainViewState{
   AppearanceResponse appearanceResponse;
 

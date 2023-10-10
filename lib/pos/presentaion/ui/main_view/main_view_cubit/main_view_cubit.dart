@@ -571,6 +571,8 @@ class MainViewCubit extends Cubit<MainViewState> {
     try {
       var res;
       if (await networkInfo.isConnected) {
+        await Future.delayed(const Duration(seconds: 1));
+        emit(LoadingAppearance());
         String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
         bool hasExpired = JwtDecoder.isExpired(token);
         if (hasExpired) {

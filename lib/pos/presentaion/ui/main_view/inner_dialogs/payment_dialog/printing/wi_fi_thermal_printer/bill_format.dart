@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '../../../../../../../domain/entities/order_model.dart';
+import '../../../../../../../domain/response/appearance_model.dart';
 import '../../../../../../../shared/constant/constant_values_manager.dart';
 import '../../../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../../../shared/constant/strings_manager.dart';
@@ -15,9 +16,7 @@ Widget billModel(
     BuildContext context,
     ScreenshotController screenshotController,
     DateTime today,
-    String businessName,
-    String businessImage,
-    String businessTell,
+    AppearanceResponse appearanceResponse,
     int orderId,
     double taxAmount,
     double discountAmount,
@@ -35,8 +34,8 @@ Widget billModel(
             Column(
               children: [
                 Container(
-                  width: deviceWidth <= 600 ? 30.w : 50.w,
-                  height: deviceWidth <= 600 ? 10.h : 150.h,
+                  width: deviceWidth <= 600 ? 50.w : 50.w,
+                  height: deviceWidth <= 600 ? 20.h : 150.h,
                   decoration: BoxDecoration(
                       border:
                           Border.all(color: ColorManager.badge, width: 0.5.w),
@@ -44,7 +43,7 @@ Widget billModel(
                           deviceWidth <= 600 ? AppSize.s0 : AppSize.s5),
                       shape: BoxShape.rectangle,
                       image: DecorationImage(
-                          image: CachedNetworkImageProvider(businessImage),
+                          image: CachedNetworkImageProvider(appearanceResponse.en.logo),
                           fit: BoxFit.fill)),
                 ),
                 SizedBox(
@@ -52,7 +51,7 @@ Widget billModel(
                         ? AppConstants.smallerDistance
                         : AppConstants.smallDistance),
                 Text(
-                  businessName,
+                  isMultiLang ? '${appearanceResponse.en.name} ${appearanceResponse.ar.name}' : appearanceResponse.en.name,
                   style: TextStyle(
                       fontSize:
                           deviceWidth <= 600 ? AppSize.s10.sp : AppSize.s20.sp),
@@ -61,7 +60,7 @@ Widget billModel(
                     height: deviceWidth <= 600
                         ? AppConstants.smallerDistance
                         : AppConstants.smallDistance),
-                Text(businessTell,
+                Text(appearanceResponse.en.tell,
                     style: TextStyle(
                         fontSize: deviceWidth <= 600
                             ? AppSize.s10.sp
@@ -73,7 +72,7 @@ Widget billModel(
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(isMultiLang ? '${AppStrings.customer} الزبون' : AppStrings.customer,
+                      Text(isMultiLang ? '${appearanceResponse.en.txtCustomer} ${appearanceResponse.ar.txtCustomer}' : appearanceResponse.en.txtCustomer,
                           style: TextStyle(
                               fontSize: deviceWidth <= 600
                                   ? AppSize.s10.sp
@@ -91,7 +90,7 @@ Widget billModel(
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(isMultiLang ? '${AppStrings.orderNo} المرجع' : AppStrings.orderNo,
+                      Text(isMultiLang ? '${appearanceResponse.en.orderNo} ${appearanceResponse.ar.orderNo}' : appearanceResponse.en.orderNo,
                           style: TextStyle(
                               fontSize: deviceWidth <= 600
                                   ? AppSize.s10.sp
@@ -109,7 +108,7 @@ Widget billModel(
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(isMultiLang ? '${AppStrings.date} التاريخ' : AppStrings.date,
+                      Text(isMultiLang ? '${appearanceResponse.en.txtDate} ${appearanceResponse.ar.txtDate}' : appearanceResponse.en.txtDate,
                           style: TextStyle(
                               fontSize: deviceWidth <= 600
                                   ? AppSize.s10.sp
@@ -132,7 +131,7 @@ Widget billModel(
                 Expanded(
                   flex: 3,
                   child: Center(
-                    child: Text(isMultiLang ? 'Qty الكمية' : "Qty",
+                    child: Text(isMultiLang ? '${appearanceResponse.en.txtQty} ${appearanceResponse.ar.txtQty}' : appearanceResponse.en.txtQty,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -143,7 +142,7 @@ Widget billModel(
                 Expanded(
                   flex: 6,
                   child: Center(
-                    child: Text(isMultiLang ? 'Item بند الموارد' : "Item",
+                    child: Text(isMultiLang ? '${appearanceResponse.en.txtItem} ${appearanceResponse.ar.txtItem}' : appearanceResponse.en.txtItem,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -155,7 +154,7 @@ Widget billModel(
                   flex: 4,
                   child: Center(
                     child: Text(
-                      isMultiLang ? 'Total الاجمالى' : "Total",
+                      isMultiLang ? '${appearanceResponse.en.txtAmount} ${appearanceResponse.ar.txtAmount}' : appearanceResponse.en.txtAmount,
                       style: TextStyle(
                           fontSize: deviceWidth <= 600
                               ? AppSize.s10.sp
@@ -251,7 +250,7 @@ Widget billModel(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        isMultiLang ? '${AppStrings.tax} الضرائب' : AppStrings.tax,
+                        isMultiLang ? '${appearanceResponse.en.txtTax} ${appearanceResponse.ar.txtTax}' : appearanceResponse.en.txtTax,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -317,7 +316,7 @@ Widget billModel(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        isMultiLang ? '${AppStrings.total2} الاجمالى' : AppStrings.total2,
+                        isMultiLang ? '${appearanceResponse.en.txtTotal} ${appearanceResponse.ar.txtTotal}' : appearanceResponse.en.txtTotal,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -350,7 +349,7 @@ Widget billModel(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        isMultiLang ? '${AppStrings.amountPaid} اجمالى المدفوع' : AppStrings.amountPaid,
+                        isMultiLang ? '${AppStrings.amountPaid} اجمالى المدفوعات' : AppStrings.amountPaid,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -383,7 +382,7 @@ Widget billModel(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        isMultiLang ? '${AppStrings.totalDue} المتبقى' : AppStrings.totalDue,
+                        isMultiLang ? '${AppStrings.totalDue} الباقى' : AppStrings.totalDue,
                         style: TextStyle(
                             fontSize: deviceWidth <= 600
                                 ? AppSize.s10.sp
@@ -411,7 +410,12 @@ Widget billModel(
                 style: TextStyle(
                     fontSize:
                         deviceWidth <= 600 ? AppSize.s10.sp : AppSize.s20.sp)),
-            Text(isMultiLang ? '!شكرًا لك' : 'Thank you',
+            SizedBox(
+                height: deviceWidth <= 600
+                    ? AppConstants.smallerDistance
+                    : AppConstants.smallDistance
+            ),
+            Text(isMultiLang ? '${appearanceResponse.en.footer} ${appearanceResponse.ar.footer}' : appearanceResponse.en.footer,
                 style: TextStyle(
                     fontSize:
                     deviceWidth <= 600 ? AppSize.s10.sp : AppSize.s20.sp))
