@@ -37,28 +37,18 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<LoginResponse> login(UserRequest parameters) async {
     try {
-      print('11111111111');
-      print(parameters.email);
       var res;
       if (await networkInfo.isConnected) {
-
         emit(LoginLoading());
         res = await posRepositoryImpl.login(parameters);
-        print(res.authorization.token);
-        print(res.user);
-        print('22222222222');
         final String encodedLocationData = json.encode(res.user);
         emit(LoginSucceed(res.authorization.token, encodedLocationData));
-        print(res);
-        print('333333333');
         return res;
       } else {
-        print('4444444444');
         emit(LoginNoInternetState());
         return res;
       }
     } catch (e) {
-      print('5555555555');
       if (e.toString() == 'Unauthorized') {
         emit(WrongEmailOrPass(e.toString()));
       } else {
