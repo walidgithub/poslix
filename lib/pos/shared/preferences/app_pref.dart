@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +22,7 @@ const String PREFS_KEY_BUSINESS_TYPE = "PREFS_KEY_BUSINESS_TYPE";
 const String PREFS_KEY_DECIMAL_PLACES = "PREFS_KEY_DECIMAL_PLACES";
 const String PREFS_KEY_LOCATION_ID = "PREFS_KEY_LOCATION_ID";
 const String PREFS_KEY_TAX_VALUE = "PREFS_KEY_TAX_VALUE";
-const String PREFS_KEY_USER_LOCATIONS = "PREFS_KEY_USER_LOCATIONS";
+const String PREFS_KEY_USER_INFO = "PREFS_KEY_USER_INFO";
 
 class AppPreferences {
   final SharedPreferences _sharedPreferences;
@@ -181,16 +180,15 @@ class AppPreferences {
   }
 
   // user locations
-  Future<bool> setUserLocations(String key, String locations) async {
-    final String encodedLocationData = json.encode(locations);
-    return await _sharedPreferences.setString(key, encodedLocationData);
+  Future<bool> setUserInfo(String key, String userInfo) async {
+    return await _sharedPreferences.setString(key, userInfo);
   }
 
-  String? getUserLocations(String key) {
+  String? getUserInfo(String key) {
     return _sharedPreferences.getString(key);
   }
 
-  Future<void> removeUserLocations(String key) async {
+  Future<void> removeUserInfo(String key) async {
     _sharedPreferences.remove(key);
   }
 }

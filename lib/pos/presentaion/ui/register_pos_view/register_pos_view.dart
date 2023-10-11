@@ -13,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:keyboard_visibility_pro/keyboard_visibility_pro.dart';
 import 'package:poslix_app/pos/domain/requests/open_register_model.dart';
+import 'package:poslix_app/pos/domain/response/login_model.dart';
 import 'package:poslix_app/pos/domain/response/taxes_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/login_view/login_cubit/login_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/register_pos_view/register_pos_cubit/register_pos_cubit.dart';
@@ -63,7 +64,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   var _selectedLocation;
   int? locationId;
   String? businessType;
-  String? userLocations;
+  String? userInfo;
   int? decimalPlaces;
   int? tax;
 
@@ -71,20 +72,22 @@ class _RegisterPosViewState extends State<RegisterPosView> {
 
   bool keyPadOn = false;
 
-  List<LocationsRolesResponse> locations = [];
+  UserResponse? userResponse;
 
   @override
   void initState() {
     cashInHand = 0;
-    getUserLocations();
+    getUserInfo();
     super.initState();
   }
 
-  void getUserLocations() async {
-    userLocations = _appPreferences.getUserLocations(PREFS_KEY_USER_LOCATIONS)!;
-    locations = json.decode(userLocations!);
+  void getUserInfo() async {
+    userInfo = _appPreferences.getUserInfo(PREFS_KEY_USER_INFO)!;
+    print('pre testttttttttttt');
+    print(userInfo);
+    userResponse = json.decode(userInfo!.to);
     print('testttt');
-    print(locations);
+    print(userResponse);
   }
 
   void reload() {
@@ -693,7 +696,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
         email: _appPreferences.getUserName(USER_NAME)!,
         password: _appPreferences.getPassword(PASS)!);
 
-    await RegisterPOSCubit.get(context).getUserInfo(userRequest, locationId!);
+    // await RegisterPOSCubit.get(context).getUserInfo(userRequest, locationId!);
   }
 
   _changeLanguage() {

@@ -1,3 +1,5 @@
+import '../../../../domain/response/user_model.dart';
+
 abstract class LoginState {}
 
 class LoginInitial extends LoginState {}
@@ -6,8 +8,8 @@ class LoginLoading extends LoginState {}
 
 class LoginSucceed extends LoginState {
   String token;
-  String userLocations;
-  LoginSucceed(this.token, this.userLocations);
+  String userInfo;
+  LoginSucceed(this.token, this.userInfo);
 }
 
 class LoginFailed extends LoginState {

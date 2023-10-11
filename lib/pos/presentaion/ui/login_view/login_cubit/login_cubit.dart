@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:poslix_app/pos/domain/requests/user_model.dart';
 import '../../../../domain/repositories/pos_repo_impl.dart';
 import '../../../../domain/response/authorization_model.dart';
+import '../../../../domain/response/login_model.dart';
 import '../../../../domain/response/logout_response.dart';
 import '../../../../domain/response/permissions_model.dart';
 import '../../../../domain/response/user_model.dart';
@@ -32,19 +35,30 @@ class LoginCubit extends Cubit<LoginState> {
     userRequest = UserRequest(email: userName!, password: password!);
   }
 
-  Future<UserResponse> login(UserRequest parameters) async {
+  Future<LoginResponse> login(UserRequest parameters) async {
     try {
+      print('11111111111');
+      print(parameters.email);
       var res;
       if (await networkInfo.isConnected) {
+
         emit(LoginLoading());
         res = await posRepositoryImpl.login(parameters);
-        emit(LoginSucceed(res.authorization.token, res.user));
+        print(res.authorization.token);
+        print(res.user);
+        print('22222222222');
+        final String encodedLocationData = json.encode(res.user);
+        emit(LoginSucceed(res.authorization.token, encodedLocationData));
+        print(res);
+        print('333333333');
         return res;
       } else {
+        print('4444444444');
         emit(LoginNoInternetState());
         return res;
       }
     } catch (e) {
+      print('5555555555');
       if (e.toString() == 'Unauthorized') {
         emit(WrongEmailOrPass(e.toString()));
       } else {

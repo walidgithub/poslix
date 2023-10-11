@@ -20,6 +20,7 @@ import '../../../../domain/response/close_register_model.dart';
 import '../../../../domain/response/close_register_report_data_model.dart';
 import '../../../../domain/response/get_customer_model.dart';
 import '../../../../domain/response/location_settings_model.dart';
+import '../../../../domain/response/login_model.dart';
 import '../../../../domain/response/payment_method_model.dart';
 import '../../../../domain/response/payment_methods_model.dart';
 import '../../../../domain/response/printing_settings_model.dart';
@@ -688,7 +689,7 @@ class MainViewCubit extends Cubit<MainViewState> {
     }
   }
 
-  Future<UserResponse> login(UserRequest parameters) async {
+  Future<LoginResponse> login(UserRequest parameters) async {
     try {
       var res;
       if (await networkInfo.isConnected) {

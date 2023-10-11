@@ -9,6 +9,7 @@ class UserResponse {
     this.username,
     required this.contactNumber,
     required this.email,
+    required this.password,
     required this.ownerId,
     required this.status,
     this.deletedAt,
@@ -23,6 +24,7 @@ class UserResponse {
   String? username;
   late final String contactNumber;
   late final String email;
+  late final String password;
   late final int ownerId;
   late final String status;
   String? deletedAt;
@@ -38,7 +40,8 @@ class UserResponse {
     username = json['username'] ?? '';
     contactNumber = json['contact_number'];
     email = json['email'];
-    ownerId = json['owner_id'];
+    password = json['password'];
+    ownerId = json['owner_id'] ?? 0;
     status = json['status'];
     deletedAt = json['deletedAt'] ?? '';
     createdAt = json['createdAt'] ?? '';
@@ -55,6 +58,7 @@ class UserResponse {
     data['username'] = username;
     data['contact_number'] = contactNumber;
     data['email'] = email;
+    data['password'] = password;
     data['owner_id'] = ownerId;
     data['status'] = status;
     data['deleted_at'] = deletedAt;

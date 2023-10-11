@@ -26,6 +26,7 @@ import '../response/currency_code_model.dart';
 import '../response/customer_model.dart';
 import '../response/get_customer_model.dart';
 import '../response/location_settings_model.dart';
+import '../response/login_model.dart';
 import '../response/logout_response.dart';
 import '../response/open_register_response.dart';
 import '../response/payment_method_model.dart';
@@ -39,24 +40,24 @@ class POSRepositoryImpl extends POSRepository {
   final DioManager _dio;
   POSRepositoryImpl(this._dio);
 
-  @override
-  Future<List<UserResponse>> getUserInfo(UserRequest parameters, String token, int locationId) async {
-    List<UserResponse> res = <UserResponse>[];
-    try {
-      return await _dio.get('api/users?location_id=$locationId',
-          headers: {'Authorization': 'Bearer $token'}).then((response) {
-        res = (response.data['result'] as List).map((e) {
-          return UserResponse.fromJson(e);
-        }).toList();
-        return res;
-      });
-    } catch (e) {
-      throw e.toString();
-    }
-  }
+  // @override
+  // Future<List<UserResponse>> getUserInfo(UserRequest parameters, String token, int locationId) async {
+  //   List<UserResponse> res = <UserResponse>[];
+  //   try {
+  //     return await _dio.get('api/users?location_id=$locationId',
+  //         headers: {'Authorization': 'Bearer $token'}).then((response) {
+  //       res = (response.data['result'] as List).map((e) {
+  //         return UserResponse.fromJson(e);
+  //       }).toList();
+  //       return res;
+  //     });
+  //   } catch (e) {
+  //     throw e.toString();
+  //   }
+  // }
 
   @override
-  Future<UserResponse> login(UserRequest parameters) async {
+  Future<LoginResponse> login(UserRequest parameters) async {
     var res;
     var statusMessage;
     try {
@@ -65,10 +66,11 @@ class POSRepositoryImpl extends POSRepository {
           .then((response) {
         statusMessage = response.statusMessage;
         res = response.data['result'];
-        return UserResponse.fromJson(res);
+        return LoginResponse.fromJson(res);
       });
     } catch (e) {
-      throw statusMessage;
+      // throw statusMessage;
+      throw e.toString();
     }
   }
 

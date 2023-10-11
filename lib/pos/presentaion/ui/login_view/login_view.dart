@@ -131,10 +131,12 @@ class _LoginViewState extends State<LoginView> {
           if (state is LoginLoading) {
             LoadingDialog.show(context);
           } else if (state is LoginSucceed) {
+            print('some thing errorrrrrrrr');
+            print(state.userInfo);
             _appPreferences.setUserLoggedIn();
             await _appPreferences.setToken(LOGGED_IN_TOKEN, state.token);
 
-            await _appPreferences.setUserLocations(PREFS_KEY_USER_LOCATIONS, state.userLocations);
+            await _appPreferences.setUserInfo(PREFS_KEY_USER_INFO, state.userInfo);
 
             LoadingDialog.hide(context);
 

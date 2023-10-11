@@ -20,6 +20,7 @@ import '../../../domain/response/currency_code_model.dart';
 import '../../../domain/response/customer_model.dart';
 import '../../../domain/response/get_customer_model.dart';
 import '../../../domain/response/location_settings_model.dart';
+import '../../../domain/response/login_model.dart';
 import '../../../domain/response/logout_response.dart';
 import '../../../domain/response/open_register_response.dart';
 import '../../../domain/response/payment_method_model.dart';
@@ -31,8 +32,8 @@ import '../../../domain/response/taxes_model.dart';
 import '../../../domain/response/user_model.dart';
 
 abstract class POSRepository {
-  Future<UserResponse> login(final UserRequest parameters);
-  Future<List<UserResponse>> getUserInfo(final UserRequest parameters, final String token, final int locationId);
+  Future<LoginResponse> login(final UserRequest parameters);
+  // Future<List<UserResponse>> getUserInfo(final UserRequest parameters, final String token, final int locationId);
   Future<AuthorizationResponse> refreshToken(final String token);
 
   Future<LogoutResponse> logout(final String token);
