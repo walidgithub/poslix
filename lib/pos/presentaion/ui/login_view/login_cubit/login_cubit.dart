@@ -32,13 +32,13 @@ class LoginCubit extends Cubit<LoginState> {
     userRequest = UserRequest(email: userName!, password: password!);
   }
 
-  Future<AuthorizationResponse> login(UserRequest parameters) async {
+  Future<UserResponse> login(UserRequest parameters) async {
     try {
       var res;
       if (await networkInfo.isConnected) {
         emit(LoginLoading());
         res = await posRepositoryImpl.login(parameters);
-        emit(LoginSucceed(res.token));
+        emit(LoginSucceed(res.authorization.token, res.user));
         return res;
       } else {
         emit(LoginNoInternetState());

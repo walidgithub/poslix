@@ -56,7 +56,7 @@ class POSRepositoryImpl extends POSRepository {
   }
 
   @override
-  Future<AuthorizationResponse> login(UserRequest parameters) async {
+  Future<UserResponse> login(UserRequest parameters) async {
     var res;
     var statusMessage;
     try {
@@ -64,8 +64,8 @@ class POSRepositoryImpl extends POSRepository {
           .post('${AppConstants.baseUrl}api/login', body: parameters.toJson())
           .then((response) {
         statusMessage = response.statusMessage;
-        res = response.data['result']['authorization'];
-        return AuthorizationResponse.fromJson(res);
+        res = response.data['result'];
+        return UserResponse.fromJson(res);
       });
     } catch (e) {
       throw statusMessage;

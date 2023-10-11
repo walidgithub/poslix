@@ -221,12 +221,12 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
     }
   }
 
-  Future<AuthorizationResponse> login(UserRequest parameters) async {
+  Future<UserResponse> login(UserRequest parameters) async {
     try {
       var res;
       if (await networkInfo.isConnected) {
         res = await posRepositoryImpl.login(parameters);
-        await _appPreferences.setToken(LOGGED_IN_TOKEN, res.token);
+        await _appPreferences.setToken(LOGGED_IN_TOKEN, res.authorization.token);
         return res;
       } else {
         emit(RegisterNoInternetState());

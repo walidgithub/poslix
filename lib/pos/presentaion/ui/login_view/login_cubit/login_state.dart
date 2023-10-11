@@ -6,7 +6,8 @@ class LoginLoading extends LoginState {}
 
 class LoginSucceed extends LoginState {
   String token;
-  LoginSucceed(this.token);
+  String userLocations;
+  LoginSucceed(this.token, this.userLocations);
 }
 
 class LoginFailed extends LoginState {

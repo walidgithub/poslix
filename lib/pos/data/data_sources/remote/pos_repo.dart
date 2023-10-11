@@ -31,7 +31,7 @@ import '../../../domain/response/taxes_model.dart';
 import '../../../domain/response/user_model.dart';
 
 abstract class POSRepository {
-  Future<AuthorizationResponse> login(final UserRequest parameters);
+  Future<UserResponse> login(final UserRequest parameters);
   Future<List<UserResponse>> getUserInfo(final UserRequest parameters, final String token, final int locationId);
   Future<AuthorizationResponse> refreshToken(final String token);
 

@@ -146,7 +146,7 @@ class OrdersCubit extends Cubit<OrdersState> {
       var res;
       if (await networkInfo.isConnected) {
         res = await posRepositoryImpl.login(parameters);
-        await _appPreferences.setToken(LOGGED_IN_TOKEN, res.token);
+        await _appPreferences.setToken(LOGGED_IN_TOKEN, res.authorization.token);
         return res;
       } else {
         emit(OrdersNoInternetState());

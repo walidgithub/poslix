@@ -25,6 +25,7 @@ import '../../../../domain/response/payment_methods_model.dart';
 import '../../../../domain/response/printing_settings_model.dart';
 import '../../../../domain/response/stocks_model.dart';
 import '../../../../domain/response/tailoring_types_model.dart';
+import '../../../../domain/response/user_model.dart';
 import '../../../../shared/core/network/network_info.dart';
 import '../../../../shared/preferences/app_pref.dart';
 import '../../../di/di.dart';
@@ -687,12 +688,12 @@ class MainViewCubit extends Cubit<MainViewState> {
     }
   }
 
-  Future<AuthorizationResponse> login(UserRequest parameters) async {
+  Future<UserResponse> login(UserRequest parameters) async {
     try {
       var res;
       if (await networkInfo.isConnected) {
         res = await posRepositoryImpl.login(parameters);
-        await _appPreferences.setToken(LOGGED_IN_TOKEN, res.token);
+        await _appPreferences.setToken(LOGGED_IN_TOKEN, res.authorization.token);
         return res;
       } else {
         emit(MainNoInternetState());

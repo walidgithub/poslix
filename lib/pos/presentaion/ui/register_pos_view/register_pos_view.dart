@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -22,6 +24,7 @@ import '../../../domain/requests/close_register_report_model.dart';
 import '../../../domain/requests/user_model.dart';
 import '../../../domain/response/business_model.dart';
 import '../../../domain/response/locations_model.dart';
+import '../../../domain/response/locations_roles_model.dart';
 import '../../../domain/response/user_model.dart';
 import '../../../shared/constant/assets_manager.dart';
 import '../../../shared/constant/constant_values_manager.dart';
@@ -60,6 +63,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   var _selectedLocation;
   int? locationId;
   String? businessType;
+  String? userLocations;
   int? decimalPlaces;
   int? tax;
 
@@ -67,12 +71,20 @@ class _RegisterPosViewState extends State<RegisterPosView> {
 
   bool keyPadOn = false;
 
-  List<UserResponse> userResponse = [];
+  List<LocationsRolesResponse> locations = [];
 
   @override
   void initState() {
     cashInHand = 0;
+    getUserLocations();
     super.initState();
+  }
+
+  void getUserLocations() async {
+    userLocations = _appPreferences.getUserLocations(PREFS_KEY_USER_LOCATIONS)!;
+    locations = json.decode(userLocations!);
+    print('testttt');
+    print(locations);
   }
 
   void reload() {
@@ -267,48 +279,49 @@ class _RegisterPosViewState extends State<RegisterPosView> {
           }
 
           if (state is GetUserInfoSucceed) {
-            userResponse = RegisterPOSCubit.get(context).userResponse;
-            print(userResponse);
-            print('liisttttttt');
-            for (var nOfUserInfo in userResponse) {
-              print('testttt');
-              print(nOfUserInfo.locations[0].id);
-              if (nOfUserInfo.locations[0].id == locationId) {
-                print('11111111');
-                print(nOfUserInfo.locations[0].id);
-                for (var nOfPermissions in nOfUserInfo.locations[0].permissions) {
-                  print('222222222');
-                  if (nOfPermissions.name == 'pos/checkout') {
-                    print('33333333333');
-                    print(nOfPermissions.name);
-                    if (listOfBusinesses.isNotEmpty && listOfLocations.isNotEmpty) {
-                      OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
-                          handCash: double.parse(posInitialEditingController.text));
-                      await RegisterPOSCubit.get(context)
-                          .openRegister(openRegisterRequest, locationId!);
 
-                      Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
-                    }
-                    return;
-                  }
-                }
-                CustomDialog.show(
-                    context,
-                    AppStrings.youHaveNoPermission.tr(),
-                    const Icon(Icons.close),
-                    ColorManager.white,
-                    AppConstants.durationOfSnackBar,
-                    ColorManager.delete);
-              } else {
-                CustomDialog.show(
-                    context,
-                    AppStrings.youHaveNoPermission.tr(),
-                    const Icon(Icons.close),
-                    ColorManager.white,
-                    AppConstants.durationOfSnackBar,
-                    ColorManager.delete);
-              }
-            }
+            // userResponse = RegisterPOSCubit.get(context).userResponse;
+            // print(userResponse);
+            // print('liisttttttt');
+            // for (var nOfUserInfo in userResponse) {
+            //   print('testttt');
+            //   print(nOfUserInfo.locations[0].id);
+            //   if (nOfUserInfo.locations[0].id == locationId) {
+            //     print('11111111');
+            //     print(nOfUserInfo.locations[0].id);
+            //     for (var nOfPermissions in nOfUserInfo.locations[0].permissions) {
+            //       print('222222222');
+            //       if (nOfPermissions.name == 'pos/checkout') {
+            //         print('33333333333');
+            //         print(nOfPermissions.name);
+            //         if (listOfBusinesses.isNotEmpty && listOfLocations.isNotEmpty) {
+            //           OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
+            //               handCash: double.parse(posInitialEditingController.text));
+            //           await RegisterPOSCubit.get(context)
+            //               .openRegister(openRegisterRequest, locationId!);
+            //
+            //           Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
+            //         }
+            //         return;
+            //       }
+            //     }
+            //     CustomDialog.show(
+            //         context,
+            //         AppStrings.youHaveNoPermission.tr(),
+            //         const Icon(Icons.close),
+            //         ColorManager.white,
+            //         AppConstants.durationOfSnackBar,
+            //         ColorManager.delete);
+            //   } else {
+            //     CustomDialog.show(
+            //         context,
+            //         AppStrings.youHaveNoPermission.tr(),
+            //         const Icon(Icons.close),
+            //         ColorManager.white,
+            //         AppConstants.durationOfSnackBar,
+            //         ColorManager.delete);
+            //   }
+            // }
           }
         },
         builder: (context, state) {

@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../domain/response/locations_roles_model.dart';
 import '../constant/language_manager.dart';
 
 const String PREFS_KEY_LANG = "PREFS_KEY_LANG";
@@ -21,6 +23,7 @@ const String PREFS_KEY_BUSINESS_TYPE = "PREFS_KEY_BUSINESS_TYPE";
 const String PREFS_KEY_DECIMAL_PLACES = "PREFS_KEY_DECIMAL_PLACES";
 const String PREFS_KEY_LOCATION_ID = "PREFS_KEY_LOCATION_ID";
 const String PREFS_KEY_TAX_VALUE = "PREFS_KEY_TAX_VALUE";
+const String PREFS_KEY_USER_LOCATIONS = "PREFS_KEY_USER_LOCATIONS";
 
 class AppPreferences {
   final SharedPreferences _sharedPreferences;
@@ -174,6 +177,20 @@ class AppPreferences {
   }
 
   Future<void> removeTaxValue(String key) async {
+    _sharedPreferences.remove(key);
+  }
+
+  // user locations
+  Future<bool> setUserLocations(String key, String locations) async {
+    final String encodedLocationData = json.encode(locations);
+    return await _sharedPreferences.setString(key, encodedLocationData);
+  }
+
+  String? getUserLocations(String key) {
+    return _sharedPreferences.getString(key);
+  }
+
+  Future<void> removeUserLocations(String key) async {
     _sharedPreferences.remove(key);
   }
 }

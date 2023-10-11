@@ -134,6 +134,8 @@ class _LoginViewState extends State<LoginView> {
             _appPreferences.setUserLoggedIn();
             await _appPreferences.setToken(LOGGED_IN_TOKEN, state.token);
 
+            await _appPreferences.setUserLocations(PREFS_KEY_USER_LOCATIONS, state.userLocations);
+
             LoadingDialog.hide(context);
 
             await Future.delayed(const Duration(seconds: 2));
