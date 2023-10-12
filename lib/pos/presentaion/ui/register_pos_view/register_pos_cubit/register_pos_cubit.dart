@@ -192,36 +192,6 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
     }
   }
 
-  // Future<List<UserResponse>> getUserInfo(UserRequest parameters, int locationId) async {
-  //   try {
-  //     var res;
-  //     if (await networkInfo.isConnected) {
-  //       String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
-  //       bool hasExpired = JwtDecoder.isExpired(token);
-  //       if (hasExpired) {
-  //         await getUserParameters();
-  //         await login(userRequest!);
-  //
-  //         res = await posRepositoryImpl.getUserInfo(parameters, LOGGED_IN_TOKEN, locationId);
-  //         userResponse = res;
-  //         emit(GetUserInfoSucceed());
-  //         return res;
-  //       }
-  //
-  //       res = await posRepositoryImpl.getUserInfo(parameters, token, locationId);
-  //       userResponse = res;
-  //       emit(GetUserInfoSucceed());
-  //       return res;
-  //     } else {
-  //       emit(RegisterNoInternetState());
-  //       return res;
-  //     }
-  //   } catch (e) {
-  //     emit(GetUserInfoFailed(e.toString()));
-  //     return Future.error(e);
-  //   }
-  // }
-
   Future<LoginResponse> login(UserRequest parameters) async {
     try {
       var res;

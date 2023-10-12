@@ -6,7 +6,7 @@ class UserResponse {
     required this.userType,
     required this.firstName,
     this.lastName,
-    this.username,
+    required this.username,
     required this.contactNumber,
     required this.email,
     required this.password,
@@ -21,7 +21,7 @@ class UserResponse {
   late final String userType;
   late final String firstName;
   String? lastName;
-  String? username;
+  late final String username;
   late final String contactNumber;
   late final String email;
   late final String password;

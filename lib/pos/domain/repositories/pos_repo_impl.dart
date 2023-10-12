@@ -9,8 +9,6 @@ import 'package:poslix_app/pos/domain/response/check_out_model.dart';
 import 'package:poslix_app/pos/domain/response/tailoring_types_model.dart';
 import 'package:poslix_app/pos/domain/response/taxes_model.dart';
 
-import 'package:poslix_app/pos/domain/response/user_model.dart';
-
 import '../../data/data_sources/remote/pos_repo.dart';
 import '../../shared/constant/constant_values_manager.dart';
 import '../../shared/core/network/dio_manager.dart';
@@ -39,22 +37,6 @@ import '../response/sales_report_items_model.dart';
 class POSRepositoryImpl extends POSRepository {
   final DioManager _dio;
   POSRepositoryImpl(this._dio);
-
-  // @override
-  // Future<List<UserResponse>> getUserInfo(UserRequest parameters, String token, int locationId) async {
-  //   List<UserResponse> res = <UserResponse>[];
-  //   try {
-  //     return await _dio.get('api/users?location_id=$locationId',
-  //         headers: {'Authorization': 'Bearer $token'}).then((response) {
-  //       res = (response.data['result'] as List).map((e) {
-  //         return UserResponse.fromJson(e);
-  //       }).toList();
-  //       return res;
-  //     });
-  //   } catch (e) {
-  //     throw e.toString();
-  //   }
-  // }
 
   @override
   Future<LoginResponse> login(UserRequest parameters) async {
