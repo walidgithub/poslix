@@ -118,7 +118,7 @@ class LoadingErrorPrintingSettings extends MainViewState{
 }
 
 class LoadedLocationSettings extends MainViewState{
-  List<LocationSettingsResponse> locationSettingResponse;
+  LocationSettingsResponse locationSettingResponse;
 
   LoadedLocationSettings(this.locationSettingResponse);
 }

@@ -131,8 +131,6 @@ class _LoginViewState extends State<LoginView> {
           if (state is LoginLoading) {
             LoadingDialog.show(context);
           } else if (state is LoginSucceed) {
-            print('some thing errorrrrrrrr');
-            print(state.userInfo);
             _appPreferences.setUserLoggedIn();
             await _appPreferences.setToken(LOGGED_IN_TOKEN, state.token);
 

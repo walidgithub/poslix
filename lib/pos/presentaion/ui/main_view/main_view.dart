@@ -658,8 +658,9 @@ class _MainViewState extends State<MainView> {
 
           } else if (state is LoadingErrorPrintingSettings) {}
           // location settings
+
           if (state is LoadedLocationSettings) {
-            isMultiLang = state.locationSettingResponse[0].isMultiLanguage == 1 ? true : false;
+            isMultiLang = state.locationSettingResponse.isMultiLanguage == 1 ? true : false;
           } else if (state is LoadingErrorLocationSettings) {}
         },
         builder: (context, state) {

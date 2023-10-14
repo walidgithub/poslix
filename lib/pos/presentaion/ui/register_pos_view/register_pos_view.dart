@@ -647,16 +647,10 @@ class _RegisterPosViewState extends State<RegisterPosView> {
         password: _appPreferences.getPassword(PASS)!);
 
     for (var nOfLocation in userResponse!.locations) {
-      print('testttt');
       print(nOfLocation.id);
       if (nOfLocation.id == locationId) {
-        print('11111111');
-        print(nOfLocation.id);
         for (var nOfPermissions in nOfLocation.permissions) {
-          print('222222222');
           if (nOfPermissions.name == 'pos/checkout') {
-            print('33333333333');
-            print(nOfPermissions.name);
             if (listOfBusinesses.isNotEmpty && listOfLocations.isNotEmpty) {
               OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
                   handCash: double.parse(posInitialEditingController.text));

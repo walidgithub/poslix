@@ -309,11 +309,9 @@ class _PaymentDialogState extends State<PaymentDialog> {
           }
 
           if (state is CheckOutSucceed) {
-            print('doneeeeeeee');
             orderId = state.checkOutRes.data.id;
             widget.done('done');
           } else if (state is CheckOutError) {
-            print('erroooorrrrrrrrrrrrrrrrrr');
             CustomDialog.show(
                 context,
                 AppStrings.errorInPayment.tr(),

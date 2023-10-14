@@ -22,7 +22,7 @@ class LocationSettingsResponse {
   late final String currencyName;
   late final String currencyCode;
   late final String currencySymbol;
-  late final PrintSettingResponse printSetting;
+  late final List<PrintSettingResponse> printSetting;
 
   LocationSettingsResponse.fromJson(Map<String, dynamic> json){
     locationId = json['location_id'];
@@ -34,7 +34,7 @@ class LocationSettingsResponse {
     currencyName = json['currency_name'];
     currencyCode = json['currency_code'];
     currencySymbol = json['currency_symbol'];
-    printSetting = PrintSettingResponse.fromJson(json['print_setting']);
+    printSetting = List.from(json['print_setting']).map((e)=>PrintSettingResponse.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -48,7 +48,7 @@ class LocationSettingsResponse {
     _data['currency_name'] = currencyName;
     _data['currency_code'] = currencyCode;
     _data['currency_symbol'] = currencySymbol;
-    _data['print_setting'] = printSetting.toJson();
+    _data['print_setting'] = printSetting.map((e)=>e.toJson()).toList();
     return _data;
   }
 }
