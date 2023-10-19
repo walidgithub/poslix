@@ -51,8 +51,8 @@ class POSRepositoryImpl extends POSRepository {
         return LoginResponse.fromJson(res);
       });
     } catch (e) {
-      // throw statusMessage;
-      throw e.toString();
+      throw statusMessage;
+      // throw e.toString();
     }
   }
 

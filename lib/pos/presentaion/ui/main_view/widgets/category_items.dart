@@ -102,11 +102,11 @@ Widget itemContainer(int index, BuildContext context,
                           child:
                               ClipOval(child: Image.asset(ImageAssets.tailor)),
                         ))
-                : SvgPicture.asset(
-                    ImageAssets.unavailable,
-                    width: AppSize.s20,
-                    color: ColorManager.delete,
-                  ))
+                : listOfProducts[index].sellOverStock == "001" ? Container() : SvgPicture.asset(
+              ImageAssets.unavailable,
+              width: AppSize.s20,
+              color: ColorManager.delete,
+            ))
         : Container()
   ]);
 }

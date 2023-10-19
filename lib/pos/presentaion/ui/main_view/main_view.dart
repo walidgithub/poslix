@@ -1269,7 +1269,7 @@ class _MainViewState extends State<MainView> {
                 .stock;
           }
 
-          if (int.parse(n.itemQuantity.toString()) > qty) {
+          if (int.parse(n.itemQuantity.toString()) > qty && itemStock.sellOverStock == "000") {
             CustomDialog.show(
                 context,
                 AppStrings.noCreditWhenCheck.tr(),
@@ -1602,7 +1602,7 @@ class _MainViewState extends State<MainView> {
       if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
               .itemQuantity
               .toString()) >=
-          qty) {
+          qty && itemStock.sellOverStock == "000") {
         noCredit(context);
         return;
       }
@@ -1727,7 +1727,7 @@ class _MainViewState extends State<MainView> {
           if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
                   .itemQuantity
                   .toString()) >=
-              listToWork[index].stock) {
+              listToWork[index].stock && listToWork[index].sellOverStock == "000") {
             noCredit(context);
             return;
           }
@@ -1760,7 +1760,7 @@ class _MainViewState extends State<MainView> {
           tel = '';
         }
 
-        if (listToWork[index].stock == 0) {
+        if (listToWork[index].stock == 0 && listToWork[index].sellOverStock == "000") {
           noCredit(context);
           return;
         }
@@ -1869,7 +1869,7 @@ class _MainViewState extends State<MainView> {
           if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
               .itemQuantity
               .toString()) >=
-              listToWork[index].stock) {
+              listToWork[index].stock && listToWork[index].sellOverStock == "000") {
             noCredit(context);
             return;
           }
@@ -1900,7 +1900,7 @@ class _MainViewState extends State<MainView> {
           tel = '';
         }
 
-        if (listToWork[index].stock == 0) {
+        if (listToWork[index].stock == 0 && listToWork[index].sellOverStock == "000") {
           noCredit(context);
           return;
         }
