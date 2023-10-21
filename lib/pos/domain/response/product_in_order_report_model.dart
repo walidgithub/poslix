@@ -65,7 +65,7 @@ class ProductsInOrdersResponse {
   late final int isDisabled;
   late final String sellPrice;
   late final String costPrice;
-  late final String sellOverStock;
+  late final int sellOverStock;
   late final String qtyOverSold;
   String? createdAt;
   String? updatedAt;

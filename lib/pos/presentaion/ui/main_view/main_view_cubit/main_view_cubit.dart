@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:poslix_app/pos/domain/response/check_out_model.dart';
@@ -455,6 +457,10 @@ class MainViewCubit extends Cubit<MainViewState> {
       CloseRegisterReportRequest parameters, int locationId) async {
     try {
       var res;
+      String? userInfo;
+      UserResponse? userResponse;
+      userInfo = _appPreferences.getUserInfo(PREFS_KEY_USER_INFO)!;
+      userResponse = UserResponse.fromJson(jsonDecode(userInfo));
       if (await networkInfo.isConnected) {
         String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
         bool hasExpired = JwtDecoder.isExpired(token);
@@ -464,26 +470,22 @@ class MainViewCubit extends Cubit<MainViewState> {
 
           res = await posRepositoryImpl.openCloseRegister(
               parameters, locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
-          if (res[0].status == 'open') {
-            String handCash_ = res[0].handCash;
-            cashInHand =
-                int.parse(handCash_.substring(0, handCash_.indexOf('.')));
-          } else {
-            cashInHand = 0;
-          }
+
+          var statusCounts  = res.firstWhere((element) => element.firstName == userResponse!.firstName && element.status == 'open');
+          String handCash_ = statusCounts.handCash;
+          cashInHand = int.parse(handCash_.substring(0, handCash_.indexOf('.')));
+
           emit(OpenCloseRegisterSucceed());
           return res;
         }
 
         res = await posRepositoryImpl.openCloseRegister(
             parameters, locationId, token);
-        if (res[0].status == 'open') {
-          String handCash_ = res[0].handCash;
-          cashInHand =
-              int.parse(handCash_.substring(0, handCash_.indexOf('.')));
-        } else {
-          cashInHand = 0;
-        }
+
+        var statusCounts  = res.firstWhere((element) => element.firstName == userResponse!.firstName && element.status == 'open');
+        String handCash_ = statusCounts.handCash;
+        cashInHand = int.parse(handCash_.substring(0, handCash_.indexOf('.')));
+
         emit(OpenCloseRegisterSucceed());
         return res;
       } else {

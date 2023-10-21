@@ -65,19 +65,19 @@ class _MyAppState extends State<MyApp> {
   final ThemeManager _themeManager = sl<ThemeManager>();
 
   bool loggedIn = false;
-  bool openedRegister = false;
+  // bool openedRegister = false;
 
   goNext() {
     _appPreferences.isUserLoggedIn().then((isUserLoggedIn) => {
           if (isUserLoggedIn) {loggedIn = true} else {loggedIn = false}
         });
 
-    _appPreferences.isUserOpenedRegister().then((isUserOpenedRegister) => {
-          if (isUserOpenedRegister)
-            {openedRegister = true}
-          else
-            {openedRegister = false}
-        });
+    // _appPreferences.isUserOpenedRegister().then((isUserOpenedRegister) => {
+    //       if (isUserOpenedRegister)
+    //         {openedRegister = true}
+    //       else
+    //         {openedRegister = false}
+    //     });
   }
 
   @override
@@ -129,9 +129,10 @@ class _MyAppState extends State<MyApp> {
             themeMode: _themeManager.themeMode,
             onGenerateRoute: RouteGenerator.getRoute,
             initialRoute: loggedIn
-                ? openedRegister
-                    ? Routes.mainRoute
-                    : Routes.registerPosRoute
+                  ? Routes.mainRoute
+                // ? openedRegister
+                    // ? Routes.mainRoute
+                    // : Routes.registerPosRoute
                 : Routes.loginRoute,
           );
         });

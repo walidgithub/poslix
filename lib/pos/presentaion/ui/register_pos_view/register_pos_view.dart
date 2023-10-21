@@ -16,6 +16,7 @@ import 'package:poslix_app/pos/domain/requests/open_register_model.dart';
 import 'package:poslix_app/pos/domain/response/login_model.dart';
 import 'package:poslix_app/pos/domain/response/taxes_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/login_view/login_cubit/login_cubit.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/main_view.dart';
 import 'package:poslix_app/pos/presentaion/ui/register_pos_view/register_pos_cubit/register_pos_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/register_pos_view/register_pos_cubit/register_pos_state.dart';
 import 'package:poslix_app/pos/presentaion/ui/register_pos_view/widgets/initial_value.dart';
@@ -63,6 +64,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   var _selectedBusiness;
   var _selectedLocation;
   int? locationId;
+  int? oldLocationId;
   String? businessType;
   String? userInfo;
   int? decimalPlaces;
@@ -77,8 +79,15 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   @override
   void initState() {
     cashInHand = 0;
+
+    getLocationId();
     getUserInfo();
+
     super.initState();
+  }
+
+  void getLocationId() async {
+    oldLocationId = _appPreferences.getLocationId(PREFS_KEY_LOCATION_ID)!;
   }
 
   void getUserInfo() async {
@@ -195,6 +204,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
 
   Widget bodyContent() {
     return BlocProvider(
+    // ..openCloseRegister(
+    // CloseRegisterReportRequest(today: true), oldLocationId!)
       create: (context) => sl<RegisterPOSCubit>()..getBusiness(),
       child: BlocConsumer<RegisterPOSCubit, RegisterPOSState>(
         listener: (context, state) async {
@@ -222,8 +233,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             _appPreferences.setBusinessType(
                 PREFS_KEY_BUSINESS_TYPE, businessType!);
 
-            RegisterPOSCubit.get(context).openCloseRegister(
-                CloseRegisterReportRequest(today: true), locationId!);
+            // RegisterPOSCubit.get(context).openCloseRegister(
+            //     CloseRegisterReportRequest(today: true), locationId!);
 
             RegisterPOSCubit.get(context).getTaxes(locationId!);
           } else if (state is RegisterPOSLoadingFailed) {
@@ -238,11 +249,12 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                 ColorManager.delete);
           }
 
-          if (state is OpenCloseRegisterSucceed) {
-            posInitialEditingController.text =
-                RegisterPOSCubit.get(context).cashInHand.toString();
+          if (state is UserHasOpenedRegister) {
+            Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
+          } else if (state is UserHasNoOpenedRegister) {
+
           } else if (state is OpenCloseRegisterError) {
-            posInitialEditingController.text = '0';
+            // posInitialEditingController.text = '0';
           }
 
           if (state is TaxesLoaded) {
@@ -647,7 +659,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
         password: _appPreferences.getPassword(PASS)!);
 
     for (var nOfLocation in userResponse!.locations) {
-      print(nOfLocation.id);
       if (nOfLocation.id == locationId) {
         for (var nOfPermissions in nOfLocation.permissions) {
           if (nOfPermissions.name == 'pos/checkout') {

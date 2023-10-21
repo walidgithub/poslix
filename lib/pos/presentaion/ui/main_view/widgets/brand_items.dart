@@ -85,29 +85,29 @@ Widget itemContainer(int index, BuildContext context,
       ),
       listOfProducts[index].stock == 0
           ? Positioned(
-              top: 5,
-              left: 5,
-              child: businessType == 'Tailor'
-                  ? listOfProducts[index].type != 'tailoring_package'
-                      ? SvgPicture.asset(
-                          ImageAssets.unavailable,
-                          width: AppSize.s20,
-                          color: ColorManager.delete,
-                        )
-                      : CircleAvatar(
-                          radius: 12.h, //radius of avatar
-                          backgroundColor: ColorManager.white, //color
-                          child: Padding(
-                            padding: const EdgeInsets.all(
-                                AppPadding.p2), // Border radius
-                            child: ClipOval(
-                                child: Image.asset(ImageAssets.tailor)),
-                          ))
-                  : SvgPicture.asset(
-                      ImageAssets.unavailable,
-                      width: AppSize.s20,
-                      color: ColorManager.delete,
-                    ))
+          top: 5,
+          left: 5,
+          child: businessType == 'Tailor'
+              ? listOfProducts[index].type != 'tailoring_package'
+              ? SvgPicture.asset(
+            ImageAssets.unavailable,
+            width: AppSize.s20,
+            color: ColorManager.delete,
+          )
+              : CircleAvatar(
+              radius: 12.h, //radius of avatar
+              backgroundColor: ColorManager.white, //color
+              child: Padding(
+                padding: const EdgeInsets.all(
+                    AppPadding.p2), // Border radius
+                child:
+                ClipOval(child: Image.asset(ImageAssets.tailor)),
+              ))
+              : listOfProducts[index].sellOverStock == 1 ? Container() : SvgPicture.asset(
+            ImageAssets.unavailable,
+            width: AppSize.s20,
+            color: ColorManager.delete,
+          ))
           : Container()
     ],
   );

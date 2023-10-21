@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:poslix_app/pos/domain/response/locations_model.dart';
@@ -153,6 +155,12 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
       CloseRegisterReportRequest parameters, int locationId) async {
     try {
       var res;
+      String? userInfo;
+      UserResponse? userResponse;
+      userInfo = _appPreferences.getUserInfo(PREFS_KEY_USER_INFO)!;
+      userResponse = UserResponse.fromJson(jsonDecode(userInfo));
+      List closed = [];
+      List opened = [];
       if (await networkInfo.isConnected) {
         String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
         bool hasExpired = JwtDecoder.isExpired(token);
@@ -162,24 +170,43 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
 
           res = await posRepositoryImpl.openCloseRegister(
               parameters, locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
-          emit(OpenCloseRegisterSucceed());
-          if (res[0].status == 'open') {
-            String cash = res[0].cash;
-            cashInHand = int.parse(cash.substring(0, cash.indexOf('.')));
+
+          var statusCounts  = res.where((element) => element.firstName == userResponse!.firstName);
+          for (var i in statusCounts) {
+            if (i.status == 'open') {
+              opened.add('open');
+            } else {
+              closed.add('close');
+            }
+          }
+          if (opened.length > closed.length) {
+            emit(UserHasOpenedRegister());
           } else {
-            cashInHand = 0;
+            emit(UserHasNoOpenedRegister());
           }
           return res;
         }
 
         res = await posRepositoryImpl.openCloseRegister(
             parameters, locationId, token);
-        emit(OpenCloseRegisterSucceed());
-        if (res[0].status == 'open') {
-          String cash = res[0].cash;
-          cashInHand = int.parse(cash.substring(0, cash.indexOf('.')));
+
+        print('starttttttt');
+        var statusCounts  = res.where((element) => element.firstName == userResponse!.firstName);
+        print(statusCounts);
+        for (var i in statusCounts) {
+          if (i.status == 'open') {
+            opened.add('open');
+          } else {
+            closed.add('close');
+          }
+        }
+        print(opened.length);
+        print(closed.length);
+
+        if (opened.length > closed.length) {
+          emit(UserHasOpenedRegister());
         } else {
-          cashInHand = 0;
+          emit(UserHasNoOpenedRegister());
         }
         return res;
       } else {

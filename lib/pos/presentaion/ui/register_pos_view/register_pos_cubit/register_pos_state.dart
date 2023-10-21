@@ -24,7 +24,8 @@ class OpenRegisterError extends RegisterPOSState{
   OpenRegisterError(this.errorText);
 }
 
-class OpenCloseRegisterSucceed extends RegisterPOSState{}
+class UserHasOpenedRegister extends RegisterPOSState{}
+class UserHasNoOpenedRegister extends RegisterPOSState{}
 class OpenCloseRegisterError extends RegisterPOSState{
   String errorText;
 
