@@ -188,7 +188,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
               child: SingleChildScrollView(
                 child: Container(
                   width: moreInfo! ? 300.w : 250.w,
-                  height: moreInfo! ? 500.h : 300.h,
+                  height: moreInfo! ? 500.h : 290.h,
                   decoration: BoxDecoration(
                       color: ColorManager.white,
                       shape: BoxShape.rectangle,
@@ -284,16 +284,14 @@ class _CustomerDialogState extends State<CustomerDialog> {
                   style: TextStyle(
                       fontSize: AppSize.s18.sp,
                       color: ColorManager.primary,
-                      fontWeight: deviceWidth! <= 600
-                          ? FontWeight.w500
-                          : FontWeight.bold))),
+                      fontWeight: FontWeight.bold))),
           SizedBox(
             height: AppConstants.smallDistance,
           ),
           DropdownButton2(
             buttonStyleData: ButtonStyleData(
               height: 47.h,
-              width: 280.w,
+              width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.only(left: AppPadding.p14, right: AppPadding.p14),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppSize.s5),
@@ -375,10 +373,9 @@ class _CustomerDialogState extends State<CustomerDialog> {
               children: [
                 Center(
                     child: Text(
-                  // moreInfo!
-                  //     ? AppStrings.lessInformation.tr()
-                  //     : AppStrings.moreInformation.tr(),
-                      'rrrrr',
+                  moreInfo!
+                      ? AppStrings.lessInformation.tr()
+                      : AppStrings.moreInformation.tr(),
                   style: TextStyle(
                       color: ColorManager.white, fontSize: AppSize.s14.sp),
                 )),
