@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../../domain/entities/customer_model.dart';
+import '../../../../../domain/response/customer_model.dart';
 import '../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../shared/constant/strings_manager.dart';
 import '../../../../../shared/style/colors_manager.dart';
@@ -96,6 +98,8 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
   final FocusNode _shippingFN = FocusNode();
 
   final _fbKey = GlobalKey<FormState>();
+  List<CustomerResponse> pricingGroupList = [];
+  var _selectedPricingGroup;
 
   bool? moreInfo;
 
@@ -180,7 +184,7 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
             body: Center(
               child: Container(
                 width: 350.w,
-                height: moreInfo! ? 600.h : 310.h,
+                height: moreInfo! ? 600.h : 400.h,
                 decoration: BoxDecoration(
                     color: ColorManager.white,
                     shape: BoxShape.rectangle,
@@ -212,6 +216,10 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
                                   ),
                                 ),
                                 requiredFields(context),
+                                SizedBox(
+                                  height: AppConstants.smallWidthBetweenElements,
+                                ),
+                                choosePricingGroup(context),
                                 SizedBox(
                                   height: AppConstants.smallWidthBetweenElements,
                                 ),
@@ -265,6 +273,89 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
             nextFN: _addressOneFN,
             validateText: AppStrings.mobileFieldIsRequired.tr()),
       ],
+    );
+  }
+
+  Widget choosePricingGroup(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(0),
+      child: Column(
+        children: [
+          Align(
+              alignment: AlignmentDirectional.topStart,
+              child: Text(AppStrings.choosePricingGroup.tr(),
+                  style: TextStyle(
+                      fontSize: AppSize.s18.sp,
+                      color: ColorManager.primary,
+                      fontWeight: deviceWidth! <= 600
+                          ? FontWeight.w500
+                          : FontWeight.bold))),
+          SizedBox(
+            height: AppConstants.smallDistance,
+          ),
+          DropdownButton2(
+            buttonStyleData: ButtonStyleData(
+              height: 47.h,
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.only(left: AppPadding.p14, right: AppPadding.p14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppSize.s5),
+                border: Border.all(
+                  color: ColorManager.primary,
+                ),
+                color: ColorManager.white,
+              ),
+              elevation: 2,
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 400.h,
+              width: 270.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppSize.s5),
+                color: ColorManager.white,
+              ),
+              offset: const Offset(0, 0),
+              scrollbarTheme: ScrollbarThemeData(
+                radius: const Radius.circular(40),
+                thickness: MaterialStateProperty.all<double>(6),
+                thumbVisibility: MaterialStateProperty.all<bool>(true),
+              ),
+            ),
+
+            underline: Container(),
+            items: pricingGroupList.map((item) {
+              return DropdownMenuItem(
+                  value: item.firstName,
+                  child: Text(
+                    item.firstName,
+                    style: TextStyle(fontSize: AppSize.s15.sp),
+                  ));
+            }).toList(),
+            onChanged: (selectedBusiness) {
+              _selectedPricingGroup = selectedBusiness;
+              setState(() {
+              });
+            },
+            value: _selectedPricingGroup,
+            isExpanded: true,
+            hint: Row(
+              children: [
+                Text(
+                  AppStrings.choosePricingGroup.tr(),
+                  style: TextStyle(
+                      color: ColorManager.primary,
+                      fontSize: AppSize.s15.sp),
+                ),
+                SizedBox(
+                  width: AppConstants.smallDistance,
+                )
+              ],
+            ),
+            style: TextStyle(
+                color: ColorManager.primary, fontSize: AppSize.s20.sp),
+          ),
+        ],
+      ),
     );
   }
 

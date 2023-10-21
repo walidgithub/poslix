@@ -188,7 +188,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
               child: SingleChildScrollView(
                 child: Container(
                   width: moreInfo! ? 300.w : 250.w,
-                  height: moreInfo! ? 420.h : 190.h,
+                  height: moreInfo! ? 500.h : 300.h,
                   decoration: BoxDecoration(
                       color: ColorManager.white,
                       shape: BoxShape.rectangle,
@@ -222,6 +222,9 @@ class _CustomerDialogState extends State<CustomerDialog> {
                               height: AppConstants.smallerDistance,
                             ),
                             choosePricingGroup(context),
+                            SizedBox(
+                              height: AppConstants.smallerDistance,
+                            ),
                             moreAndLessInfo(),
                             moreInfo! ? optionalFields(context) : Container(),
                             buttons(context),
@@ -272,14 +275,14 @@ class _CustomerDialogState extends State<CustomerDialog> {
 
   Widget choosePricingGroup(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(0),
       child: Column(
         children: [
           Align(
               alignment: AlignmentDirectional.topStart,
               child: Text(AppStrings.choosePricingGroup.tr(),
                   style: TextStyle(
-                      fontSize: AppSize.s20.sp,
+                      fontSize: AppSize.s18.sp,
                       color: ColorManager.primary,
                       fontWeight: deviceWidth! <= 600
                           ? FontWeight.w500
