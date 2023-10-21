@@ -65,7 +65,7 @@ class ProductsResponse {
   late final int isDisabled;
   late final String sellPrice;
   late final String costPrice;
-  late final String sellOverStock;
+  late final int sellOverStock;
   late final String qtyOverSold;
   String? createdAt;
   String? updatedAt;
@@ -102,7 +102,7 @@ class ProductsResponse {
     isDisabled = json['is_disabled'] ?? 0;
     sellPrice = json['sell_price'] ?? '';
     costPrice = json['cost_price'] ?? '';
-    sellOverStock = json['sell_over_stock'] ?? '';
+    sellOverStock = json['sell_over_stock'] ?? 0;
     qtyOverSold = json['qty_over_sold'] ?? '';
     createdAt = json['createdAt'] ?? '';
     updatedAt = json['updatedAt'] ?? '';

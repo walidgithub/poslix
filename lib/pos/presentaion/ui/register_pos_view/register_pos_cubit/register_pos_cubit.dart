@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:poslix_app/pos/domain/response/locations_model.dart';
@@ -135,7 +137,7 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
         }
 
         res =
-            await posRepositoryImpl.openRegister(parameters, locationId, token);
+        await posRepositoryImpl.openRegister(parameters, locationId, token);
         emit(OpenRegisterSucceed());
         return res;
       } else {
@@ -153,6 +155,10 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
       CloseRegisterReportRequest parameters, int locationId) async {
     try {
       var res;
+      String? userInfo;
+      UserResponse? userResponse;
+      userInfo = _appPreferences.getUserInfo(PREFS_KEY_USER_INFO)!;
+      userResponse = UserResponse.fromJson(jsonDecode(userInfo));
       if (await networkInfo.isConnected) {
         String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
         bool hasExpired = JwtDecoder.isExpired(token);
@@ -162,25 +168,23 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
 
           res = await posRepositoryImpl.openCloseRegister(
               parameters, locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
+
+          var statusCounts  = res.firstWhere((element) => element.firstName == userResponse!.firstName && element.status == 'open');
+          String handCash_ = statusCounts.handCash;
+          cashInHand = int.parse(handCash_.substring(0, handCash_.indexOf('.')));
+
           emit(OpenCloseRegisterSucceed());
-          if (res[0].status == 'open') {
-            // String cash = res[0].cash;
-            // cashInHand = int.parse(cash.substring(0, cash.indexOf('.')));
-          } else {
-            cashInHand = 0;
-          }
           return res;
         }
 
         res = await posRepositoryImpl.openCloseRegister(
             parameters, locationId, token);
+
+        var statusCounts  = res.firstWhere((element) => element.firstName == userResponse!.firstName && element.status == 'open');
+        String handCash_ = statusCounts.handCash;
+        cashInHand = int.parse(handCash_.substring(0, handCash_.indexOf('.')));
+
         emit(OpenCloseRegisterSucceed());
-        if (res[0].status == 'open') {
-          String cash = res[0].cash;
-          cashInHand = int.parse(cash.substring(0, cash.indexOf('.')));
-        } else {
-          cashInHand = 0;
-        }
         return res;
       } else {
         emit(RegisterNoInternetState());
