@@ -19,6 +19,7 @@ import '../../../../router/app_router.dart';
 import '../../../components/close_button.dart';
 import '../../../components/container_component.dart';
 import '../../../popup_dialogs/custom_dialog.dart';
+import '../../../popup_dialogs/loading_dialog.dart';
 import '../../main_view_cubit/main_view_cubit.dart';
 import '../../main_view_cubit/main_view_state.dart';
 import 'widgets/money_methods.dart';
@@ -119,9 +120,14 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                 ColorManager.delete);
           }
 
-          if (state is OpenCloseRegisterSucceed) {
+          if (state is OpenCloseRegisterLoading) {
+            LoadingDialog.show(context);
+          } else if (state is OpenCloseRegisterSucceed) {
             cashInHand = MainViewCubit.get(context).cashInHand;
-          } else if (state is OpenCloseRegisterError) {}
+            LoadingDialog.hide(context);
+          } else if (state is OpenCloseRegisterError) {
+            LoadingDialog.hide(context);
+          }
 
           if (state is LoadedRegisterData) {
             setState(() {
@@ -242,13 +248,13 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                     ),
                                     widget.deviceWidth <= 600
                                         ? SizedBox(
-                                      height: AppConstants
-                                          .smallDistance,
-                                    ) : Container(),
-
+                                            height: AppConstants.smallDistance,
+                                          )
+                                        : Container(),
                                     widget.deviceWidth <= 600
                                         ? Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
                                               moneyMethods(
                                                   context,

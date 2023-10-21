@@ -35,6 +35,7 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
   List<TaxesResponse> listOfTaxes = [];
 
   int? cashInHand;
+  bool? registeredBefore;
 
   String? userName;
   String? password;
@@ -169,9 +170,15 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
           res = await posRepositoryImpl.openCloseRegister(
               parameters, locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
 
-          var statusCounts  = res.firstWhere((element) => element.firstName == userResponse!.firstName && element.status == 'open');
-          String handCash_ = statusCounts.handCash;
-          cashInHand = int.parse(handCash_.substring(0, handCash_.indexOf('.')));
+          var statusCounts  = res.firstWhere((element) => element.firstName == userResponse!.firstName);
+          if (statusCounts.status == 'open') {
+            String handCash_ = statusCounts.handCash;
+            cashInHand = int.parse(handCash_.substring(0, handCash_.indexOf('.')));
+            registeredBefore = true;
+          } else {
+            cashInHand = 0;
+            registeredBefore = false;
+          }
 
           emit(OpenCloseRegisterSucceed());
           return res;
@@ -180,9 +187,15 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
         res = await posRepositoryImpl.openCloseRegister(
             parameters, locationId, token);
 
-        var statusCounts  = res.firstWhere((element) => element.firstName == userResponse!.firstName && element.status == 'open');
-        String handCash_ = statusCounts.handCash;
-        cashInHand = int.parse(handCash_.substring(0, handCash_.indexOf('.')));
+        var statusCounts  = res.firstWhere((element) => element.firstName == userResponse!.firstName);
+        if (statusCounts.status == 'open') {
+          String handCash_ = statusCounts.handCash;
+          cashInHand = int.parse(handCash_.substring(0, handCash_.indexOf('.')));
+          registeredBefore = true;
+        } else {
+          cashInHand = 0;
+          registeredBefore = false;
+        }
 
         emit(OpenCloseRegisterSucceed());
         return res;

@@ -67,6 +67,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   int? tax;
 
   int? cashInHand;
+  bool? registeredBefore;
 
   bool keyPadOn = false;
 
@@ -227,6 +228,9 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             _appPreferences.setBusinessType(
                 PREFS_KEY_BUSINESS_TYPE, businessType!);
 
+            RegisterPOSCubit.get(context).openCloseRegister(
+                CloseRegisterReportRequest(today: true), locationId!);
+
             RegisterPOSCubit.get(context).getTaxes(locationId!);
           } else if (state is RegisterPOSLoadingFailed) {
             LoadingDialog.hide(context);
@@ -243,8 +247,10 @@ class _RegisterPosViewState extends State<RegisterPosView> {
           if (state is OpenCloseRegisterSucceed) {
             cashInHand = RegisterPOSCubit.get(context).cashInHand;
             posInitialEditingController.text = cashInHand.toString();
+            registeredBefore = RegisterPOSCubit.get(context).registeredBefore;
           } else if (state is OpenCloseRegisterError) {
             posInitialEditingController.text = '0';
+            registeredBefore = false;
           }
 
           if (state is TaxesLoaded) {
@@ -644,19 +650,28 @@ class _RegisterPosViewState extends State<RegisterPosView> {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
 
-    // UserRequest userRequest = UserRequest(
-    //     email: _appPreferences.getUserName(USER_NAME)!,
-    //     password: _appPreferences.getPassword(PASS)!);
-
     for (var nOfLocation in userResponse!.locations) {
       if (nOfLocation.id == locationId) {
         for (var nOfPermissions in nOfLocation.permissions) {
           if (nOfPermissions.name == 'pos/checkout') {
             if (listOfBusinesses.isNotEmpty && listOfLocations.isNotEmpty) {
-              OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
-                  handCash: double.parse(posInitialEditingController.text));
-              await RegisterPOSCubit.get(context)
-                  .openRegister(openRegisterRequest, locationId!);
+              if (registeredBefore!) {
+                CustomDialog.show(
+                    context,
+                    AppStrings.registeredBefore.tr(),
+                    const Icon(Icons.warning_amber_rounded),
+                    ColorManager.white,
+                    AppConstants.durationOfSnackBar,
+                    ColorManager.hold);
+
+                await Future.delayed(
+                    Duration(milliseconds: AppConstants.durationOfSnackBar + 1000));
+              } else {
+                OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
+                    handCash: double.parse(posInitialEditingController.text));
+                await RegisterPOSCubit.get(context)
+                    .openRegister(openRegisterRequest, locationId!);
+              }
 
               Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
             }

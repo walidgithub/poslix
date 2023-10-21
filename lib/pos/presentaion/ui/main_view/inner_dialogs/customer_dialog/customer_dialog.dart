@@ -1,9 +1,11 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
@@ -83,6 +85,9 @@ class _CustomerDialogState extends State<CustomerDialog> {
       TextEditingController();
   final TextEditingController _shippingAddressEditingController =
       TextEditingController();
+
+  List<CustomerResponse> pricingGroupList = [];
+  var _selectedPricingGroup;
 
   final FocusNode _fNameFN = FocusNode();
   final FocusNode _lNameFN = FocusNode();
@@ -216,6 +221,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
                             SizedBox(
                               height: AppConstants.smallerDistance,
                             ),
+                            choosePricingGroup(context),
                             moreAndLessInfo(),
                             moreInfo! ? optionalFields(context) : Container(),
                             buttons(context),
@@ -264,6 +270,89 @@ class _CustomerDialogState extends State<CustomerDialog> {
     );
   }
 
+  Widget choosePricingGroup(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Align(
+              alignment: AlignmentDirectional.topStart,
+              child: Text(AppStrings.choosePricingGroup.tr(),
+                  style: TextStyle(
+                      fontSize: AppSize.s20.sp,
+                      color: ColorManager.primary,
+                      fontWeight: deviceWidth! <= 600
+                          ? FontWeight.w500
+                          : FontWeight.bold))),
+          SizedBox(
+            height: AppConstants.smallDistance,
+          ),
+          DropdownButton2(
+            buttonStyleData: ButtonStyleData(
+              height: 47.h,
+              width: 280.w,
+              padding: const EdgeInsets.only(left: AppPadding.p14, right: AppPadding.p14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppSize.s5),
+                border: Border.all(
+                  color: ColorManager.primary,
+                ),
+                color: ColorManager.white,
+              ),
+              elevation: 2,
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 400.h,
+              width: 270.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppSize.s5),
+                color: ColorManager.white,
+              ),
+              offset: const Offset(0, 0),
+              scrollbarTheme: ScrollbarThemeData(
+                radius: const Radius.circular(40),
+                thickness: MaterialStateProperty.all<double>(6),
+                thumbVisibility: MaterialStateProperty.all<bool>(true),
+              ),
+            ),
+
+            underline: Container(),
+            items: pricingGroupList.map((item) {
+              return DropdownMenuItem(
+                  value: item.firstName,
+                  child: Text(
+                    item.firstName,
+                    style: TextStyle(fontSize: AppSize.s15.sp),
+                  ));
+            }).toList(),
+            onChanged: (selectedBusiness) {
+              _selectedPricingGroup = selectedBusiness;
+              setState(() {
+              });
+            },
+            value: _selectedPricingGroup,
+            isExpanded: true,
+            hint: Row(
+              children: [
+                Text(
+                  AppStrings.choosePricingGroup.tr(),
+                  style: TextStyle(
+                      color: ColorManager.primary,
+                      fontSize: AppSize.s15.sp),
+                ),
+                SizedBox(
+                  width: AppConstants.smallDistance,
+                )
+              ],
+            ),
+            style: TextStyle(
+                color: ColorManager.primary, fontSize: AppSize.s20.sp),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget moreAndLessInfo() {
     return Align(
       alignment: AlignmentDirectional.centerStart,
@@ -283,9 +372,10 @@ class _CustomerDialogState extends State<CustomerDialog> {
               children: [
                 Center(
                     child: Text(
-                  moreInfo!
-                      ? AppStrings.lessInformation.tr()
-                      : AppStrings.moreInformation.tr(),
+                  // moreInfo!
+                  //     ? AppStrings.lessInformation.tr()
+                  //     : AppStrings.moreInformation.tr(),
+                      'rrrrr',
                   style: TextStyle(
                       color: ColorManager.white, fontSize: AppSize.s14.sp),
                 )),

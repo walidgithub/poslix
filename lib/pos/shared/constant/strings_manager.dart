@@ -137,10 +137,12 @@ class AppStrings{
   static const customerAddError  = 'Failed to add';
   static const saveOrder  = 'Save Order';
   static const chooseBusiness  = 'Choose Business';
+  static const choosePricingGroup  = 'Choose Pricing Group';
   static const chooseLocation  = 'Choose Location';
   static const initialPosValue  = 'Initial Pos Value';
   static const noDataToDelete  = 'There are not items to delete';
   static const errorTryAgain  = 'There is an error try again later';
+  static const registeredBefore  = 'You have registered before';
   static const noDataToHold  = 'There are not items to hold';
   static const selectFabricFirst  = 'Select a fabric first';
   static const sizeNameRequired  = 'Size name field required';

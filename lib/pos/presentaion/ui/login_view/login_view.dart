@@ -140,8 +140,7 @@ class _LoginViewState extends State<LoginView> {
 
             await Future.delayed(const Duration(seconds: 2));
 
-            Navigator.of(context).pushReplacementNamed(
-                openedRegister ? Routes.mainRoute : Routes.introRoute);
+            Navigator.of(context).pushReplacementNamed(Routes.introRoute);
           } else if (state is WrongEmailOrPass) {
             LoadingDialog.hide(context);
             CustomDialog.show(

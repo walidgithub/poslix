@@ -128,11 +128,9 @@ class _MyAppState extends State<MyApp> {
             darkTheme: darkTheme,
             themeMode: _themeManager.themeMode,
             onGenerateRoute: RouteGenerator.getRoute,
-            initialRoute: loggedIn
-                  ? Routes.mainRoute
-                // ? openedRegister
-                    // ? Routes.mainRoute
-                    // : Routes.registerPosRoute
+            initialRoute:
+            loggedIn ?
+                  Routes.registerPosRoute
                 : Routes.loginRoute,
           );
         });

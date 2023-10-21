@@ -87,6 +87,7 @@ class CloseRegisterError extends MainViewState{
   CloseRegisterError(this.errorText);
 }
 
+class OpenCloseRegisterLoading extends MainViewState{}
 class OpenCloseRegisterSucceed extends MainViewState{}
 class OpenCloseRegisterError extends MainViewState{
   String errorText;

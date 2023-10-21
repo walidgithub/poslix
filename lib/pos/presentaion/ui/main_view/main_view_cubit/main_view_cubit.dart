@@ -456,6 +456,8 @@ class MainViewCubit extends Cubit<MainViewState> {
   Future<List<CloseRegisterReportDataResponse>> openCloseRegister(
       CloseRegisterReportRequest parameters, int locationId) async {
     try {
+      await Future.delayed(const Duration(seconds: 1));
+      emit(OpenCloseRegisterLoading());
       var res;
       String? userInfo;
       UserResponse? userResponse;

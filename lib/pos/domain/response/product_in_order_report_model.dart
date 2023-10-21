@@ -89,7 +89,7 @@ class ProductsInOrdersResponse {
     isFabric = json['is_fabric'];
     subproductname = json['subproductname'] ?? '';
     unitId = json['unit_id'];
-    brandId = json['brand_id'];
+    brandId = json['brand_id'] ?? 0;
     categoryId = json['category_id'];
     subCategoryId = json['subCategoryId'] ?? 0;
     tax = json['tax'] ?? 0.0;
@@ -104,7 +104,7 @@ class ProductsInOrdersResponse {
     sellPrice = json['sell_price'];
     costPrice = json['cost_price'];
     sellOverStock = json['sell_over_stock'];
-    qtyOverSold = json['qty_over_sold'];
+    qtyOverSold = json['qty_over_sold'] ?? '';
     createdAt = json['createdAt'] ?? '';
     updatedAt = json['updatedAt'] ?? '';
     isSellingMultiPrice = json['is_selling_multi_price'];
