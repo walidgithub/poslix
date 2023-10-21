@@ -164,8 +164,8 @@ class RegisterPOSCubit extends Cubit<RegisterPOSState> {
               parameters, locationId, _appPreferences.getToken(LOGGED_IN_TOKEN)!);
           emit(OpenCloseRegisterSucceed());
           if (res[0].status == 'open') {
-            String cash = res[0].cash;
-            cashInHand = int.parse(cash.substring(0, cash.indexOf('.')));
+            // String cash = res[0].cash;
+            // cashInHand = int.parse(cash.substring(0, cash.indexOf('.')));
           } else {
             cashInHand = 0;
           }
