@@ -149,7 +149,7 @@ class AppStrings{
   static const inputsRequired  = 'Inputs fields required';
   static const noDataToCheckOut  = 'There are not items to check out';
   static const orderDeletedSuccessfully  = 'Order deleted successfully';
-  static const searchForCustomer  = 'Search for an customer...';
+  static const searchForCustomer  = 'Search for a customer...';
   static const no  = 'No';
   static const yes  = 'Yes';
   static const warning  = 'Warning';

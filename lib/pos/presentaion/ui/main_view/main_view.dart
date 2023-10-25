@@ -920,22 +920,25 @@ class _MainViewState extends State<MainView> {
           items: listOfCustomers.map((item) {
             return DropdownMenuItem(
                 value: item,
-                child: Row(
-                  children: [
-                    textS14PrimaryComponent(context, item.firstName),
-                    SizedBox(width: AppConstants.smallerDistance),
-                    textS14PrimaryComponent(context, item.lastName),
-                    item.firstName == AppStrings.firstName
-                        ? Container()
-                        : Row(
-                      children: [
-                        SizedBox(width: AppConstants.smallerDistance),
-                        textS14PrimaryComponent(context, '|'),
-                        SizedBox(width: AppConstants.smallerDistance),
-                        textS14PrimaryComponent(context, item.mobile)
-                      ],
-                    ),
-                  ],
+                child: SizedBox(
+                  width: 50.w,
+                  child: Row(
+                    children: [
+                      textS14PrimaryComponent(context, item.firstName),
+                      SizedBox(width: AppConstants.smallerDistance),
+                      textS14PrimaryComponent(context, item.lastName),
+                      item.firstName == AppStrings.firstName
+                          ? Container()
+                          : Row(
+                        children: [
+                          SizedBox(width: AppConstants.smallerDistance),
+                          textS14PrimaryComponent(context, '|'),
+                          SizedBox(width: AppConstants.smallerDistance),
+                          textS14PrimaryComponent(context, item.mobile)
+                        ],
+                      ),
+                    ],
+                  ),
                 ));
           }).toList(),
 
@@ -1034,6 +1037,7 @@ class _MainViewState extends State<MainView> {
           ),
           style: TextStyle(
               color: ColorManager.primary, fontSize: AppSize.s14.sp),
+
         ));
   }
 
@@ -1382,14 +1386,16 @@ class _MainViewState extends State<MainView> {
         if (done == 'done') {
           // MainViewCubit.get(context).getCategories(locationId);
           setState(() {
-            categoryFilter = true;
-            listOfTmpOrder = [];
-            listOfBothProducts = [];
-            listOfAllProducts = [];
-            searchList = [];
+            // categoryFilter = true;
+            // listOfTmpOrder = [];
+            // listOfBothProducts = [];
+            // listOfAllProducts = [];
+            // searchList = [];
+            reload();
           });
         }
       }, deviceWidth!, GlobalValues.getEditOrder ? GlobalValues.getRelatedInvoiceId : 0,printerIP,printerType,isMultiLang);
+
       discount = 0;
       estimatedTax = 0;
       shippingCharge = 0;
