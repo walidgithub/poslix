@@ -109,6 +109,7 @@ class _MainViewState extends State<MainView> {
   TailoringTypesModel? tailoringType;
 
   List<CustomerResponse> listOfCustomers = [];
+  List<CustomerResponse> listOfPricingGroups = [];
 
   String selectedDiscountType = '';
 
@@ -522,6 +523,7 @@ class _MainViewState extends State<MainView> {
             loadCategories();
 
             listOfCustomers = MainViewCubit.get(context).listOfCustomers;
+            listOfPricingGroups = MainViewCubit.get(context).listOfPricingGroups;
             loadCustomers();
 
             currencyCode = MainViewCubit.get(context).currencyCode;
@@ -604,6 +606,13 @@ class _MainViewState extends State<MainView> {
             LoadingDialog.hide(context);
             tryAgainLater(context);
           }
+          // get Pricing Groups -----------------------------------------------------------------------------------------------------------------
+          if (state is LoadedPricingGroups) {
+            listOfPricingGroups = MainViewCubit.get(context).listOfPricingGroups;
+          } else if (state is LoadingErrorPricingGroups) {
+            tryAgainLater(context);
+          }
+
           // get Customer data -----------------------------------------------------------------------------------------------------------------
           if (state is LoadingCustomer) {
             showLoadingDialog(context);

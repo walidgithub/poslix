@@ -56,6 +56,7 @@ class MainViewCubit extends Cubit<MainViewState> {
   TailoringTypesModel? tailoringType;
 
   List<CustomerResponse> listOfCustomers = [];
+  List<CustomerResponse> listOfPricingGroups = [];
 
   int? cashInHand;
   double? totalCash;
@@ -105,6 +106,10 @@ class MainViewCubit extends Cubit<MainViewState> {
           var res2 = await posRepositoryImpl.getCustomers(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
           listOfCustomers = res2.toList();
 
+          // PricingGroups ----
+          var res4 = await posRepositoryImpl.getPricingGroups(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          listOfPricingGroups = res4.toList();
+
           // Currency ----
           var res3 = await posRepositoryImpl.getCurrency(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
           currencyCode = res3.code;
@@ -128,6 +133,10 @@ class MainViewCubit extends Cubit<MainViewState> {
         // Customers -----
         var res2 = await posRepositoryImpl.getCustomers(token, locationId);
         listOfCustomers = res2.toList();
+
+        // PricingGroups ----
+        var res4 = await posRepositoryImpl.getPricingGroups(token, locationId);
+        listOfPricingGroups = res4.toList();
 
         // Currency ----
         var res3 = await posRepositoryImpl.getCurrency(token, locationId);
@@ -274,6 +283,36 @@ class MainViewCubit extends Cubit<MainViewState> {
       }
     } catch (e) {
       emit(LoadingErrorCustomers(e.toString()));
+      return Future.error(e);
+    }
+  }
+
+  Future<List<CustomerResponse>> getPricingGroups(int locationId) async {
+    try {
+      var res;
+      if (await networkInfo.isConnected) {
+        String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
+        bool hasExpired = JwtDecoder.isExpired(token);
+        if (hasExpired) {
+          await getUserParameters();
+          await login(userRequest!);
+
+          res = await posRepositoryImpl.getPricingGroups(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
+          emit(LoadedPricingGroups());
+          listOfCustomers = res.toList();
+          return res;
+        }
+
+        res = await posRepositoryImpl.getPricingGroups(token, locationId);
+        emit(LoadedPricingGroups());
+        listOfCustomers = res.toList();
+        return res;
+      } else {
+        emit(MainNoInternetState());
+        return [];
+      }
+    } catch (e) {
+      emit(LoadingErrorPricingGroups(e.toString()));
       return Future.error(e);
     }
   }

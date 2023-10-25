@@ -39,6 +39,13 @@ class LoadingErrorCustomers extends MainViewState{
   LoadingErrorCustomers(this.errorText);
 }
 
+class LoadedPricingGroups extends MainViewState{}
+class LoadingErrorPricingGroups extends MainViewState{
+  String errorText;
+
+  LoadingErrorPricingGroups(this.errorText);
+}
+
 class LoadingCustomer extends MainViewState{}
 class LoadedCustomer extends MainViewState{}
 class LoadingErrorCustomer extends MainViewState{

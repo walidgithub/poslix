@@ -51,6 +51,7 @@ abstract class POSRepository {
   Future<GetCustomerResponse> getCustomer(final int customerId, final String token);
   Future<void> addCustomer(final String token, final CustomerModel parameters, final int locationId);
   Future<void> updateCustomer(final int customerId, final String token, final CustomerModel parameters);
+  Future<List<CustomerResponse>> getPricingGroups(final String token, final int locationId);
 
   Future<CheckOutResponse> checkout(final CheckOutRequest parameters, String token);
   Future<CheckOutResponse> saveOrder(final SaveOrder parameters, String token, int orderId);

@@ -178,6 +178,23 @@ class POSRepositoryImpl extends POSRepository {
     }
   }
 
+  @override
+  Future<List<CustomerResponse>> getPricingGroups(
+      String token, int locationId) async {
+    List<CustomerResponse> res = <CustomerResponse>[];
+    try {
+      return await _dio.get('api/pricing-group/$locationId',
+          headers: {'Authorization': 'Bearer $token'}).then((response) {
+        res = (response.data['result'] as List).map((e) {
+          return CustomerResponse.fromJson(e);
+        }).toList();
+        return res;
+      });
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
   // Business --------------------------------------------------------------------------
   @override
   Future<List<BusinessResponse>> getBusinesses(String token) async {
