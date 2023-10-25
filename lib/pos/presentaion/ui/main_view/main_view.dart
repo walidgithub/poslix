@@ -128,6 +128,7 @@ class _MainViewState extends State<MainView> {
   @override
   void dispose() {
     _searchEditingController.dispose();
+    _customerEditingController.dispose();
     super.dispose();
   }
 
@@ -298,6 +299,9 @@ class _MainViewState extends State<MainView> {
 
   final TextEditingController _searchEditingController =
       TextEditingController();
+
+  final TextEditingController _customerEditingController =
+  TextEditingController();
 
   double? deviceWidth;
 
@@ -937,12 +941,55 @@ class _MainViewState extends State<MainView> {
 
           onChanged: (selectedCustomer) {
             setState(() {
-              _selectedCustomer = selectedCustomer;
+              _selectedCustomer = selectedCustomer as CustomerResponse?;
               _selectedCustomerName =
               '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
               _selectedCustomerId = selectedCustomer?.id;
               _selectedCustomerTel = selectedCustomer?.mobile;
             });
+          },
+
+          // // search text for customer
+          dropdownSearchData: DropdownSearchData(
+            searchController: _customerEditingController,
+            searchInnerWidgetHeight: 50,
+            searchInnerWidget: Container(
+              height: 50,
+              padding: const EdgeInsets.only(
+                top: 8,
+                bottom: 4,
+                right: 8,
+                left: 8,
+              ),
+              child: TextFormField(
+                expands: true,
+                maxLines: null,
+                controller: _customerEditingController,
+                decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  hintText: AppStrings.searchForCustomer.tr(),
+                  hintStyle: const TextStyle(fontSize: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+            searchMatchFn: (item, searchValue) {
+              _selectedCustomer = item.value as CustomerResponse?;
+              var choose = '${_selectedCustomer!.firstName} ${_selectedCustomer!.lastName} | ${_selectedCustomer!.mobile}';
+              return choose.contains(searchValue);
+            },
+          ),
+          // // This to clear the search value when you close the menu
+          onMenuStateChange: (isOpen) {
+            if (!isOpen) {
+              _customerEditingController.clear();
+            }
           },
 
           buttonStyleData: ButtonStyleData(

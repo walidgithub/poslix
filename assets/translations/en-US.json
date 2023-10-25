@@ -23,6 +23,7 @@
   "Size Name": "Size Name",
   "Additional Notes": "Additional Notes",
   "Choose Pricing Group": "Choose Pricing Group",
+  "Search for an customer...": "Search for an customer...",
   "Something went wrong": "Something went wrong",
   "You have no permission": "You have no permission",
   "You have registered before": "You have registered before",
@@ -167,6 +168,5 @@
   "Error In Payment" : "Error In Payment",
   "No Internet" : "No Internet",
   "Wrong email or password" : "Wrong email or password",
-  "You have no permission" : "You have no permission",
   "There is an error try again later" : "There is an error try again later"
 }
