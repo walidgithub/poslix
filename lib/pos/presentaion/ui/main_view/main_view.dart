@@ -920,28 +920,28 @@ class _MainViewState extends State<MainView> {
           items: listOfCustomers.map((item) {
             return DropdownMenuItem(
                 value: item,
-                child: SizedBox(
-                  width: 50.w,
-                  child: Row(
-                    children: [
-                      textS14PrimaryComponent(context, item.firstName),
-                      SizedBox(width: AppConstants.smallerDistance),
-                      textS14PrimaryComponent(context, item.lastName),
-                      item.firstName == AppStrings.firstName
-                          ? Container()
-                          : Row(
-                        children: [
-                          SizedBox(width: AppConstants.smallerDistance),
-                          textS14PrimaryComponent(context, '|'),
-                          SizedBox(width: AppConstants.smallerDistance),
-                          textS14PrimaryComponent(context, item.mobile)
-                        ],
-                      ),
-                    ],
-                  ),
+                child: Row(
+                  children: [
+                    textS14PrimaryComponent(context, item.firstName),
+                    SizedBox(width: AppConstants.smallerDistance),
+                    textS14PrimaryComponent(context, item.lastName),
+                    item.firstName == AppStrings.firstName
+                        ? Container()
+                        : Row(
+                      children: [
+                        SizedBox(width: AppConstants.smallerDistance),
+                        textS14PrimaryComponent(context, '|'),
+                        SizedBox(width: AppConstants.smallerDistance),
+                        Container(
+                          constraints: BoxConstraints(
+                            maxWidth: 80.w
+                          ),
+                            child: textS14PrimaryComponent(context, item.mobile))
+                      ],
+                    ),
+                  ],
                 ));
           }).toList(),
-
           onChanged: (selectedCustomer) {
             setState(() {
               _selectedCustomer = selectedCustomer as CustomerResponse?;
@@ -951,7 +951,6 @@ class _MainViewState extends State<MainView> {
               _selectedCustomerTel = selectedCustomer?.mobile;
             });
           },
-
           // // search text for customer
           dropdownSearchData: DropdownSearchData(
             searchController: _customerEditingController,
@@ -994,7 +993,6 @@ class _MainViewState extends State<MainView> {
               _customerEditingController.clear();
             }
           },
-
           buttonStyleData: ButtonStyleData(
             height: 47.h,
             width: 250.w,
@@ -1022,7 +1020,6 @@ class _MainViewState extends State<MainView> {
               thumbVisibility: MaterialStateProperty.all<bool>(true),
             ),
           ),
-
           isExpanded: true,
           hint: Row(
             children: [
@@ -1037,7 +1034,6 @@ class _MainViewState extends State<MainView> {
           ),
           style: TextStyle(
               color: ColorManager.primary, fontSize: AppSize.s14.sp),
-
         ));
   }
 

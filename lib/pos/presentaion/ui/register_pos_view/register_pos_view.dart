@@ -693,6 +693,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             ColorManager.white,
             AppConstants.durationOfSnackBar,
             ColorManager.delete);
+        return;
       }
     }
   }

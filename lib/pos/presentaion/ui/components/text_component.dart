@@ -24,7 +24,7 @@ Widget textS14PrimaryComponent(BuildContext context,String text,
     {double? fontSize,Color? color}) {
 
   return Text(
-    text,style: TextStyle(fontSize: AppSize.s14.sp,color: ColorManager.primary),
+    text,style: TextStyle(fontSize: AppSize.s14.sp,color: ColorManager.primary),overflow: TextOverflow.ellipsis
   );
 }
 
