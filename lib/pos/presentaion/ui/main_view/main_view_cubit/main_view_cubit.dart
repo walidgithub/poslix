@@ -8,11 +8,11 @@ import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
 import 'package:poslix_app/pos/domain/response/register_data_model.dart';
 import 'package:poslix_app/pos/domain/response/variations_model.dart';
-import '../../../../domain/entities/customer_model.dart';
 import '../../../../domain/repositories/pos_repo_impl.dart';
 import '../../../../domain/requests/check_out_model.dart';
 import '../../../../domain/requests/close_register_model.dart';
 import '../../../../domain/requests/close_register_report_model.dart';
+import '../../../../domain/requests/customer_model.dart';
 import '../../../../domain/requests/user_model.dart';
 import '../../../../domain/response/appearance_model.dart';
 import '../../../../domain/response/authorization_model.dart';
@@ -25,6 +25,7 @@ import '../../../../domain/response/location_settings_model.dart';
 import '../../../../domain/response/login_model.dart';
 import '../../../../domain/response/payment_method_model.dart';
 import '../../../../domain/response/payment_methods_model.dart';
+import '../../../../domain/response/pricing_group_model.dart';
 import '../../../../domain/response/printing_settings_model.dart';
 import '../../../../domain/response/stocks_model.dart';
 import '../../../../domain/response/tailoring_types_model.dart';
@@ -56,7 +57,7 @@ class MainViewCubit extends Cubit<MainViewState> {
   TailoringTypesModel? tailoringType;
 
   List<CustomerResponse> listOfCustomers = [];
-  List<CustomerResponse> listOfPricingGroups = [];
+  List<PricingGroupResponse> listOfPricingGroups = [];
 
   int? cashInHand;
   double? totalCash;
@@ -287,7 +288,7 @@ class MainViewCubit extends Cubit<MainViewState> {
     }
   }
 
-  Future<List<CustomerResponse>> getPricingGroups(int locationId) async {
+  Future<List<PricingGroupResponse>> getPricingGroups(int locationId) async {
     try {
       var res;
       if (await networkInfo.isConnected) {
@@ -299,13 +300,13 @@ class MainViewCubit extends Cubit<MainViewState> {
 
           res = await posRepositoryImpl.getPricingGroups(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
           emit(LoadedPricingGroups());
-          listOfCustomers = res.toList();
+          listOfPricingGroups = res.toList();
           return res;
         }
 
         res = await posRepositoryImpl.getPricingGroups(token, locationId);
         emit(LoadedPricingGroups());
-        listOfCustomers = res.toList();
+        listOfPricingGroups = res.toList();
         return res;
       } else {
         emit(MainNoInternetState());
@@ -347,7 +348,7 @@ class MainViewCubit extends Cubit<MainViewState> {
     }
   }
 
-  Future<void> addCustomer(CustomerModel parameters, int locationId) async {
+  Future<void> addCustomer(CustomerRequest parameters, int locationId) async {
     try {
       if (await networkInfo.isConnected) {
         String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
@@ -373,7 +374,7 @@ class MainViewCubit extends Cubit<MainViewState> {
     }
   }
 
-  Future<void> updateCustomer(int customerId, CustomerModel parameters) async {
+  Future<void> updateCustomer(int customerId, CustomerRequest parameters) async {
     try {
       if (await networkInfo.isConnected) {
         String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;

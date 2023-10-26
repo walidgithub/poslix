@@ -8,9 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
-
-import '../../../../../domain/entities/customer_model.dart';
+import '../../../../../domain/requests/customer_model.dart';
 import '../../../../../domain/response/customer_model.dart';
+import '../../../../../domain/response/pricing_group_model.dart';
 import '../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../shared/constant/strings_manager.dart';
 import '../../../../../shared/style/colors_manager.dart';
@@ -27,9 +27,10 @@ class CustomerMobileDialog extends StatefulWidget {
   int locationId;
   int customerId;
   Function done;
+  List<PricingGroupResponse> listOfPricingGroups = [];
 
   static void show(BuildContext context, String editType, var customerData,
-      int customerId, int locationId, Function done) =>
+      int customerId, int locationId, Function done, List<PricingGroupResponse> listOfPricingGroups) =>
       isApple() ? showCupertinoDialog<void>(context: context,
           useRootNavigator: false,
           barrierDismissible: false,
@@ -38,7 +39,9 @@ class CustomerMobileDialog extends StatefulWidget {
               customerData: customerData,
               customerId: customerId,
               locationId: locationId,
-              done: done)).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
+              done: done,
+              listOfPricingGroups: listOfPricingGroups
+          )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) :
       showDialog<void>(
         context: context,
         useRootNavigator: false,
@@ -48,7 +51,9 @@ class CustomerMobileDialog extends StatefulWidget {
             customerData: customerData,
             customerId: customerId,
             locationId: locationId,
-            done: done),
+            done: done,
+          listOfPricingGroups: listOfPricingGroups,
+        ),
       ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
   static void hide(BuildContext context) => Navigator.of(context).pop();
@@ -59,6 +64,7 @@ class CustomerMobileDialog extends StatefulWidget {
         required this.customerId,
         required this.locationId,
         required this.done,
+        required this.listOfPricingGroups,
         super.key});
 
   @override
@@ -98,7 +104,8 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
   final FocusNode _shippingFN = FocusNode();
 
   final _fbKey = GlobalKey<FormState>();
-  List<CustomerResponse> pricingGroupList = [];
+  List<PricingGroupResponse> pricingGroupList = [];
+  int? pricingGroupId;
   var _selectedPricingGroup;
 
   bool? moreInfo;
@@ -118,7 +125,13 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
       _zipCodeEditingController.text = widget.customerData.zipCode;
       _shippingAddressEditingController.text =
           widget.customerData.shippingAddress;
+      pricingGroupId =
+          widget.customerData.priceGroupsId;
+      if (pricingGroupId != null) {
+        _selectedPricingGroup = widget.listOfPricingGroups.firstWhere((element) => element.id == pricingGroupId);
+      }
     }
+    pricingGroupList = widget.listOfPricingGroups;
     super.initState();
   }
 
@@ -287,9 +300,8 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
                   style: TextStyle(
                       fontSize: AppSize.s18.sp,
                       color: ColorManager.primary,
-                      fontWeight: deviceWidth! <= 600
-                          ? FontWeight.w500
-                          : FontWeight.bold))),
+                      fontWeight: FontWeight.w500
+                          ))),
           SizedBox(
             height: AppConstants.smallDistance,
           ),
@@ -325,18 +337,18 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
             underline: Container(),
             items: pricingGroupList.map((item) {
               return DropdownMenuItem(
-                  value: item.firstName,
-                  child: Text(
-                    item.firstName,
+                  value: item.name,
+                  child: Text(item.name,
                     style: TextStyle(fontSize: AppSize.s15.sp),
                   ));
             }).toList(),
-            onChanged: (selectedBusiness) {
-              _selectedPricingGroup = selectedBusiness;
+            onChanged: (selectedGroup) {
+              _selectedPricingGroup = selectedGroup;
+              pricingGroupId = pricingGroupList.firstWhere((element) => element.name == _selectedPricingGroup).id;
               setState(() {
               });
             },
-            value: _selectedPricingGroup,
+            value: pricingGroupId != null ? pricingGroupList.firstWhere((element) => element.id == pricingGroupId).name : _selectedPricingGroup,
             isExpanded: true,
             hint: Row(
               children: [
@@ -485,33 +497,35 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
               _fbKey.currentState!.validate();
 
               if (widget.editType == 'Add') {
-                CustomerModel customerModel = CustomerModel(
-                    addressLine_1: _addressOneEditingController.text,
-                    addressLine_2: _addressTwoEditingController.text,
+                CustomerRequest customerModel = CustomerRequest(
+                    address_line_1: _addressOneEditingController.text,
+                    address_line_2: _addressTwoEditingController.text,
                     city: _cityEditingController.text,
                     country: _countryEditingController.text,
-                    firstName: _firstNameEditingController.text,
-                    lastName: _lastNameEditingController.text,
+                    first_name: _firstNameEditingController.text,
+                    last_name: _lastNameEditingController.text,
                     mobile: int.parse(_mobileEditingController.text),
-                    shippingAddress: _shippingAddressEditingController.text,
+                    shipping_address: _shippingAddressEditingController.text,
                     state: _stateEditingController.text,
-                    zipCode: _zipCodeEditingController.text);
+                    zip_code: _zipCodeEditingController.text,
+                    priceGroupsId: pricingGroupList.last.id == 0 ? pricingGroupId = null : pricingGroupId);
                 MainViewCubit.get(context)
                     .addCustomer(customerModel, widget.locationId);
 
                 widget.done('done');
               } else if (widget.editType == 'Edit') {
-                CustomerModel customerModel = CustomerModel(
-                    addressLine_1: _addressOneEditingController.text,
-                    addressLine_2: _addressTwoEditingController.text,
+                CustomerRequest customerModel = CustomerRequest(
+                    address_line_1: _addressOneEditingController.text,
+                    address_line_2: _addressTwoEditingController.text,
                     city: _cityEditingController.text,
                     country: _countryEditingController.text,
-                    firstName: _firstNameEditingController.text,
-                    lastName: _lastNameEditingController.text,
+                    first_name: _firstNameEditingController.text,
+                    last_name: _lastNameEditingController.text,
                     mobile: int.parse(_mobileEditingController.text),
-                    shippingAddress: _shippingAddressEditingController.text,
+                    shipping_address: _shippingAddressEditingController.text,
                     state: _stateEditingController.text,
-                    zipCode: _zipCodeEditingController.text);
+                    zip_code: _zipCodeEditingController.text,
+                    priceGroupsId: pricingGroupList.last.id == 0 ? pricingGroupId = null : pricingGroupId);
                 MainViewCubit.get(context)
                     .updateCustomer(widget.customerId, customerModel);
               }

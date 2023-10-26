@@ -43,6 +43,7 @@ import '../../../domain/entities/tmp_order_model.dart';
 import '../../../domain/response/brands_model.dart';
 import '../../../domain/response/categories_model.dart';
 import '../../../domain/response/payment_method_model.dart';
+import '../../../domain/response/pricing_group_model.dart';
 import '../../../domain/response/stocks_model.dart';
 import '../../../domain/response/tailoring_types_model.dart';
 import '../../../domain/response/variations_model.dart';
@@ -109,7 +110,7 @@ class _MainViewState extends State<MainView> {
   TailoringTypesModel? tailoringType;
 
   List<CustomerResponse> listOfCustomers = [];
-  List<CustomerResponse> listOfPricingGroups = [];
+  List<PricingGroupResponse> listOfPricingGroups = [];
 
   String selectedDiscountType = '';
 
@@ -619,6 +620,17 @@ class _MainViewState extends State<MainView> {
           } else if (state is LoadedCustomer) {
             LoadingDialog.hide(context);
 
+            var contain = listOfPricingGroups.where((element) => element.name == AppStrings.noThing.tr());
+            if (contain.isEmpty) {
+              listOfPricingGroups.add(PricingGroupResponse(id: 0,
+                  updatedAt: '',
+                  createdAt: '',
+                  locationId: locationId,
+                  name: AppStrings.noThing.tr(),
+                  businessId: 0,
+                  isActive: 0));
+            }
+
             int index = listOfCustomers.indexWhere((element) =>
                 '${element.firstName} ${element.lastName} | ${element.mobile}' ==
                 '${_selectedCustomer?.firstName} ${_selectedCustomer?.lastName} | ${_selectedCustomer?.mobile}');
@@ -637,7 +649,7 @@ class _MainViewState extends State<MainView> {
                         MainViewCubit.get(context).getCustomers(locationId);
                       });
                     }
-                  })
+                  },listOfPricingGroups)
                 : CustomerDialog.show(context, 'Edit', listOfCustomers[index],
                     _selectedCustomerId!, locationId, (done) {
                     if (done == 'done') {
@@ -648,7 +660,7 @@ class _MainViewState extends State<MainView> {
                         MainViewCubit.get(context).getCustomers(locationId);
                       });
                     }
-                  });
+                  },listOfPricingGroups);
           } else if (state is LoadingErrorCustomer) {
             LoadingDialog.hide(context);
             tryAgainLater(context);
@@ -931,9 +943,17 @@ class _MainViewState extends State<MainView> {
                 value: item,
                 child: Row(
                   children: [
-                    textS14PrimaryComponent(context, item.firstName),
+                    Container(
+                        constraints: BoxConstraints(
+                            maxWidth: 60.w
+                        ),
+                        child: textS14PrimaryComponent(context, item.firstName)),
                     SizedBox(width: AppConstants.smallerDistance),
-                    textS14PrimaryComponent(context, item.lastName),
+                    Container(
+                        constraints: BoxConstraints(
+                            maxWidth: 60.w
+                        ),
+                        child: textS14PrimaryComponent(context, item.lastName)),
                     item.firstName == AppStrings.firstName
                         ? Container()
                         : Row(
@@ -943,7 +963,7 @@ class _MainViewState extends State<MainView> {
                         SizedBox(width: AppConstants.smallerDistance),
                         Container(
                           constraints: BoxConstraints(
-                            maxWidth: 80.w
+                            maxWidth: 50.w
                           ),
                             child: textS14PrimaryComponent(context, item.mobile))
                       ],
@@ -952,6 +972,8 @@ class _MainViewState extends State<MainView> {
                 ));
           }).toList(),
           onChanged: (selectedCustomer) {
+            print(selectedCustomer);
+            print('111111111');
             setState(() {
               _selectedCustomer = selectedCustomer as CustomerResponse?;
               _selectedCustomerName =
@@ -1055,6 +1077,16 @@ class _MainViewState extends State<MainView> {
   }
 
   void addCustomer(BuildContext context) {
+    var contain = listOfPricingGroups.where((element) => element.name == AppStrings.noThing.tr());
+    if (contain.isEmpty) {
+      listOfPricingGroups.add(PricingGroupResponse(id: 0,
+          updatedAt: '',
+          createdAt: '',
+          locationId: locationId,
+          name: AppStrings.noThing.tr(),
+          businessId: 0,
+          isActive: 0));
+    }
     deviceWidth! <= 600
         ? CustomerMobileDialog.show(context, 'Add', [], 0, locationId,
             (done) async {
@@ -1075,7 +1107,7 @@ class _MainViewState extends State<MainView> {
                   AppConstants.durationOfSnackBar,
                   ColorManager.success);
             }
-          })
+          },listOfPricingGroups)
         : CustomerDialog.show(context, 'Add', [], 0, locationId, (done) {
             if (done == 'done') {
               CustomerDialog.hide(context);
@@ -1094,7 +1126,7 @@ class _MainViewState extends State<MainView> {
                   AppConstants.durationOfSnackBar,
                   ColorManager.success);
             }
-          });
+          },listOfPricingGroups);
   }
 
   void editDiscount(BuildContext context) {

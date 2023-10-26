@@ -25,6 +25,7 @@ class AppStrings{
   static const youHaveNoPermission  = 'You have no permission';
 
   static const category  = 'Category';
+  static const noThing  = 'No Thing';
   static const brand  = 'Brand';
   static const close  = 'Close';
   static const cancel  = 'Cancel';

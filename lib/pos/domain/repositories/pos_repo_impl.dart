@@ -12,9 +12,9 @@ import 'package:poslix_app/pos/domain/response/taxes_model.dart';
 import '../../data/data_sources/remote/pos_repo.dart';
 import '../../shared/constant/constant_values_manager.dart';
 import '../../shared/core/network/dio_manager.dart';
-import '../entities/customer_model.dart';
 import '../requests/check_out_model.dart';
 import '../requests/close_register_report_model.dart';
+import '../requests/customer_model.dart';
 import '../requests/open_register_model.dart';
 import '../response/brands_model.dart';
 import '../response/categories_model.dart';
@@ -29,6 +29,7 @@ import '../response/logout_response.dart';
 import '../response/open_register_response.dart';
 import '../response/payment_method_model.dart';
 import '../response/payment_methods_model.dart';
+import '../response/pricing_group_model.dart';
 import '../response/printing_settings_model.dart';
 import '../response/register_data_model.dart';
 import '../response/sales_report_data_model.dart';
@@ -156,7 +157,7 @@ class POSRepositoryImpl extends POSRepository {
 
   @override
   Future<void> addCustomer(
-      String token, CustomerModel parameters, int locationId) async {
+      String token, CustomerRequest parameters, int locationId) async {
     try {
       await _dio.post('${AppConstants.baseUrl}api/customers/$locationId',
           body: parameters.toJson(),
@@ -168,7 +169,7 @@ class POSRepositoryImpl extends POSRepository {
 
   @override
   Future<void> updateCustomer(
-      int customerId, String token, CustomerModel parameters) async {
+      int customerId, String token, CustomerRequest parameters) async {
     try {
       await _dio.put('${AppConstants.baseUrl}api/customers/$customerId',
           body: parameters.toJson(),
@@ -179,14 +180,14 @@ class POSRepositoryImpl extends POSRepository {
   }
 
   @override
-  Future<List<CustomerResponse>> getPricingGroups(
+  Future<List<PricingGroupResponse>> getPricingGroups(
       String token, int locationId) async {
-    List<CustomerResponse> res = <CustomerResponse>[];
+    List<PricingGroupResponse> res = <PricingGroupResponse>[];
     try {
       return await _dio.get('api/pricing-group/$locationId',
           headers: {'Authorization': 'Bearer $token'}).then((response) {
-        res = (response.data['result'] as List).map((e) {
-          return CustomerResponse.fromJson(e);
+        res = (response.data['result']['data'] as List).map((e) {
+          return PricingGroupResponse.fromJson(e);
         }).toList();
         return res;
       });

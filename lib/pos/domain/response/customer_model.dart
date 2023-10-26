@@ -21,6 +21,7 @@ class CustomerResponse {
     this.deletedAt,
     required this.createdAt,
     this.updatedAt,
+    this.priceGroupsId,
   });
   int? id;
   late final int locationId;
@@ -43,6 +44,7 @@ class CustomerResponse {
   String? deletedAt;
   late final String createdAt;
   String? updatedAt;
+  late final int? priceGroupsId;
 
   CustomerResponse.fromJson(Map<String, dynamic> json){
     id = json['id'];
@@ -66,6 +68,7 @@ class CustomerResponse {
     deletedAt = json['deletedAt'] ?? '';
     createdAt = json['created_at'] ?? '';
     updatedAt = json['updatedAt'] ?? '';
+    priceGroupsId = json['price_groups_id'] ?? null;
   }
 
   Map<String, dynamic> toJson() {
@@ -91,6 +94,7 @@ class CustomerResponse {
     data['deleted_at'] = deletedAt;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
+    data['price_groups_id'] = priceGroupsId;
     return data;
   }
 }
