@@ -95,6 +95,7 @@ flutter:
     - assets/images/loginScreen.jpg
     - assets/images/arrowDown.svg
     - assets/images/close.svg
+    - assets/images/printing.svg
     - assets/images/language.svg
     - assets/images/logout.svg
     - assets/images/reload.svg

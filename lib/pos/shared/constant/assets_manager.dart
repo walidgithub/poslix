@@ -6,6 +6,7 @@ class ImageAssets {
   static const String addToTmp = '$imagePath/arrowDown.svg';
 
   static const String close = '$imagePath/close.svg';
+  static const String printing = '$imagePath/printing.svg';
   static const String logout = '$imagePath/logout.svg';
   static const String language = '$imagePath/language.svg';
   static const String reload = '$imagePath/reload.svg';

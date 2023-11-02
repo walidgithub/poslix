@@ -60,6 +60,7 @@ import '../login_view/login_cubit/login_cubit.dart';
 import '../login_view/login_cubit/login_state.dart';
 import '../popup_dialogs/custom_dialog.dart';
 import '../popup_dialogs/loading_dialog.dart';
+import '../printer_settings/printer_settings_view.dart';
 import 'widgets/bottom_bar.dart';
 import 'inner_dialogs/close_register_dialog/close_register_dialog.dart';
 import 'inner_dialogs/customer_dialog/customer_mobile_dialog.dart';
@@ -370,6 +371,22 @@ class _MainViewState extends State<MainView> {
     );
   }
 
+  Widget printerSettings() {
+    return FloatingActionButton(
+      onPressed: () {
+        PrinterSettingsDialog.show(context, deviceWidth!);
+      },
+      heroTag: AppStrings.registerPos.tr(),
+      tooltip: AppStrings.registerPos.tr(),
+      backgroundColor: ColorManager.primary,
+      child: SvgPicture.asset(
+        ImageAssets.printing,
+        width: AppSize.s35,
+        color: ColorManager.white,
+      ),
+    );
+  }
+
   Widget refresh() {
     return FloatingActionButton(
       onPressed: () {
@@ -402,7 +419,7 @@ class _MainViewState extends State<MainView> {
             body: bodyContent(context),
             floatingActionButton: showFab
                 ? AnimatedFloatingActionButton(
-                    fabButtons: [language(), logout(), register(), refresh()],
+                    fabButtons: [printerSettings(), language(), logout(), register(), refresh()],
                     key: floatingKey,
                     colorStartAnimation: ColorManager.primary,
                     colorEndAnimation: ColorManager.delete,

@@ -154,6 +154,18 @@
   "Change return":"المتبقى",
   "Balance":"الاجمالي المستحق",
 
+  "Printer Settings": "اعدادات الطابعة",
+  "Printer Name": "اسم الطابعة",
+  "Printer IP": "IP الطابعة",
+  "Choose Printer Name": "اختر اسم الطابعة",
+  "Choose Printer IP": "IP اختر الطابعة",
+  "Choose Print Type": "اختر نوع الطباعة",
+  "Choose Connection Method": "اختر نوع الاتصال",
+  "Choose Printer Status": "اختر حالة الاتصال",
+  "Add Printer": "اضافة طابعة",
+  "Edit Printer": "تعديل طابعة",
+  "New Printer": "طابعة جديدة",
+
   "Terms and Conditions" : "تطبق الشروط والأحكام",
   "Total Due:" : "الاجمالي المستحق:",
   "Amount Paid:" : "اجمالى المدفوع:",

@@ -101,6 +101,19 @@ class AppStrings{
   static const bankPayment  = 'Bank Payment';
   static const cartPayment  = 'Card Payment';
   static const closeRegister  = 'Close Register';
+
+  static const printerSettings  = 'Printer Settings';
+  static const printerName  = 'Printer Name';
+  static const printerIP = 'Printer IP';
+  static const choosePrintType = 'Choose Print Type';
+  static const chooseConnectionMethod = 'Choose Connection Method';
+  static const choosePrinterStatus = 'Choose Printer Status';
+  static const choosePrinterName = 'Choose Printer Name';
+  static const choosePrinterIP = 'Choose Printer IP';
+  static const addPrinter = 'Add Printer';
+  static const editPrinter = 'Edit Printer';
+  static const newPrinter = 'New Printer';
+
   static const cashInHand  = 'Cash in hand';
   static const difference  = 'Difference';
   static const first_name  = 'First Name';
