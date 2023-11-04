@@ -1,6 +1,7 @@
 import 'package:poslix_app/pos/data/data_sources/local/pos_local_repo.dart';
 import 'package:poslix_app/pos/domain/entities/hold_order_items_model.dart';
 import 'package:poslix_app/pos/domain/entities/hold_order_names_model.dart';
+import 'package:poslix_app/pos/domain/entities/printing_settings_model.dart';
 
 import '../../shared/core/local_db/dbHelper.dart';
 
@@ -58,5 +59,33 @@ class POSLocalRepositoryImp extends POSLocalRepository {
     } catch (e) {
       throw e.toString();
     }
+  }
+
+  // Printer Settings -----------------------------------------------------------
+  @override
+  Future<void> addPrintingSetting(PrintSettingModel printSettingModel) async {
+    await _dbHelper.createPrinterSetting(printSettingModel);
+  }
+
+  @override
+  Future<void> deletePrintingSetting(int printerId) async {
+    await _dbHelper.deletePrinterSetting(printerId);
+  }
+
+  @override
+  Future<void> updatePrintingSetting(PrintSettingModel printSettingModel, int printerId) async {
+    await _dbHelper.updatePrinterSetting(printSettingModel, printerId);
+  }
+
+  @override
+  Future<List<PrintSettingModel>> getPrintingSettings() async {
+    final res = await _dbHelper.getAllPrinters();
+    return res;
+  }
+
+  @override
+  Future<PrintSettingModel> getPrinterById(int printerId) async {
+    final res = await _dbHelper.getPrinterById(printerId);
+    return res;
   }
 }

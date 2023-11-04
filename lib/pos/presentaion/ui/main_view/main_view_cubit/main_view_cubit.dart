@@ -8,6 +8,7 @@ import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
 import 'package:poslix_app/pos/domain/response/register_data_model.dart';
 import 'package:poslix_app/pos/domain/response/variations_model.dart';
+import '../../../../domain/repositories/pos_local_repo_impl.dart';
 import '../../../../domain/repositories/pos_repo_impl.dart';
 import '../../../../domain/requests/check_out_model.dart';
 import '../../../../domain/requests/close_register_model.dart';
@@ -26,7 +27,7 @@ import '../../../../domain/response/login_model.dart';
 import '../../../../domain/response/payment_method_model.dart';
 import '../../../../domain/response/payment_methods_model.dart';
 import '../../../../domain/response/pricing_group_model.dart';
-import '../../../../domain/response/printing_settings_model.dart';
+import '../../../../domain/entities/printing_settings_model.dart';
 import '../../../../domain/response/stocks_model.dart';
 import '../../../../domain/response/tailoring_types_model.dart';
 import '../../../../domain/response/user_model.dart';
@@ -36,9 +37,10 @@ import '../../../di/di.dart';
 import 'main_view_state.dart';
 
 class MainViewCubit extends Cubit<MainViewState> {
-  MainViewCubit(this.posRepositoryImpl) : super(MainViewInitial());
+  MainViewCubit(this.posRepositoryImpl, this.posLocalRepositoryImpl) : super(MainViewInitial());
 
   POSRepositoryImpl posRepositoryImpl;
+  POSLocalRepositoryImp posLocalRepositoryImpl;
 
   static MainViewCubit get(context) => BlocProvider.of(context);
 
@@ -644,30 +646,51 @@ class MainViewCubit extends Cubit<MainViewState> {
   }
 
   // Printing Settings -----------------------------
-  Future<List<PrintSettingResponse>> getPrintingSettings(int locationId) async {
+  Future<void> addPrintingSetting(PrintSettingModel printSettingModel) async {
     try {
-      var res;
-      if (await networkInfo.isConnected) {
-        String token = _appPreferences.getToken(LOGGED_IN_TOKEN)!;
-        bool hasExpired = JwtDecoder.isExpired(token);
-        if (hasExpired) {
-          await getUserParameters();
-          await login(userRequest!);
+      await posLocalRepositoryImpl.addPrintingSetting(printSettingModel);
+      emit(InsertPrintingSettings());
+    } catch (e) {
+      emit(InsertErrorPrintingSettings(e.toString()));
+    }
+  }
 
-          res = await posRepositoryImpl.getPrintingSettings(_appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId);
-          emit(LoadedPrintingSettings(res));
-          return res;
-        }
+  Future<void> deletePrintingSetting(int printerId) async {
+    try {
+      await posLocalRepositoryImpl.deletePrintingSetting(printerId);
+      emit(DeletePrintingSettings());
+    } catch (e) {
+      emit(DeleteErrorPrintingSettings(e.toString()));
+    }
+  }
 
-        res = await posRepositoryImpl.getPrintingSettings(token, locationId);
-        emit(LoadedPrintingSettings(res));
-        return res;
-      } else {
-        emit(MainNoInternetState());
-        return res;
-      }
+  Future<void> updatePrintingSetting(PrintSettingModel printSettingModel, int printerId) async {
+    try {
+      await posLocalRepositoryImpl.updatePrintingSetting(printSettingModel, printerId);
+      emit(UpdatePrintingSettings());
+    } catch (e) {
+      emit(UpdateErrorPrintingSettings(e.toString()));
+    }
+  }
+
+  Future<List<PrintSettingModel>> getPrintingSettings() async {
+    try {
+      final res = await posLocalRepositoryImpl.getPrintingSettings();
+      emit(LoadedPrintingSettings(res));
+      return res;
     } catch (e) {
       emit(LoadingErrorPrintingSettings(e.toString()));
+      return Future.error(e);
+    }
+  }
+
+  Future<PrintSettingModel> getPrinterById(int printerId) async {
+    try {
+      final res = await posLocalRepositoryImpl.getPrinterById(printerId);
+      emit(LoadedByIdPrintingSettings(res));
+      return res;
+    } catch (e) {
+      emit(LoadingByIdErrorPrintingSettings(e.toString()));
       return Future.error(e);
     }
   }

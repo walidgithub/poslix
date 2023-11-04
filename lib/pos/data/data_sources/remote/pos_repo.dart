@@ -25,7 +25,7 @@ import '../../../domain/response/open_register_response.dart';
 import '../../../domain/response/payment_method_model.dart';
 import '../../../domain/response/payment_methods_model.dart';
 import '../../../domain/response/pricing_group_model.dart';
-import '../../../domain/response/printing_settings_model.dart';
+import '../../../domain/entities/printing_settings_model.dart';
 import '../../../domain/response/sales_report_data_model.dart';
 import '../../../domain/response/tailoring_types_model.dart';
 import '../../../domain/response/taxes_model.dart';
@@ -38,7 +38,6 @@ abstract class POSRepository {
   Future<LogoutResponse> logout(final String token);
 
   Future<List<BusinessResponse>> getBusinesses(final String token);
-  Future<List<PrintSettingResponse>> getPrintingSettings(final String token, final int locationId);
   Future<LocationSettingsResponse> getLocationSettings(String token, int locationId);
   Future<List<TaxesResponse>> getTaxes(final String token, final int locationId);
 

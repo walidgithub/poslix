@@ -525,7 +525,7 @@ class _MainViewState extends State<MainView> {
         : differenceValue = 0;
 
     return BlocProvider(
-      create: (context) => sl<MainViewCubit>()..getHomeData(locationId)..getPaymentMethods(locationId)..getPrintingSettings(locationId)..getLocationSettings(locationId),
+      create: (context) => sl<MainViewCubit>()..getHomeData(locationId)..getPaymentMethods(locationId)..getPrintingSettings()..getLocationSettings(locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
@@ -688,9 +688,9 @@ class _MainViewState extends State<MainView> {
           // printing settings
           if (state is LoadedPrintingSettings) {
             for (var n in state.printSettingResponse) {
-              if (n.status == 1) {
-                printerIP = n.ip;
-                printerType = n.printType;
+              if (n.printerStatus == 1) {
+                printerIP = n.printerIP!;
+                printerType = n.printType!;
                 return;
               } else {
                 printerIP = AppConstants.printerIp;

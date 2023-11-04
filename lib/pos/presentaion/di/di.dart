@@ -41,7 +41,7 @@ class ServiceLocator {
 
     // Cubit
     sl.registerFactory(() => LoginCubit(sl()));
-    sl.registerFactory(() => MainViewCubit(sl()));
+    sl.registerFactory(() => MainViewCubit(sl(), sl()));
     sl.registerFactory(() => RegisterPOSCubit(sl()));
     sl.registerFactory(() => MainViewLocalCubit(sl()));
     sl.registerFactory(() => OrdersCubit(sl()));

@@ -3,13 +3,14 @@ import 'package:poslix_app/pos/domain/entities/hold_order_items_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../domain/entities/hold_order_names_model.dart';
+import '../../../domain/entities/printing_settings_model.dart';
 
 class DbHelper {
   Database? _db;
 
   static int? insertedNewHoldId;
 
-  String dbdName = 'poslix_hold_orders4.db';
+  String dbdName = 'poslix_local_db.db';
 
   Future<Database> get database async {
     if (_db != null) {
@@ -32,6 +33,9 @@ class DbHelper {
 
     await db.execute(
         'create table poslix_hold_items(id integer primary key autoincrement, holdOrderId integer, category varchar(15), itemAmount varchar(15), itemName varchar(15), itemPrice varchar(15), productType varchar(15), itemQuantity integer, brand varchar(15), itemOption varchar(15), productId integer, variationId integer, customerTel varchar(15), customer varchar(255), discount varchar(15), holdText varchar(15), date TEXT NOT NULL)');
+
+    await db.execute(
+        'create table poslix_printer_settings(id integer primary key autoincrement, printer_name varchar(15), connection_method varchar(15), printer_ip varchar(15), print_type varchar(15), printer_status integer)');
 
   }
 
@@ -122,9 +126,66 @@ class DbHelper {
     return result.map((map) => HoldOrderItemsModel.fromMap(map)).toList();
   }
 
+  // Printer Settings Operations----------------------------------------------------------------------------------------
+  Future<PrintSettingModel> createPrinterSetting(PrintSettingModel printerSetting) async {
+    final db = _db!.database;
 
+    await db.insert('poslix_printer_settings', printerSetting.toMap());
+
+    return printerSetting;
+  }
+
+  Future<int> deletePrinterSetting(int printerId) async {
+    if (_db == null) {
+      await initDB(dbdName);
+    }
+
+    final db = _db!.database;
+
+    return db.delete('poslix_printer_settings', where: 'id = ?', whereArgs: [printerId]);
+  }
+
+  Future<int> updatePrinterSetting(
+      PrintSettingModel printerSetting, int printerId) async {
+    if (_db == null) {
+      await initDB(dbdName);
+    }
+
+    final db = _db!.database;
+    return db.update('poslix_printer_settings', printerSetting.toMap(),
+        where: 'id = ?', whereArgs: [printerId]);
+  }
+
+  Future<List<PrintSettingModel>> getAllPrinters() async {
+    if (_db == null) {
+      await initDB(dbdName);
+    }
+
+    final db = _db!.database;
+
+    final result = await db.rawQuery(
+        'SELECT * FROM poslix_printer_settings Order by id ASC');
+    return result.map((map) => PrintSettingModel.fromMap(map)).toList();
+  }
+
+  Future<PrintSettingModel> getPrinterById(int printerId) async {
+    if (_db == null) {
+      await initDB(dbdName);
+    }
+
+    final db = _db!.database;
+
+    final maps = await db.query('poslix_printer_settings',
+        where: 'id = ?',
+        whereArgs: [printerId]);
+
+    if (maps.isNotEmpty) {
+      return PrintSettingModel.fromMap(maps.first);
+    } else {
+      throw Exception('date not found');
+    }
+  }
   // Others -----------------------------------------------------------------------------------------------
-
   Future close() async {
     if (_db == null) {
       await initDB(dbdName);

@@ -15,8 +15,8 @@ Widget printerNameValue(BuildContext context,
       mainAxisSize: MainAxisSize.min,
       children: [
         TextField(
-            autofocus: false,
-            keyboardType: TextInputType.number,
+            autofocus: true,
+            keyboardType: TextInputType.text,
             controller: printerNameEditingController,
             decoration: InputDecoration(
                 hintText: AppStrings.printerName.tr(),

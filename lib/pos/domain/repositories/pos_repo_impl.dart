@@ -30,7 +30,7 @@ import '../response/open_register_response.dart';
 import '../response/payment_method_model.dart';
 import '../response/payment_methods_model.dart';
 import '../response/pricing_group_model.dart';
-import '../response/printing_settings_model.dart';
+import '../entities/printing_settings_model.dart';
 import '../response/register_data_model.dart';
 import '../response/sales_report_data_model.dart';
 import '../response/sales_report_items_model.dart';
@@ -214,22 +214,6 @@ class POSRepositoryImpl extends POSRepository {
   }
 
   // Location Settings --------------------------------------------------------------------------
-  @override
-  Future<List<PrintSettingResponse>> getPrintingSettings(final String token, final int locationId) async {
-    List<PrintSettingResponse> res = <PrintSettingResponse>[];
-    try {
-      return await _dio.get('api/business/locations/$locationId',
-          headers: {'Authorization': 'Bearer $token'}).then((response) {
-        res = (response.data['result']['print_setting'] as List).map((e) {
-          return PrintSettingResponse.fromJson(e);
-        }).toList();
-        return res;
-      });
-    } catch (e) {
-      throw e.toString();
-    }
-  }
-
   @override
   Future<LocationSettingsResponse> getLocationSettings(String token, int locationId) async {
     var res;

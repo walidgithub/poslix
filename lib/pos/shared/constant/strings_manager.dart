@@ -104,7 +104,9 @@ class AppStrings{
 
   static const printerSettings  = 'Printer Settings';
   static const printerName  = 'Printer Name';
+  static const editPrinterName  = 'Edit Printer Name';
   static const printerIP = 'Printer IP';
+  static const editPrinterIP = 'Edit Printer IP';
   static const choosePrintType = 'Choose Print Type';
   static const chooseConnectionMethod = 'Choose Connection Method';
   static const choosePrinterStatus = 'Choose Printer Status';
@@ -113,6 +115,8 @@ class AppStrings{
   static const addPrinter = 'Add Printer';
   static const editPrinter = 'Edit Printer';
   static const newPrinter = 'New Printer';
+  static const deletePrinter = 'Delete Printer';
+  static const allPrinters = 'All Printers';
 
   static const cashInHand  = 'Cash in hand';
   static const difference  = 'Difference';
@@ -191,4 +195,5 @@ class AppStrings{
   static const description  = 'Description';
   static const unitPrice  = 'Unit Price';
   static const noInternet  = 'No Internet';
+  static const completeRequired  = 'All Fields Required';
 }

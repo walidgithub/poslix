@@ -1,7 +1,7 @@
 import '../../../../domain/response/appearance_model.dart';
 import '../../../../domain/response/check_out_model.dart';
 import '../../../../domain/response/location_settings_model.dart';
-import '../../../../domain/response/printing_settings_model.dart';
+import '../../../../domain/entities/printing_settings_model.dart';
 
 abstract class MainViewState{}
 
@@ -114,8 +114,29 @@ class LoadingErrorCurrency extends MainViewState{
   LoadingErrorCurrency(this.errorText);
 }
 
+class InsertPrintingSettings  extends MainViewState{}
+class InsertErrorPrintingSettings extends MainViewState{
+  String errorText;
+
+  InsertErrorPrintingSettings(this.errorText);
+}
+
+class DeletePrintingSettings extends MainViewState{}
+class DeleteErrorPrintingSettings  extends MainViewState{
+  String errorText;
+
+  DeleteErrorPrintingSettings(this.errorText);
+}
+
+class UpdatePrintingSettings extends MainViewState{}
+class UpdateErrorPrintingSettings  extends MainViewState{
+  String errorText;
+
+  UpdateErrorPrintingSettings(this.errorText);
+}
+
 class LoadedPrintingSettings extends MainViewState{
-  List<PrintSettingResponse> printSettingResponse;
+  List<PrintSettingModel> printSettingResponse;
 
   LoadedPrintingSettings(this.printSettingResponse);
 }
@@ -123,6 +144,17 @@ class LoadingErrorPrintingSettings extends MainViewState{
   String errorText;
 
   LoadingErrorPrintingSettings(this.errorText);
+}
+
+class LoadedByIdPrintingSettings extends MainViewState{
+  PrintSettingModel printSettingResponse;
+
+  LoadedByIdPrintingSettings(this.printSettingResponse);
+}
+class LoadingByIdErrorPrintingSettings extends MainViewState{
+  String errorText;
+
+  LoadingByIdErrorPrintingSettings(this.errorText);
 }
 
 class LoadedLocationSettings extends MainViewState{

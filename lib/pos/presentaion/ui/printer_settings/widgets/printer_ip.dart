@@ -16,7 +16,7 @@ Widget printerIPValue(BuildContext context,
       children: [
         TextField(
             autofocus: false,
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.text,
             controller: printerIPEditingController,
             decoration: InputDecoration(
                 hintText: AppStrings.printerIP.tr(),
