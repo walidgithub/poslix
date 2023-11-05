@@ -18,6 +18,7 @@ class AppStrings{
   static const noCreditWhenCheck  = 'There is no stock from item';
   static const errorInCloseRegister  = 'Error In Close Register';
   static const errorInPayment  = 'Error In Payment';
+  static const missedPrintingSetting  = 'Missed Printing Setting';
   static const noPermission  = 'You have no permission';
   static const someThingWentWrong  = 'Something went wrong';
 

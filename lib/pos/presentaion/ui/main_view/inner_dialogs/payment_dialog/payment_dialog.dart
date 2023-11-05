@@ -339,13 +339,28 @@ class _PaymentDialogState extends State<PaymentDialog> {
                 connectionMethod = n.connectionMethod!;
                 return;
               } else {
+                CustomDialog.show(
+                    context,
+                    AppStrings.missedPrintingSetting.tr(),
+                    const Icon(Icons.close),
+                    ColorManager.white,
+                    AppConstants.durationOfSnackBar,
+                    ColorManager.delete);
                 printerIP = AppConstants.globalPrinterIp;
                 printerType = AppConstants.globalPrinterType;
                 connectionMethod = AppConstants.globalConnectionMethod;
               }
             }
 
-          } else if (state is LoadingErrorPrintingSettings) {}
+          } else if (state is LoadingErrorPrintingSettings) {
+            CustomDialog.show(
+                context,
+                AppStrings.errorInPayment.tr(),
+                const Icon(Icons.close),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.delete);
+          }
         },
         builder: (context, state) {
           return Scaffold(
