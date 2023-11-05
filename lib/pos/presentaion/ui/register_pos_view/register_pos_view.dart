@@ -112,7 +112,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
           _changeLanguage();
         });
       },
-      heroTag: AppStrings.language.tr(),
       tooltip: AppStrings.language.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
@@ -138,7 +137,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
               _appPreferences.logout();
               Navigator.of(context).pushReplacementNamed(Routes.loginRoute);
             },
-            heroTag: AppStrings.logout.tr(),
             tooltip: AppStrings.logout.tr(),
             backgroundColor: ColorManager.primary,
             child: SvgPicture.asset(
@@ -157,7 +155,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
       onPressed: () {
         reload();
       },
-      heroTag: AppStrings.reload.tr(),
       tooltip: AppStrings.reload.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(

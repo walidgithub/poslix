@@ -51,8 +51,6 @@ class PaymentDialog extends StatefulWidget {
   Function done;
   double deviceWidth;
   int relatedInvoiceId;
-  String printerIP;
-  String printerType;
   bool isMultiLang;
   static void show(
           BuildContext context,
@@ -69,8 +67,6 @@ class PaymentDialog extends StatefulWidget {
           Function done,
           double deviceWidth,
       int relatedInvoiceId,
-  String printerIP,
-  String printerType,
       bool isMultiLang
       ) =>
       isApple()
@@ -90,7 +86,7 @@ class PaymentDialog extends StatefulWidget {
                         taxType: taxType,
                         taxAmount: taxAmount,
                         done: done,
-                        deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,printerIP:printerIP,printerType:printerType,isMultiLang:isMultiLang
+                        deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,isMultiLang:isMultiLang
                       ))
               .then((_) => FocusScope.of(context).requestFocus(FocusNode()))
           : showDialog<void>(
@@ -109,7 +105,7 @@ class PaymentDialog extends StatefulWidget {
                 taxType: taxType,
                 taxAmount: taxAmount,
                 done: done,
-                deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,printerIP:printerIP,printerType:printerType,isMultiLang:isMultiLang
+                deviceWidth: deviceWidth, relatedInvoiceId: relatedInvoiceId,isMultiLang:isMultiLang
               ),
             ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
@@ -129,9 +125,7 @@ class PaymentDialog extends StatefulWidget {
       required this.taxAmount,
       required this.done,
       required this.deviceWidth,
-        required this.relatedInvoiceId,
-        required this.printerIP,
-        required this.printerType,required this.isMultiLang,
+        required this.relatedInvoiceId,required this.isMultiLang,
       super.key});
 
   @override
@@ -243,6 +237,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
   double? balance;
   double? due;
 
+  String printerIP = '';
+  String printerType = '';
+  String connectionMethod = '';
+
   double totalNewPaying = 0.0;
 
   int orderId = 0;
@@ -296,7 +294,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<MainViewCubit>()
-        ..getAppearance(widget.locationId),
+        ..getAppearance(widget.locationId)..getPrintingSettings(),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
@@ -331,6 +329,23 @@ class _PaymentDialogState extends State<PaymentDialog> {
             loading = true;
             appearanceResponse = state.appearanceResponse;
           } else if (state is LoadingErrorAppearance) {}
+
+          // printing settings
+          if (state is LoadedPrintingSettings) {
+            for (var n in state.printSettingResponse) {
+              if (n.printerStatus == 1) {
+                printerIP = n.printerIP!;
+                printerType = n.printType!;
+                connectionMethod = n.connectionMethod!;
+                return;
+              } else {
+                printerIP = AppConstants.globalPrinterIp;
+                printerType = AppConstants.globalPrinterType;
+                connectionMethod = AppConstants.globalConnectionMethod;
+              }
+            }
+
+          } else if (state is LoadingErrorPrintingSettings) {}
         },
         builder: (context, state) {
           return Scaffold(
@@ -604,52 +619,62 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    if (widget.printerType == 'Bluetooth') {
-      // Navigator.of(context).pushNamed(
-      //     Routes.thermalPrint,
-      //     arguments: GoToThermal(
-      //         total: widget.total.toString()));
-    } else if (widget.printerType == 'A4') {
-      // final image = await imageFromAssetBundle(
-      //   "assets/images/logo.jpeg",
-      // );
-      // final doc = pw.Document();
-      // doc.addPage(pw.Page(
-      //     pageFormat: PdfPageFormat.a4,
-      //     build: (pw.Context context) {
-      //       return buildPrintableData(image,
-      //           businessAddress,
-      //           businessEmail,
-      //           businessVat,
-      //           customerNumber,
-      //           widget.currencyCode
-      //           ,today,
-      //           businessName,
-      //           businessImage,
-      //           businessTell,
-      //           orderId,
-      //           widget.taxAmount,
-      //           widget.discountAmount,
-      //           widget.total,
-      //           totalPaying!,
-      //           due!);
-      //     }));
-      // await Printing.layoutPdf(
-      //     onLayout: (PdfPageFormat format) async => doc.save());
-    } else if (widget.printerType == 'receipt') {
-      screenshotController
-          .capture(delay: const Duration(milliseconds: 10))
-          .then((capturedImage) async {
-        theImageThatComesFromThePrinter = capturedImage!;
-        setState(() {
-          theImageThatComesFromThePrinter = capturedImage;
-          goToPrint(widget.printerIP, theImageThatComesFromThePrinter);
+    if (printerType == 'A4') {
+      if (connectionMethod == 'Wifi') {
+
+      } else if (connectionMethod == 'USB') {
+        // final image = await imageFromAssetBundle(
+        //   "assets/images/logo.jpeg",
+        // );
+        // final doc = pw.Document();
+        // doc.addPage(pw.Page(
+        //     pageFormat: PdfPageFormat.a4,
+        //     build: (pw.Context context) {
+        //       return buildPrintableData(image,
+        //           businessAddress,
+        //           businessEmail,
+        //           businessVat,
+        //           customerNumber,
+        //           widget.currencyCode
+        //           ,today,
+        //           businessName,
+        //           businessImage,
+        //           businessTell,
+        //           orderId,
+        //           widget.taxAmount,
+        //           widget.discountAmount,
+        //           widget.total,
+        //           totalPaying!,
+        //           due!);
+        //     }));
+        // await Printing.layoutPdf(
+        //     onLayout: (PdfPageFormat format) async => doc.save());
+      } else if (connectionMethod == 'Bluetooth') {
+
+      }
+    } else if (printerType == 'receipt') {
+      if (connectionMethod == 'Wifi') {
+        screenshotController
+            .capture(delay: const Duration(milliseconds: 10))
+            .then((capturedImage) async {
+          theImageThatComesFromThePrinter = capturedImage!;
+          setState(() {
+            theImageThatComesFromThePrinter = capturedImage;
+            goToPrint(printerIP, theImageThatComesFromThePrinter);
+          });
+        }).catchError((onError) {
+          if (kDebugMode) {
+            print(onError);
+          }
         });
-      }).catchError((onError) {
-        if (kDebugMode) {
-          print(onError);
-        }
-      });
+      } else if (connectionMethod == 'USB') {
+
+      } else if (connectionMethod == 'Bluetooth') {
+        // Navigator.of(context).pushNamed(
+        //     Routes.thermalPrint,
+        //     arguments: GoToThermal(
+        //         total: widget.total.toString()));
+      }
     }
 
     await Future.delayed(const Duration(milliseconds: 2000));

@@ -164,6 +164,8 @@
   "Choose Printer Status": "اختر حالة الاتصال",
   "Edit Printer Name": "تعديل اسم الطابعة",
   "Edit Printer IP": "تعديل IP الطابعة",
+  "Printer Status": "حالة الطابعة",
+  "Same Printer Name": "يوجد طابعة بنفس الاسم",
   "Add Printer": "اضافة طابعة",
   "Edit Printer": "تعديل طابعة",
   "New Printer": "طابعة جديدة",

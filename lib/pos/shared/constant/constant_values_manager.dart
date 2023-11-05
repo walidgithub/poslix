@@ -3,8 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppConstants {
 
   static const String baseUrl = 'https://laravel-poslix.onrender.com/';
-  static const String printerIp = '';
-  // static const String printerIp = '192.168.1.114';
+  static const String globalPrinterIp = '192.168.1.114';
+  static const String globalPrinterType = 'receipt';
+  static const String globalConnectionMethod = 'Wifi';
 
   static double heightBetweenElements = 20.h;
   static double bigHeightBetweenElements = 60.h;

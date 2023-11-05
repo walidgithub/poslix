@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/presentaion/ui/components/close_button.dart';
+import 'package:poslix_app/pos/presentaion/ui/printer_settings/printer_table/printer_table_columns.dart';
+import 'package:poslix_app/pos/presentaion/ui/printer_settings/printer_table/printer_table_head.dart';
 import 'package:poslix_app/pos/presentaion/ui/printer_settings/widgets/printer_ip.dart';
 import 'package:poslix_app/pos/presentaion/ui/printer_settings/widgets/printer_name.dart';
 import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
@@ -52,9 +54,7 @@ class PrinterSettingsDialog extends StatefulWidget {
 
 class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
   TextEditingController printerNameEditingController = TextEditingController();
-  TextEditingController editPrinterNameEditingController = TextEditingController();
   TextEditingController printerIPEditingController = TextEditingController();
-  TextEditingController editPrinterIPEditingController = TextEditingController();
 
   List<String> listOfPrinters = [];
   List<String> listOfPrinterIPs = [];
@@ -62,8 +62,16 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
   List<String> listOfConnectionMethods = ['Wifi', 'USB', 'Bluetooth'];
   List<String> listOfStatus = ['On', 'Off'];
 
-  var _selectedPrinter;
-  var _selectedPrinterIP;
+  int getIndex(int index) {
+    int finalIndex = index + 1;
+    return finalIndex;
+  }
+
+  final int _currentSortColumn = 0;
+  final bool _isSortAsc = true;
+
+  String _selectedPrinter = '';
+  String _selectedPrinterIP = '';
   var _selectedPrinterType;
   var _selectedConnectionMethod;
   var _selectedStatus;
@@ -72,8 +80,9 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
 
   bool keyPadOn = false;
   bool addNew = true;
-  bool showEditName = false;
-  bool showEditIP = false;
+  bool editData = false;
+  bool endNameEdit = false;
+  bool endIPEdit = false;
 
   @override
   void dispose() {
@@ -88,10 +97,7 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is InsertPrintingSettings) {
-
-          } else if (state is InsertErrorPrintingSettings) {
-
-          }
+          } else if (state is InsertErrorPrintingSettings) {}
 
           if (state is DeletePrintingSettings) {
           } else if (state is DeleteErrorPrintingSettings) {}
@@ -112,12 +118,16 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
           } else if (state is LoadingErrorPrintingSettings) {}
 
           if (state is LoadedByIdPrintingSettings) {
-            setState(() {
-              _selectedPrinterIP = state.printSettingResponse.printerIP;
-              _selectedConnectionMethod = state.printSettingResponse.connectionMethod;
+              _selectedPrinterId  = state.printSettingResponse.id;
+              _selectedPrinter = state.printSettingResponse.printerName!;
+              printerNameEditingController.text = state.printSettingResponse.printerName!;
+              _selectedPrinterIP = state.printSettingResponse.printerIP!;
+              printerIPEditingController.text = state.printSettingResponse.printerIP!;
+              _selectedConnectionMethod =
+                  state.printSettingResponse.connectionMethod;
               _selectedPrinterType = state.printSettingResponse.printType;
-              _selectedStatus = state.printSettingResponse.printerStatus == 1 ? 'Off' : 'On';
-            });
+              _selectedStatus =
+                  state.printSettingResponse.printerStatus == 1 ? 'On' : 'Off';
           } else if (state is LoadingByIdErrorPrintingSettings) {}
         },
         builder: (context, state) {
@@ -154,7 +164,31 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
                                       height:
                                           AppConstants.heightBetweenElements,
                                     ),
-                                    printerData(context),
+                                    newPrinter(context),
+                                    SizedBox(
+                                      height:
+                                          AppConstants.heightBetweenElements,
+                                    ),
+                                    addNew
+                                        ? printerData(context)
+                                        : Expanded(
+                                            flex: 2,
+                                            child: SingleChildScrollView(
+                                                scrollDirection: Axis.vertical,
+                                                child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    child: createDataTable(
+                                                        context,
+                                                        _currentSortColumn,
+                                                        _isSortAsc,
+                                                        createColumns(
+                                                            widget.deviceWidth),
+                                                        createRows(
+                                                            context,
+                                                            widget
+                                                                .deviceWidth!)))),
+                                          ),
                                     buttons(context)
                                   ],
                                 ),
@@ -177,17 +211,12 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    newPrinter(context),
-                    addNew
-                        ? printerNameValue(context,
-                            printerNameEditingController, widget.deviceWidth)
-                        : choosePrinter(context),
-                    addNew
-                        ? printerIPValue(context, printerIPEditingController,
-                            widget.deviceWidth)
-                        : choosePrinterIP(context),
+                    printerNameValue(context, printerNameEditingController,
+                        widget.deviceWidth, editData, _selectedPrinter, getNewPrinterNameValue, endNameEdit),
+                    printerIPValue(context, printerIPEditingController,
+                        widget.deviceWidth, editData, _selectedPrinterIP, getNewPrinterIPValue, endIPEdit),
                     choosePrintType(context),
-                    chooseConnectionMethod(context),
+                    // chooseConnectionMethod(context),
                     choosePrinterStatus(context),
                     const Divider(
                       thickness: AppSize.s1,
@@ -213,215 +242,16 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
             borderWidth: 1.w));
   }
 
-  Widget choosePrinter(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Expanded(
-              child: showEditName
-                  ? TextField(
-                      autofocus: true,
-                      keyboardType: TextInputType.text,
-                      controller: editPrinterNameEditingController,
-                      decoration: InputDecoration(
-                          hintText: AppStrings.editPrinterName.tr(),
-                          contentPadding: const EdgeInsets.fromLTRB(
-                              AppPadding.p10, 0, AppPadding.p5, 0),
-                          hintStyle: TextStyle(fontSize: AppSize.s12.sp),
-                          labelText: AppStrings.editPrinterName.tr(),
-                          labelStyle: TextStyle(
-                              fontSize: AppSize.s15.sp,
-                              color: ColorManager.primary),
-                          border: InputBorder.none))
-                  : DropdownButton2(
-                      buttonStyleData: ButtonStyleData(
-                        height: 47.h,
-                        width: 280.w,
-                        padding: const EdgeInsets.only(
-                            left: AppPadding.p14, right: AppPadding.p14),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(AppSize.s5),
-                          border: Border.all(
-                            color: ColorManager.primary,
-                          ),
-                          color: ColorManager.white,
-                        ),
-                        elevation: 2,
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        maxHeight: 400.h,
-                        width: 270.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(AppSize.s5),
-                          color: ColorManager.white,
-                        ),
-                        offset: const Offset(0, 0),
-                        scrollbarTheme: ScrollbarThemeData(
-                          radius: const Radius.circular(40),
-                          thickness: MaterialStateProperty.all<double>(6),
-                          thumbVisibility:
-                              MaterialStateProperty.all<bool>(true),
-                        ),
-                      ),
-                      underline: Container(),
-                      items: listOfPrinters.map((item) {
-                        return DropdownMenuItem(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: TextStyle(fontSize: AppSize.s15.sp),
-                            ));
-                      }).toList(),
-                      onChanged: (selectedPrinter) async {
-                        setState(() {
-                          _selectedPrinter = selectedPrinter;
-                          _selectedPrinterId = printSettingsData.where((element) => element.printerName == _selectedPrinter).first.id;
-                        });
-                        await MainViewCubit.get(context)
-                            .getPrinterById(_selectedPrinterId!);
-                      },
-                      value: _selectedPrinter,
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          Text(
-                            AppStrings.choosePrinterName.tr(),
-                            style: TextStyle(
-                                color: ColorManager.primary,
-                                fontSize: AppSize.s15.sp),
-                          ),
-                          SizedBox(
-                            width: AppConstants.smallDistance,
-                          )
-                        ],
-                      ),
-                      style: TextStyle(
-                          color: ColorManager.primary,
-                          fontSize: AppSize.s20.sp),
-                    )),
-          SizedBox(
-            width: AppConstants.smallWidthBetweenElements,
-          ),
-          Bounceable(
-              duration:
-                  Duration(milliseconds: AppConstants.durationOfBounceable),
-              onTap: () async {
-                setState(() {
-                  showEditName = !showEditName;
-                });
-              },
-              child: Icon(
-                showEditName ? Icons.refresh : Icons.edit,
-                color: ColorManager.orders,
-              ))
-        ],
-      ),
-    );
+  void getNewPrinterNameValue(String newValue) {
+    endNameEdit = true;
+    endIPEdit = true;
+    printerNameEditingController.text = newValue;
   }
 
-  Widget choosePrinterIP(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Expanded(
-              child: showEditIP
-                  ? TextField(
-                      autofocus: true,
-                      keyboardType: TextInputType.text,
-                      controller: editPrinterIPEditingController,
-                      decoration: InputDecoration(
-                          hintText: AppStrings.editPrinterIP.tr(),
-                          contentPadding: const EdgeInsets.fromLTRB(
-                              AppPadding.p10, 0, AppPadding.p5, 0),
-                          hintStyle: TextStyle(fontSize: AppSize.s12.sp),
-                          labelText: AppStrings.editPrinterIP.tr(),
-                          labelStyle: TextStyle(
-                              fontSize: AppSize.s15.sp,
-                              color: ColorManager.primary),
-                          border: InputBorder.none))
-                  : DropdownButton2(
-                      buttonStyleData: ButtonStyleData(
-                        height: 47.h,
-                        width: 280.w,
-                        padding: const EdgeInsets.only(
-                            left: AppPadding.p14, right: AppPadding.p14),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(AppSize.s5),
-                          border: Border.all(
-                            color: ColorManager.primary,
-                          ),
-                          color: ColorManager.white,
-                        ),
-                        elevation: 2,
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        maxHeight: 400.h,
-                        width: 270.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(AppSize.s5),
-                          color: ColorManager.white,
-                        ),
-                        offset: const Offset(0, 0),
-                        scrollbarTheme: ScrollbarThemeData(
-                          radius: const Radius.circular(40),
-                          thickness: MaterialStateProperty.all<double>(6),
-                          thumbVisibility:
-                              MaterialStateProperty.all<bool>(true),
-                        ),
-                      ),
-                      underline: Container(),
-                      items: listOfPrinterIPs.map((item) {
-                        return DropdownMenuItem(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: TextStyle(fontSize: AppSize.s15.sp),
-                            ));
-                      }).toList(),
-                      onChanged: (selectedPrinterIP) {
-                        setState(() {
-                          _selectedPrinterIP = selectedPrinterIP;
-                        });
-                      },
-                      value: _selectedPrinterIP,
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          Text(
-                            AppStrings.choosePrinterIP.tr(),
-                            style: TextStyle(
-                                color: ColorManager.primary,
-                                fontSize: AppSize.s15.sp),
-                          ),
-                          SizedBox(
-                            width: AppConstants.smallDistance,
-                          )
-                        ],
-                      ),
-                      style: TextStyle(
-                          color: ColorManager.primary,
-                          fontSize: AppSize.s20.sp),
-                    )),
-          SizedBox(
-            width: AppConstants.smallWidthBetweenElements,
-          ),
-          Bounceable(
-              duration:
-                  Duration(milliseconds: AppConstants.durationOfBounceable),
-              onTap: () async {
-                setState(() {
-                  showEditIP = !showEditIP;
-                });
-              },
-              child: Icon(
-                showEditIP ? Icons.refresh : Icons.edit,
-                color: ColorManager.orders,
-              ))
-        ],
-      ),
-    );
+  void getNewPrinterIPValue(String newValue) {
+    endIPEdit = true;
+    endNameEdit = true;
+    printerIPEditingController.text = newValue;
   }
 
   Widget choosePrintType(BuildContext context) {
@@ -636,56 +466,36 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
 
   Widget buttons(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         closeButton(context),
-        Bounceable(
-            duration: Duration(milliseconds: AppConstants.durationOfBounceable),
-            onTap: () async {
-              await addOrEditPrinter(context);
-            },
-            child: containerComponent(
-                context,
-                Center(
-                    child: Text(
-                  addNew
-                      ? AppStrings.addPrinter.tr()
-                      : AppStrings.editPrinter.tr(),
-                  style: TextStyle(
-                      color: ColorManager.white, fontSize: AppSize.s14.sp),
-                )),
-                height: 40.h,
-                width: widget.deviceWidth <= 600
-                    ? addNew
-                        ? 170.h
-                        : 100.h
-                    : 50.w,
-                color: ColorManager.primary,
-                borderRadius: AppSize.s5,
-                borderColor: ColorManager.primary,
-                borderWidth: 0.6.w)),
+        SizedBox(
+          width: AppConstants.smallDistance,
+        ),
         addNew
-            ? Container()
-            : Bounceable(
+            ? Bounceable(
                 duration:
                     Duration(milliseconds: AppConstants.durationOfBounceable),
                 onTap: () async {
-                  // delete printer
+                  await addOrEditPrinter(context);
                 },
                 child: containerComponent(
                     context,
                     Center(
                         child: Text(
-                      AppStrings.deletePrinter.tr(),
+                      editData
+                          ? AppStrings.editPrinter.tr()
+                          : AppStrings.addPrinter.tr(),
                       style: TextStyle(
                           color: ColorManager.white, fontSize: AppSize.s14.sp),
                     )),
                     height: 40.h,
-                    width: widget.deviceWidth <= 600 ? 100.h : 50.w,
-                    color: ColorManager.delete,
+                    width: widget.deviceWidth <= 600 ? 170.h : 50.w,
+                    color: ColorManager.primary,
                     borderRadius: AppSize.s5,
-                    borderColor: ColorManager.delete,
-                    borderWidth: 0.6.w)),
+                    borderColor: ColorManager.primary,
+                    borderWidth: 0.6.w))
+            : Container(),
       ],
     );
   }
@@ -699,8 +509,6 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
             onTap: () async {
               setState(() {
                 addNew = !addNew;
-                showEditName = false;
-                showEditIP = false;
               });
               await MainViewCubit.get(context).getPrintingSettings();
             },
@@ -727,90 +535,167 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
   Future<void> addOrEditPrinter(BuildContext context) async {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
-
-    if (addNew) {
-      if (printerNameEditingController.text == '' ||
-          printerIPEditingController.text == '' ||
-          _selectedPrinterType == null ||
-          _selectedConnectionMethod == null ||
-          _selectedStatus == null) {
-        CustomDialog.show(
-            context,
-            AppStrings.completeRequired.tr(),
-            const Icon(Icons.warning_amber_rounded),
-            ColorManager.white,
-            AppConstants.durationOfSnackBar,
-            ColorManager.hold);
-        return;
-      }
+    _selectedConnectionMethod = 'Wifi';
+    if (printerNameEditingController.text == '' ||
+        printerIPEditingController.text == '' ||
+        _selectedPrinterType == null ||
+        _selectedConnectionMethod == null ||
+        _selectedStatus == null) {
+      CustomDialog.show(
+          context,
+          AppStrings.completeRequired.tr(),
+          const Icon(Icons.warning_amber_rounded),
+          ColorManager.white,
+          AppConstants.durationOfSnackBar,
+          ColorManager.hold);
+      return;
+    }
+    if (!editData) {
       PrintSettingModel printSettingModel = PrintSettingModel(
         id: null,
         printerName: printerNameEditingController.text,
         printerIP: printerIPEditingController.text,
         printType: _selectedPrinterType,
         connectionMethod: _selectedConnectionMethod,
-        printerStatus: _selectedStatus == 'No' ? 0 : 1,
+        printerStatus: _selectedStatus == 'On' ? 1 : 0,
       );
 
-      await MainViewCubit.get(context).addPrintingSetting(printSettingModel);
-      await MainViewCubit.get(context).getPrintingSettings();
-    } else {
-      if (showEditName
-          ? editPrinterNameEditingController.text == ''
-          : _selectedPrinter == null || showEditIP
-              ? editPrinterIPEditingController.text == ''
-              : _selectedPrinterIP == null ||
-                  _selectedPrinterType == null ||
-                  _selectedConnectionMethod == null ||
-                  _selectedStatus == null) {
-        CustomDialog.show(
-            context,
-            AppStrings.completeRequired.tr(),
-            const Icon(Icons.warning_amber_rounded),
-            ColorManager.white,
-            AppConstants.durationOfSnackBar,
-            ColorManager.hold);
-        return;
+      for(var t in printSettingsData) {
+        if (t.printerName == printerNameEditingController.text) {
+          CustomDialog.show(
+              context,
+              AppStrings.samePrinterName.tr(),
+              const Icon(Icons.warning_amber_rounded),
+              ColorManager.white,
+              AppConstants.durationOfSnackBar,
+              ColorManager.hold);
+          return;
+        }
       }
+
+      if (_selectedStatus == 'On') {
+        await MainViewCubit.get(context).updateAllPrintingSetting();
+      }
+
+      await MainViewCubit.get(context).addPrintingSetting(printSettingModel);
+
+    } else {
       PrintSettingModel printSettingModel = PrintSettingModel(
         id: _selectedPrinterId,
-        printerName:
-            showEditName ? editPrinterNameEditingController.text : _selectedPrinter,
-        printerIP:
-            showEditIP ? editPrinterIPEditingController.text : _selectedPrinterIP,
+        printerName: printerNameEditingController.text,
+        printerIP: printerIPEditingController.text,
         printType: _selectedPrinterType,
         connectionMethod: _selectedConnectionMethod,
-        printerStatus: _selectedStatus == 'On' ? 0 : 1,
+        printerStatus: _selectedStatus == 'On' ? 1 : 0,
       );
+
+      for(var t in printSettingsData) {
+        if (t.printerName == printerNameEditingController.text) {
+          CustomDialog.show(
+              context,
+              AppStrings.samePrinterName.tr(),
+              const Icon(Icons.warning_amber_rounded),
+              ColorManager.white,
+              AppConstants.durationOfSnackBar,
+              ColorManager.hold);
+          return;
+        }
+      }
+
+      if (_selectedStatus == 'On') {
+        await MainViewCubit.get(context).updateAllPrintingSetting();
+      }
 
       await MainViewCubit.get(context)
           .updatePrintingSetting(printSettingModel, _selectedPrinterId!);
-      await MainViewCubit.get(context).getPrintingSettings();
     }
 
     setState(() {
-      addNew = !addNew;
-      reload();
-    });
-  }
-
-  Future<void> deletePrinter(BuildContext context) async {
-    await Future.delayed(
-        Duration(milliseconds: AppConstants.durationOfBounceable));
-
-    await MainViewCubit.get(context).deletePrintingSetting(_selectedPrinterId!);
-    await MainViewCubit.get(context).getPrintingSettings();
-
-    setState(() {
-      addNew = !addNew;
+      editData = false;
+      addNew = true;
       reload();
     });
   }
 
   void reload() {
     printerNameEditingController.text = '';
-    editPrinterNameEditingController.text = '';
     printerIPEditingController.text = '';
-    editPrinterIPEditingController.text = '';
+  }
+
+  List<DataRow> createRows(BuildContext context, double deviceWidth) {
+    return printSettingsData
+        .map((tmpOrder) => DataRow(cells: [
+              DataCell(Text(
+                getIndex(printSettingsData.indexOf(tmpOrder)).toString(),
+                style: TextStyle(color: ColorManager.edit),
+              )),
+              DataCell(SizedBox(
+                width: widget.deviceWidth <= 600 ? 100.w : 40.w,
+                child: Center(
+                    child: Text(
+                        printSettingsData[printSettingsData.indexOf(tmpOrder)]
+                            .printerName
+                            .toString(),
+                        style: TextStyle(fontSize: AppSize.s12.sp),
+                        textAlign: TextAlign.center)),
+              )),
+              DataCell(SizedBox(
+                width: widget.deviceWidth <= 600 ? 100.w : 42.w,
+                child: Center(
+                    child: Text(
+                        printSettingsData[printSettingsData.indexOf(tmpOrder)]
+                            .printerStatus == 1 ? 'On' : 'Off',
+                        style: TextStyle(fontSize: AppSize.s12.sp),
+                        textAlign: TextAlign.center)),
+              )),
+              DataCell(SizedBox(
+                width: widget.deviceWidth <= 600 ? 50.w : 20.w,
+                child: Center(
+                    child: Row(
+                      children: [
+                        Bounceable(
+                            duration: Duration(
+                                milliseconds: AppConstants.durationOfBounceable),
+                            onTap: () async {
+                              await Future.delayed(Duration(
+                                  milliseconds: AppConstants.durationOfBounceable));
+                              await MainViewCubit.get(context).getPrinterById(printSettingsData[printSettingsData.indexOf(tmpOrder)]
+                                  .id!);
+                              setState(() {
+                                addNew = !addNew;
+                                editData = true;
+                              });
+                            },
+                            child: Icon(
+                              Icons.edit,
+                              color: ColorManager.edit,
+                              size: AppSize.s20.sp,
+                            )),
+                        SizedBox(
+                          width: AppConstants.smallDistance,
+                        ),
+                        Bounceable(
+                            duration: Duration(
+                                milliseconds: AppConstants.durationOfBounceable),
+                            onTap: () async {
+                              await Future.delayed(Duration(
+                                  milliseconds: AppConstants.durationOfBounceable));
+                              await MainViewCubit.get(context).deletePrintingSetting(printSettingsData[printSettingsData.indexOf(tmpOrder)]
+                                  .id!);
+                              await MainViewCubit.get(context).getPrintingSettings();
+                              setState(() {
+
+                              });
+                            },
+                            child: Icon(
+                              Icons.delete,
+                              color: ColorManager.delete,
+                              size: AppSize.s20.sp,
+                            ))
+                      ],
+                    )),
+              )),
+            ]))
+        .toList();
   }
 }

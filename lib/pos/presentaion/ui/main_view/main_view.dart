@@ -90,9 +90,6 @@ class _MainViewState extends State<MainView> {
 
   bool isMultiLang = false;
 
-  String printerIP = '';
-  String printerType = '';
-
   List<CategoriesResponse> listOfCategories = [];
   List<BrandsResponse> listOfBrands = [];
 
@@ -197,8 +194,7 @@ class _MainViewState extends State<MainView> {
         _selectedCategory = listOfCategories[currentId].name;
         listOfProducts = listOfCategories[currentId].products;
         if (listOfCategories[currentId].products.isNotEmpty) {
-          listOfVariations =
-              listOfCategories[currentId].products[0].variations;
+          listOfVariations = listOfCategories[currentId].products[0].variations;
           listOfStocks = listOfCategories[currentId].products[0].stocks;
         } else {
           listOfVariations = [];
@@ -215,8 +211,7 @@ class _MainViewState extends State<MainView> {
         _selectedCategory = listOfBrands[currentId].name;
         listOfProducts = listOfBrands[currentId].products;
         if (listOfBrands[currentId].products.isNotEmpty) {
-          listOfVariations =
-              listOfBrands[currentId].products[0].variations;
+          listOfVariations = listOfBrands[currentId].products[0].variations;
           listOfStocks = listOfBrands[currentId].products[0].stocks;
         } else {
           listOfVariations = [];
@@ -304,7 +299,7 @@ class _MainViewState extends State<MainView> {
       TextEditingController();
 
   final TextEditingController _customerEditingController =
-  TextEditingController();
+      TextEditingController();
 
   double? deviceWidth;
 
@@ -315,7 +310,6 @@ class _MainViewState extends State<MainView> {
           _changeLanguage();
         });
       },
-      heroTag: AppStrings.language.tr(),
       tooltip: AppStrings.language.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
@@ -341,7 +335,6 @@ class _MainViewState extends State<MainView> {
               _appPreferences.logout();
               Navigator.of(context).pushReplacementNamed(Routes.loginRoute);
             },
-            heroTag: AppStrings.logout.tr(),
             tooltip: AppStrings.logout.tr(),
             backgroundColor: ColorManager.primary,
             child: SvgPicture.asset(
@@ -360,7 +353,6 @@ class _MainViewState extends State<MainView> {
       onPressed: () {
         CloseRegisterDialog.show(context, locationId, deviceWidth!);
       },
-      heroTag: AppStrings.registerPos.tr(),
       tooltip: AppStrings.registerPos.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
@@ -376,7 +368,6 @@ class _MainViewState extends State<MainView> {
       onPressed: () {
         PrinterSettingsDialog.show(context, deviceWidth!);
       },
-      heroTag: AppStrings.registerPos.tr(),
       tooltip: AppStrings.registerPos.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
@@ -392,7 +383,6 @@ class _MainViewState extends State<MainView> {
       onPressed: () {
         reload();
       },
-      heroTag: AppStrings.reload.tr(),
       tooltip: AppStrings.reload.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
@@ -419,7 +409,13 @@ class _MainViewState extends State<MainView> {
             body: bodyContent(context),
             floatingActionButton: showFab
                 ? AnimatedFloatingActionButton(
-                    fabButtons: [printerSettings(), language(), logout(), register(), refresh()],
+                    fabButtons: [
+                        printerSettings(),
+                        language(),
+                        logout(),
+                        register(),
+                        refresh()
+                      ],
                     key: floatingKey,
                     colorStartAnimation: ColorManager.primary,
                     colorEndAnimation: ColorManager.delete,
@@ -525,7 +521,10 @@ class _MainViewState extends State<MainView> {
         : differenceValue = 0;
 
     return BlocProvider(
-      create: (context) => sl<MainViewCubit>()..getHomeData(locationId)..getPaymentMethods(locationId)..getPrintingSettings()..getLocationSettings(locationId),
+      create: (context) => sl<MainViewCubit>()
+        ..getHomeData(locationId)
+        ..getPaymentMethods(locationId)
+        ..getLocationSettings(locationId),
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is MainNoInternetState) {
@@ -541,7 +540,8 @@ class _MainViewState extends State<MainView> {
             loadCategories();
 
             listOfCustomers = MainViewCubit.get(context).listOfCustomers;
-            listOfPricingGroups = MainViewCubit.get(context).listOfPricingGroups;
+            listOfPricingGroups =
+                MainViewCubit.get(context).listOfPricingGroups;
             loadCustomers();
 
             currencyCode = MainViewCubit.get(context).currencyCode;
@@ -626,7 +626,8 @@ class _MainViewState extends State<MainView> {
           }
           // get Pricing Groups -----------------------------------------------------------------------------------------------------------------
           if (state is LoadedPricingGroups) {
-            listOfPricingGroups = MainViewCubit.get(context).listOfPricingGroups;
+            listOfPricingGroups =
+                MainViewCubit.get(context).listOfPricingGroups;
           } else if (state is LoadingErrorPricingGroups) {
             tryAgainLater(context);
           }
@@ -637,9 +638,11 @@ class _MainViewState extends State<MainView> {
           } else if (state is LoadedCustomer) {
             LoadingDialog.hide(context);
 
-            var contain = listOfPricingGroups.where((element) => element.name == AppStrings.noThing.tr());
+            var contain = listOfPricingGroups
+                .where((element) => element.name == AppStrings.noThing.tr());
             if (contain.isEmpty) {
-              listOfPricingGroups.add(PricingGroupResponse(id: 0,
+              listOfPricingGroups.add(PricingGroupResponse(
+                  id: 0,
                   updatedAt: '',
                   createdAt: '',
                   locationId: locationId,
@@ -666,7 +669,7 @@ class _MainViewState extends State<MainView> {
                         MainViewCubit.get(context).getCustomers(locationId);
                       });
                     }
-                  },listOfPricingGroups)
+                  }, listOfPricingGroups)
                 : CustomerDialog.show(context, 'Edit', listOfCustomers[index],
                     _selectedCustomerId!, locationId, (done) {
                     if (done == 'done') {
@@ -677,32 +680,21 @@ class _MainViewState extends State<MainView> {
                         MainViewCubit.get(context).getCustomers(locationId);
                       });
                     }
-                  },listOfPricingGroups);
+                  }, listOfPricingGroups);
           } else if (state is LoadingErrorCustomer) {
             LoadingDialog.hide(context);
             tryAgainLater(context);
           }
           if (state is LoadedPaymentMethods) {
-            listOfPaymentMethods = MainViewCubit.get(context).listOfPaymentMethods;
+            listOfPaymentMethods =
+                MainViewCubit.get(context).listOfPaymentMethods;
           }
-          // printing settings
-          if (state is LoadedPrintingSettings) {
-            for (var n in state.printSettingResponse) {
-              if (n.printerStatus == 1) {
-                printerIP = n.printerIP!;
-                printerType = n.printType!;
-                return;
-              } else {
-                printerIP = AppConstants.printerIp;
-                printerType = 'receipt';
-              }
-            }
-
-          } else if (state is LoadingErrorPrintingSettings) {}
           // location settings
 
           if (state is LoadedLocationSettings) {
-            isMultiLang = state.locationSettingResponse.isMultiLanguage == 1 ? true : false;
+            isMultiLang = state.locationSettingResponse.isMultiLanguage == 1
+                ? true
+                : false;
           } else if (state is LoadingErrorLocationSettings) {}
         },
         builder: (context, state) {
@@ -904,8 +896,12 @@ class _MainViewState extends State<MainView> {
                             ),
 
                       deviceWidth! <= 600
-                          ? searchText(context, _searchEditingController,
-                          addToTmpInBottomSheet, listOfAllProducts, searchList)
+                          ? searchText(
+                              context,
+                              _searchEditingController,
+                              addToTmpInBottomSheet,
+                              listOfAllProducts,
+                              searchList)
                           : searchText(context, _searchEditingController,
                               addToTmp, listOfAllProducts, searchList),
 
@@ -961,40 +957,34 @@ class _MainViewState extends State<MainView> {
                 child: Row(
                   children: [
                     Container(
-                        constraints: BoxConstraints(
-                            maxWidth: 60.w
-                        ),
-                        child: textS14PrimaryComponent(context, item.firstName)),
+                        constraints: BoxConstraints(maxWidth: 60.w),
+                        child:
+                            textS14PrimaryComponent(context, item.firstName)),
                     SizedBox(width: AppConstants.smallerDistance),
                     Container(
-                        constraints: BoxConstraints(
-                            maxWidth: 60.w
-                        ),
+                        constraints: BoxConstraints(maxWidth: 60.w),
                         child: textS14PrimaryComponent(context, item.lastName)),
                     item.firstName == AppStrings.firstName
                         ? Container()
                         : Row(
-                      children: [
-                        SizedBox(width: AppConstants.smallerDistance),
-                        textS14PrimaryComponent(context, '|'),
-                        SizedBox(width: AppConstants.smallerDistance),
-                        Container(
-                          constraints: BoxConstraints(
-                            maxWidth: 50.w
+                            children: [
+                              SizedBox(width: AppConstants.smallerDistance),
+                              textS14PrimaryComponent(context, '|'),
+                              SizedBox(width: AppConstants.smallerDistance),
+                              Container(
+                                  constraints: BoxConstraints(maxWidth: 50.w),
+                                  child: textS14PrimaryComponent(
+                                      context, item.mobile))
+                            ],
                           ),
-                            child: textS14PrimaryComponent(context, item.mobile))
-                      ],
-                    ),
                   ],
                 ));
           }).toList(),
           onChanged: (selectedCustomer) {
-            print(selectedCustomer);
-            print('111111111');
             setState(() {
               _selectedCustomer = selectedCustomer as CustomerResponse?;
               _selectedCustomerName =
-              '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
+                  '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
               _selectedCustomerId = selectedCustomer?.id;
               _selectedCustomerTel = selectedCustomer?.mobile;
             });
@@ -1031,7 +1021,8 @@ class _MainViewState extends State<MainView> {
             ),
             searchMatchFn: (item, searchValue) {
               _selectedCustomer = item.value as CustomerResponse?;
-              var choose = '${_selectedCustomer!.firstName} ${_selectedCustomer!.lastName} | ${_selectedCustomer!.mobile}';
+              var choose =
+                  '${_selectedCustomer!.firstName} ${_selectedCustomer!.lastName} | ${_selectedCustomer!.mobile}';
               return choose.contains(searchValue);
             },
           ),
@@ -1044,7 +1035,8 @@ class _MainViewState extends State<MainView> {
           buttonStyleData: ButtonStyleData(
             height: 47.h,
             width: 250.w,
-            padding: const EdgeInsets.only(left: AppPadding.p14, right: AppPadding.p14),
+            padding: const EdgeInsets.only(
+                left: AppPadding.p14, right: AppPadding.p14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppSize.s5),
               border: Border.all(
@@ -1080,8 +1072,8 @@ class _MainViewState extends State<MainView> {
               )
             ],
           ),
-          style: TextStyle(
-              color: ColorManager.primary, fontSize: AppSize.s14.sp),
+          style:
+              TextStyle(color: ColorManager.primary, fontSize: AppSize.s14.sp),
         ));
   }
 
@@ -1094,9 +1086,11 @@ class _MainViewState extends State<MainView> {
   }
 
   void addCustomer(BuildContext context) {
-    var contain = listOfPricingGroups.where((element) => element.name == AppStrings.noThing.tr());
+    var contain = listOfPricingGroups
+        .where((element) => element.name == AppStrings.noThing.tr());
     if (contain.isEmpty) {
-      listOfPricingGroups.add(PricingGroupResponse(id: 0,
+      listOfPricingGroups.add(PricingGroupResponse(
+          id: 0,
           updatedAt: '',
           createdAt: '',
           locationId: locationId,
@@ -1124,7 +1118,7 @@ class _MainViewState extends State<MainView> {
                   AppConstants.durationOfSnackBar,
                   ColorManager.success);
             }
-          },listOfPricingGroups)
+          }, listOfPricingGroups)
         : CustomerDialog.show(context, 'Add', [], 0, locationId, (done) {
             if (done == 'done') {
               CustomerDialog.hide(context);
@@ -1143,7 +1137,7 @@ class _MainViewState extends State<MainView> {
                   AppConstants.durationOfSnackBar,
                   ColorManager.success);
             }
-          },listOfPricingGroups);
+          }, listOfPricingGroups);
   }
 
   void editDiscount(BuildContext context) {
@@ -1374,7 +1368,8 @@ class _MainViewState extends State<MainView> {
                 .stock;
           }
 
-          if (int.parse(n.itemQuantity.toString()) > qty && itemStock.sellOverStock == 0) {
+          if (int.parse(n.itemQuantity.toString()) > qty &&
+              itemStock.sellOverStock == 0) {
             CustomDialog.show(
                 context,
                 AppStrings.noCreditWhenCheck.tr(),
@@ -1390,7 +1385,6 @@ class _MainViewState extends State<MainView> {
       listOfTmpOrder[0].orderDiscount = discount;
 
       listOfOrders.clear();
-
 
       for (var element in listOfTmpOrder) {
         listOfOrders.add(OrderModel(
@@ -1448,7 +1442,10 @@ class _MainViewState extends State<MainView> {
             reload();
           });
         }
-      }, deviceWidth!, GlobalValues.getEditOrder ? GlobalValues.getRelatedInvoiceId : 0,printerIP,printerType,isMultiLang);
+      },
+          deviceWidth!,
+          GlobalValues.getEditOrder ? GlobalValues.getRelatedInvoiceId : 0,
+          isMultiLang);
 
       discount = 0;
       estimatedTax = 0;
@@ -1468,7 +1465,7 @@ class _MainViewState extends State<MainView> {
                 style: TextStyle(color: ColorManager.edit),
               )),
               DataCell(SizedBox(
-                width: deviceWidth <= 600 ? 100.w : 40.w,
+                width: deviceWidth <= 600 ? 70.w : 40.w,
                 child: Center(
                     child: Text(
                         listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
@@ -1614,6 +1611,32 @@ class _MainViewState extends State<MainView> {
                             .toString(),
                         style: TextStyle(fontSize: AppSize.s12.sp),
                         textAlign: TextAlign.center)),
+              )),
+              DataCell(SizedBox(
+                width: 20.w,
+                child: Center(
+                    child: Bounceable(
+                        duration: Duration(
+                            milliseconds: AppConstants.durationOfBounceable),
+                        onTap: () async {
+                          if (deviceWidth <= 600) {
+                            _controllerLeftPart.setState!(() {
+                              listOfTmpOrder.removeAt(
+                                  getIndex(listOfTmpOrder.indexOf(tmpOrder) - 1));
+                            });
+                          } else {
+                            setState(() {
+                              listOfTmpOrder.removeAt(
+                                  getIndex(listOfTmpOrder.indexOf(tmpOrder) - 1));
+                            });
+                          }
+                          getTotalAmount();
+                        },
+                        child: Icon(
+                          Icons.delete,
+                          size: AppSize.s20.sp,
+                          color: ColorManager.delete,
+                        ))),
               ))
             ]))
         .toList();
@@ -1674,7 +1697,6 @@ class _MainViewState extends State<MainView> {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
 
-
     if (businessType != 'Tailor') {
       if (categoryFilter!) {
         for (var element in listOfCategories) {
@@ -1707,9 +1729,10 @@ class _MainViewState extends State<MainView> {
       }
 
       if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-              .itemQuantity
-              .toString()) >=
-          qty && itemStock.sellOverStock == 0) {
+                  .itemQuantity
+                  .toString()) >=
+              qty &&
+          itemStock.sellOverStock == 0) {
         noCredit(context);
         return;
       }
@@ -1832,9 +1855,10 @@ class _MainViewState extends State<MainView> {
 
         if (listOfTmpOrderIndex >= 0) {
           if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
-                  .itemQuantity
-                  .toString()) >=
-              listToWork[index].stock && listToWork[index].sellOverStock == 0) {
+                      .itemQuantity
+                      .toString()) >=
+                  listToWork[index].stock &&
+              listToWork[index].sellOverStock == 0) {
             noCredit(context);
             return;
           }
@@ -1867,7 +1891,8 @@ class _MainViewState extends State<MainView> {
           tel = '';
         }
 
-        if (listToWork[index].stock == 0 && listToWork[index].sellOverStock == 0) {
+        if (listToWork[index].stock == 0 &&
+            listToWork[index].sellOverStock == 0) {
           noCredit(context);
           return;
         }
@@ -1904,7 +1929,7 @@ class _MainViewState extends State<MainView> {
 
   void addToTmpInBottomSheet(int index, BuildContext context, bool searching) {
     List<ProductsResponse> listToWork =
-    searching ? listOfAllProducts : listOfProducts;
+        searching ? listOfAllProducts : listOfProducts;
 
     if (listToWork[index].type == 'tailoring_package') {
       if (listOfProducts[index].packages.isNotEmpty) {
@@ -1924,7 +1949,7 @@ class _MainViewState extends State<MainView> {
       LoadingDialog.show(context);
       MainViewCubit.get(context)
           .getTailoringTypeById(
-          listOfProducts[index].packages[0].tailoringTypeId!)
+              listOfProducts[index].packages[0].tailoringTypeId!)
           .then((value) {
         tailoringType = MainViewCubit.get(context).tailoringType;
 
@@ -1948,7 +1973,7 @@ class _MainViewState extends State<MainView> {
     }
 
     if (listToWork[index].variations.isNotEmpty) {
-     _controllerLeftPart.setState!(() {
+      _controllerLeftPart.setState!(() {
         ItemOptionsDialog.show(
             context,
             currencyCode,
@@ -1974,9 +1999,10 @@ class _MainViewState extends State<MainView> {
 
         if (listOfTmpOrderIndex >= 0) {
           if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
-              .itemQuantity
-              .toString()) >=
-              listToWork[index].stock && listToWork[index].sellOverStock == 0) {
+                      .itemQuantity
+                      .toString()) >=
+                  listToWork[index].stock &&
+              listToWork[index].sellOverStock == 0) {
             noCredit(context);
             return;
           }
@@ -2000,14 +2026,15 @@ class _MainViewState extends State<MainView> {
         String customerName, tel = '';
         if (_selectedCustomer != null) {
           customerName =
-          '${_selectedCustomer!.firstName} ${_selectedCustomer!.lastName}';
+              '${_selectedCustomer!.firstName} ${_selectedCustomer!.lastName}';
           tel = _selectedCustomer!.mobile;
         } else {
           customerName = '${AppStrings.firstName} ${AppStrings.secondName}';
           tel = '';
         }
 
-        if (listToWork[index].stock == 0 && listToWork[index].sellOverStock == 0) {
+        if (listToWork[index].stock == 0 &&
+            listToWork[index].sellOverStock == 0) {
           noCredit(context);
           return;
         }
@@ -2019,9 +2046,9 @@ class _MainViewState extends State<MainView> {
             itemName: listToWork[index].name,
             itemQuantity: 1,
             itemAmount:
-            '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+                '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
             itemPrice:
-            '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
+                '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
             customer: customerName,
             category: listToWork[index].categoryId.toString(),
             orderDiscount: discount,

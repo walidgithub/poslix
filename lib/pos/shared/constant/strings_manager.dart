@@ -110,6 +110,7 @@ class AppStrings{
   static const choosePrintType = 'Choose Print Type';
   static const chooseConnectionMethod = 'Choose Connection Method';
   static const choosePrinterStatus = 'Choose Printer Status';
+  static const printerStatus = 'Printer Status';
   static const choosePrinterName = 'Choose Printer Name';
   static const choosePrinterIP = 'Choose Printer IP';
   static const addPrinter = 'Add Printer';
@@ -196,4 +197,5 @@ class AppStrings{
   static const unitPrice  = 'Unit Price';
   static const noInternet  = 'No Internet';
   static const completeRequired  = 'All Fields Required';
+  static const samePrinterName  = 'Same Printer Name';
 }

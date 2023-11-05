@@ -156,6 +156,16 @@ class DbHelper {
         where: 'id = ?', whereArgs: [printerId]);
   }
 
+  Future<int> updateAllPrintingSetting() async {
+    if (_db == null) {
+      await initDB(dbdName);
+    }
+
+    final db = _db!.database;
+    return await db.rawUpdate(
+        'UPDATE poslix_printer_settings SET printer_status = 0');
+  }
+
   Future<List<PrintSettingModel>> getAllPrinters() async {
     if (_db == null) {
       await initDB(dbdName);

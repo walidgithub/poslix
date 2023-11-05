@@ -8,16 +8,21 @@ import '../../../../shared/constant/strings_manager.dart';
 import '../../../../shared/style/colors_manager.dart';
 
 Widget printerIPValue(BuildContext context,
-    TextEditingController printerIPEditingController, double deviceWidth) {
+    TextEditingController printerIPEditingController, double deviceWidth, bool editMode, String oldValue, Function getNewValue, bool endEdit) {
   return Padding(
     padding: const EdgeInsets.all(10),
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         TextField(
+            onSubmitted: (String value) {
+              oldValue = value;
+              endEdit == true;
+              getNewValue(value);
+            },
             autofocus: false,
             keyboardType: TextInputType.text,
-            controller: printerIPEditingController,
+            controller: editMode ? !endEdit ? TextEditingController(text: oldValue) : printerIPEditingController : printerIPEditingController,
             decoration: InputDecoration(
                 hintText: AppStrings.printerIP.tr(),
                 contentPadding: const EdgeInsets.fromLTRB(

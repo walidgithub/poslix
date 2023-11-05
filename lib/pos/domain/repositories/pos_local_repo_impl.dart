@@ -78,6 +78,11 @@ class POSLocalRepositoryImp extends POSLocalRepository {
   }
 
   @override
+  Future<void> updateAllPrintingSetting() async {
+    await _dbHelper.updateAllPrintingSetting();
+  }
+
+  @override
   Future<List<PrintSettingModel>> getPrintingSettings() async {
     final res = await _dbHelper.getAllPrinters();
     return res;

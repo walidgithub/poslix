@@ -17,6 +17,7 @@ abstract class POSLocalRepository {
   Future<void> addPrintingSetting(PrintSettingModel printSettingModel);
   Future<void> deletePrintingSetting(int printerId);
   Future<void> updatePrintingSetting(PrintSettingModel printSettingModel, int printerId);
+  Future<void> updateAllPrintingSetting();
   Future<List<PrintSettingModel>> getPrintingSettings();
   Future<PrintSettingModel> getPrinterById(int printerId);
 }

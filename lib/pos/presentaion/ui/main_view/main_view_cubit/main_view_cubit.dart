@@ -664,6 +664,15 @@ class MainViewCubit extends Cubit<MainViewState> {
     }
   }
 
+  Future<void> updateAllPrintingSetting() async {
+    try {
+      await posLocalRepositoryImpl.updateAllPrintingSetting();
+      emit(UpdatePrintingSettings());
+    } catch (e) {
+      emit(UpdateErrorPrintingSettings(e.toString()));
+    }
+  }
+
   Future<void> updatePrintingSetting(PrintSettingModel printSettingModel, int printerId) async {
     try {
       await posLocalRepositoryImpl.updatePrintingSetting(printSettingModel, printerId);
