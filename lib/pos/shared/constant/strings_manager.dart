@@ -65,6 +65,7 @@ class AppStrings{
   static const enterPassword  = 'Enter Password';
   static const enterValue  = 'Enter Value';
   static const enterName  = 'Enter Name:';
+  static const editQuantity  = 'Edit Quantity';
   static const signIn  = 'Sign in';
   static const signUp  = 'Sign up';
   static const language  = 'language';

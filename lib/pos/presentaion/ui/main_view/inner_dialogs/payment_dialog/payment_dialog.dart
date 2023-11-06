@@ -342,10 +342,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
                 CustomDialog.show(
                     context,
                     AppStrings.missedPrintingSetting.tr(),
-                    const Icon(Icons.close),
+                    const Icon(Icons.print),
                     ColorManager.white,
                     AppConstants.durationOfSnackBar,
-                    ColorManager.delete);
+                    ColorManager.hold);
                 printerIP = AppConstants.globalPrinterIp;
                 printerType = AppConstants.globalPrinterType;
                 connectionMethod = AppConstants.globalConnectionMethod;

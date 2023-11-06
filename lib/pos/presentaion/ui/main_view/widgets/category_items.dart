@@ -102,7 +102,7 @@ Widget itemContainer(int index, BuildContext context,
                           child:
                               ClipOval(child: Image.asset(ImageAssets.tailor)),
                         ))
-                : listOfProducts[index].sellOverStock == 1 ? Container() : SvgPicture.asset(
+                : listOfProducts[index].sellOverStock == 1 || listOfProducts[index].isService == 1 ? Container() : SvgPicture.asset(
               ImageAssets.unavailable,
               width: AppSize.s20,
               color: ColorManager.delete,

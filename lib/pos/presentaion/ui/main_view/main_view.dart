@@ -15,6 +15,7 @@ import 'package:poslix_app/pos/domain/requests/cart_model.dart';
 import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/domain/response/prices_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/edit_qyantity_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/add_edit_customer_buttons.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand_button.dart';
@@ -60,7 +61,7 @@ import '../login_view/login_cubit/login_cubit.dart';
 import '../login_view/login_cubit/login_state.dart';
 import '../popup_dialogs/custom_dialog.dart';
 import '../popup_dialogs/loading_dialog.dart';
-import '../printer_settings/printer_settings_view.dart';
+import 'inner_dialogs/printer_settings/printer_settings_view.dart';
 import 'widgets/bottom_bar.dart';
 import 'inner_dialogs/close_register_dialog/close_register_dialog.dart';
 import 'inner_dialogs/customer_dialog/customer_mobile_dialog.dart';
@@ -129,6 +130,9 @@ class _MainViewState extends State<MainView> {
   void dispose() {
     _searchEditingController.dispose();
     _customerEditingController.dispose();
+    // for (var controller in _quantityControllers) {
+    //   controller.dispose();
+    // }
     super.dispose();
   }
 
@@ -298,6 +302,8 @@ class _MainViewState extends State<MainView> {
   final TextEditingController _searchEditingController =
       TextEditingController();
 
+  // final List<TextEditingController> _quantityControllers = [];
+
   final TextEditingController _customerEditingController =
       TextEditingController();
 
@@ -310,6 +316,7 @@ class _MainViewState extends State<MainView> {
           _changeLanguage();
         });
       },
+      heroTag: AppStrings.language.tr(),
       tooltip: AppStrings.language.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
@@ -335,6 +342,7 @@ class _MainViewState extends State<MainView> {
               _appPreferences.logout();
               Navigator.of(context).pushReplacementNamed(Routes.loginRoute);
             },
+            heroTag: AppStrings.logout.tr(),
             tooltip: AppStrings.logout.tr(),
             backgroundColor: ColorManager.primary,
             child: SvgPicture.asset(
@@ -353,6 +361,7 @@ class _MainViewState extends State<MainView> {
       onPressed: () {
         CloseRegisterDialog.show(context, locationId, deviceWidth!);
       },
+      heroTag: AppStrings.registerPos.tr(),
       tooltip: AppStrings.registerPos.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
@@ -368,7 +377,8 @@ class _MainViewState extends State<MainView> {
       onPressed: () {
         PrinterSettingsDialog.show(context, deviceWidth!);
       },
-      tooltip: AppStrings.registerPos.tr(),
+      heroTag: AppStrings.printerSettings.tr(),
+      tooltip: AppStrings.printerSettings.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
         ImageAssets.printing,
@@ -383,6 +393,7 @@ class _MainViewState extends State<MainView> {
       onPressed: () {
         reload();
       },
+      heroTag: AppStrings.reload.tr(),
       tooltip: AppStrings.reload.tr(),
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
@@ -1246,6 +1257,10 @@ class _MainViewState extends State<MainView> {
         GlobalValues.setEditOrder = false;
       });
     }
+
+    // for (var controller in _quantityControllers) {
+    //     _quantityControllers.removeAt(_quantityControllers.indexOf(controller));
+    // }
   }
 
   void getOrders(BuildContext context) {
@@ -1368,16 +1383,17 @@ class _MainViewState extends State<MainView> {
                 .stock;
           }
 
-          if (int.parse(n.itemQuantity.toString()) > qty &&
-              itemStock.sellOverStock == 0) {
-            CustomDialog.show(
-                context,
-                AppStrings.noCreditWhenCheck.tr(),
-                const Icon(Icons.warning_amber_rounded),
-                ColorManager.white,
-                AppConstants.durationOfSnackBar,
-                ColorManager.hold);
-            return;
+          if (itemStock.sellOverStock == 0 && itemStock.isService == 0) {
+            if (int.parse(n.itemQuantity.toString()) > qty) {
+              CustomDialog.show(
+                  context,
+                  AppStrings.noCreditWhenCheck.tr(),
+                  const Icon(Icons.warning_amber_rounded),
+                  ColorManager.white,
+                  AppConstants.durationOfSnackBar,
+                  ColorManager.hold);
+              return;
+            }
           }
         }
       }
@@ -1529,75 +1545,99 @@ class _MainViewState extends State<MainView> {
                           : SizedBox(
                               width: AppConstants.smallWidthBetweenElements,
                             ),
-                      containerComponent(
-                          context,
-                          Padding(
-                            padding: const EdgeInsets.all(AppPadding.p2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Bounceable(
-                                  duration: Duration(
-                                      milliseconds:
-                                          AppConstants.durationOfBounceable),
-                                  onTap: () async {
-                                    await decreaseCount(tmpOrder);
-                                  },
-                                  child: containerComponent(
-                                      context,
-                                      Icon(
-                                        listOfTmpOrder[listOfTmpOrder
-                                                        .indexOf(tmpOrder)]
-                                                    .itemQuantity ==
-                                                1
-                                            ? Icons.close
-                                            : Icons.remove,
-                                        size: AppSize.s10.sp,
-                                      ),
-                                      height: 20.h,
-                                      width: deviceWidth <= 600 ? 20.w : 10.w,
-                                      color: ColorManager.secondary,
-                                      borderColor: ColorManager.secondary,
-                                      borderWidth: 1.w,
-                                      borderRadius: AppSize.s5),
-                                ),
-                                Text(
-                                  listOfTmpOrder[
-                                          listOfTmpOrder.indexOf(tmpOrder)]
-                                      .itemQuantity
-                                      .toString(),
-                                  style: TextStyle(fontSize: AppSize.s12.sp),
-                                  textAlign: TextAlign.center,
-                                ),
-                                Bounceable(
-                                  duration: Duration(
-                                      milliseconds:
-                                          AppConstants.durationOfBounceable),
-                                  onTap: () async {
-                                    await increaseCount(tmpOrder, context);
-                                  },
-                                  child: containerComponent(
-                                      context,
-                                      Icon(
-                                        Icons.add,
-                                        size: AppSize.s10.sp,
-                                      ),
-                                      height: 20.h,
-                                      width: deviceWidth <= 600 ? 20.w : 10.w,
-                                      color: ColorManager.secondary,
-                                      borderColor: ColorManager.secondary,
-                                      borderWidth: 1.w,
-                                      borderRadius: AppSize.s5),
-                                ),
-                              ],
+                      GestureDetector(
+                        onLongPressUp: () {
+                          editQuantityDialog(context, deviceWidth,
+                                  (value) {
+                                editCount(tmpOrder, context, value);
+                              });
+                        },
+                        child: containerComponent(
+                            context,
+                            Padding(
+                              padding: const EdgeInsets.all(AppPadding.p2),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Bounceable(
+                                    duration: Duration(
+                                        milliseconds:
+                                            AppConstants.durationOfBounceable),
+                                    onTap: () async {
+                                      await decreaseCount(tmpOrder);
+                                    },
+                                    child: GestureDetector(
+                                      onLongPressUp: () {
+                                        editQuantityDialog(context, deviceWidth,
+                                            (value) {
+                                          editCount(tmpOrder, context, value);
+                                        });
+                                      },
+                                      child: containerComponent(
+                                          context,
+                                          Icon(
+                                            listOfTmpOrder[listOfTmpOrder
+                                                            .indexOf(tmpOrder)]
+                                                        .itemQuantity ==
+                                                    1
+                                                ? Icons.close
+                                                : Icons.remove,
+                                            size: AppSize.s10.sp,
+                                          ),
+                                          height: 20.h,
+                                          width: deviceWidth <= 600 ? 20.w : 10.w,
+                                          color: ColorManager.secondary,
+                                          borderColor: ColorManager.secondary,
+                                          borderWidth: 1.w,
+                                          borderRadius: AppSize.s5),
+                                    ),
+                                  ),
+                                  Text(
+                                    listOfTmpOrder[
+                                            listOfTmpOrder.indexOf(tmpOrder)]
+                                        .itemQuantity
+                                        .toString(),
+                                    style: TextStyle(fontSize: AppSize.s12.sp),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Bounceable(
+                                    duration: Duration(
+                                        milliseconds:
+                                            AppConstants.durationOfBounceable),
+                                    onTap: () async {
+                                      await increaseCount(tmpOrder, context);
+                                    },
+                                    child: GestureDetector(
+                                      onLongPressUp: () {
+                                        editQuantityDialog(context, deviceWidth,
+                                            (value) {
+                                          editCount(tmpOrder, context, value);
+                                        });
+                                      },
+                                      child: containerComponent(
+                                          context,
+                                          Icon(
+                                            Icons.add,
+                                            size: AppSize.s10.sp,
+                                          ),
+                                          height: 20.h,
+                                          width: deviceWidth <= 600 ? 20.w : 10.w,
+                                          color: ColorManager.secondary,
+                                          borderColor: ColorManager.secondary,
+                                          borderWidth: 1.w,
+                                          borderRadius: AppSize.s5),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          height: 30.h,
-                          width: deviceWidth <= 600 ? 70.w : 30.w,
-                          color: ColorManager.white,
-                          borderColor: ColorManager.badge,
-                          borderWidth: 0.5.w,
-                          borderRadius: AppSize.s5)
+                            height: 30.h,
+                            width: deviceWidth <= 600 ? 75.w : 30.w,
+                            color: ColorManager.white,
+                            borderColor: ColorManager.badge,
+                            borderWidth: 0.5.w,
+                            borderRadius: AppSize.s5),
+                      )
                     ],
                   ),
                 ),
@@ -1621,15 +1661,21 @@ class _MainViewState extends State<MainView> {
                         onTap: () async {
                           if (deviceWidth <= 600) {
                             _controllerLeftPart.setState!(() {
-                              listOfTmpOrder.removeAt(
-                                  getIndex(listOfTmpOrder.indexOf(tmpOrder) - 1));
+                              listOfTmpOrder.removeAt(getIndex(
+                                  listOfTmpOrder.indexOf(tmpOrder) - 1));
                             });
                           } else {
                             setState(() {
-                              listOfTmpOrder.removeAt(
-                                  getIndex(listOfTmpOrder.indexOf(tmpOrder) - 1));
+                              listOfTmpOrder.removeAt(getIndex(
+                                  listOfTmpOrder.indexOf(tmpOrder) - 1));
                             });
                           }
+                          // _quantityControllers.removeAt(getIndex(
+                          //     listOfTmpOrder.indexOf(tmpOrder)));
+                          // for (var controller in _quantityControllers) {
+                          //   print('testttttttt');
+                          //   print(controller.text);
+                          // }
                           getTotalAmount();
                         },
                         child: Icon(
@@ -1728,13 +1774,11 @@ class _MainViewState extends State<MainView> {
             .stock;
       }
 
-      if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
-                  .itemQuantity
-                  .toString()) >=
-              qty &&
-          itemStock.sellOverStock == 0) {
-        noCredit(context);
-        return;
+      if (itemStock.sellOverStock == 0 && itemStock.isService == 0) {
+        if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity.toString()) >= qty) {
+          noCredit(context);
+          return;
+        }
       }
     }
 
@@ -1764,6 +1808,89 @@ class _MainViewState extends State<MainView> {
             listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity;
 
         itemCount = itemCount! + 1;
+
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity =
+            itemCount;
+
+        double total = roundDouble(
+            (itemCount *
+                double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                    .itemPrice
+                    .toString())),
+            decimalPlaces);
+
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+            total.toString();
+      });
+    }
+
+    getTotalAmount();
+  }
+
+  Future<void> editCount(
+      TmpOrderModel tmpOrder, BuildContext context, int newValue) async {
+    await Future.delayed(
+        Duration(milliseconds: AppConstants.durationOfBounceable));
+
+    if (businessType != 'Tailor') {
+      if (categoryFilter!) {
+        for (var element in listOfCategories) {
+          listOfBothProducts.addAll(Set.of(element.products));
+        }
+      } else {
+        for (var element in listOfBrands) {
+          listOfBothProducts.addAll(Set.of(element.products));
+        }
+      }
+      var itemStock = listOfBothProducts
+          .where((element) =>
+              element.id ==
+              listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId)
+          .first;
+
+      int qty = itemStock.stock;
+
+      int indexOfList = listOfBothProducts.indexWhere((element) =>
+          element.id ==
+          listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].productId);
+
+      if (listOfBothProducts[indexOfList].variations.isNotEmpty) {
+        int indexOfVariationList = itemStock.variations.indexWhere((element) =>
+            element.id ==
+            listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].variationId);
+        qty = listOfBothProducts[indexOfList]
+            .variations[indexOfVariationList]
+            .stock;
+      }
+
+      if (itemStock.sellOverStock == 0 && itemStock.isService == 0) {
+        if (newValue >= qty) {
+          noCredit(context);
+          return;
+        }
+      }
+    }
+
+    if (deviceWidth! <= 600) {
+      _controllerLeftPart.setState!(() {
+        int? itemCount = newValue;
+
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity =
+            itemCount;
+
+        double total = roundDouble(
+            (itemCount *
+                double.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                    .itemPrice
+                    .toString())),
+            decimalPlaces);
+
+        listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemAmount =
+            total.toString();
+      });
+    } else {
+      setState(() {
+        int? itemCount = newValue;
 
         listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity =
             itemCount;
@@ -1853,14 +1980,16 @@ class _MainViewState extends State<MainView> {
         int listOfTmpOrderIndex = listOfTmpOrder
             .indexWhere((element) => element.productId == listToWork[index].id);
 
+
         if (listOfTmpOrderIndex >= 0) {
-          if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
-                      .itemQuantity
-                      .toString()) >=
-                  listToWork[index].stock &&
-              listToWork[index].sellOverStock == 0) {
-            noCredit(context);
-            return;
+          if (listToWork[index].sellOverStock == 0 && listToWork[index].isService == 0) {
+            if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
+                .itemQuantity
+                .toString()) >=
+                listToWork[index].stock) {
+              noCredit(context);
+              return;
+            }
           }
         }
       }
@@ -1891,11 +2020,13 @@ class _MainViewState extends State<MainView> {
           tel = '';
         }
 
-        if (listToWork[index].stock == 0 &&
-            listToWork[index].sellOverStock == 0) {
-          noCredit(context);
-          return;
+        if (listToWork[index].sellOverStock == 0 && listToWork[index].isService == 0) {
+          if (listToWork[index].stock == 0) {
+            noCredit(context);
+            return;
+          }
         }
+
 
         String sellPrice = listToWork[index].sellPrice;
 
@@ -1924,6 +2055,8 @@ class _MainViewState extends State<MainView> {
 
         if (deviceWidth! <= 600) startAnimation();
       });
+      // _quantityControllers.add(TextEditingController());
+      // _quantityControllers[index].addListener(getTotalAmount);
     }
   }
 
@@ -1998,14 +2131,16 @@ class _MainViewState extends State<MainView> {
             .indexWhere((element) => element.productId == listToWork[index].id);
 
         if (listOfTmpOrderIndex >= 0) {
-          if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
-                      .itemQuantity
-                      .toString()) >=
-                  listToWork[index].stock &&
-              listToWork[index].sellOverStock == 0) {
-            noCredit(context);
-            return;
+          if (listToWork[index].sellOverStock == 0 && listToWork[index].isService == 0) {
+            if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
+                .itemQuantity
+                .toString()) >=
+                listToWork[index].stock) {
+              noCredit(context);
+              return;
+            }
           }
+
         }
       }
 
@@ -2033,11 +2168,13 @@ class _MainViewState extends State<MainView> {
           tel = '';
         }
 
-        if (listToWork[index].stock == 0 &&
-            listToWork[index].sellOverStock == 0) {
-          noCredit(context);
-          return;
+        if (listToWork[index].sellOverStock == 0 && listToWork[index].isService == 0) {
+          if (listToWork[index].stock == 0) {
+            noCredit(context);
+            return;
+          }
         }
+
 
         String sellPrice = listToWork[index].sellPrice;
 

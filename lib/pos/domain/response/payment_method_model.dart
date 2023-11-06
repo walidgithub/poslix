@@ -19,8 +19,8 @@ class PaymentMethodModel {
     name = json['name'];
     locationId = json['location_id'];
     enableFlag = json['enable_flag'];
-    createdAt = json['createdAt'] ?? '';
-    updatedAt = json['updatedAt'] ?? '';
+    createdAt = json['created_at'] ?? '';
+    updatedAt = json['updated_at'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
