@@ -15,7 +15,7 @@ import 'package:poslix_app/pos/domain/requests/cart_model.dart';
 import 'package:poslix_app/pos/domain/response/customer_model.dart';
 import 'package:poslix_app/pos/domain/response/prices_model.dart';
 import 'package:poslix_app/pos/domain/response/products_model.dart';
-import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/edit_qyantity_dialog.dart';
+import 'package:poslix_app/pos/presentaion/ui/main_view/inner_dialogs/edit_quantity_dialog.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/main_view_cubit/main_view_cubit.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/add_edit_customer_buttons.dart';
 import 'package:poslix_app/pos/presentaion/ui/main_view/widgets/brand_button.dart';
@@ -382,7 +382,7 @@ class _MainViewState extends State<MainView> {
       backgroundColor: ColorManager.primary,
       child: SvgPicture.asset(
         ImageAssets.printing,
-        width: AppSize.s35,
+        width: AppSize.s40,
         color: ColorManager.white,
       ),
     );
