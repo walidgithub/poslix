@@ -19,7 +19,7 @@ Widget printerNameValue(BuildContext context,
               endEdit == true;
               getNewValue(value);
             },
-            autofocus: true,
+            autofocus: false,
             keyboardType: TextInputType.text,
             controller: editMode ? !endEdit ? TextEditingController(text: oldValue) : printerNameEditingController : printerNameEditingController,
             decoration: InputDecoration(

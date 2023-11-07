@@ -303,7 +303,6 @@ class POSRepositoryImpl extends POSRepository {
   Future<List<SalesReportDataModel>> getOrderReportByPage(
       String token, int locationId, int pageNum) async {
     List<SalesReportDataModel> res = <SalesReportDataModel>[];
-    // var res;
     try {
       return await _dio.get('api/reports/sales/$locationId/?page=$pageNum',
           headers: {'Authorization': 'Bearer $token'}).then((response) {
@@ -322,7 +321,6 @@ class POSRepositoryImpl extends POSRepository {
   Future<List<SalesReportDataModel>> getOrderReport(
       String token, int locationId) async {
     List<SalesReportDataModel> res = <SalesReportDataModel>[];
-    // var res;
     try {
       return await _dio.get('api/reports/sales/$locationId/?all_data=1',
           headers: {'Authorization': 'Bearer $token'}).then((response) {

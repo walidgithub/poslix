@@ -147,6 +147,7 @@ class _MainViewState extends State<MainView> {
 
   CustomerResponse? _selectedCustomer;
   String? _selectedCustomerName;
+  int? _selectedPriceGroupId;
 
   int? _selectedCustomerId;
   String? _selectedCustomerTel;
@@ -514,12 +515,15 @@ class _MainViewState extends State<MainView> {
             deletedAt: '',
             email: '',
             name: '',
-            updatedAt: ''));
+            updatedAt: '',
+        priceGroupsId: 0,
+        ));
 
     _selectedCustomerName =
         '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
     _selectedCustomerId = listOfCustomers[0].id;
     _selectedCustomerTel = listOfCustomers[0].mobile;
+    _selectedPriceGroupId = listOfCustomers[0].priceGroupsId ?? 0;
   }
 
   Widget bodyContent(BuildContext context) {
@@ -659,7 +663,7 @@ class _MainViewState extends State<MainView> {
                   locationId: locationId,
                   name: AppStrings.noThing.tr(),
                   businessId: 0,
-                  isActive: 0));
+                  isActive: 0, products: [],customers: []));
             }
 
             int index = listOfCustomers.indexWhere((element) =>
@@ -998,6 +1002,7 @@ class _MainViewState extends State<MainView> {
                   '${selectedCustomer?.firstName} ${selectedCustomer?.lastName}';
               _selectedCustomerId = selectedCustomer?.id;
               _selectedCustomerTel = selectedCustomer?.mobile;
+              _selectedPriceGroupId = selectedCustomer?.priceGroupsId ?? 0;
             });
           },
           // // search text for customer
@@ -1107,7 +1112,7 @@ class _MainViewState extends State<MainView> {
           locationId: locationId,
           name: AppStrings.noThing.tr(),
           businessId: 0,
-          isActive: 0));
+          isActive: 0, products: [],customers: []));
     }
     deviceWidth! <= 600
         ? CustomerMobileDialog.show(context, 'Add', [], 0, locationId,
@@ -1181,7 +1186,7 @@ class _MainViewState extends State<MainView> {
     } else {
       listOfTmpOrder[0].orderDiscount = discount;
       holdOrdersDialog(context, deviceWidth!, listOfTmpOrder, discount,
-          _selectedCustomerTel!, _selectedCustomerName!, (done) {
+          _selectedCustomerTel!, _selectedCustomerName!, _selectedPriceGroupId!, (done) {
         if (done == 'done') {
           setState(() {
             listOfTmpOrder.clear();
@@ -1216,6 +1221,7 @@ class _MainViewState extends State<MainView> {
             '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
 
         _selectedCustomerTel = listOfCustomers[0].mobile;
+        _selectedPriceGroupId = listOfCustomers[0].priceGroupsId ?? 0;
 
         discount = 0;
         differenceValue = 0;
@@ -1248,6 +1254,7 @@ class _MainViewState extends State<MainView> {
             '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
 
         _selectedCustomerTel = listOfCustomers[0].mobile;
+        _selectedPriceGroupId= listOfCustomers[0].priceGroupsId ?? 0;
 
         discount = 0;
         differenceValue = 0;
@@ -1277,6 +1284,10 @@ class _MainViewState extends State<MainView> {
         _selectedCustomerName =
             '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
         _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
+        _selectedPriceGroupId = listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
+        for (var n in listOfTmpOrder) {
+          n.pricingGroupId = _selectedPriceGroupId;
+        }
       } else {
         _selectedCustomer = listOfCustomers
             .where((element) =>
@@ -1291,6 +1302,10 @@ class _MainViewState extends State<MainView> {
         _selectedCustomerName =
             '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
         _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
+        _selectedPriceGroupId = listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
+        for (var n in listOfTmpOrder) {
+          n.pricingGroupId = _selectedPriceGroupId;
+        }
       }
     }, (orderTotal) {
       originalTotalValue = orderTotal;
@@ -1321,6 +1336,10 @@ class _MainViewState extends State<MainView> {
         _selectedCustomerName =
             '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
         _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
+        _selectedPriceGroupId = listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
+        for (var n in listOfTmpOrder) {
+          n.pricingGroupId = _selectedPriceGroupId;
+        }
       } else {
         _selectedCustomer = listOfCustomers
             .where((element) =>
@@ -1335,6 +1354,10 @@ class _MainViewState extends State<MainView> {
         _selectedCustomerName =
             '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
         _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
+        _selectedPriceGroupId = listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
+        for (var n in listOfTmpOrder) {
+          n.pricingGroupId = _selectedPriceGroupId;
+        }
       }
     }, (orderTotal) {
       originalTotalValue = orderTotal;
@@ -1492,7 +1515,7 @@ class _MainViewState extends State<MainView> {
               )),
               DataCell(Center(
                   child: SizedBox(
-                width: deviceWidth <= 600 ? 100.w : 42.w,
+                width: deviceWidth <= 600 ? 110.w : 42.w,
                 child: Center(
                   child: Row(
                     children: [
@@ -1543,7 +1566,7 @@ class _MainViewState extends State<MainView> {
                               width: AppConstants.smallerDistance,
                             )
                           : SizedBox(
-                              width: AppConstants.smallWidthBetweenElements,
+                              width: AppConstants.widthBetweenElements,
                             ),
                       GestureDetector(
                         onLongPressUp: () {
@@ -1643,7 +1666,7 @@ class _MainViewState extends State<MainView> {
                 ),
               ))),
               DataCell(SizedBox(
-                width: deviceWidth <= 600 ? 50.w : 20.w,
+                width: deviceWidth <= 600 ? 70.w : 20.w,
                 child: Center(
                     child: Text(
                         listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
@@ -1950,6 +1973,7 @@ class _MainViewState extends State<MainView> {
             decimalPlaces,
             _selectedCustomerName!,
             _selectedCustomerTel!,
+            _selectedPriceGroupId!,
             deviceWidth!);
       });
       return;
@@ -1965,6 +1989,7 @@ class _MainViewState extends State<MainView> {
             listToWork,
             _selectedCustomerTel!,
             _selectedCustomerName!,
+            _selectedPriceGroupId!,
             discount,
             deviceWidth!, (done) {
           if (done == 'done') {
@@ -1972,7 +1997,7 @@ class _MainViewState extends State<MainView> {
               getTotalAmount();
             });
           }
-        });
+        },listOfPricingGroups);
       });
     } else {
       ///////////////////////
@@ -2028,7 +2053,18 @@ class _MainViewState extends State<MainView> {
         }
 
 
+
         String sellPrice = listToWork[index].sellPrice;
+        // edit with price group
+        if (_selectedPriceGroupId != 0) {
+          var pricingGroupProductsResponse =
+          listOfPricingGroups.firstWhere((element) => element.id == _selectedPriceGroupId).products;
+          for (var p in pricingGroupProductsResponse) {
+            if (p.id == listToWork[index].id) {
+              sellPrice = '${p.price}.000000000000000000000';
+            }
+          }
+        }
 
         listOfTmpOrder.add(TmpOrderModel(
             id: listToWork[index].id,
@@ -2048,6 +2084,7 @@ class _MainViewState extends State<MainView> {
                 ? listToWork[index].variations[index].name
                 : '',
             productId: listToWork[index].id,
+            pricingGroupId: _selectedPriceGroupId,
             variationId: listToWork[index].variations.isNotEmpty
                 ? listToWork[index].variations[index].id
                 : 0,
@@ -2100,6 +2137,7 @@ class _MainViewState extends State<MainView> {
             decimalPlaces,
             _selectedCustomerName!,
             _selectedCustomerTel!,
+            _selectedPriceGroupId!,
             deviceWidth!);
       });
       return;
@@ -2115,6 +2153,7 @@ class _MainViewState extends State<MainView> {
             listToWork,
             _selectedCustomerTel!,
             _selectedCustomerName!,
+            _selectedPriceGroupId!,
             discount,
             deviceWidth!, (done) {
           if (done == 'done') {
@@ -2122,7 +2161,7 @@ class _MainViewState extends State<MainView> {
               getTotalAmount();
             });
           }
-        });
+        },listOfPricingGroups);
       });
     } else {
       ///////////////////////
@@ -2196,6 +2235,7 @@ class _MainViewState extends State<MainView> {
                 ? listToWork[index].variations[index].name
                 : '',
             productId: listToWork[index].id,
+            pricingGroupId: _selectedPriceGroupId,
             variationId: listToWork[index].variations.isNotEmpty
                 ? listToWork[index].variations[index].id
                 : 0,

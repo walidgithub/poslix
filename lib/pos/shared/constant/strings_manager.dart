@@ -199,5 +199,8 @@ class AppStrings{
   static const unitPrice  = 'Unit Price';
   static const noInternet  = 'No Internet';
   static const completeRequired  = 'All Fields Required';
+  static const printerAddedSuccessfully  = 'Printer Added Successfully';
+  static const printerUpdatedSuccessfully  = 'Printer Updated Successfully';
+  static const printerDeletedSuccessfully  = 'Printer Deleted Successfully';
   static const samePrinterName  = 'Same Printer Name';
 }

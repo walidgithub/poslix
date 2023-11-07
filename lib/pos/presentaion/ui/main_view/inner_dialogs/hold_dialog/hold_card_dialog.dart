@@ -24,7 +24,7 @@ import 'local_main_view_cubit/local_main_view_cubit.dart';
 import 'local_main_view_cubit/local_main_view_state.dart';
 
 Future holdOrdersDialog(
-    BuildContext context, double deviceWidth, List<TmpOrderModel> listOfTmpOrders, double discount, String customerTel, String customerName, Function done) {
+    BuildContext context, double deviceWidth, List<TmpOrderModel> listOfTmpOrders, double discount, String customerTel, String customerName, int priceGroupId, Function done) {
   TextEditingController holdNameEditingController = TextEditingController();
   DateTime today = DateTime.now();
   return isApple() ? showCupertinoDialog<void>(context: context, builder: (context) {
@@ -100,6 +100,7 @@ Future holdOrdersDialog(
                                       customer: customerName,
                                       discount: discount.toString(),
                                       date: today.toString(),
+                                      pricingGroupId: priceGroupId,
                                       holdText:
                                       holdNameEditingController.text);
 
@@ -237,6 +238,7 @@ Future holdOrdersDialog(
                                           customer: customerName,
                                           discount: discount.toString(),
                                           date: today.toString(),
+                                          pricingGroupId: priceGroupId,
                                           holdText:
                                               holdNameEditingController.text);
 

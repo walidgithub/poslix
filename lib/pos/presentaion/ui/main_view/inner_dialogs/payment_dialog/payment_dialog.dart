@@ -338,20 +338,18 @@ class _PaymentDialogState extends State<PaymentDialog> {
                 printerType = n.printType!;
                 connectionMethod = n.connectionMethod!;
                 return;
-              } else {
-                CustomDialog.show(
-                    context,
-                    AppStrings.missedPrintingSetting.tr(),
-                    const Icon(Icons.print),
-                    ColorManager.white,
-                    AppConstants.durationOfSnackBar,
-                    ColorManager.hold);
-                printerIP = AppConstants.globalPrinterIp;
-                printerType = AppConstants.globalPrinterType;
-                connectionMethod = AppConstants.globalConnectionMethod;
               }
             }
-
+            CustomDialog.show(
+                context,
+                AppStrings.missedPrintingSetting.tr(),
+                const Icon(Icons.print),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.hold);
+            printerIP = AppConstants.globalPrinterIp;
+            printerType = AppConstants.globalPrinterType;
+            connectionMethod = AppConstants.globalConnectionMethod;
           } else if (state is LoadingErrorPrintingSettings) {
             CustomDialog.show(
                 context,

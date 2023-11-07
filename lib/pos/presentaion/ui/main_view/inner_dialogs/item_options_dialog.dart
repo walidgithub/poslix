@@ -7,6 +7,8 @@ import 'package:poslix_app/pos/shared/constant/strings_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 
 import '../../../../domain/entities/tmp_order_model.dart';
+import '../../../../domain/response/pricing_group_model.dart';
+import '../../../../domain/response/pricing_group_variants_model.dart';
 import '../../../../shared/constant/constant_values_manager.dart';
 import '../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../shared/preferences/app_pref.dart';
@@ -20,12 +22,14 @@ class ItemOptionsDialog extends StatefulWidget {
   int itemIndex;
   String currencyCode;
   String selectedCustomerTel;
+  int selectedPriceGroupId;
   var selectedListName;
   String selectedCustomer;
   List itemOptions;
   double? discount;
   double deviceWidth;
   Function done;
+  List<PricingGroupResponse> listOfPricingGroups;
 
   static void show(
           BuildContext context,
@@ -35,9 +39,11 @@ class ItemOptionsDialog extends StatefulWidget {
           var selectedListName,
           String selectedCustomerTel,
           String selectedCustomer,
+          int selectedPriceGroupId,
           double discount,
           double deviceWidth,
           Function done,
+          List<PricingGroupResponse> listOfPricingGroups,
       ) =>
      isApple() ? showCupertinoDialog<void>(context: context, useRootNavigator: false,
          barrierDismissible: false, builder: (_) => ItemOptionsDialog(
@@ -47,9 +53,11 @@ class ItemOptionsDialog extends StatefulWidget {
          selectedCustomerTel: selectedCustomerTel,
          selectedListName: selectedListName,
          selectedCustomer: selectedCustomer,
+         selectedPriceGroupId: selectedPriceGroupId,
          discount: discount,
            deviceWidth: deviceWidth,
            done: done,
+           listOfPricingGroups: listOfPricingGroups,
          )).then((_) => FocusScope.of(context).requestFocus(FocusNode())) : showDialog<void>(
         context: context,
         useRootNavigator: false,
@@ -61,9 +69,11 @@ class ItemOptionsDialog extends StatefulWidget {
             selectedCustomerTel: selectedCustomerTel,
             selectedListName: selectedListName,
             selectedCustomer: selectedCustomer,
+            selectedPriceGroupId: selectedPriceGroupId,
             discount: discount,
           deviceWidth: deviceWidth,
           done: done,
+          listOfPricingGroups: listOfPricingGroups,
         ),
       ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
@@ -76,9 +86,11 @@ class ItemOptionsDialog extends StatefulWidget {
       required this.selectedListName,
       required this.selectedCustomerTel,
       required this.selectedCustomer,
+      required this.selectedPriceGroupId,
       required this.discount,
       required this.deviceWidth,
       required this.done,
+      required this.listOfPricingGroups,
       super.key});
 
   @override
@@ -91,10 +103,21 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
   DateTime today = DateTime.now();
 
   int decimalPlaces = 2;
+  var pricingGroupProductsResponse;
+  List<PricingGroupVariantsResponse> pricingGroupVariantsResponse = [];
 
   @override
   void initState() {
     getDecimalPlaces();
+    if (widget.selectedPriceGroupId != 0) {
+       pricingGroupProductsResponse =
+       widget.listOfPricingGroups.firstWhere((element) => element.id == widget.selectedPriceGroupId).products;
+       for (var p in pricingGroupProductsResponse) {
+         if (p.id == widget.selectedListName[widget.itemIndex].id) {
+           pricingGroupVariantsResponse = p.variants;
+         }
+       }
+    }
     super.initState();
   }
 
@@ -206,6 +229,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
                           children: [
                             textS14PrimaryComponent(
                               context,
+                              widget.selectedPriceGroupId != 0 ? pricingGroupVariantsResponse[index].price.toString() :
                               widget.itemOptions[index].price.toString(),
                             ),
                             SizedBox(
@@ -312,6 +336,16 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
 
       String sellPrice = widget.itemOptions[index].price;
 
+      if (widget.selectedPriceGroupId != 0) {
+        var pricingGroupProductsResponse =
+            widget.listOfPricingGroups.firstWhere((element) => element.id == widget.selectedPriceGroupId).products;
+        for (var p in pricingGroupProductsResponse) {
+          if (p.id == widget.selectedListName[widget.itemIndex].id) {
+            sellPrice = '${p.price}.000000000000000000000';
+          }
+        }
+      }
+
       listOfTmpOrder.add(TmpOrderModel(
         productId: widget.selectedListName[widget.itemIndex].id,
         variationId:
@@ -330,6 +364,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
         orderDiscount: widget.discount,
         brand: widget.selectedListName[widget.itemIndex].brandId.toString(),
         customerTel: widget.selectedCustomerTel,
+        pricingGroupId: widget.selectedPriceGroupId,
         date: today.toString().split(" ")[0],
         itemOption: widget.itemOptions.isNotEmpty
             ? widget.selectedListName[widget.itemIndex].variations[index].name

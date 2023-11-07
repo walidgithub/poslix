@@ -82,7 +82,7 @@ class _CustomDialogState extends State<CustomDialog> {
               right: _isExpanded ? 10.w : 0.w,
               child: Container(
                 height: AppSize.s50,
-                width: deviceWidth! <= 600 ? 250.w : 130.w,
+                width: deviceWidth! <= 600 ? 290.w : 130.w,
                 decoration: BoxDecoration(
                     color: widget.messageColor,
                     border: Border.all(

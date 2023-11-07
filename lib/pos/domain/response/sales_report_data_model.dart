@@ -21,12 +21,12 @@ class SalesReportDataModel {
   late final int contactId;
   late final String userName;
   late final String contactName;
-  late final String contactMobile;
+  String? contactMobile;
   late final double total;
   late final double subTotal;
   late final double payed;
   late final int due;
-  late final String discount;
+  String? discount;
   double? tax;
   late final String date;
   late final String transactionStatus;
@@ -39,7 +39,7 @@ class SalesReportDataModel {
     contactId = json['contact_id'];
     userName = json['user_name'];
     contactName = json['contact_name'];
-    contactMobile = json['contact_mobile'];
+    contactMobile = json['contact_mobile'] ?? '';
     total = (json['total'] as num).toDouble();
     subTotal = (json['sub_total'] as num).toDouble();
     payed = (json['payed'] as num).toDouble();

@@ -173,7 +173,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
           final searchRow = element.contactMobile;
           final searchText = query;
 
-          return searchRow.contains(searchText);
+          return searchRow!.contains(searchText);
         }).toList();
 
         setState(() {
@@ -411,7 +411,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
               } else if (selectedSearchType == AppStrings.customer.tr()) {
                 searchList.add(element.contactName);
               } else if (selectedSearchType == AppStrings.tel.tr()) {
-                searchList.add(element.contactMobile);
+                searchList.add(element.contactMobile!);
               }
             }
           } else if (state is AllOrderReportError) {
@@ -557,7 +557,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                           searchList.add(element.contactName);
                         } else if (selectedSearchType ==
                             AppStrings.tel.tr()) {
-                          searchList.add(element.contactMobile);
+                          searchList.add(element.contactMobile!);
                         }
                       }
                     } else if (state is OrderReportError) {
@@ -633,7 +633,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
           } else if (selectedSearchType == AppStrings.customer.tr()) {
             searchList.add(element.contactName);
           } else if (selectedSearchType == AppStrings.tel.tr()) {
-            searchList.add(element.contactMobile);
+            searchList.add(element.contactMobile!);
           }
         }
       }
@@ -676,7 +676,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                 } else if (selectedSearchType == AppStrings.customer.tr()) {
                   searchList.add(element.contactName);
                 } else if (selectedSearchType == AppStrings.tel.tr()) {
-                  searchList.add(element.contactMobile);
+                  searchList.add(element.contactMobile!);
                 }
               }
             } else if (state is OrderReportError) {
@@ -1152,6 +1152,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                             .name
                             : '',
                         productId: element.id,
+                        pricingGroupId: 0,
                         variationId: element.variations.isNotEmpty
                             ? element
                             .variations[listOfOrderHead.indexOf(order)]
@@ -1372,6 +1373,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                             .name
                             : '',
                         productId: element.id,
+                        pricingGroupId: 0,
                         variationId: element.variations.isNotEmpty
                             ? element
                             .variations[
@@ -1538,6 +1540,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                         itemOption: element.itemOption,
                         productId: element.productId,
                         variationId: element.variationId,
+                        pricingGroupId: 0,
                         productType: element.productType,
                         customerTel: element.customerTel));
                   }
@@ -1675,6 +1678,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                             itemOption: element.itemOption,
                             productId: element.productId,
                             variationId: element.variationId,
+                            pricingGroupId: 0,
                             productType: element.productType,
                             customerTel: element.customerTel));
                       }

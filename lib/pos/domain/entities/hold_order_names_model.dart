@@ -7,8 +7,9 @@ class HoldOrderNamesModel {
   String? customer;
   String? discount;
   String? date;
+  int? pricingGroupId;
 
-  HoldOrderNamesModel({this.id,this.holdText,this.customerTel,this.customer,this.date,this.discount});
+  HoldOrderNamesModel({this.id,this.holdText,this.customerTel,this.customer,this.date,this.discount,this.pricingGroupId});
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -18,6 +19,7 @@ class HoldOrderNamesModel {
     data["customer"] = customer;
     data["date"] = date;
     data["discount"] = discount;
+    data["pricingGroupId"] = pricingGroupId ?? 0;
     return data;
   }
 
@@ -28,5 +30,6 @@ class HoldOrderNamesModel {
     customer = map["customer"];
     date = map["date"];
     discount = map["discount"];
+    pricingGroupId = map["pricingGroupId"] ?? 0;
   }
 }

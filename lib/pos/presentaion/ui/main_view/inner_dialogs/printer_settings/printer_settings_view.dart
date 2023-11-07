@@ -86,6 +86,7 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
   bool editData = false;
   bool endNameEdit = false;
   bool endIPEdit = false;
+  bool showPrinterIP = true;
 
   @override
   void dispose() {
@@ -100,24 +101,38 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
       child: BlocConsumer<MainViewCubit, MainViewState>(
         listener: (context, state) async {
           if (state is InsertPrintingSettings) {
+            CustomDialog.show(
+                context,
+                AppStrings.printerAddedSuccessfully.tr(),
+                const Icon(Icons.check),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.success);
           } else if (state is InsertErrorPrintingSettings) {}
 
           if (state is DeletePrintingSettings) {
+            CustomDialog.show(
+                context,
+                AppStrings.printerDeletedSuccessfully.tr(),
+                const Icon(Icons.check),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.success);
           } else if (state is DeleteErrorPrintingSettings) {}
 
           if (state is UpdatePrintingSettings) {
+            CustomDialog.show(
+                context,
+                AppStrings.printerUpdatedSuccessfully.tr(),
+                const Icon(Icons.check),
+                ColorManager.white,
+                AppConstants.durationOfSnackBar,
+                ColorManager.success);
           } else if (state is UpdateErrorPrintingSettings) {}
 
           if (state is LoadedPrintingSettings) {
             printSettingsData = state.printSettingResponse;
-            listOfPrinterIPs = [];
-            listOfPrinters = [];
-            for (var n in state.printSettingResponse) {
-              if (n.printerName! != '') {
-                listOfPrinterIPs.add(n.printerIP!);
-                listOfPrinters.add(n.printerName!);
-              }
-            }
+            print('hereeeeee');
           } else if (state is LoadingErrorPrintingSettings) {}
 
           if (state is LoadedByIdPrintingSettings) {
@@ -131,6 +146,15 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
               _selectedPrinterType = state.printSettingResponse.printType;
               _selectedStatus =
                   state.printSettingResponse.printerStatus == 1 ? 'On' : 'Off';
+              if (_selectedConnectionMethod == 'USB' || _selectedConnectionMethod == 'Bluetooth') {
+                setState(() {
+                  showPrinterIP = false;
+                });
+              } else {
+                setState(() {
+                  showPrinterIP = true;
+                });
+              }
           } else if (state is LoadingByIdErrorPrintingSettings) {}
         },
         builder: (context, state) {
@@ -190,7 +214,7 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
                                                         createRows(
                                                             context,
                                                             widget
-                                                                .deviceWidth!)))),
+                                                                .deviceWidth)))),
                                           ),
                                     buttons(context)
                                   ],
@@ -216,10 +240,10 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
                   children: [
                     printerNameValue(context, printerNameEditingController,
                         widget.deviceWidth, editData, _selectedPrinter, getNewPrinterNameValue, endNameEdit),
-                    printerIPValue(context, printerIPEditingController,
-                        widget.deviceWidth, editData, _selectedPrinterIP, getNewPrinterIPValue, endIPEdit),
+                    showPrinterIP ? printerIPValue(context, printerIPEditingController,
+                        widget.deviceWidth, editData, _selectedPrinterIP, getNewPrinterIPValue, endIPEdit) : Container(),
                     choosePrintType(context),
-                    // chooseConnectionMethod(context),
+                    chooseConnectionMethod(context),
                     choosePrinterStatus(context),
                     const Divider(
                       thickness: AppSize.s1,
@@ -373,6 +397,11 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
             onChanged: (selectedConnectionMethod) {
               setState(() {
                 _selectedConnectionMethod = selectedConnectionMethod;
+                if (_selectedConnectionMethod == 'USB' || _selectedConnectionMethod == 'Bluetooth') {
+                  showPrinterIP = false;
+                } else {
+                  showPrinterIP = true;
+                }
               });
             },
             value: _selectedConnectionMethod,
@@ -512,24 +541,29 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
             onTap: () async {
               setState(() {
                 addNew = !addNew;
+                if (!addNew) {
+                  MainViewCubit.get(context).getPrintingSettings();
+                } else if (addNew) {
+                  reload();
+                  editData = false;
+                }
               });
-              await MainViewCubit.get(context).getPrintingSettings();
             },
             child: containerComponent(
                 context,
                 Center(
                     child: Text(
                   addNew
-                      ? AppStrings.allPrinters.tr()
+                      ? editData ? AppStrings.cancel.tr() : AppStrings.allPrinters.tr()
                       : AppStrings.newPrinter.tr(),
                   style: TextStyle(
                       color: ColorManager.white, fontSize: AppSize.s14.sp),
                 )),
                 height: 40.h,
                 width: widget.deviceWidth <= 600 ? 170.h : 50.w,
-                color: ColorManager.primary,
+                color: addNew ? editData ? ColorManager.delete : ColorManager.primary : ColorManager.primary,
                 borderRadius: AppSize.s5,
-                borderColor: ColorManager.primary,
+                borderColor: addNew ? editData ? ColorManager.delete : ColorManager.primary : ColorManager.primary,
                 borderWidth: 0.6.w)),
       ],
     );
@@ -538,7 +572,9 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
   Future<void> addOrEditPrinter(BuildContext context) async {
     await Future.delayed(
         Duration(milliseconds: AppConstants.durationOfBounceable));
-    _selectedConnectionMethod = 'Wifi';
+    if (_selectedConnectionMethod == 'USB' || _selectedConnectionMethod == 'Bluetooth') {
+      printerIPEditingController.text = 'No IP';
+    }
     if (printerNameEditingController.text == '' ||
         printerIPEditingController.text == '' ||
         _selectedPrinterType == null ||
@@ -592,8 +628,9 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
         printerStatus: _selectedStatus == 'On' ? 1 : 0,
       );
 
+
       for(var t in printSettingsData) {
-        if (t.printerName == printerNameEditingController.text) {
+        if (t.printerName == printerNameEditingController.text && t.id != _selectedPrinterId) {
           CustomDialog.show(
               context,
               AppStrings.samePrinterName.tr(),

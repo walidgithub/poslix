@@ -37,6 +37,7 @@ class TailorDialog extends StatefulWidget {
   int? decimalPlaces;
   String selectedCustomer;
   String selectedCustomerTel;
+  int selectedPriceGroupId;
   double deviceWidth;
 
   static void show(
@@ -52,6 +53,7 @@ class TailorDialog extends StatefulWidget {
           int decimalPlaces,
           String selectedCustomer,
           String selectedCustomerTel,
+          int selectedPriceGroupId,
       double deviceWidth
       ) =>
       isApple()
@@ -71,6 +73,7 @@ class TailorDialog extends StatefulWidget {
                     decimalPlaces: decimalPlaces,
                     selectedCustomer: selectedCustomer,
                     selectedCustomerTel: selectedCustomerTel,
+                    selectedPriceGroupId: selectedPriceGroupId,
                 deviceWidth: deviceWidth,
                   ))
           : showDialog<void>(
@@ -89,6 +92,7 @@ class TailorDialog extends StatefulWidget {
                 decimalPlaces: decimalPlaces,
                 selectedCustomer: selectedCustomer,
                 selectedCustomerTel: selectedCustomerTel,
+                selectedPriceGroupId: selectedPriceGroupId,
                 deviceWidth: deviceWidth,
               ),
             ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
@@ -106,6 +110,7 @@ class TailorDialog extends StatefulWidget {
       required this.decimalPlaces,
       required this.selectedCustomer,
       required this.selectedCustomerTel,
+      required this.selectedPriceGroupId,
       required this.deviceWidth,
       super.key});
 
@@ -701,6 +706,7 @@ class _TailorDialogState extends State<TailorDialog> {
           orderDiscount: widget.discount,
           brand: widget.selectedListName[widget.itemIndex].brandId.toString(),
           customerTel: widget.selectedCustomerTel,
+          pricingGroupId: widget.selectedPriceGroupId,
           date: today.toString().split(" ")[0],
           itemOption: '',
           productType: widget.selectedListName[widget.itemIndex].type));
