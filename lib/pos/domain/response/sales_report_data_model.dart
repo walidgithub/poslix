@@ -34,6 +34,7 @@ class SalesReportDataModel {
   late final List<String> paymentMethod;
   late final String type;
 
+
   SalesReportDataModel.fromJson(Map<String, dynamic> json){
     id = json['id'];
     contactId = json['contact_id'];

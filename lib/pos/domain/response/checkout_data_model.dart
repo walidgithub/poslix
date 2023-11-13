@@ -30,13 +30,12 @@ class CheckOutDataResponse {
     this.totalTaxes,
     this.taxes,
     this.currencyId,
-    required this.products,
     required this.payment,
   });
   late final int id;
-  late final int relatedTransactionId;
+  int? relatedTransactionId;
   late final int locationId;
-  String? transferredLocationId;
+  int? transferredLocationId;
   late final String type;
   String? subType;
   late final String status;
@@ -60,14 +59,13 @@ class CheckOutDataResponse {
   String? totalTaxes;
   String? taxes;
   String? currencyId;
-  late final List<ProductsCheckOutResponse> products;
   late final List<PaymentResponse> payment;
 
   CheckOutDataResponse.fromJson(Map<String, dynamic> json){
     id = json['id'];
     relatedTransactionId = json['related_transaction_id'] ?? 0;
     locationId = json['location_id'];
-    transferredLocationId = json['transferredLocationId'] ?? '';
+    transferredLocationId = json['transferredLocationId'] ?? 0;
     type = json['type'];
     subType = json['subType'] ?? '';
     status = json['status'];
@@ -91,7 +89,6 @@ class CheckOutDataResponse {
     totalTaxes = json['totalTaxes'] ?? '';
     taxes = json['taxes'] ?? '';
     currencyId = json['currencyId'] ?? '';
-    products = List.from(json['products']).map((e)=>ProductsCheckOutResponse.fromJson(e)).toList();
     payment = List.from(json['payment']).map((e)=>PaymentResponse.fromJson(e)).toList();
   }
 
@@ -124,7 +121,6 @@ class CheckOutDataResponse {
     _data['total_taxes'] = totalTaxes;
     _data['taxes'] = taxes;
     _data['currency_id'] = currencyId;
-    _data['products'] = products.map((e)=>e.toJson()).toList();
     _data['payment'] = payment.map((e)=>e.toJson()).toList();
     return _data;
   }

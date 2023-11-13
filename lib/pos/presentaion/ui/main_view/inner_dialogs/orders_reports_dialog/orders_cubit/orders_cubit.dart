@@ -4,6 +4,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../../../../../domain/repositories/pos_repo_impl.dart';
 import '../../../../../../domain/requests/user_model.dart';
 import '../../../../../../domain/response/authorization_model.dart';
+import '../../../../../../domain/response/sales_items_report_model.dart';
 import '../../../../../../domain/response/sales_report_data_model.dart';
 import '../../../../../../domain/response/sales_report_items_model.dart';
 import '../../../../../../shared/core/network/network_info.dart';
@@ -106,7 +107,7 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   // Order Report Items-------------------------------------------------------------
-  Future<List<SalesReportItemsResponse>> getOrderReportItems(
+  Future<SalesItemsReportResponse> getOrderReportItems(
       int locationId, int orderId) async {
     try {
       var res;
@@ -121,15 +122,15 @@ class OrdersCubit extends Cubit<OrdersState> {
 
           res = await posRepositoryImpl.getOrderReportItems(
               _appPreferences.getToken(LOGGED_IN_TOKEN)!, locationId, orderId);
-          emit(OrderReportItemsSucceed());
-          listOfOrderItems = res;
+          emit(OrderReportItemsSucceed(res));
+          listOfOrderItems = res.data;
           return res;
         }
 
         res = await posRepositoryImpl.getOrderReportItems(
             token, locationId, orderId);
-        emit(OrderReportItemsSucceed());
-        listOfOrderItems = res;
+        emit(OrderReportItemsSucceed(res));
+        listOfOrderItems = res.data;
         return res;
       } else {
         emit(OrdersNoInternetState());

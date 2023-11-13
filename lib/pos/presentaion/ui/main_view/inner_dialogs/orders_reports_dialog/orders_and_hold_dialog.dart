@@ -1227,6 +1227,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   setState(() {
                     listOfOrderItems =
                         OrdersCubit.get(context).listOfOrderItems;
+                    totalAmount = double.parse(state.salesItemsReportResponse.total as String);
                   });
                 } else if (state is OrderReportItemsError) {
                   LoadingDialog.hide(context);
@@ -1450,6 +1451,8 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   setState(() {
                     listOfOrderItems =
                         OrdersCubit.get(context).listOfOrderItems;
+
+                    totalAmount = double.parse(state.salesItemsReportResponse.total as String);
                   });
                 } else if (state is OrderReportItemsError) {
                   LoadingDialog.hide(context);

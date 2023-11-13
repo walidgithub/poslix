@@ -1,3 +1,6 @@
+import '../../../../../../domain/response/sales_items_report_model.dart';
+import '../../../../../../domain/response/sales_report_items_model.dart';
+
 abstract class OrdersState{}
 
 class OrdersInitial extends OrdersState{}
@@ -19,7 +22,10 @@ class OrderReportError extends OrdersState{
 }
 
 class LoadingOrderReportItems extends OrdersState{}
-class OrderReportItemsSucceed extends OrdersState{}
+class OrderReportItemsSucceed extends OrdersState{
+  SalesItemsReportResponse salesItemsReportResponse;
+  OrderReportItemsSucceed(this.salesItemsReportResponse);
+}
 class OrderReportItemsError extends OrdersState{
   String errorText;
 

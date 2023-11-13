@@ -1,3 +1,5 @@
+import 'package:poslix_app/pos/domain/response/products_checkout_model.dart';
+
 class CheckOutSalesDataResponse {
   CheckOutSalesDataResponse({
     required this.id,
@@ -16,6 +18,7 @@ class CheckOutSalesDataResponse {
     required this.paymentStatus,
     required this.paymentMethod,
     required this.type,
+    required this.products,
   });
   late final int id;
   late final int contactId;
@@ -33,6 +36,7 @@ class CheckOutSalesDataResponse {
   late final String paymentStatus;
   late final String paymentMethod;
   late final String type;
+  late final List<ProductsCheckOutResponse> products;
 
   CheckOutSalesDataResponse.fromJson(Map<String, dynamic> json){
     id = json['id'];
@@ -51,6 +55,7 @@ class CheckOutSalesDataResponse {
     paymentStatus = json['payment_status'];
     paymentMethod = json['payment_method'];
     type = json['type'];
+    products = List.from(json['products']).map((e)=>ProductsCheckOutResponse.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -71,6 +76,7 @@ class CheckOutSalesDataResponse {
     _data['payment_status'] = paymentStatus;
     _data['payment_method'] = paymentMethod;
     _data['type'] = type;
+    _data['products'] = products.map((e)=>e.toJson()).toList();
     return _data;
   }
 }

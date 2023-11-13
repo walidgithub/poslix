@@ -32,6 +32,7 @@ import '../response/payment_methods_model.dart';
 import '../response/pricing_group_model.dart';
 import '../entities/printing_settings_model.dart';
 import '../response/register_data_model.dart';
+import '../response/sales_items_report_model.dart';
 import '../response/sales_report_data_model.dart';
 import '../response/sales_report_items_model.dart';
 
@@ -335,16 +336,14 @@ class POSRepositoryImpl extends POSRepository {
   }
 
   @override
-  Future<List<SalesReportItemsResponse>> getOrderReportItems(
+  Future<SalesItemsReportResponse> getOrderReportItems(
       String token, int locationId, int orderId) async {
-    List<SalesReportItemsResponse> res = <SalesReportItemsResponse>[];
+    var res;
     try {
       return await _dio.get('api/reports/item-sales/$locationId/$orderId',
           headers: {'Authorization': 'Bearer $token'}).then((response) {
-        res = (response.data['result']['data'] as List).map((e) {
-          return SalesReportItemsResponse.fromJson(e);
-        }).toList();
-        return res;
+        res = response.data['result'];
+        return SalesItemsReportResponse.fromJson(res);
       });
     } catch (e) {
       throw e.toString();

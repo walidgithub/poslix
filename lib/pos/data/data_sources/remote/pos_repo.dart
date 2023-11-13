@@ -26,6 +26,7 @@ import '../../../domain/response/payment_method_model.dart';
 import '../../../domain/response/payment_methods_model.dart';
 import '../../../domain/response/pricing_group_model.dart';
 import '../../../domain/entities/printing_settings_model.dart';
+import '../../../domain/response/sales_items_report_model.dart';
 import '../../../domain/response/sales_report_data_model.dart';
 import '../../../domain/response/tailoring_types_model.dart';
 import '../../../domain/response/taxes_model.dart';
@@ -63,7 +64,7 @@ abstract class POSRepository {
 
   Future<List<SalesReportDataModel>> getOrderReportByPage(String token, final int locationId, int pageNum);
   Future<List<SalesReportDataModel>> getOrderReport(String token, final int locationId);
-  Future<List<SalesReportItemsResponse>> getOrderReportItems(String token, final int locationId, final int orderId);
+  Future<SalesItemsReportResponse> getOrderReportItems(String token, final int locationId, final int orderId);
 
   Future<CurrencyCodeResponse> getCurrency(String token, final int locationId);
 
