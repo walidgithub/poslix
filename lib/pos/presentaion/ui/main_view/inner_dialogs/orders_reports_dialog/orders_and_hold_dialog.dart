@@ -1073,7 +1073,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
         child: Center(
             child: Text(
                 listOfOrderHead[listOfOrderHead.indexOf(order)]
-                    .subTotal
+                    .total
                     .toString(),
                 style: TextStyle(fontSize: AppSize.s14.sp),
                 textAlign: TextAlign.center)),
@@ -1227,7 +1227,6 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   setState(() {
                     listOfOrderItems =
                         OrdersCubit.get(context).listOfOrderItems;
-                    totalAmount = double.parse(state.salesItemsReportResponse.total as String);
                   });
                 } else if (state is OrderReportItemsError) {
                   LoadingDialog.hide(context);
@@ -1246,8 +1245,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                       orderItems = true;
                       orderFilter = false;
                       orderId = listOfOrderHead[
-                      listOfOrderHead.indexOf(order)]
-                          .id;
+                      listOfOrderHead.indexOf(order)].id;
                       OrdersCubit.get(context).getOrderReportItems(
                           widget.locationId, orderId!);
                       if (widget.deviceWidth <= 600) {
@@ -1297,7 +1295,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
             Text(
                 listOfOrderHeadForSearch[
                 listOfOrderHeadForSearch.indexOf(order)]
-                    .subTotal
+                    .total
                     .toString(),
 
                 style: TextStyle(fontSize: AppSize.s14.sp),
@@ -1451,8 +1449,6 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   setState(() {
                     listOfOrderItems =
                         OrdersCubit.get(context).listOfOrderItems;
-
-                    totalAmount = double.parse(state.salesItemsReportResponse.total as String);
                   });
                 } else if (state is OrderReportItemsError) {
                   LoadingDialog.hide(context);

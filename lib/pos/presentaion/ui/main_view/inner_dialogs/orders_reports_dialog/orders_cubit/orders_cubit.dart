@@ -126,17 +126,20 @@ class OrdersCubit extends Cubit<OrdersState> {
           listOfOrderItems = res.data;
           return res;
         }
-
+        print('cubit 0000000000');
         res = await posRepositoryImpl.getOrderReportItems(
             token, locationId, orderId);
         emit(OrderReportItemsSucceed(res));
         listOfOrderItems = res.data;
+        print(listOfOrderItems);
+        print('cubit 111111111111');
         return res;
       } else {
         emit(OrdersNoInternetState());
         return res;
       }
     } catch (e) {
+      print('cubit 22222222');
       emit(OrderReportItemsError(e.toString()));
       return Future.error(e);
     }

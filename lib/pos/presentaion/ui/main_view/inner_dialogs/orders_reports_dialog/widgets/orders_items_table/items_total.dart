@@ -12,11 +12,11 @@ Widget itemsTotal(BuildContext context, bool searching, int orderId, List<SalesR
   if (searching) {
     int orderIndex = listOfOrderHeadForSearch
         .indexWhere((element) => element.id == orderId);
-    // totalAmount = listOfOrderHeadForSearch[orderIndex].subTotal;
+    totalAmount = listOfOrderHeadForSearch[orderIndex].total;
   } else {
     int orderIndex =
     listOfOrderHead.indexWhere((element) => element.id == orderId);
-    // totalAmount = listOfOrderHead[orderIndex].subTotal;
+    totalAmount = listOfOrderHead[orderIndex].total;
   }
   return Align(
     alignment: AlignmentDirectional.center,

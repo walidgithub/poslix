@@ -13,16 +13,16 @@ class SalesItemsReportResponse {
   });
   late final int cost;
   late final int subTotal;
-  late final int tax;
-  late final int total;
+  late final double tax;
+  late final double total;
   late final CurrencyResponse currency;
   late final List<SalesReportItemsResponse> data;
 
   SalesItemsReportResponse.fromJson(Map<String, dynamic> json){
     cost = json['cost'];
     subTotal = json['sub_total'];
-    tax = json['tax'];
-    total = json['total'];
+    tax = (json['tax'] as num).toDouble();
+    total = (json['total'] as num).toDouble();
     currency = CurrencyResponse.fromJson(json['currency']);
     data = List.from(json['data']).map((e)=>SalesReportItemsResponse.fromJson(e)).toList();
   }

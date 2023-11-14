@@ -27,17 +27,17 @@ class DioManager {
       ),
     );
     if (!kReleaseMode) {
-      dio.interceptors.add(
-        PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: true,
-          error: true,
-          compact: true,
-          maxWidth: 120,
-        ),
-      );
+      // dio.interceptors.add(
+      //   PrettyDioLogger(
+      //     requestHeader: true,
+      //     requestBody: true,
+      //     responseBody: true,
+      //     responseHeader: true,
+      //     error: true,
+      //     compact: true,
+      //     maxWidth: 120,
+      //   ),
+      // );
     }
     return dio;
   }
