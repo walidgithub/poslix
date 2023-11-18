@@ -1,4 +1,4 @@
-import 'package:poslix_app/pos/domain/response/sales_report_items_model.dart';
+import 'package:poslix_app/pos/domain/response/sales_report_items_data_model.dart';
 
 import 'currency_model.dart';
 
@@ -16,7 +16,7 @@ class SalesItemsReportResponse {
   late final double tax;
   late final double total;
   late final CurrencyResponse currency;
-  late final List<SalesReportItemsResponse> data;
+  late final List<SalesReportItemsDataResponse> data;
 
   SalesItemsReportResponse.fromJson(Map<String, dynamic> json){
     cost = json['cost'];
@@ -24,7 +24,7 @@ class SalesItemsReportResponse {
     tax = (json['tax'] as num).toDouble();
     total = (json['total'] as num).toDouble();
     currency = CurrencyResponse.fromJson(json['currency']);
-    data = List.from(json['data']).map((e)=>SalesReportItemsResponse.fromJson(e)).toList();
+    data = List.from(json['data']).map((e)=>SalesReportItemsDataResponse.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {

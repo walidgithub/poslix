@@ -4,157 +4,53 @@ import 'package:poslix_app/pos/domain/response/variations_model.dart';
 
 class ProductsInOrdersResponse {
   ProductsInOrdersResponse({
-    required this.id,
-    required this.name,
-    this.businessId,
-    required this.locationId,
-    required this.type,
-    required this.isTailoring,
-    required this.isService,
-    required this.isFabric,
-    required this.subproductname,
-    required this.unitId,
-    required this.brandId,
-    required this.categoryId,
-    this.subCategoryId,
-    this.tax,
-    required this.neverTax,
-    required this.alertQuantity,
-    required this.sku,
-    required this.barcodeType,
-    required this.image,
-    this.productDescription,
-    required this.createdBy,
-    required this.isDisabled,
-    required this.sellPrice,
-    required this.costPrice,
-    required this.sellOverStock,
-    required this.qtyOverSold,
-    this.createdAt,
-    this.updatedAt,
-    required this.isSellingMultiPrice,
-    required this.isFifo,
-    required this.status,
+    required this.productId,
+    required this.productName,
+    required this.productSku,
+    required this.productPrice,
     required this.productQty,
-    required this.stock,
-    required this.packages,
-    required this.variations,
-    required this.stocks,
+    required this.variantId,
+    required this.categoryId,
+    required this.categoryName,
+    required this.brandId,
+    required this.brandName,
   });
-  late final int id;
-  late final String name;
-  int? businessId;
-  late final int locationId;
-  late final String type;
-  late final int isTailoring;
-  late final int isService;
-  late final int isFabric;
-  late final String subproductname;
-  late final int unitId;
-  late final int brandId;
-  late final int categoryId;
-  int? subCategoryId;
-  double? tax;
-  late final int neverTax;
-  late final String alertQuantity;
-  late final String sku;
-  late final String barcodeType;
-  late final String image;
-  String? productDescription;
-  late final int createdBy;
-  late final int isDisabled;
-  late final String sellPrice;
-  late final String costPrice;
-  late final int sellOverStock;
-  late final String qtyOverSold;
-  String? createdAt;
-  String? updatedAt;
-  late final int isSellingMultiPrice;
-  late final int isFifo;
-  late final String status;
+  late final int productId;
+  late final String productName;
+  late final String productSku;
+  late final String productPrice;
   late final String productQty;
-  late final int stock;
-  late final List<PackagesResponse> packages;
-  late final List<VariationsResponse> variations;
-  late final List<StocksResponse> stocks;
+  late final int variantId;
+  late final String categoryId;
+  late final String categoryName;
+  late final String brandId;
+  late final String brandName;
 
   ProductsInOrdersResponse.fromJson(Map<String, dynamic> json){
-    id = json['id'];
-    name = json['name'];
-    businessId = json['businessId'] ?? 0;
-    locationId = json['location_id'];
-    type = json['type'];
-    isTailoring = json['is_tailoring'];
-    isService = json['is_service'];
-    isFabric = json['is_fabric'];
-    subproductname = json['subproductname'] ?? '';
-    unitId = json['unit_id'];
-    brandId = json['brand_id'] ?? 0;
-    categoryId = json['category_id'];
-    subCategoryId = json['subCategoryId'] ?? 0;
-    tax = json['tax'] ?? 0.0;
-    neverTax = json['never_tax'];
-    alertQuantity = json['alert_quantity'] ?? '';
-    sku = json['sku'];
-    barcodeType = json['barcode_type'];
-    image = json['image'];
-    productDescription = json['productDescription'] ?? '';
-    createdBy = json['created_by'];
-    isDisabled = json['is_disabled'];
-    sellPrice = json['sell_price'];
-    costPrice = json['cost_price'];
-    sellOverStock = json['sell_over_stock'];
-    qtyOverSold = json['qty_over_sold'] ?? '';
-    createdAt = json['createdAt'] ?? '';
-    updatedAt = json['updatedAt'] ?? '';
-    isSellingMultiPrice = json['is_selling_multi_price'];
-    isFifo = json['is_fifo'];
-    status = json['status'];
+    productId = json['product_id'];
+    productName = json['product_name'];
+    productSku = json['product_sku'];
+    productPrice = json['product_price'];
     productQty = json['product_qty'];
-    stock = json['stock'];
-    packages = List.from(json['packages']).map((e)=>PackagesResponse.fromJson(e)).toList();
-    variations = List.from(json['variations']).map((e)=>VariationsResponse.fromJson(e)).toList();
-    stocks = List.from(json['stocks']).map((e)=>StocksResponse.fromJson(e)).toList();
+    variantId = json['variant_id'];
+    categoryId = json['category_id'];
+    categoryName = json['category_name'];
+    brandId = json['brand_id'];
+    brandName = json['brand_name'];
   }
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['id'] = id;
-    data['name'] = name;
-    data['business_id'] = businessId;
-    data['location_id'] = locationId;
-    data['type'] = type;
-    data['is_tailoring'] = isTailoring;
-    data['is_service'] = isService;
-    data['is_fabric'] = isFabric;
-    data['subproductname'] = subproductname;
-    data['unit_id'] = unitId;
-    data['brand_id'] = brandId;
-    data['category_id'] = categoryId;
-    data['sub_category_id'] = subCategoryId;
-    data['tax'] = tax;
-    data['never_tax'] = neverTax;
-    data['alert_quantity'] = alertQuantity;
-    data['sku'] = sku;
-    data['barcode_type'] = barcodeType;
-    data['image'] = image;
-    data['product_description'] = productDescription;
-    data['created_by'] = createdBy;
-    data['is_disabled'] = isDisabled;
-    data['sell_price'] = sellPrice;
-    data['cost_price'] = costPrice;
-    data['sell_over_stock'] = sellOverStock;
-    data['qty_over_sold'] = qtyOverSold;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
-    data['is_selling_multi_price'] = isSellingMultiPrice;
-    data['is_fifo'] = isFifo;
-    data['status'] = status;
-    data['product_qty'] = productQty;
-    data['stock'] = stock;
-    data['packages'] = packages.map((e)=>e.toJson()).toList();
-    data['variations'] = variations.map((e)=>e.toJson()).toList();
-    data['stocks'] = stocks.map((e)=>e.toJson()).toList();
-    return data;
+    final _data = <String, dynamic>{};
+    _data['product_id'] = productId;
+    _data['product_name'] = productName;
+    _data['product_sku'] = productSku;
+    _data['product_price'] = productPrice;
+    _data['product_qty'] = productQty;
+    _data['variant_id'] = variantId;
+    _data['category_id'] = categoryId;
+    _data['category_name'] = categoryName;
+    _data['brand_id'] = brandId;
+    _data['brand_name'] = brandName;
+    return _data;
   }
 }

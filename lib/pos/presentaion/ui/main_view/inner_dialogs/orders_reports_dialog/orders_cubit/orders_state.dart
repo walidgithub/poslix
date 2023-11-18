@@ -1,5 +1,5 @@
 import '../../../../../../domain/response/sales_items_report_model.dart';
-import '../../../../../../domain/response/sales_report_items_model.dart';
+import '../../../../../../domain/response/sales_report_items_data_model.dart';
 
 abstract class OrdersState{}
 

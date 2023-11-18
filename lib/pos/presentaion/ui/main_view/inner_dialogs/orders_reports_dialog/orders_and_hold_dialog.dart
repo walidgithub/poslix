@@ -24,7 +24,7 @@ import '../../../../../domain/entities/hold_order_items_model.dart';
 import '../../../../../domain/entities/hold_order_names_model.dart';
 import '../../../../../domain/entities/tmp_order_model.dart';
 import '../../../../../domain/response/sales_report_data_model.dart';
-import '../../../../../domain/response/sales_report_items_model.dart';
+import '../../../../../domain/response/sales_report_items_data_model.dart';
 import '../../../../../shared/constant/assets_manager.dart';
 import '../../../../../shared/constant/constant_values_manager.dart';
 import '../../../../../shared/constant/language_manager.dart';
@@ -115,7 +115,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
 
   List<SalesReportDataModel> listOfOrderHead = [];
   List<SalesReportDataModel> listOfAllOrderHead = [];
-  List<SalesReportItemsResponse> listOfOrderItems = [];
+  List<SalesReportItemsDataResponse> listOfOrderItems = [];
 
   int? orderId;
 
@@ -1114,13 +1114,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   listOfTmpOrder.clear();
 
                   for (var element in getOrdersItems.first.products) {
-                    String sellPrice = element.sellPrice;
-
-                    if (element.variations.isNotEmpty) {
-                      sellPrice = element
-                          .variations[listOfOrderHead.indexOf(order)]
-                          .price;
-                    }
+                    String sellPrice = element.productPrice;
 
                     String amount =
                         '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}';
@@ -1128,7 +1122,7 @@ class _OrdersDialogState extends State<OrdersDialog> {
                     String productQty = element.productQty;
 
                     listOfTmpOrder.add(TmpOrderModel(
-                        id: element.id,
+                        id: element.productId,
                         date: getOrdersItems.first.date,
                         category: element.categoryId.toString(),
                         brand: element.brandId.toString(),
@@ -1139,26 +1133,17 @@ class _OrdersDialogState extends State<OrdersDialog> {
                                 double.parse(productQty),
                             decimalPlaces))
                             .toString(),
-                        itemName: element.name,
+                        itemName: element.productName,
                         itemPrice: amount,
                         itemQuantity: int.parse(productQty.substring(
                             0, productQty.indexOf('.'))),
                         orderDiscount:
                         0.0,
-                        itemOption: element.variations.isNotEmpty
-                            ? element
-                            .variations[
-                        listOfOrderHead.indexOf(order)]
-                            .name
-                            : '',
-                        productId: element.id,
+                        itemOption: '',
+                        productId: element.productId,
                         pricingGroupId: 0,
-                        variationId: element.variations.isNotEmpty
-                            ? element
-                            .variations[listOfOrderHead.indexOf(order)]
-                            .id
-                            : 0,
-                        productType: element.type,
+                        variationId: element.variantId ?? 0,
+                        productType: element.variantId.toString() == null ? "single" : "variable",
                         customerTel: getOrdersItems.first.contactMobile));
                   }
                   GlobalValues.setEditOrder = true;
@@ -1337,20 +1322,14 @@ class _OrdersDialogState extends State<OrdersDialog> {
                   listOfTmpOrder.clear();
 
                   for (var element in getOrdersItems.first.products) {
-                    String sellPrice = element.sellPrice;
-
-                    if (element.variations.isNotEmpty) {
-                      sellPrice = element
-                          .variations[listOfOrderHead.indexOf(order)]
-                          .price;
-                    }
+                    String sellPrice = element.productPrice;
 
                     String amount =
                         '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}';
 
                     String productQty = element.productQty;
                     listOfTmpOrder.add(TmpOrderModel(
-                        id: element.id,
+                        id: element.productId,
                         date: getOrdersItems.first.date,
                         category: element.categoryId.toString(),
                         brand: element.brandId.toString(),
@@ -1359,27 +1338,17 @@ class _OrdersDialogState extends State<OrdersDialog> {
                         itemAmount:
                         (int.parse(amount) * int.parse(productQty))
                             .toString(),
-                        itemName: element.name,
+                        itemName: element.productName,
                         itemPrice: amount,
                         itemQuantity: int.parse(productQty.substring(
                             0, productQty.indexOf('.'))),
                         orderDiscount:
                         0.0,
-                        itemOption: element.variations.isNotEmpty
-                            ? element
-                            .variations[
-                        listOfOrderHead.indexOf(order)]
-                            .name
-                            : '',
-                        productId: element.id,
+                        itemOption: '',
+                        productId: element.productId,
                         pricingGroupId: 0,
-                        variationId: element.variations.isNotEmpty
-                            ? element
-                            .variations[
-                        listOfOrderHead.indexOf(order)]
-                            .id
-                            : 0,
-                        productType: element.type,
+                        variationId: element.variantId ?? 0,
+                        productType: element.variantId.toString() == null ? "single" : "variable",
                         customerTel: getOrdersItems.first.contactMobile));
                   }
                   GlobalValues.setEditOrder = true;

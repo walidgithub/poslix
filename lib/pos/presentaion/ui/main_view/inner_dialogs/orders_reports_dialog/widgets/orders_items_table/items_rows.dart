@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../../../domain/response/sales_report_items_model.dart';
+import '../../../../../../../domain/response/sales_report_items_data_model.dart';
 import '../../../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../../../shared/style/colors_manager.dart';
 
-List<DataRow> createOrderItemsRows(int decimalPlaces, List<SalesReportItemsResponse> listOfOrderItems, double deviceWidth) {
+List<DataRow> createOrderItemsRows(int decimalPlaces, List<SalesReportItemsDataResponse> listOfOrderItems, double deviceWidth) {
   return listOfOrderItems[0]
       .products
       .map((orderItem) => DataRow(cells: [
-    DataCell(Text(orderItem.id.toString(),
+    DataCell(Text(orderItem.productId.toString(),
         style: TextStyle(color: ColorManager.edit),
         textAlign: TextAlign.center)),
     DataCell(SizedBox(
       width: deviceWidth <= 600 ? 130.w : 40.w,
       child: Center(
-          child: Text(orderItem.name,
+          child: Text(orderItem.productName,
               style: TextStyle(fontSize: AppSize.s14.sp),
               textAlign: TextAlign.center)),
     )),
@@ -23,9 +23,7 @@ List<DataRow> createOrderItemsRows(int decimalPlaces, List<SalesReportItemsRespo
       width: deviceWidth <= 600 ? 60.w : 25.w,
       child: Center(
           child: Text(
-              orderItem.type == 'single'
-                  ? '${orderItem.sellPrice.toString().substring(0, orderItem.sellPrice.toString().indexOf('.'))}${orderItem.sellPrice.toString().substring(orderItem.sellPrice.toString().indexOf('.'), orderItem.sellPrice.toString().indexOf('.') + 1 + decimalPlaces)}'
-                  : '${orderItem.variations[0].price.toString().substring(0, orderItem.variations[0].price.toString().indexOf('.'))}${orderItem.variations[0].price.toString().substring(orderItem.variations[0].price.toString().indexOf('.'), orderItem.variations[0].price.toString().indexOf('.') + 1 + decimalPlaces)}',
+              '${orderItem.productPrice.toString().substring(0, orderItem.productPrice.toString().indexOf('.'))}${orderItem.productPrice.toString().substring(orderItem.productPrice.toString().indexOf('.'), orderItem.productPrice.toString().indexOf('.') + 1 + decimalPlaces)}',
               style: TextStyle(fontSize: AppSize.s14.sp),
               textAlign: TextAlign.center)),
     )),

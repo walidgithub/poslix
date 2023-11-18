@@ -6,7 +6,7 @@ import '../../../../../../domain/requests/user_model.dart';
 import '../../../../../../domain/response/authorization_model.dart';
 import '../../../../../../domain/response/sales_items_report_model.dart';
 import '../../../../../../domain/response/sales_report_data_model.dart';
-import '../../../../../../domain/response/sales_report_items_model.dart';
+import '../../../../../../domain/response/sales_report_items_data_model.dart';
 import '../../../../../../shared/core/network/network_info.dart';
 import '../../../../../../shared/preferences/app_pref.dart';
 import '../../../../../di/di.dart';
@@ -24,7 +24,7 @@ class OrdersCubit extends Cubit<OrdersState> {
 
   List<SalesReportDataModel> listOfOrderHead = [];
   List<SalesReportDataModel> listOfAllOrderHead = [];
-  List<SalesReportItemsResponse> listOfOrderItems = [];
+  List<SalesReportItemsDataResponse> listOfOrderItems = [];
 
   String? userName;
   String? password;

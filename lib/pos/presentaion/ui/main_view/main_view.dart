@@ -2068,7 +2068,7 @@ class _MainViewState extends State<MainView> {
 
         listOfTmpOrder.add(TmpOrderModel(
             id: listToWork[index].id,
-            itemName: listToWork[index].name,
+            itemName: listToWork[index].type == 'single' ? listToWork[index].name : listToWork[index].name + listToWork[index].variations[index].name,
             itemQuantity: 1,
             itemAmount:
                 '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
@@ -2219,7 +2219,7 @@ class _MainViewState extends State<MainView> {
 
         listOfTmpOrder.add(TmpOrderModel(
             id: listToWork[index].id,
-            itemName: listToWork[index].name,
+            itemName: listToWork[index].type == 'single' ? listToWork[index].name : listToWork[index].name + listToWork[index].variations[index].name,
             itemQuantity: 1,
             itemAmount:
                 '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',

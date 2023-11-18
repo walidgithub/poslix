@@ -34,7 +34,7 @@ import '../entities/printing_settings_model.dart';
 import '../response/register_data_model.dart';
 import '../response/sales_items_report_model.dart';
 import '../response/sales_report_data_model.dart';
-import '../response/sales_report_items_model.dart';
+import '../response/sales_report_items_data_model.dart';
 
 class POSRepositoryImpl extends POSRepository {
   final DioManager _dio;

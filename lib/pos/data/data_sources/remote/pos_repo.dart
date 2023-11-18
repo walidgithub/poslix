@@ -2,7 +2,7 @@ import 'package:poslix_app/pos/domain/requests/close_register_model.dart';
 import 'package:poslix_app/pos/domain/requests/open_register_model.dart';
 import 'package:poslix_app/pos/domain/response/business_model.dart';
 import 'package:poslix_app/pos/domain/response/register_data_model.dart';
-import 'package:poslix_app/pos/domain/response/sales_report_items_model.dart';
+import 'package:poslix_app/pos/domain/response/sales_report_items_data_model.dart';
 import '../../../domain/requests/check_out_model.dart';
 import '../../../domain/requests/close_register_report_model.dart';
 import '../../../domain/requests/customer_model.dart';
