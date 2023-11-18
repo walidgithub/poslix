@@ -323,7 +323,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
 
     setState(() {
       for (var entry in listOfTmpOrder) {
-        if (widget.selectedListName[widget.itemIndex].name == entry.itemName &&
+        if (widget.selectedListName[widget.itemIndex].name + " " + widget.selectedListName[widget.itemIndex].variations[index].name == entry.itemName &&
             widget.itemOptions[index].name == entry.itemOption) {
           int? itemCount = entry.itemQuantity;
           itemCount = itemCount! + 1;
@@ -353,7 +353,7 @@ class _ItemOptionsDialogState extends State<ItemOptionsDialog> {
                 ? widget.selectedListName[widget.itemIndex].variations[index].id
                 : 0,
         id: widget.selectedListName[widget.itemIndex].id,
-        itemName: widget.selectedListName[widget.itemIndex].type == 'single' ? widget.selectedListName[widget.itemIndex].name : widget.selectedListName[widget.itemIndex].name + widget.selectedListName[widget.itemIndex].variations[index].name,
+        itemName: widget.selectedListName[widget.itemIndex].name + " " + widget.selectedListName[widget.itemIndex].variations[index].name,
         itemQuantity: 1,
         itemAmount:
             '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',

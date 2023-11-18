@@ -1153,6 +1153,12 @@ class _OrdersDialogState extends State<OrdersDialog> {
                       '${AppStrings.firstName} ${AppStrings.secondName}') {
                     widget.customerName(order.contactName);
                   } else {
+                    print('testttttttttttttt');
+                    print(widget.customerName(
+                        '${order.contactName} | ${order.contactMobile}'));
+                    // contactFirstName
+                    // contactLastName
+                    // contactMobile
                     widget.customerName(
                         '${order.contactName} | ${order.contactMobile}');
                   }
