@@ -1156,7 +1156,6 @@ class _OrdersDialogState extends State<OrdersDialog> {
                     widget.customerName(
                         '${order.contactName} | ${order.contactMobile}');
                   }
-
                   OrdersDialog.hide(context);
                 } else if (state is OrderReportItemsError) {
                   LoadingDialog.hide(context);
