@@ -132,7 +132,6 @@ class _PrinterSettingsDialogState extends State<PrinterSettingsDialog> {
 
           if (state is LoadedPrintingSettings) {
             printSettingsData = state.printSettingResponse;
-            print('hereeeeee');
           } else if (state is LoadingErrorPrintingSettings) {}
 
           if (state is LoadedByIdPrintingSettings) {

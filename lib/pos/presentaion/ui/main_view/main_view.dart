@@ -1691,12 +1691,6 @@ class _MainViewState extends State<MainView> {
                                   listOfTmpOrder.indexOf(tmpOrder) - 1));
                             });
                           }
-                          // _quantityControllers.removeAt(getIndex(
-                          //     listOfTmpOrder.indexOf(tmpOrder)));
-                          // for (var controller in _quantityControllers) {
-                          //   print('testttttttt');
-                          //   print(controller.text);
-                          // }
                           getTotalAmount();
                         },
                         child: Icon(

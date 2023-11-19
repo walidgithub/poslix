@@ -1,7 +1,7 @@
 class AppStrings{
   static const poslix = 'Poslix';
-  static const firstName = 'walk-in';
-  static const secondName = 'customer';
+  static const firstName = 'Walk In';
+  static const secondName = 'Customer';
   static const search = 'Search';
   static const searchByProduct = 'Search by product';
   static const noRouteFound  = 'noRouteFound';
