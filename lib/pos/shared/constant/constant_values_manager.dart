@@ -15,6 +15,7 @@ class AppConstants {
   static double smallDistance = 5.w;
   static double smallerDistance = 2.w;
   static int durationOfSnackBar = 3000;
+  static int durationOfSnackBarinRegister = 5000;
   static int durationOfAdd = 1000;
   static int waitingLoading = 8000;
   static int durationOfBounceable = 300;

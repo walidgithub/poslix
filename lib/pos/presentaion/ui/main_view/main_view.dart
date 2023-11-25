@@ -40,6 +40,7 @@ import 'package:poslix_app/pos/shared/constant/padding_margin_values_manager.dar
 import 'package:poslix_app/pos/shared/style/colors_manager.dart';
 import 'package:poslix_app/pos/shared/utils/utils.dart';
 import '../../../domain/entities/order_model.dart';
+import '../../../domain/entities/search_list_model.dart';
 import '../../../domain/entities/tmp_order_model.dart';
 import '../../../domain/response/brands_model.dart';
 import '../../../domain/response/categories_model.dart';
@@ -98,7 +99,7 @@ class _MainViewState extends State<MainView> {
 
   List<ProductsResponse> listOfAllProducts = [];
   List<ProductsResponse> listOfBothProducts = [];
-  List<String> searchList = [];
+  List<SearchListModel> searchList = [];
 
   List<ProductsResponse> listOfProducts = [];
   List<VariationsResponse> listOfVariations = [];
@@ -130,9 +131,6 @@ class _MainViewState extends State<MainView> {
   void dispose() {
     _searchEditingController.dispose();
     _customerEditingController.dispose();
-    // for (var controller in _quantityControllers) {
-    //   controller.dispose();
-    // }
     super.dispose();
   }
 
@@ -452,7 +450,7 @@ class _MainViewState extends State<MainView> {
     }
 
     for (var element in listOfAllProducts) {
-      searchList.add(element.name);
+      searchList.add(SearchListModel(name: element.name, sku: element.sku));
     }
 
     listOfCategories.insert(
@@ -593,7 +591,7 @@ class _MainViewState extends State<MainView> {
             }
 
             for (var element in listOfAllProducts) {
-              searchList.add(element.name);
+              searchList.add(SearchListModel(name: element.name, sku: element.sku));
             }
 
             listOfBrands.insert(
@@ -1005,7 +1003,6 @@ class _MainViewState extends State<MainView> {
               _selectedPriceGroupId = selectedCustomer?.priceGroupsId ?? 0;
             });
           },
-          // // search text for customer
           dropdownSearchData: DropdownSearchData(
             searchController: _customerEditingController,
             searchInnerWidgetHeight: 50,
@@ -1042,7 +1039,6 @@ class _MainViewState extends State<MainView> {
               return choose.contains(searchValue);
             },
           ),
-          // // This to clear the search value when you close the menu
           onMenuStateChange: (isOpen) {
             if (!isOpen) {
               _customerEditingController.clear();
@@ -1264,10 +1260,6 @@ class _MainViewState extends State<MainView> {
         GlobalValues.setEditOrder = false;
       });
     }
-
-    // for (var controller in _quantityControllers) {
-    //     _quantityControllers.removeAt(_quantityControllers.indexOf(controller));
-    // }
   }
 
   void getOrders(BuildContext context) {
@@ -1469,13 +1461,7 @@ class _MainViewState extends State<MainView> {
           'fixed',
           estimatedTax, (done) {
         if (done == 'done') {
-          // MainViewCubit.get(context).getCategories(locationId);
           setState(() {
-            // categoryFilter = true;
-            // listOfTmpOrder = [];
-            // listOfBothProducts = [];
-            // listOfAllProducts = [];
-            // searchList = [];
             reload();
           });
         }

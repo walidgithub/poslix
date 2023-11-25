@@ -404,7 +404,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
             buttonStyleData: ButtonStyleData(
               height: 47.h,
               width: 280.w,
-              padding: const EdgeInsets.only(left: AppPadding.p14, right: AppPadding.p14),
+              padding: const EdgeInsets.only(
+                  left: AppPadding.p14, right: AppPadding.p14),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppSize.s5),
                 border: Border.all(
@@ -428,7 +429,6 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                 thumbVisibility: MaterialStateProperty.all<bool>(true),
               ),
             ),
-
             underline: Container(),
             items: listOfBusinesses.map((item) {
               return DropdownMenuItem(
@@ -444,8 +444,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                 int index = 0;
                 for (var i in listOfBusinesses) {
                   if (i.name == _selectedBusiness) {
-                    listOfBusinesses
-                        .indexWhere((element) => element.name == _selectedBusiness);
+                    listOfBusinesses.indexWhere(
+                        (element) => element.name == _selectedBusiness);
 
                     listOfLocations = listOfBusinesses[index].locations;
 
@@ -454,7 +454,8 @@ class _RegisterPosViewState extends State<RegisterPosView> {
 
                     decimalPlaces = listOfLocations[0].locationDecimalPlaces;
 
-                    _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
+                    _appPreferences.setLocationId(
+                        PREFS_KEY_LOCATION_ID, locationId!);
 
                     _appPreferences.setBusinessType(
                         PREFS_KEY_BUSINESS_TYPE, businessType!);
@@ -476,9 +477,11 @@ class _RegisterPosViewState extends State<RegisterPosView> {
 
                     locationId = listOfLocations[index].locationId;
 
-                    decimalPlaces = listOfLocations[index].locationDecimalPlaces;
+                    decimalPlaces =
+                        listOfLocations[index].locationDecimalPlaces;
 
-                    _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
+                    _appPreferences.setLocationId(
+                        PREFS_KEY_LOCATION_ID, locationId!);
 
                     _appPreferences.setBusinessType(
                         PREFS_KEY_BUSINESS_TYPE, businessType!);
@@ -499,8 +502,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
                 Text(
                   AppStrings.chooseBusiness.tr(),
                   style: TextStyle(
-                      color: ColorManager.primary,
-                      fontSize: AppSize.s15.sp),
+                      color: ColorManager.primary, fontSize: AppSize.s15.sp),
                 ),
                 SizedBox(
                   width: AppConstants.smallDistance,
@@ -532,88 +534,87 @@ class _RegisterPosViewState extends State<RegisterPosView> {
           SizedBox(
             height: AppConstants.smallDistance,
           ),
-      DropdownButton2(
-
-        buttonStyleData: ButtonStyleData(
-          height: 47.h,
-          width: 280.w,
-          padding: const EdgeInsets.only(left: AppPadding.p14, right: AppPadding.p14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSize.s5),
-            border: Border.all(
-              color: ColorManager.primary,
-            ),
-            color: ColorManager.white,
-          ),
-          elevation: 2,
-        ),
-        dropdownStyleData: DropdownStyleData(
-          maxHeight: 400.h,
-          width: 270.w,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSize.s5),
-            color: ColorManager.white,
-          ),
-          offset: const Offset(0, 0),
-          scrollbarTheme: ScrollbarThemeData(
-            radius: const Radius.circular(40),
-            thickness: MaterialStateProperty.all<double>(6),
-            thumbVisibility: MaterialStateProperty.all<bool>(true),
-          ),
-        ),
-
-        underline: Container(),
-        items: listOfLocations.map((item) {
-          return DropdownMenuItem(
-              value: item.locationName,
-              child: Text(
-                item.locationName,
-                style: TextStyle(fontSize: AppSize.s15.sp),
-              ));
-        }).toList(),
-        onChanged: (selectedLocation) {
-          setState(() {
-            _selectedLocation = selectedLocation;
-            int index = 0;
-            for (var i in listOfLocations) {
-              if (i.locationName == _selectedLocation) {
-                index = listOfLocations.indexWhere(
-                    (element) => element.locationName == _selectedLocation);
-
-                locationId = listOfLocations[index].locationId;
-
-                decimalPlaces = listOfLocations[index].locationDecimalPlaces;
-
-                _appPreferences.setLocationId(PREFS_KEY_LOCATION_ID, locationId!);
-
-                RegisterPOSCubit.get(context).openCloseRegister(
-                    CloseRegisterReportRequest(today: true), locationId!);
-
-                RegisterPOSCubit.get(context).getTaxes(locationId!);
-                break;
-              }
-            }
-          });
-        },
-        value: _selectedLocation,
-        isExpanded: true,
-        hint: Row(
-          children: [
-            Text(
-              AppStrings.chooseLocation.tr(),
-              style: TextStyle(
+          DropdownButton2(
+            buttonStyleData: ButtonStyleData(
+              height: 47.h,
+              width: 280.w,
+              padding: const EdgeInsets.only(
+                  left: AppPadding.p14, right: AppPadding.p14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppSize.s5),
+                border: Border.all(
                   color: ColorManager.primary,
-                  fontSize: AppSize.s15.sp),
+                ),
+                color: ColorManager.white,
+              ),
+              elevation: 2,
             ),
-            SizedBox(
-              width: AppConstants.smallDistance,
-            )
-          ],
-        ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 400.h,
+              width: 270.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppSize.s5),
+                color: ColorManager.white,
+              ),
+              offset: const Offset(0, 0),
+              scrollbarTheme: ScrollbarThemeData(
+                radius: const Radius.circular(40),
+                thickness: MaterialStateProperty.all<double>(6),
+                thumbVisibility: MaterialStateProperty.all<bool>(true),
+              ),
+            ),
+            underline: Container(),
+            items: listOfLocations.map((item) {
+              return DropdownMenuItem(
+                  value: item.locationName,
+                  child: Text(
+                    item.locationName,
+                    style: TextStyle(fontSize: AppSize.s15.sp),
+                  ));
+            }).toList(),
+            onChanged: (selectedLocation) {
+              setState(() {
+                _selectedLocation = selectedLocation;
+                int index = 0;
+                for (var i in listOfLocations) {
+                  if (i.locationName == _selectedLocation) {
+                    index = listOfLocations.indexWhere(
+                        (element) => element.locationName == _selectedLocation);
 
-        style: TextStyle(
-            color: ColorManager.primary, fontSize: AppSize.s20.sp),
-      ),
+                    locationId = listOfLocations[index].locationId;
+
+                    decimalPlaces =
+                        listOfLocations[index].locationDecimalPlaces;
+
+                    _appPreferences.setLocationId(
+                        PREFS_KEY_LOCATION_ID, locationId!);
+
+                    RegisterPOSCubit.get(context).openCloseRegister(
+                        CloseRegisterReportRequest(today: true), locationId!);
+
+                    RegisterPOSCubit.get(context).getTaxes(locationId!);
+                    break;
+                  }
+                }
+              });
+            },
+            value: _selectedLocation,
+            isExpanded: true,
+            hint: Row(
+              children: [
+                Text(
+                  AppStrings.chooseLocation.tr(),
+                  style: TextStyle(
+                      color: ColorManager.primary, fontSize: AppSize.s15.sp),
+                ),
+                SizedBox(
+                  width: AppConstants.smallDistance,
+                )
+              ],
+            ),
+            style: TextStyle(
+                color: ColorManager.primary, fontSize: AppSize.s20.sp),
+          ),
         ],
       ),
     );
@@ -666,14 +667,16 @@ class _RegisterPosViewState extends State<RegisterPosView> {
 
                 await Future.delayed(
                     Duration(milliseconds: AppConstants.durationOfSnackBar + 1000));
+
+                Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
               } else {
                 OpenRegisterRequest openRegisterRequest = OpenRegisterRequest(
                     handCash: double.parse(posInitialEditingController.text));
                 await RegisterPOSCubit.get(context)
                     .openRegister(openRegisterRequest, locationId!);
-              }
 
-              Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
+                Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
+              }
             }
             return;
           }

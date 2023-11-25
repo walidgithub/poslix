@@ -19,7 +19,11 @@ class CustomDialog extends StatefulWidget {
           barrierDismissible: false,
           builder: (dialogContext) {
             Future.delayed(Duration(milliseconds: messageTime), () {
-              Navigator.of(dialogContext).pop(true);
+              try {
+                Navigator.of(dialogContext).pop(true);
+              } catch (e){
+
+              }
             });
             return CustomDialog(
               messageText: messageText,
@@ -36,7 +40,11 @@ class CustomDialog extends StatefulWidget {
       barrierColor: Colors.transparent,
       builder: (dialogContext) {
         Future.delayed(Duration(milliseconds: messageTime), () {
-          Navigator.of(dialogContext).pop(true);
+            try {
+              Navigator.of(dialogContext).pop(true);
+            } catch (e){
+
+            }
         });
         return CustomDialog(
           messageText: messageText,

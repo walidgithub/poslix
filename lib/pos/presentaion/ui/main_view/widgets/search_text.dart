@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poslix_app/pos/presentaion/ui/components/close_button.dart';
+import 'package:poslix_app/pos/shared/constant/constant_values_manager.dart';
 
+import '../../../../domain/entities/search_list_model.dart';
 import '../../../../domain/response/products_model.dart';
 import '../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../shared/constant/strings_manager.dart';
@@ -16,18 +18,28 @@ Widget searchText(
     TextEditingController searchEditingController,
     Function addToTmp,
     List<ProductsResponse> listOfAllProducts,
-    List<String> searchList) {
+    List<SearchListModel> searchList) {
   deviceWidth = getDeviceWidth(context);
-  return Autocomplete<String>(
+  return Autocomplete<SearchListModel>(
     optionsBuilder: (TextEditingValue textEditingValue) {
       if (textEditingValue.text.isEmpty) {
-        return const Iterable<String>.empty();
+        return const Iterable<SearchListModel>.empty();
       } else {
-        return searchList.where((word) =>
-            word.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+        var selectedName = searchList.where((word) =>
+            word.name.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+        var selectedSku = searchList.where((word) =>
+            word.sku.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+        print('selecteddddd');
+        print(selectedName.first.name.toString());
+        print(selectedSku.first.sku.toString());
+
+        var selected = searchList.where((word) =>
+            word.name.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+
+        return selected;
       }
     },
-    onSelected: (String selection) {
+    onSelected: (SearchListModel selection) {
       int index =
           listOfAllProducts.indexWhere((element) => element.name == selection);
 
@@ -71,7 +83,17 @@ Widget searchText(
                           },
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [Text(e), const Divider()],
+                            children: [Row(children: [
+                              Text(e.name),
+                              SizedBox(
+                                width: AppConstants.smallDistance,
+                              ),
+                              const Text('| Sku: '),
+                              SizedBox(
+                                width: AppConstants.smallDistance,
+                              ),
+                              Text(e.sku)
+                            ],), const Divider()],
                           ),
                         ),
                       ))

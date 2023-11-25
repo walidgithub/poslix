@@ -51,18 +51,20 @@ Widget itemContainer(int index, BuildContext context,
       Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 200.w,
-            height: deviceWidth <= 600 ? 125.h : 105.h,
-            decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                image: listOfProducts[index].image.toString() == "n"
-                    ? const DecorationImage(
-                        image: AssetImage(ImageAssets.noItem), fit: BoxFit.fill)
-                    : DecorationImage(
-                        image: CachedNetworkImageProvider(
-                            listOfProducts[index].image.toString()),
-                        fit: BoxFit.fill)),
+          Flexible(
+            child: Container(
+              width: 200.w,
+              height: deviceWidth <= 600 ? 125.h : 105.h,
+              decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  image: listOfProducts[index].image.toString() == "n"
+                      ? const DecorationImage(
+                          image: AssetImage(ImageAssets.noItem), fit: BoxFit.fill)
+                      : DecorationImage(
+                          image: CachedNetworkImageProvider(
+                              listOfProducts[index].image.toString()),
+                          fit: BoxFit.fill)),
+            ),
           ),
           Container(
             width: deviceWidth <= 600 ? 155.w : 50.w,
