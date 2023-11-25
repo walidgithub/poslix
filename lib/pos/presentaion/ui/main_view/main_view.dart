@@ -414,6 +414,7 @@ class _MainViewState extends State<MainView> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: SafeArea(
           child: Scaffold(
+            resizeToAvoidBottomInset : false,
             key: _scaffoldKey,
             backgroundColor: ColorManager.secondary,
             body: bodyContent(context),

@@ -22,26 +22,30 @@ Widget searchText(
   deviceWidth = getDeviceWidth(context);
   return Autocomplete<SearchListModel>(
     optionsBuilder: (TextEditingValue textEditingValue) {
-      if (textEditingValue.text.isEmpty) {
+      if (textEditingValue.text.isEmpty || textEditingValue == null) {
         return const Iterable<SearchListModel>.empty();
       } else {
         var selectedName = searchList.where((word) =>
             word.name.toLowerCase().contains(textEditingValue.text.toLowerCase()));
         var selectedSku = searchList.where((word) =>
             word.sku.toLowerCase().contains(textEditingValue.text.toLowerCase()));
-        print('selecteddddd');
-        print(selectedName.first.name.toString());
-        print(selectedSku.first.sku.toString());
 
-        var selected = searchList.where((word) =>
-            word.name.toLowerCase().contains(textEditingValue.text.toLowerCase()));
-
+        var selected;
+        if (selectedName != null && selectedName.isNotEmpty) {
+          selected = selectedName.where((word) =>
+              word.name.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+        } else if (selectedSku != null && selectedSku.isNotEmpty) {
+          selected = selectedSku.where((word) =>
+              word.sku.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+        } else {
+          return const Iterable<SearchListModel>.empty();
+        }
         return selected;
       }
     },
     onSelected: (SearchListModel selection) {
       int index =
-          listOfAllProducts.indexWhere((element) => element.name == selection);
+          listOfAllProducts.indexWhere((element) => element.name == selection.name);
 
       addToTmp(index, context, true);
     },
@@ -54,7 +58,7 @@ Widget searchText(
           },
           autofocus: false,
           keyboardType: TextInputType.text,
-          controller: searchEditingController,
+          controller: textEditingController,
           focusNode: focusNode,
           onEditingComplete: onFieldSubmitted,
           decoration: InputDecoration(
@@ -80,6 +84,7 @@ Widget searchText(
                           onTap: () {
                             FocusScope.of(context).unfocus();
                             onSelected(e);
+                            searchEditingController.text = '${e.name} | Sku: ${e.sku}';
                           },
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
