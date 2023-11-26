@@ -2343,13 +2343,23 @@ class _MainViewState extends State<MainView> {
   }
 
   void checkSearchText(String checkText) {
-    setState(() {
-      if (checkText == '') {
-        writing = false;
-      } else{
-        writing = true;
-      }
-    });
+    if (deviceWidth! <= 600) {
+      _controllerLeftPart.setState!(() {
+        if (checkText == '') {
+          writing = false;
+        } else{
+          writing = true;
+        }
+      });
+    } else {
+      setState(() {
+        if (checkText == '') {
+          writing = false;
+        } else{
+          writing = true;
+        }
+      });
+    }
   }
 
   Widget brand(BuildContext context) {
