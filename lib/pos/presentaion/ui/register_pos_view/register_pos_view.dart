@@ -77,7 +77,7 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   void initState() {
     cashInHand = 0;
 
-    getLocationId();
+    // getLocationId();
     getUserInfo();
 
     super.initState();

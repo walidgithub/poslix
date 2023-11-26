@@ -121,6 +121,7 @@ class _MainViewState extends State<MainView> {
   int tax = 0;
 
   bool tailor = false;
+  bool writing = false;
 
   int getIndex(int index) {
     int finalIndex = index + 1;
@@ -915,9 +916,9 @@ class _MainViewState extends State<MainView> {
                               _searchEditingController,
                               addToTmpInBottomSheet,
                               listOfAllProducts,
-                              searchList)
+                              searchList, checkSearchText, writing)
                           : searchText(context, _searchEditingController,
-                              addToTmp, listOfAllProducts, searchList),
+                              addToTmp, listOfAllProducts, searchList, checkSearchText, writing),
 
                       // tmp table of items
                       Expanded(
@@ -2254,7 +2255,7 @@ class _MainViewState extends State<MainView> {
                         : Container(),
                     deviceWidth! <= 600
                         ? searchText(context, _searchEditingController,
-                            addToTmp, listOfAllProducts, searchList)
+                            addToTmp, listOfAllProducts, searchList, checkSearchText, writing)
                         : Container(),
                     deviceWidth! <= 600
                         ? SizedBox(
@@ -2339,6 +2340,16 @@ class _MainViewState extends State<MainView> {
             borderRadius: AppSize.s5),
       ),
     );
+  }
+
+  void checkSearchText(String checkText) {
+    setState(() {
+      if (checkText == '') {
+        writing = false;
+      } else{
+        writing = true;
+      }
+    });
   }
 
   Widget brand(BuildContext context) {

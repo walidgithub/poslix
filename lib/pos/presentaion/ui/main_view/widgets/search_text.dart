@@ -13,39 +13,36 @@ import '../../../../shared/utils/utils.dart';
 import '../../components/container_component.dart';
 
 double? deviceWidth;
+
 Widget searchText(
     BuildContext context,
     TextEditingController searchEditingController,
     Function addToTmp,
     List<ProductsResponse> listOfAllProducts,
-    List<SearchListModel> searchList) {
+    List<SearchListModel> searchList,
+    Function checkSearchText,
+    bool writing) {
   deviceWidth = getDeviceWidth(context);
   return Autocomplete<SearchListModel>(
     optionsBuilder: (TextEditingValue textEditingValue) {
+      checkSearchText(textEditingValue.text);
       if (textEditingValue.text.isEmpty || textEditingValue == null) {
         return const Iterable<SearchListModel>.empty();
       } else {
-        var selectedName = searchList.where((word) =>
-            word.name.toLowerCase().contains(textEditingValue.text.toLowerCase()));
-        var selectedSku = searchList.where((word) =>
-            word.sku.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+        var selected = searchList.where((element) =>
+            element.name
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()) ||
+            element.sku
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()));
 
-        var selected;
-        if (selectedName != null && selectedName.isNotEmpty) {
-          selected = selectedName.where((word) =>
-              word.name.toLowerCase().contains(textEditingValue.text.toLowerCase()));
-        } else if (selectedSku != null && selectedSku.isNotEmpty) {
-          selected = selectedSku.where((word) =>
-              word.sku.toLowerCase().contains(textEditingValue.text.toLowerCase()));
-        } else {
-          return const Iterable<SearchListModel>.empty();
-        }
         return selected;
       }
     },
     onSelected: (SearchListModel selection) {
-      int index =
-          listOfAllProducts.indexWhere((element) => element.name == selection.name);
+      int index = listOfAllProducts
+          .indexWhere((element) => element.name == selection.name);
 
       addToTmp(index, context, true);
     },
@@ -66,6 +63,16 @@ Widget searchText(
                 Icons.search,
                 size: AppSize.s25.sp,
               ),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  searchEditingController.text = '';
+                },
+                icon: writing ? Icon(
+                  Icons.close,
+                  color: ColorManager.primary,
+                  size: AppSize.s25.sp,
+                ) : Icon(null),
+              ),
               hintText: AppStrings.searchByProduct.tr(),
               hintStyle:
                   TextStyle(fontSize: AppSize.s14, color: ColorManager.primary),
@@ -84,21 +91,27 @@ Widget searchText(
                           onTap: () {
                             FocusScope.of(context).unfocus();
                             onSelected(e);
-                            searchEditingController.text = '${e.name} | Sku: ${e.sku}';
+                            searchEditingController.text =
+                                '${e.name} | Sku: ${e.sku}';
                           },
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [Row(children: [
-                              Text(e.name),
-                              SizedBox(
-                                width: AppConstants.smallDistance,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(e.name),
+                                  SizedBox(
+                                    width: AppConstants.smallDistance,
+                                  ),
+                                  const Text('| Sku: '),
+                                  SizedBox(
+                                    width: AppConstants.smallDistance,
+                                  ),
+                                  Text(e.sku)
+                                ],
                               ),
-                              const Text('| Sku: '),
-                              SizedBox(
-                                width: AppConstants.smallDistance,
-                              ),
-                              Text(e.sku)
-                            ],), const Divider()],
+                              const Divider()
+                            ],
                           ),
                         ),
                       ))
