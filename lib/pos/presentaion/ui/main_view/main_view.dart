@@ -415,25 +415,26 @@ class _MainViewState extends State<MainView> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: SafeArea(
           child: Scaffold(
-            resizeToAvoidBottomInset : false,
+            resizeToAvoidBottomInset: false,
             key: _scaffoldKey,
             backgroundColor: ColorManager.secondary,
             body: bodyContent(context),
             floatingActionButton: showFab
-                ? AnimatedFloatingActionButton(
-                    fabButtons: [
-                        printerSettings(),
-                        language(),
-                        logout(),
-                        register(),
-                        refresh()
-                      ],
-                    key: floatingKey,
-                    colorStartAnimation: ColorManager.primary,
-                    colorEndAnimation: ColorManager.delete,
-                    animatedIconData:
-                        AnimatedIcons.menu_close //To principal button
-                    )
+                ?
+            AnimatedFloatingActionButton(
+                fabButtons: [
+                  printerSettings(),
+                  language(),
+                  logout(),
+                  register(),
+                  refresh()
+                ],
+                key: floatingKey,
+                colorStartAnimation: ColorManager.primary,
+                colorEndAnimation: ColorManager.delete,
+                animatedIconData:
+                AnimatedIcons.menu_close//To principal button
+            )
                 : Container(),
           ),
         ),
@@ -495,28 +496,28 @@ class _MainViewState extends State<MainView> {
     listOfCustomers.insert(
         0,
         CustomerResponse(
-            firstName: AppStrings.firstName,
-            lastName: AppStrings.secondName,
-            locationId: locationId,
-            addressLine_1: '',
-            addressLine_2: '',
-            city: '',
-            contactStatus: '',
-            country: '',
-            createdAt: '',
-            createdBy: 0,
-            id: 1,
-            mobile: '',
-            shippingAddress: '',
-            state: '',
-            type: '',
-            zipCode: '',
-            contactId: '',
-            deletedAt: '',
-            email: '',
-            name: '',
-            updatedAt: '',
-        priceGroupsId: 0,
+          firstName: AppStrings.firstName,
+          lastName: AppStrings.secondName,
+          locationId: locationId,
+          addressLine_1: '',
+          addressLine_2: '',
+          city: '',
+          contactStatus: '',
+          country: '',
+          createdAt: '',
+          createdBy: 0,
+          id: 1,
+          mobile: '',
+          shippingAddress: '',
+          state: '',
+          type: '',
+          zipCode: '',
+          contactId: '',
+          deletedAt: '',
+          email: '',
+          name: '',
+          updatedAt: '',
+          priceGroupsId: 0,
         ));
 
     _selectedCustomerName =
@@ -593,7 +594,8 @@ class _MainViewState extends State<MainView> {
             }
 
             for (var element in listOfAllProducts) {
-              searchList.add(SearchListModel(name: element.name, sku: element.sku));
+              searchList
+                  .add(SearchListModel(name: element.name, sku: element.sku));
             }
 
             listOfBrands.insert(
@@ -663,7 +665,9 @@ class _MainViewState extends State<MainView> {
                   locationId: locationId,
                   name: AppStrings.noThing.tr(),
                   businessId: 0,
-                  isActive: 0, products: [],customers: []));
+                  isActive: 0,
+                  products: [],
+                  customers: []));
             }
 
             int index = listOfCustomers.indexWhere((element) =>
@@ -818,31 +822,6 @@ class _MainViewState extends State<MainView> {
                                     },
                                     child: ordersBtnMobile()))
                     : Container(),
-                deviceWidth! <= 600
-                    ? listOfTmpOrder.isNotEmpty
-                        ? isRtl()
-                            ? Positioned(
-                                left: 11.w,
-                                bottom: 13.h,
-                                child: Container(
-                                    width: 60.h,
-                                    height: 60.w,
-                                    decoration: BoxDecoration(
-                                      color: ColorManager.white,
-                                      shape: BoxShape.circle,
-                                    )))
-                            : Positioned(
-                                right: 11.w,
-                                bottom: 13.h,
-                                child: Container(
-                                    width: 60.h,
-                                    height: 60.w,
-                                    decoration: BoxDecoration(
-                                      color: ColorManager.white,
-                                      shape: BoxShape.circle,
-                                    )))
-                        : Container()
-                    : Container(),
                 deviceWidth! <= 600 && _showArrow
                     ? isRtl()
                         ? AnimatedPositioned(
@@ -916,9 +895,17 @@ class _MainViewState extends State<MainView> {
                               _searchEditingController,
                               addToTmpInBottomSheet,
                               listOfAllProducts,
-                              searchList, checkSearchText, writing)
-                          : searchText(context, _searchEditingController,
-                              addToTmp, listOfAllProducts, searchList, checkSearchText, writing),
+                              searchList,
+                              checkSearchText,
+                              writing)
+                          : searchText(
+                              context,
+                              _searchEditingController,
+                              addToTmp,
+                              listOfAllProducts,
+                              searchList,
+                              checkSearchText,
+                              writing),
 
                       // tmp table of items
                       Expanded(
@@ -1110,7 +1097,9 @@ class _MainViewState extends State<MainView> {
           locationId: locationId,
           name: AppStrings.noThing.tr(),
           businessId: 0,
-          isActive: 0, products: [],customers: []));
+          isActive: 0,
+          products: [],
+          customers: []));
     }
     deviceWidth! <= 600
         ? CustomerMobileDialog.show(context, 'Add', [], 0, locationId,
@@ -1183,8 +1172,14 @@ class _MainViewState extends State<MainView> {
           ColorManager.hold);
     } else {
       listOfTmpOrder[0].orderDiscount = discount;
-      holdOrdersDialog(context, deviceWidth!, listOfTmpOrder, discount,
-          _selectedCustomerTel!, _selectedCustomerName!, _selectedPriceGroupId!, (done) {
+      holdOrdersDialog(
+          context,
+          deviceWidth!,
+          listOfTmpOrder,
+          discount,
+          _selectedCustomerTel!,
+          _selectedCustomerName!,
+          _selectedPriceGroupId!, (done) {
         if (done == 'done') {
           setState(() {
             listOfTmpOrder.clear();
@@ -1252,7 +1247,7 @@ class _MainViewState extends State<MainView> {
             '${listOfCustomers[0].firstName} ${listOfCustomers[0].lastName}';
 
         _selectedCustomerTel = listOfCustomers[0].mobile;
-        _selectedPriceGroupId= listOfCustomers[0].priceGroupsId ?? 0;
+        _selectedPriceGroupId = listOfCustomers[0].priceGroupsId ?? 0;
 
         discount = 0;
         differenceValue = 0;
@@ -1278,14 +1273,17 @@ class _MainViewState extends State<MainView> {
         _selectedCustomerName =
             '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
         _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
-        _selectedPriceGroupId = listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
+        _selectedPriceGroupId =
+            listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
         for (var n in listOfTmpOrder) {
           n.pricingGroupId = _selectedPriceGroupId;
         }
       } else {
         _selectedCustomer = listOfCustomers
             .where((element) =>
-                "${element.firstName} ${element.lastName} | ${element.mobile}" == customerName).first;
+                "${element.firstName} ${element.lastName} | ${element.mobile}" ==
+                customerName)
+            .first;
         int indexOfCustomer = listOfCustomers.indexWhere((element) =>
             "${element.firstName} ${element.lastName} | ${element.mobile}" ==
             customerName);
@@ -1294,7 +1292,8 @@ class _MainViewState extends State<MainView> {
         _selectedCustomerName =
             '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
         _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
-        _selectedPriceGroupId = listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
+        _selectedPriceGroupId =
+            listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
         for (var n in listOfTmpOrder) {
           n.pricingGroupId = _selectedPriceGroupId;
         }
@@ -1328,7 +1327,8 @@ class _MainViewState extends State<MainView> {
         _selectedCustomerName =
             '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
         _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
-        _selectedPriceGroupId = listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
+        _selectedPriceGroupId =
+            listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
         for (var n in listOfTmpOrder) {
           n.pricingGroupId = _selectedPriceGroupId;
         }
@@ -1346,7 +1346,8 @@ class _MainViewState extends State<MainView> {
         _selectedCustomerName =
             '${listOfCustomers[indexOfCustomer].firstName} ${listOfCustomers[indexOfCustomer].lastName}';
         _selectedCustomerTel = listOfCustomers[indexOfCustomer].mobile;
-        _selectedPriceGroupId = listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
+        _selectedPriceGroupId =
+            listOfCustomers[indexOfCustomer].priceGroupsId ?? 0;
         for (var n in listOfTmpOrder) {
           n.pricingGroupId = _selectedPriceGroupId;
         }
@@ -1556,17 +1557,17 @@ class _MainViewState extends State<MainView> {
                             ),
                       GestureDetector(
                         onLongPressUp: () {
-                          editQuantityDialog(context, deviceWidth,
-                                  (value) {
-                                editCount(tmpOrder, context, value);
-                              });
+                          editQuantityDialog(context, deviceWidth, (value) {
+                            editCount(tmpOrder, context, value);
+                          });
                         },
                         child: containerComponent(
                             context,
                             Padding(
                               padding: const EdgeInsets.all(AppPadding.p2),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Bounceable(
                                     duration: Duration(
@@ -1594,7 +1595,8 @@ class _MainViewState extends State<MainView> {
                                             size: AppSize.s10.sp,
                                           ),
                                           height: 20.h,
-                                          width: deviceWidth <= 600 ? 20.w : 10.w,
+                                          width:
+                                              deviceWidth <= 600 ? 20.w : 10.w,
                                           color: ColorManager.secondary,
                                           borderColor: ColorManager.secondary,
                                           borderWidth: 1.w,
@@ -1630,7 +1632,8 @@ class _MainViewState extends State<MainView> {
                                             size: AppSize.s10.sp,
                                           ),
                                           height: 20.h,
-                                          width: deviceWidth <= 600 ? 20.w : 10.w,
+                                          width:
+                                              deviceWidth <= 600 ? 20.w : 10.w,
                                           color: ColorManager.secondary,
                                           borderColor: ColorManager.secondary,
                                           borderWidth: 1.w,
@@ -1778,7 +1781,10 @@ class _MainViewState extends State<MainView> {
       }
 
       if (itemStock.sellOverStock == 0 && itemStock.isService == 0) {
-        if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)].itemQuantity.toString()) >= qty) {
+        if (int.parse(listOfTmpOrder[listOfTmpOrder.indexOf(tmpOrder)]
+                .itemQuantity
+                .toString()) >=
+            qty) {
           noCredit(context);
           return;
         }
@@ -1977,7 +1983,7 @@ class _MainViewState extends State<MainView> {
               getTotalAmount();
             });
           }
-        },listOfPricingGroups);
+        }, listOfPricingGroups);
       });
     } else {
       ///////////////////////
@@ -1985,12 +1991,12 @@ class _MainViewState extends State<MainView> {
         int listOfTmpOrderIndex = listOfTmpOrder
             .indexWhere((element) => element.productId == listToWork[index].id);
 
-
         if (listOfTmpOrderIndex >= 0) {
-          if (listToWork[index].sellOverStock == 0 && listToWork[index].isService == 0) {
+          if (listToWork[index].sellOverStock == 0 &&
+              listToWork[index].isService == 0) {
             if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
-                .itemQuantity
-                .toString()) >=
+                    .itemQuantity
+                    .toString()) >=
                 listToWork[index].stock) {
               noCredit(context);
               return;
@@ -2025,20 +2031,20 @@ class _MainViewState extends State<MainView> {
           tel = '';
         }
 
-        if (listToWork[index].sellOverStock == 0 && listToWork[index].isService == 0) {
+        if (listToWork[index].sellOverStock == 0 &&
+            listToWork[index].isService == 0) {
           if (listToWork[index].stock == 0) {
             noCredit(context);
             return;
           }
         }
 
-
-
         String sellPrice = listToWork[index].sellPrice;
         // edit with price group
         if (_selectedPriceGroupId != 0) {
-          var pricingGroupProductsResponse =
-          listOfPricingGroups.firstWhere((element) => element.id == _selectedPriceGroupId).products;
+          var pricingGroupProductsResponse = listOfPricingGroups
+              .firstWhere((element) => element.id == _selectedPriceGroupId)
+              .products;
           for (var p in pricingGroupProductsResponse) {
             if (p.id == listToWork[index].id) {
               sellPrice = '${p.price}.000000000000000000000';
@@ -2048,7 +2054,11 @@ class _MainViewState extends State<MainView> {
 
         listOfTmpOrder.add(TmpOrderModel(
             id: listToWork[index].id,
-            itemName: listToWork[index].type == 'single' ? listToWork[index].name : listToWork[index].name + " " + listToWork[index].variations[index].name,
+            itemName: listToWork[index].type == 'single'
+                ? listToWork[index].name
+                : listToWork[index].name +
+                    " " +
+                    listToWork[index].variations[index].name,
             itemQuantity: 1,
             itemAmount:
                 '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
@@ -2141,7 +2151,7 @@ class _MainViewState extends State<MainView> {
               getTotalAmount();
             });
           }
-        },listOfPricingGroups);
+        }, listOfPricingGroups);
       });
     } else {
       ///////////////////////
@@ -2150,16 +2160,16 @@ class _MainViewState extends State<MainView> {
             .indexWhere((element) => element.productId == listToWork[index].id);
 
         if (listOfTmpOrderIndex >= 0) {
-          if (listToWork[index].sellOverStock == 0 && listToWork[index].isService == 0) {
+          if (listToWork[index].sellOverStock == 0 &&
+              listToWork[index].isService == 0) {
             if (int.parse(listOfTmpOrder[listOfTmpOrderIndex]
-                .itemQuantity
-                .toString()) >=
+                    .itemQuantity
+                    .toString()) >=
                 listToWork[index].stock) {
               noCredit(context);
               return;
             }
           }
-
         }
       }
 
@@ -2187,19 +2197,23 @@ class _MainViewState extends State<MainView> {
           tel = '';
         }
 
-        if (listToWork[index].sellOverStock == 0 && listToWork[index].isService == 0) {
+        if (listToWork[index].sellOverStock == 0 &&
+            listToWork[index].isService == 0) {
           if (listToWork[index].stock == 0) {
             noCredit(context);
             return;
           }
         }
 
-
         String sellPrice = listToWork[index].sellPrice;
 
         listOfTmpOrder.add(TmpOrderModel(
             id: listToWork[index].id,
-            itemName: listToWork[index].type == 'single' ? listToWork[index].name : listToWork[index].name + " " + listToWork[index].variations[index].name,
+            itemName: listToWork[index].type == 'single'
+                ? listToWork[index].name
+                : listToWork[index].name +
+                    " " +
+                    listToWork[index].variations[index].name,
             itemQuantity: 1,
             itemAmount:
                 '${sellPrice.substring(0, sellPrice.indexOf('.'))}${sellPrice.substring(sellPrice.indexOf('.'), sellPrice.indexOf('.') + 1 + decimalPlaces)}',
@@ -2254,8 +2268,14 @@ class _MainViewState extends State<MainView> {
                           )
                         : Container(),
                     deviceWidth! <= 600
-                        ? searchText(context, _searchEditingController,
-                            addToTmp, listOfAllProducts, searchList, checkSearchText, writing)
+                        ? searchText(
+                            context,
+                            _searchEditingController,
+                            addToTmp,
+                            listOfAllProducts,
+                            searchList,
+                            checkSearchText,
+                            writing)
                         : Container(),
                     deviceWidth! <= 600
                         ? SizedBox(
@@ -2347,7 +2367,7 @@ class _MainViewState extends State<MainView> {
       _controllerLeftPart.setState!(() {
         if (checkText == '') {
           writing = false;
-        } else{
+        } else {
           writing = true;
         }
       });
@@ -2355,7 +2375,7 @@ class _MainViewState extends State<MainView> {
       setState(() {
         if (checkText == '') {
           writing = false;
-        } else{
+        } else {
           writing = true;
         }
       });
