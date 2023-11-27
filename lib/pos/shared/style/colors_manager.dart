@@ -2,7 +2,6 @@ import 'dart:ui';
 
 class ColorManager{
   static Color primary = const Color(0xff025C53);
-  static Color floatingColor = const Color(0xff47b5dc);
   static Color success = const Color(0xff45d77f);
   static Color secondary = const Color(0xffE6F6F5);
   static Color white = const Color(0xffFFFFFF);
