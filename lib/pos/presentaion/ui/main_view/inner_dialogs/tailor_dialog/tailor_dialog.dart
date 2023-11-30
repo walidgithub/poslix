@@ -392,6 +392,7 @@ class _TailorDialogState extends State<TailorDialog> {
               padding: const EdgeInsets.fromLTRB(
                   AppPadding.p0, AppPadding.p5, AppPadding.p5, AppPadding.p5),
               child: TextField(
+                  cursorColor: ColorManager.primary,
                   autofocus: false,
                   keyboardType: TextInputType.number,
                   controller: _sizesControllers[index],

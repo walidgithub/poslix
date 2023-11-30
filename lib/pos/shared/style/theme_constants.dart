@@ -10,7 +10,10 @@ ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     primaryColor: ColorManager.primary,
     floatingActionButtonTheme:
-        FloatingActionButtonThemeData(backgroundColor: ColorManager.delete),
+        FloatingActionButtonThemeData(
+            backgroundColor: ColorManager.delete,
+          foregroundColor: Colors.white
+        ),
     // elevated button
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
@@ -42,6 +45,7 @@ ThemeData lightTheme = ThemeData(
   inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: ColorManager.white,
+
       // content padding
       contentPadding: const EdgeInsets.fromLTRB(AppPadding.p15,AppPadding.p0,AppPadding.p5,AppPadding.p0),
       prefixIconColor: ColorManager.primary,
@@ -82,7 +86,7 @@ ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primaryColor: ColorManager.primary,
   floatingActionButtonTheme:
-  FloatingActionButtonThemeData(backgroundColor: ColorManager.delete),
+  FloatingActionButtonThemeData(backgroundColor: ColorManager.delete,foregroundColor: Colors.white),
   // elevated button
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(

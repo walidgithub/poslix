@@ -50,6 +50,7 @@ Widget searchText(
         (context, textEditingController, focusNode, onFieldSubmitted) {
       searchEditingController = textEditingController;
       return TextField(
+          cursorColor: ColorManager.primary,
           onSubmitted: (value) {
             FocusScope.of(context).unfocus();
           },

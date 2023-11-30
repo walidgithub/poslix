@@ -77,8 +77,9 @@ class _CustomDialogState extends State<CustomDialog> {
   @override
   Widget build(BuildContext context) {
     deviceWidth = getDeviceWidth(context);
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) async => false,
       child: Padding(
         padding: const EdgeInsets.only(top: 50),
         child: Stack(

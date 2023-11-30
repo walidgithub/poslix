@@ -30,6 +30,7 @@ Widget putInitialValue(BuildContext context,
         ),
         TextField(
             autofocus: false,
+            cursorColor: ColorManager.primary,
             keyboardType: TextInputType.number,
             controller: posInitialEditingController,
             decoration: InputDecoration(

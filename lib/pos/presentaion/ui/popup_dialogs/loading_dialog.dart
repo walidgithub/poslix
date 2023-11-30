@@ -33,8 +33,9 @@ class _LoadingDialogState extends State<LoadingDialog> {
   @override
   Widget build(BuildContext context) {
     deviceWidth = getDeviceWidth(context);
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) async => false,
       child: Center(
         child: Container(
           height: deviceWidth! <= 600 ? 100.h : 150.h,

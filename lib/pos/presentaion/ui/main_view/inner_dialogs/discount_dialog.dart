@@ -142,6 +142,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                       child: SizedBox(
                         width: 50.w,
                         child: TextField(
+                            cursorColor: ColorManager.primary,
                             autofocus: false,
                             keyboardType: TextInputType.number,
                             controller: numberEditingController,

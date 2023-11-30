@@ -321,6 +321,7 @@ class _CloseRegisterDialogState extends State<CloseRegisterDialog> {
                                           AppConstants.heightBetweenElements,
                                     ),
                                     TextField(
+                                        cursorColor: ColorManager.primary,
                                         autofocus: false,
                                         keyboardType: TextInputType.text,
                                         controller: _notesEditingController,

@@ -54,6 +54,7 @@ Future holdOrdersDialog(
                   Expanded(
                     flex: 1,
                     child: TextField(
+                        cursorColor: ColorManager.primary,
                         autofocus: true,
                         keyboardType: TextInputType.text,
                         controller: holdNameEditingController,

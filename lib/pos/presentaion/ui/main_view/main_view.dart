@@ -407,8 +407,20 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     deviceWidth = getDeviceWidth(context);
-    return WillPopScope(
-      onWillPop: () => isApple()
+
+    // final RenderBox fabRenderBox =
+    // context.findRenderObject() as RenderBox;
+    // final Offset fabPosition =
+    // fabRenderBox.localToGlobal(Offset.zero);
+    // final double left = fabPosition.dx;
+    // final double bottom =
+    //     MediaQuery.of(context).size.height - fabPosition.dy;
+    // print('Left: $left');
+    // print('Bottom: $bottom');
+
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) => isApple()
           ? onBackButtonPressedInIOS(context)
           : onBackButtonPressed(context),
       child: GestureDetector(

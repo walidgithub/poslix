@@ -11,7 +11,7 @@ Widget autoComplete(BuildContext context, TextEditingController searchEditingCon
       flex: deviceWidth <= 600 ? 2 : 3,
       child: TextField(
           autofocus: false,
-
+          cursorColor: ColorManager.primary,
           keyboardType: TextInputType.text,
           controller: searchEditingController,
           onChanged: searchInList,

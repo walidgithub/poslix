@@ -15,6 +15,7 @@ Widget printerIPValue(BuildContext context,
       mainAxisSize: MainAxisSize.min,
       children: [
         TextField(
+            cursorColor: ColorManager.primary,
             onSubmitted: (String value) {
               oldValue = value;
               endEdit == true;

@@ -8,6 +8,7 @@ import '../../../../../../shared/style/colors_manager.dart';
 
 Widget sizeName(BuildContext context, TextEditingController sizeNameEditingController) {
   return TextField(
+      cursorColor: ColorManager.primary,
       autofocus: false,
       keyboardType: TextInputType.text,
       controller: sizeNameEditingController,

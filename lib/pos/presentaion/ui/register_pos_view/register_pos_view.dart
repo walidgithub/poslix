@@ -171,8 +171,9 @@ class _RegisterPosViewState extends State<RegisterPosView> {
   @override
   Widget build(BuildContext context) {
     deviceWidth = getDeviceWidth(context);
-    return WillPopScope(
-      onWillPop: () => isApple()
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) => isApple()
           ? onBackButtonPressedInIOS(context)
           : onBackButtonPressed(context),
       child: GestureDetector(
