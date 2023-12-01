@@ -8,6 +8,7 @@ import '../../../../../../shared/style/colors_manager.dart';
 
 Widget mainNotes(BuildContext context, TextEditingController notesEditingController) {
   return TextField(
+      cursorColor: ColorManager.primary,
       autofocus: false,
       keyboardType: TextInputType.text,
       controller: notesEditingController,

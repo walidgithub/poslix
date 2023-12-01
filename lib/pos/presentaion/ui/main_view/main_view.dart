@@ -1016,6 +1016,7 @@ class _MainViewState extends State<MainView> {
                 left: 8,
               ),
               child: TextFormField(
+                cursorColor: ColorManager.primary,
                 expands: true,
                 maxLines: null,
                 controller: _customerEditingController,

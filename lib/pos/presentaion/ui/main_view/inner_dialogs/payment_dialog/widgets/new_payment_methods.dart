@@ -133,6 +133,7 @@ Widget newPaymentMethods(
                             Expanded(
                               flex: 1,
                               child: TextField(
+                                  cursorColor: ColorManager.primary,
                                   autofocus: false,
                                   keyboardType: TextInputType.text,
                                   controller: paymentNotesControllers[index],

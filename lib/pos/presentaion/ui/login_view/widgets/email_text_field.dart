@@ -31,6 +31,7 @@ Widget emailText(BuildContext context, RegExp regexMail,FocusNode loginPassFN, F
               loginPassFN);
         },
         focusNode: loginEmailFN,
+        cursorColor: ColorManager.primary,
         autofocus: false,
         keyboardType:
         TextInputType

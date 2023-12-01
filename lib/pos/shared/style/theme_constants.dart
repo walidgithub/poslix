@@ -86,7 +86,10 @@ ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primaryColor: ColorManager.primary,
   floatingActionButtonTheme:
-  FloatingActionButtonThemeData(backgroundColor: ColorManager.delete,foregroundColor: Colors.white),
+  FloatingActionButtonThemeData(
+      backgroundColor: ColorManager.delete,
+      foregroundColor: Colors.white
+  ),
   // elevated button
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(

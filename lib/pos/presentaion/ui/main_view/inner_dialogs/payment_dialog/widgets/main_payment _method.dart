@@ -15,6 +15,7 @@ Widget mainPaymentMethod(BuildContext context, double total, Function selectMain
       Expanded(
         flex: 1,
         child: TextField(
+            cursorColor: ColorManager.primary,
             autofocus: false,
             keyboardType:
             TextInputType.number,
@@ -98,6 +99,7 @@ Widget mainPaymentMethod(BuildContext context, double total, Function selectMain
       Expanded(
         flex: 1,
         child: TextField(
+            cursorColor: ColorManager.primary,
             autofocus: false,
             keyboardType: TextInputType.text,
             controller:

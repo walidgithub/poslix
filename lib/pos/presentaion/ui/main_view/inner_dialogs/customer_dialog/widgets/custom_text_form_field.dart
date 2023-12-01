@@ -6,10 +6,11 @@ import '../../../../../../shared/constant/padding_margin_values_manager.dart';
 import '../../../../../../shared/style/colors_manager.dart';
 import '../../../../popup_dialogs/custom_dialog.dart';
 
-Widget customTextFormField(BuildContext context,
+Widget customTextFormFieldd(BuildContext context,
     FocusNode fn, TextEditingController controller, String hint, String label, TextInputType textInputType,
     {FocusNode? nextFN, String? validateText}) {
   return TextFormField(
+      cursorColor: ColorManager.primary,
       onFieldSubmitted: (_) {
         FocusScope.of(context).requestFocus(nextFN);
       },

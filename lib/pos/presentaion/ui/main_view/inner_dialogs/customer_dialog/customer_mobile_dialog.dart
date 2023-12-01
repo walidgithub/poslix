@@ -267,21 +267,21 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
         SizedBox(
           height: AppConstants.smallWidthBetweenElements,
         ),
-        customTextFormField(context, _fNameFN, _firstNameEditingController,
+        customTextFormFieldd(context, _fNameFN, _firstNameEditingController,
             AppStrings.first_name.tr(), AppStrings.first_name.tr(), TextInputType.text,
             nextFN: _lNameFN,
             validateText: AppStrings.firstNameFieldIsRequired.tr()),
         SizedBox(
           height: AppConstants.smallWidthBetweenElements,
         ),
-        customTextFormField(context, _lNameFN, _lastNameEditingController,
+        customTextFormFieldd(context, _lNameFN, _lastNameEditingController,
             AppStrings.lastName.tr(), AppStrings.lastName.tr(), TextInputType.text,
             nextFN: _mobileFN,
             validateText: AppStrings.lastNameFieldIsRequired.tr()),
         SizedBox(
           height: AppConstants.smallWidthBetweenElements,
         ),
-        customTextFormField(context, _mobileFN, _mobileEditingController,
+        customTextFormFieldd(context, _mobileFN, _mobileEditingController,
             AppStrings.mobile.tr(), AppStrings.mobile.tr(), TextInputType.number,
             nextFN: _addressOneFN,
             validateText: AppStrings.mobileFieldIsRequired.tr()),
@@ -419,7 +419,7 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
       children: [
         Column(
           children: [
-            customTextFormField(context,
+            customTextFormFieldd(context,
                 _addressOneFN,
                 _addressOneEditingController,
                 AppStrings.addressLine1.tr(),
@@ -428,7 +428,7 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
             SizedBox(
               height: AppConstants.smallWidthBetweenElements,
             ),
-            customTextFormField(context,
+            customTextFormFieldd(context,
                 _addressTwoFN,
                 _addressTwoEditingController,
                 AppStrings.addressLine2.tr(),
@@ -441,19 +441,19 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
         ),
         Column(
           children: [
-            customTextFormField(context, _cityFN, _cityEditingController,
+            customTextFormFieldd(context, _cityFN, _cityEditingController,
                 AppStrings.city.tr(), AppStrings.city.tr(), TextInputType.text,
                 nextFN: _stateFN),
             SizedBox(
               height: AppConstants.smallWidthBetweenElements,
             ),
-            customTextFormField(context, _stateFN, _stateEditingController,
+            customTextFormFieldd(context, _stateFN, _stateEditingController,
                 AppStrings.state.tr(), AppStrings.state.tr(), TextInputType.text,
                 nextFN: _countryFN),
             SizedBox(
               height: AppConstants.smallWidthBetweenElements,
             ),
-            customTextFormField(context,
+            customTextFormFieldd(context,
                 _countryFN,
                 _countryEditingController,
                 AppStrings.country.tr(),
@@ -462,7 +462,7 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
             SizedBox(
               height: AppConstants.smallWidthBetweenElements,
             ),
-            customTextFormField(context,
+            customTextFormFieldd(context,
                 _zipCodeFN,
                 _zipCodeEditingController,
                 AppStrings.zipCode.tr(),
@@ -473,7 +473,7 @@ class _CustomerMobileDialogState extends State<CustomerMobileDialog> {
         Divider(
           color: ColorManager.primary,
         ),
-        customTextFormField(context, _shippingFN, _shippingAddressEditingController,
+        customTextFormFieldd(context, _shippingFN, _shippingAddressEditingController,
           AppStrings.shippingAddress.tr(), AppStrings.shippingAddress.tr(), TextInputType.text,),
       ],
     );

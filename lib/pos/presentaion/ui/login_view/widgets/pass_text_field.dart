@@ -21,6 +21,7 @@ Widget passText(BuildContext context, FocusNode loginPassFN, TextEditingControll
         keyboardType: TextInputType.visiblePassword,
         controller: loginPassEditingController,
         obscureText: !showPass,
+        cursorColor: ColorManager.primary,
         decoration: InputDecoration(
             errorStyle: const TextStyle(
               height: AppSize.s16,

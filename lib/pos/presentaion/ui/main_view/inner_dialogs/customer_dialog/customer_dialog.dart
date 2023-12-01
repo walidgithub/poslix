@@ -259,7 +259,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
       children: [
         Expanded(
             flex: 1,
-            child: customTextFormField(context, _fNameFN, _firstNameEditingController,
+            child: customTextFormFieldd(context, _fNameFN, _firstNameEditingController,
                 AppStrings.first_name.tr(), AppStrings.first_name.tr(), TextInputType.text,
                 nextFN: _lNameFN,
                 validateText: AppStrings.firstNameFieldIsRequired.tr())),
@@ -268,7 +268,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
         ),
         Expanded(
             flex: 1,
-            child: customTextFormField(context, _lNameFN, _lastNameEditingController,
+            child: customTextFormFieldd(context, _lNameFN, _lastNameEditingController,
                 AppStrings.lastName.tr(), AppStrings.lastName.tr(), TextInputType.text,
                 nextFN: _mobileFN,
                 validateText: AppStrings.lastNameFieldIsRequired.tr())),
@@ -277,7 +277,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
         ),
         Expanded(
             flex: 1,
-            child: customTextFormField(context, _mobileFN, _mobileEditingController,
+            child: customTextFormFieldd(context, _mobileFN, _mobileEditingController,
                 AppStrings.mobile.tr(), AppStrings.mobile.tr(), TextInputType.number,
                 nextFN: _addressOneFN,
                 validateText: AppStrings.mobileFieldIsRequired.tr())),
@@ -423,7 +423,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(context,
+                child: customTextFormFieldd(context,
                     _addressOneFN,
                     _addressOneEditingController,
                     AppStrings.addressLine1.tr(),
@@ -434,7 +434,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(context,
+                child: customTextFormFieldd(context,
                     _addressTwoFN,
                     _addressTwoEditingController,
                     AppStrings.addressLine2.tr(),
@@ -449,7 +449,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
           children: [
             Expanded(
                 flex: 1,
-                child: customTextFormField(context, _cityFN, _cityEditingController,
+                child: customTextFormFieldd(context, _cityFN, _cityEditingController,
                     AppStrings.city.tr(), AppStrings.city.tr(), TextInputType.text,
                     nextFN: _stateFN)),
             SizedBox(
@@ -457,7 +457,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(context, _stateFN, _stateEditingController,
+                child: customTextFormFieldd(context, _stateFN, _stateEditingController,
                     AppStrings.state.tr(), AppStrings.state.tr(), TextInputType.text,
                     nextFN: _countryFN)),
             SizedBox(
@@ -465,7 +465,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(context,
+                child: customTextFormFieldd(context,
                     _countryFN,
                     _countryEditingController,
                     AppStrings.country.tr(),
@@ -476,7 +476,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
             ),
             Expanded(
                 flex: 1,
-                child: customTextFormField(context,
+                child: customTextFormFieldd(context,
                     _zipCodeFN,
                     _zipCodeEditingController,
                     AppStrings.zipCode.tr(),
@@ -487,7 +487,7 @@ class _CustomerDialogState extends State<CustomerDialog> {
         Divider(
           color: ColorManager.primary,
         ),
-        customTextFormField(context, _shippingFN, _shippingAddressEditingController,
+        customTextFormFieldd(context, _shippingFN, _shippingAddressEditingController,
             AppStrings.shippingAddress.tr(), AppStrings.shippingAddress.tr(), TextInputType.text,),
         SizedBox(
           height: AppConstants.smallDistance,

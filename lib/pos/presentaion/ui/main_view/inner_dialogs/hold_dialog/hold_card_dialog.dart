@@ -194,6 +194,7 @@ Future holdOrdersDialog(
                       height: deviceWidth <= 600 ? AppConstants.smallWidthBetweenElements : AppConstants.smallDistance,
                     ),
                     TextField(
+                        cursorColor: ColorManager.primary,
                         autofocus: true,
                         keyboardType: TextInputType.text,
                         controller: holdNameEditingController,
